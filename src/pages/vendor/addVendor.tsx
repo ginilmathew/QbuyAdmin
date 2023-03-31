@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import React from 'react'
 
 const addVendor = () => {
-    const router = useRouter()
 
   return (
     <Box px={5} py={2} pt={10} mt={0} >

@@ -53,10 +53,10 @@ const Header = () => {
   };
   const handleClose3 = () => {
     setAnchorE3(null);
-  };
+  }
   const handleClose4 = () => {
     setAnchorE4(null);
-  };
+  }
 
   const Menudropdown = useCallback((e: React.MouseEvent<HTMLButtonElement>, value: string) => {
     switch (value) {
