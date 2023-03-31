@@ -1,0 +1,390 @@
+
+
+
+export const Admin_item = [
+    {
+        id: 1,
+        item: "Dashboard",
+        path:'/dashboard'
+    },
+    {
+        id: 2,
+        item: "Shipments",
+        path:'/dashboard'
+    },
+    {
+        id: 3,
+        item: "Accounts",
+        path:null,
+        list: [
+            {
+                id: 3.1,
+                item: "Franchis",
+                path:'/dashboard',
+            },
+            {
+                id: 3.2,
+                item: "vendors",
+                path:'/dashboard',
+            },
+            {
+                id: 3.3,
+                item: "Riders",
+                path:'/dashboard',
+            },
+            
+            {
+                id: 3.4,
+                item: "cusomers",
+                path:'/dashboard',
+            },
+        ]
+
+    },
+    {
+        id: 4,
+        item: "Revenue",
+        path:'',
+    },
+    {
+        id: 5,
+        item: "Panda Tools",
+        path:'',
+    },
+    {
+        id: 6,
+        item: "Multivendor",
+        path:'',
+    },
+    {
+        id: 7,
+        item: "Pick Up & Drop",
+        path:null,
+    },
+    {
+        id: 8,
+        item: "Reports",
+        path:"",
+        list: [
+            {
+                id: 8.1,
+                item: "Customer Transaction",
+                path:'',
+            },
+            {
+                id: 8.2,
+                item: "Customer Activity",
+                path:'',
+
+            },
+            {
+                id: 8.3,
+                item: "Customer Orders",
+                path:'',
+            },
+            {
+                id: 8.4,
+                item: "Reward Points",
+                path:'',
+            },
+            {
+                id: 8.5,
+                item: "Search Report",
+                path:'/dashboard',
+            },
+            {
+                id: 8.6,
+                item: "Tax Report",
+                path:'/dashboard',
+            },
+            {
+                id: 8.7,
+                item: "Shipping Report",
+                path:'/dashboard',
+            },
+            {
+                id: 8.8,
+                item: "Return Report",
+                path:'/dashboard',
+            },
+            {
+                id: 8.9,
+                item: "Sales Report",
+                path:'/dashboard',
+            },
+            {
+                id: 8.10,
+                item: "Coupons Report",
+                path:'/dashboard',
+            },
+            {
+                id: 8.11,
+                item: "Products Viewed",
+                path:'/dashboard',
+            },
+            {
+                id: 8.12,
+                item: "Product Purchased",
+                path:'/dashboard',
+            },
+        ]
+    },
+    {
+        id: 9,
+        item: "User Management",
+        path:'/dashboard',
+        
+    },
+    {
+        id: 10,
+        item: "Settings",
+        path:null,
+        list:[
+            {
+              id:10.1,
+              item:'Slider Management',
+              path:'/dashboard',
+            },
+            {
+                id:10.2,
+                item:'Feedbacks',
+                path:'/dashboard',
+              },
+              {
+                id:10.3,
+                item:'Message Banner',
+                path:'/dashboard',
+              },
+              {
+                id:10.4,
+                item:'Rush Hour',
+                path:'/dashboard',
+              },
+              {
+                id:10.5,
+                item:'Attendance',
+                path:'/dashboard',
+              },
+              {
+                id:10.6,
+                item:'Rate Card',
+                path:'/dashboard',
+              },
+              {
+                id:10.7,
+                item:'Pickup & Drop Charges',
+                path:'/dashboard',
+              },
+              {
+                id:10.8,
+                item:'Delivery Charges',
+                path:'/dashboard',
+              },
+              {
+                id:10.9,
+                item:'Extra Charges',
+                path:'/dashboard',
+              },
+              {
+                id:10.9,
+                item:'Order Assign Criteria',
+                path:'/dashboard',
+              },
+        ]
+    },
+    {
+        id:11,
+        item:'Smart Suggest',
+        path:'/dashboard',
+    },
+    {
+        id:12,
+        item:'Promotion',
+        path:null,
+        list:[
+            {
+                id:12.1,
+                item:'Coupons',
+                path:'/dashboard',
+            },
+            {
+                id:12.2,
+                item:'Panda Coins',
+                path:'/dashboard',
+            },
+            
+            {
+                id:12.3,
+                item:'Offers',
+                path:'/dashboard',
+            },
+            
+
+        ]
+    }
+
+]
+
+
+//sales
+
+export const sales_item = [
+    {
+        id: 1,
+        item: "Franchisee",
+        path:'/dashboard',
+    },
+    {
+        id: 2,
+        item: "Vendor Profile",
+        path:'#'
+    },
+    {
+        id: 3,
+        item: "Vendor Signup",
+        path:"/vendor"
+    },
+    {
+        id: 4,
+        item: "Marketing",
+        path:null,
+        list:[
+            {
+                id:4.1,
+                item:"Merchant Marketing",
+                path:'/dashboard',
+            },
+            {
+                id:4.2,
+                item:"Franchisee Marketing",
+                path:'/dashboard',
+            },
+        ]
+    },
+    {
+        id: 5,
+        item: "Referred Restaurants",
+        path:'/dashboard',
+    },
+    {
+        id: 6,
+        item: "Franchisee Enquires",
+        path:'/dashboard',
+    },
+    {
+        id: 7,
+        item: "Category Management",
+        path:'/category',
+    },
+    {
+        id: 8,
+        item: "Product Adding",
+        path:'/products',
+    },
+
+]
+
+
+//logs......
+
+
+export const Logs_item = [
+
+    {
+        id: 1,
+        item: "Smart Suggest List",
+        path:'/dashboard',
+    },
+    {
+        id: 2,
+        item: "Rider Onboarding",
+        path:'/dashboard',
+    },
+    {
+        id: 3,
+        item: "Onboarding List",
+        path:'/dashboard',
+    },
+    {
+        id: 4,
+        item: "Delivery Riders",
+        path:'/dashboard',
+    },
+    {
+        id: 5,
+        item: "Rider Lifecycle",
+        path:'/dashboard',
+    },
+    {
+        id: 6,
+        item: "Rider Support",
+        path:'/dashboard',
+    },
+    {
+        id: 7,
+        item: "Rider Summary",
+        path:'/dashboard',
+    },
+    {
+        id: 8,
+        item: "Rider Referrals",
+        path:'/dashboard',
+    },
+
+
+]
+
+
+export const support_item = [
+    {
+        id:1,
+        item: 'Customer Complaints',
+        path:'/dashboard',
+    },
+    {   
+        id:2,
+        item: 'Rider Tickets',
+        path:'/dashboard',
+    },
+    {
+        id:3,
+        item: 'Customer Details',
+        path:'/dashboard',
+    },
+    {
+        id:4,
+        item: 'Customer Group',
+        path:'/dashboard',
+    },
+    {
+        id:5,
+        item: 'Push Notification',
+        path:'/dashboard',
+    },
+    {
+        id:6,
+        item: 'Latest Order Reviews',
+        path:'/dashboard',
+    },
+    {
+        id:7,
+        item: 'Affiliate Onboarding',
+        path:'/dashboard',
+    },
+    {
+        id:8,
+        item: 'Customer Referral',
+        path:'/dashboard',
+    },
+    {
+        id:9,
+        item: 'Customer Chat History',
+        path:'/dashboard',
+    },
+    {
+        id:10,
+        item: 'Order Summary',
+        path:'/dashboard',
+    },
+
+]
