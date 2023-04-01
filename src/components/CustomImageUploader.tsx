@@ -85,8 +85,7 @@ const CustomImageUploader = ({
                                 <BackupIcon style={{
                                     color: "#58D36E",
                                     cursor: "pointer",
-
-                                    zIndex: "1000",
+                                    zIndex: "99",
                                     position: "absolute",
                                     justifyContent: 'center',
                                     borderRadius: "3px",
