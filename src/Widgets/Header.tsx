@@ -50,7 +50,7 @@ const Header = () => {
     setAnchorE2(null);
     setAnchorE3(null);
     setAnchorE4(null);
-  };
+  }
 
   const Menudropdown = useCallback((e: React.MouseEvent<HTMLButtonElement>, value: string) => {
     switch (value) {

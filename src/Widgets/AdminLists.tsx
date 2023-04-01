@@ -49,8 +49,8 @@ export const ListItems = ({ res, handleOpen, open, handleClose }: props) => {
 
             {res?.list && res?.list?.length > 0 &&
                 <Collapse in={res?.id === open ? true : false}>
-                    {res?.list?.map((itm: any) => (
-                        <Box ml={2}>
+                    {res?.list?.map((itm: any, index: number) => (
+                        <Box ml={2} key={index}>
                             <ListItems res={itm} handleOpen={() => handleOpenC(itm)} open={openc} />
                         </Box>
                     ))}
@@ -61,7 +61,7 @@ export const ListItems = ({ res, handleOpen, open, handleClose }: props) => {
 }
 
 
-const AdminLists = memo(({ id, handleClose }: idprops) => {
+const AdminLists = ({ id, handleClose }: idprops) => {
 
     const [open, setOpen] = useState<string>("")
     const [dataList, setDataList] = useState<any>(id === "Admin" ? Admin_item : id === "Sales" ? sales_item : id === "Logs" ? Logs_item : id === "Support" ? support_item : Admin_item);
@@ -86,6 +86,6 @@ const AdminLists = memo(({ id, handleClose }: idprops) => {
             </List>
         </>
     )
-})
+}
 
 export default AdminLists
