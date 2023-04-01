@@ -10,7 +10,7 @@ const poppins = Poppins({
   weight: ['200', '600', '700']
 })
 
-console.log({poppins})
+
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -19,7 +19,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
 
   return <main className={poppins.className}>
-    <LoadScript googleMapsApiKey="AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I" libraries={["drawing","geometry","places"]}>
+    <LoadScript googleMapsApiKey="AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I" libraries={["drawing"]}>
       {showHeader && <Header />}
       <Component {...pageProps} />
     </LoadScript>

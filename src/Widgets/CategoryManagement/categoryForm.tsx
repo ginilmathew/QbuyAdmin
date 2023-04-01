@@ -11,10 +11,7 @@ const CategoryForm = () => {
 
 
     const [imagefile, setImagefile] = useState<null | File>(null)
-    const [type,settype]=useState<string>("");
-   
- 
-
+    const [type, settype] = useState<string>("");
 
 
     const { register,
@@ -106,21 +103,23 @@ const CategoryForm = () => {
                             type={"file"}
                             background="#e7f5f7"
                             myid="contained-button-file"
-                            width={"80%"}
+                            width={"90%"}
                         />
-
                     </Grid>
                 </Grid>
-
-
             </CustomBox>
+
             <Box py={3}>
-                <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Category'} onClick={() => null} />
+                <Custombutton
+                    btncolor=''
+                    IconEnd={''}
+                    IconStart={''}
+                    endIcon={false} startIcon={false} height={''} label={'Add Category'} onClick={() => null} />
             </Box>
 
             <CustomBox title='Sub Category'>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} lg={2}>
+                    <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -133,7 +132,7 @@ const CategoryForm = () => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2}>
+                    <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -162,17 +161,15 @@ const CategoryForm = () => {
                             type={"file"}
                             background="#e7f5f7"
                             myid="contained-button-file"
-                            width={"60%"}
+                            width={"80%"}
                         />
 
                     </Grid>
                 </Grid>
-
             </CustomBox>
             <Box py={3}>
                 <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add SubCategory'} onClick={() => null} />
             </Box>
-
         </Box>
     )
 }

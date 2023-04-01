@@ -33,12 +33,12 @@ export const ListItems = ({ res, handleOpen, open, handleClose }: props) => {
         }
     }
 
-    const NavigatePath = useCallback((path: any) => {
+    const NavigatePath = (path: any) => {
         if (path) {
             router.push(path)
-            handleClose()
+            // handleClose()
         }
-    }, [])
+    }
 
     return (
         <>
@@ -81,7 +81,7 @@ const AdminLists = memo(({ id, handleClose }: idprops) => {
         <>
             <List sx={{maxHeight:'90vh'}}>
                 {dataList?.map((res: any, i: React.Key | null | undefined) => (
-                    <ListItems res={res} handleOpen={() => handleOpen(res)} open={open} key={i} handleClose={handleClose} />
+                    <ListItems res={res} handleOpen={() => handleOpen(res)} open={open} key={i} handleClose={()=>handleClose()} />
                 ))}
             </List>
         </>

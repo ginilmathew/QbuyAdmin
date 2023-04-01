@@ -37,12 +37,12 @@ const Menus = ({ Icon, text, ArrowIcon, onClick, id, anchorEl, open, handleClose
                 id={id + id}
                 anchorEl={anchorEl}
                 open={open}
-                onClose={handleClose}
+                onClose={()=>handleClose()}
                 MenuListProps={{
                     'aria-labelledby': id,
                 }}
             >
-                <AdminLists id={unique} handleClose={handleClose} />
+                <AdminLists id={unique} handleClose={()=>handleClose()} />
             </Menu>
         </>
 

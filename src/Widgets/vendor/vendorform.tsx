@@ -1,21 +1,25 @@
 import CustomInput from '@/components/CustomInput'
-import { Box, Divider, Grid, Typography,MenuItem } from '@mui/material'
-import React, { useCallback, useRef, useState } from 'react'
+import { Box, Divider, Grid, Typography, MenuItem } from '@mui/material'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import CustomBox from '../CustomBox'
 import { useForm, SubmitHandler } from "react-hook-form";
 import Custombutton from '@/components/Custombutton';
 import CustomImageUploader from '@/components/CustomImageUploader';
 import Customselect from '@/components/Customselect';
 import { FormInputs } from '@/utilities/types';
-import { DrawingManager, GoogleMap, Marker, Polygon, Polyline, useJsApiLoader, } from '@react-google-maps/api';
+import { DrawingManager, GoogleMap, Marker, Polygon, Polyline, useJsApiLoader } from '@react-google-maps/api';
+import { fetchData } from '@/CustomAxios';
 
 const Vendorform = () => {
     const [map, setMap] = useState<null>(null)
 
     const [imagefile, setImagefile] = useState<null | File>(null)
-    const [category,setCategory]=useState<string>('')
+    const [category, setCategory] = useState<string>('')
+    const [polygonCoords, setPolygonCoords] = useState<google.maps.LatLngLiteral[]>([]);
+    const [drawingManager, setDrawingManager] = useState<google.maps.drawing.DrawingManager | null>(null);
+    const [selectedShape, setSelectedShape] = useState<google.maps.Circle | google.maps.Polygon | null>(null);
 
-    console.log({ imagefile })
+
 
     const { register,
         handleSubmit,
@@ -50,12 +54,17 @@ const Vendorform = () => {
     };
 
 
-    const paths = [
-        { lat: 25.774, lng: -80.19 },
-        { lat: 18.466, lng: -66.118 },
-        { lat: 32.321, lng: -64.757 },
-        { lat: 25.774, lng: -80.19 }
-    ]
+    const handleLoad = (drawingManager: google.maps.drawing.DrawingManager) => {
+        setDrawingManager(drawingManager);
+        drawingManager.setMap(map);
+    };
+
+    const handleOverlayComplete = (event: google.maps.drawing.OverlayCompleteEvent) => {
+        const { overlay } = event;
+        if (overlay instanceof google.maps.Circle || overlay instanceof google.maps.Polygon) {
+            setSelectedShape(overlay);
+        }
+    };
 
     const options = {
         fillColor: "lightblue",
@@ -90,11 +99,26 @@ const Vendorform = () => {
     }
 
 
-    const onChangeSelect = (e:React.ChangeEvent<HTMLInputElement>) => {
+    const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCategory(e.target.value)
 
     }
 
+
+    const handleFetchData = async () => {
+        try {
+          const response = await fetchData('/pproducts')
+          console.log(response.data)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
+
+    useEffect(() => {
+        handleFetchData()
+    }, [])
+    
 
     return (
         <Box>
@@ -141,7 +165,6 @@ const Vendorform = () => {
                     </Grid>
                 </Grid>
             </CustomBox>
-
             <CustomBox title='Store Details'>
                 <Box display={'flex'}>
                     <Grid container flex={.7} spacing={2}>
@@ -258,33 +281,41 @@ const Vendorform = () => {
                     <Divider />
                     {isLoaded &&
                         <Box py={1}>
-                            <GoogleMap
-                                mapContainerStyle={containerStyle}
-                                center={center}
-                                zoom={10}
-                                options={{
-
-                                    scrollwheel: false,
-                                    disableDoubleClickZoom: true,
-                                    zoomControl: false,
-                                    gestureHandling: 'none',
-                                    fullscreenControl: false,
-                                    streetView: null,
-                                    streetViewControl: false,
-                                    mapTypeControl: false,
-                                    disableDefaultUI: true,
-                                    styles: [{ elementType: "labels", featureType: "poi.business", stylers: [{ visibility: "off", }], }]
-                                }}
-                            // onLoad={onLoad}
-                            // onUnmount={onUnmount}
-                            >
-
-                                <Polygon
-                                    onLoad={onLoad}
-                                    paths={paths}
-                                    options={options}
+                            <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={12}>
+                                <Marker position={center} />
+                                
+                                <DrawingManager
+                                    onLoad={handleLoad}
+                                    onOverlayComplete={handleOverlayComplete}
+                                    options={{
+                                        markerOptions: {
+                                            clickable: true,
+                                            draggable: true,
+                                        },
+                                        drawingMode: google.maps.drawing.OverlayType.POLYGON,
+                                        drawingControl: true,
+                                        drawingControlOptions: {
+                                            position: google.maps.ControlPosition.TOP_CENTER,
+                                            drawingModes: [google.maps.drawing.OverlayType.CIRCLE, google.maps.drawing.OverlayType.POLYGON]
+                                        },
+                                        circleOptions: {
+                                            fillColor: "red",
+                                            fillOpacity: 0.3,
+                                            strokeWeight: 5,
+                                            clickable: true,
+                                            editable: true,
+                                            zIndex: 1
+                                        },
+                                        polygonOptions: {
+                                            fillColor: "#ffff00",
+                                            fillOpacity: 0.3,
+                                            strokeWeight: 5,
+                                            clickable: true,
+                                            editable: true,
+                                            zIndex: 1
+                                        }
+                                    }}
                                 />
-
                             </GoogleMap>
                         </Box>}
                 </Box>
@@ -343,9 +374,7 @@ const Vendorform = () => {
                             defaultValue={''}
                         />
                     </Grid>
-
                 </Grid>
-
                 <Typography fontSize={22} fontWeight={'bold'} py={3}>Bank Account Details</Typography>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>

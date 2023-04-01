@@ -47,14 +47,8 @@ const Header = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-  const handleClose2 = () => {
     setAnchorE2(null);
-  };
-  const handleClose3 = () => {
     setAnchorE3(null);
-  };
-  const handleClose4 = () => {
     setAnchorE4(null);
   };
 
@@ -86,7 +80,16 @@ const Header = () => {
   }
 
   return (
-    <Box height={80} width={'100%'} bgcolor={'#fff'} px={5} display={'flex'} justifyContent={'space-between'} alignItems={'center'} position={'fixed'} zIndex={100} >
+    <Box
+      height={80}
+      bgcolor={'#fff'}
+      px={5}
+      display={'flex'}
+      justifyContent={'space-between'}
+      alignItems={'center'}
+      position={'fixed'}
+      width={'100vw'}
+      zIndex={100} >
       <Image
         style={{ cursor: 'pointer' }}
         onClick={Homenavigation}
@@ -114,7 +117,7 @@ const Header = () => {
       <Menus
         unique={unique}
         open={open2}
-        handleClose={handleClose2}
+        handleClose={handleClose}
         anchorEl={anchorE2}
         text={"Sales"}
         ArrowIcon={KeyboardArrowDownIcon}
@@ -128,7 +131,7 @@ const Header = () => {
         unique={unique}
         text={"Logs"}
         open={open3}
-        handleClose={handleClose3}
+        handleClose={handleClose}
         anchorEl={anchorE3}
         ArrowIcon={KeyboardArrowDownIcon}
         Icon={AssignmentOutlinedIcon}
@@ -140,7 +143,7 @@ const Header = () => {
       <Menus
         unique={unique}
         open={open4}
-        handleClose={handleClose4}
+        handleClose={handleClose}
         anchorEl={anchorE4}
         text={"Support"}
         ArrowIcon={KeyboardArrowDownIcon}
@@ -154,8 +157,8 @@ const Header = () => {
       <Box display={'flex'} gap={1} >
         <Box width={140} height={50} sx={{ background: '#58d36e' }} borderRadius={10} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
           <Box px={1.5}>
-            <Typography sx={{fontFamily:`'Poppins' sans-serif`,}}>john deo</Typography>
-            <Typography fontSize={12} color={'#fff'} sx={{fontFamily:`'Poppins' sans-serif`,}}>admin</Typography>
+            <Typography sx={{ fontFamily: `'Poppins' sans-serif`, }}>john deo</Typography>
+            <Typography fontSize={12} color={'#fff'} sx={{ fontFamily: `'Poppins' sans-serif`, }}>admin</Typography>
           </Box>
           <Avatar sx={{ height: 40, borderRadius: 10 }}></Avatar>
         </Box>
