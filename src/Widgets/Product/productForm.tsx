@@ -104,7 +104,7 @@ const ProductForm = () => {
 
 
     const addAtributes = () => {
-        if(attributes?.length <= 2 ){
+        if(attributes?.length <= 1 ){
             setAttributes([...attributes, { name: '', content: '' ,varient : false}])
         }
     }
