@@ -13,31 +13,50 @@ const VendorSignup = () => {
     const router = useRouter();
 
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', flex: 1, },
+        { field: ' Vendor ID', headerName: 'Vendor ID', flex: 1, },
         {
-            field: 'firstName',
-            headerName: 'First name',
+            field: 'Vendor Name',
+            headerName: 'Vendor Name',
             flex: 1,
             editable: true,
         },
         {
-            field: 'lastName',
-            headerName: 'Last name',
+            field: 'Contact No',
+            headerName: 'Contact No.',
             flex: 1,
             editable: true,
         },
         {
-            field: 'age',
-            headerName: 'Age',
+            field: 'Store Name',
+            headerName: 'Store Name',
             type: 'number',
             flex: 1,
-            editable: true,
+          
         },
         {
-            field: 'fullName',
-            headerName: 'Full name',
-            description: 'This column has a value getter and is not sortable.',
-            sortable: false,
+            field: 'Category',
+            headerName: 'category',
+            flex: 1,
+            valueGetter: (params: GridValueGetterParams) =>
+                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+        },
+        {
+            field: 'Location',
+            headerName: 'Location',
+            flex: 1,
+            valueGetter: (params: GridValueGetterParams) =>
+                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+        },
+        {
+            field: 'Approval Status',
+            headerName: 'Approval Status',
+            flex: 1,
+            valueGetter: (params: GridValueGetterParams) =>
+                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+        },
+        {
+            field: 'Status',
+            headerName: 'Status',
             flex: 1,
             valueGetter: (params: GridValueGetterParams) =>
                 `${params.row.firstName || ''} ${params.row.lastName || ''}`,
