@@ -1,24 +1,23 @@
 import CustomInput from '@/components/CustomInput'
 import { Box, Divider, Grid, Typography, MenuItem } from '@mui/material'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
 import CustomBox from '../CustomBox'
 import { useForm, SubmitHandler } from "react-hook-form";
 import Custombutton from '@/components/Custombutton';
 import CustomImageUploader from '@/components/CustomImageUploader';
 import Customselect from '@/components/Customselect';
 import { FormInputs } from '@/utilities/types';
-import { DrawingManager, GoogleMap, Marker, Polygon, Polyline, useJsApiLoader } from '@react-google-maps/api';
+import { GoogleMap, Polygon, useJsApiLoader, LoadScript, Marker, DrawingManager } from "@react-google-maps/api";
 import { fetchData } from '@/CustomAxios';
+import CustomTimepicker from '@/components/CustomTimepicker';
+import dayjs, { Dayjs } from 'dayjs';
 
 const Vendorform = () => {
-    const [map, setMap] = useState<null>(null)
 
+
+    const [pickTime, setPickTime] = React.useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [category, setCategory] = useState<string>('')
-    const [polygonCoords, setPolygonCoords] = useState<google.maps.LatLngLiteral[]>([]);
-    const [drawingManager, setDrawingManager] = useState<google.maps.drawing.DrawingManager | null>(null);
-    const [selectedShape, setSelectedShape] = useState<google.maps.Circle | google.maps.Polygon | null>(null);
-
 
 
     const { register,
@@ -42,55 +41,62 @@ const Vendorform = () => {
 
 
 
+
+
     const containerStyle = {
-        width: '100%',
-        height: '400px',
-        borderRadius: '5px 5px 5px 5px'
+        width: "100%",
+        height: "400px",
     };
 
     const center = {
-        lat: -3.745,
-        lng: -38.523
+        lat: 37.7749,
+        lng: -122.4194,
     };
 
 
-    const handleLoad = (drawingManager: google.maps.drawing.DrawingManager) => {
-        setDrawingManager(drawingManager);
-        drawingManager.setMap(map);
-    };
 
-    const handleOverlayComplete = (event: google.maps.drawing.OverlayCompleteEvent) => {
-        const { overlay } = event;
-        if (overlay instanceof google.maps.Circle || overlay instanceof google.maps.Polygon) {
-            setSelectedShape(overlay);
+    const [path, setPath] = useState([
+        { lat: 52.52549080781086, lng: 13.398118538856465 },
+        { lat: 52.48578559055679, lng: 13.36653284549709 },
+        { lat: 52.48871246221608, lng: 13.44618372440334 }
+    ]);
+
+    // Define refs for Polygon instance and listeners
+    const polygonRef = useRef<google.maps.Polygon | null>(null);
+    const listenersRef = useRef<google.maps.MapsEventListener[]>([]);
+
+    // Call setPath with new edited path
+    const onEdit = useCallback(() => {
+        if (polygonRef.current) {
+            const nextPath = polygonRef.current
+                .getPath()
+                .getArray()
+                .map((latLng: google.maps.LatLng) => {
+                    return { lat: latLng.lat(), lng: latLng.lng() };
+                });
+            setPath(nextPath);
         }
-    };
+    }, [setPath]);
 
-    const options = {
-        fillColor: "lightblue",
-        fillOpacity: 1,
-        strokeColor: "red",
-        strokeOpacity: 1,
-        strokeWeight: 2,
-        clickable: true,
-        draggable: true,
-        editable: true,
-        geodesic: true,
-        zIndex: 1
-    }
+    // Bind refs to current Polygon and listeners
+    const onLoad = useCallback(
+        (polygon: google.maps.Polygon) => {
+            polygonRef.current = polygon;
+            const path = polygon.getPath();
+            listenersRef.current.push(
+                path.addListener("set_at", onEdit),
+                path.addListener("insert_at", onEdit),
+                path.addListener("remove_at", onEdit)
+            );
+        },
+        [onEdit]
+    );
 
-    const onLoad = (polygon: any) => {
-        console.log("polygon: ", polygon);
-    }
-
-
-
-
-
-    const position = {
-        lat: 37.772,
-        lng: -122.214
-    }
+    // Clean up refs
+    const onUnmount = useCallback(() => {
+        listenersRef.current.forEach((lis: google.maps.MapsEventListener) => lis.remove());
+        polygonRef.current = null;
+    }, []);
 
 
     const imageUploder = (file: any) => {
@@ -107,18 +113,29 @@ const Vendorform = () => {
 
     const handleFetchData = async () => {
         try {
-          const response = await fetchData('/pproducts')
-          console.log(response.data)
+            const response = await fetchData('/pproducts')
+            console.log(response.data)
         } catch (error) {
-          console.log(error)
+            console.log(error)
         }
-      }
+    }
 
 
     useEffect(() => {
         handleFetchData()
     }, [])
+
+
+    const onChangePickup = (e: any) => {
+
+    }
+
     
+    const onChangedropup = (e: any) => {
+
+    }
+
+
 
     return (
         <Box>
@@ -135,6 +152,7 @@ const Vendorform = () => {
                             disabled={false}
                             view={false}
                             defaultValue={''}
+
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -149,6 +167,7 @@ const Vendorform = () => {
                             view={false}
                             defaultValue={''}
                         />
+
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput
@@ -230,31 +249,21 @@ const Vendorform = () => {
                             </Customselect>
                         </Grid>
                         <Grid item xs={12} lg={2.1}>
-                            <CustomInput
-                                type='time'
+                            <CustomTimepicker
+                                changeValue={onChangePickup}
+                                fieldName='pickupTime'
                                 control={control}
-                                error={errors.opentime}
-                                fieldName="openAt"
-                                placeholder={``}
-                                fieldLabel={"Store Time"}
-                                disabled={false}
-                                view={false}
-                                defaultValue={''}
-                            />
+                                error={errors.pickupTime}
+                                fieldLabel={'Store Time'} />
                         </Grid>
                         <Grid item xs={12} lg={2.1}>
-                            <Typography mb={3.2}></Typography>
-                            <CustomInput
-                                type='time'
+                            <Typography mb={3.5}></Typography>
+                            <CustomTimepicker
+                                changeValue={onChangedropup}
+                                fieldName='dropTime'
                                 control={control}
-                                error={errors.closetime}
-                                fieldName="closeAt"
-                                placeholder={``}
-                                fieldLabel={""}
-                                disabled={false}
-                                view={false}
-                                defaultValue={''}
-                            />
+                                error={errors.dropTime}
+                                fieldLabel={''} />
                         </Grid>
                     </Grid>
                     <Box flex={.3} sx={{}}>
@@ -279,45 +288,35 @@ const Vendorform = () => {
                 </Box>
                 <Box py={2}>
                     <Divider />
-                    {isLoaded &&
-                        <Box py={1}>
-                            <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={12}>
-                                <Marker position={center} />
-                                
-                                <DrawingManager
-                                    onLoad={handleLoad}
-                                    onOverlayComplete={handleOverlayComplete}
-                                    options={{
-                                        markerOptions: {
-                                            clickable: true,
-                                            draggable: true,
-                                        },
-                                        drawingMode: google.maps.drawing.OverlayType.POLYGON,
-                                        drawingControl: true,
-                                        drawingControlOptions: {
-                                            position: google.maps.ControlPosition.TOP_CENTER,
-                                            drawingModes: [google.maps.drawing.OverlayType.CIRCLE, google.maps.drawing.OverlayType.POLYGON]
-                                        },
-                                        circleOptions: {
-                                            fillColor: "red",
-                                            fillOpacity: 0.3,
-                                            strokeWeight: 5,
-                                            clickable: true,
-                                            editable: true,
-                                            zIndex: 1
-                                        },
-                                        polygonOptions: {
-                                            fillColor: "#ffff00",
-                                            fillOpacity: 0.3,
-                                            strokeWeight: 5,
-                                            clickable: true,
-                                            editable: true,
-                                            zIndex: 1
+                    {/* {isLoaded && */}
+                    <Box py={1}>
+                        <LoadScript googleMapsApiKey='AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I' libraries={['drawing', 'geometry']} >
+                            <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={12}
+
+                            >
+
+                                <Polygon
+                                    // Make the Polygon editable / draggable
+                                    editable
+                                    draggable
+                                    path={path}
+                                    // Event used when manipulating and adding points
+                                    onMouseUp={onEdit}
+                                    // Event used when dragging the whole Polygon
+                                    onDragEnd={onEdit}
+                                    onLoad={onLoad}
+                                    onUnmount={onUnmount}
+                                    options={
+                                        {
+                                            clickable: true
                                         }
-                                    }}
+                                    }
                                 />
+
                             </GoogleMap>
-                        </Box>}
+                        </LoadScript>
+
+                    </Box>
                 </Box>
             </CustomBox>
             <CustomBox title='KYC Details'>

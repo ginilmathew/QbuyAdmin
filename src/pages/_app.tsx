@@ -19,10 +19,10 @@ export default function App({ Component, pageProps }: AppProps) {
 
 
   return <main className={poppins.className}>
-    <LoadScript googleMapsApiKey="AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I" libraries={["drawing"]}>
+    {/* <LoadScript googleMapsApiKey="AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I" libraries={["drawing"]}> */}
       {showHeader && <Header />}
       <Component {...pageProps} />
-    </LoadScript>
+    {/* </LoadScript> */}
 
   </main>
 

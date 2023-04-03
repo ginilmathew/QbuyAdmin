@@ -8,7 +8,6 @@ import { JsxElement } from 'typescript';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { support_item } from '../utilities/Menu_items'
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
-
 import Menus from './Menu';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -162,7 +161,7 @@ const Header = () => {
           </Box>
           <Avatar sx={{ height: 40, borderRadius: 10 }}></Avatar>
         </Box>
-        <Box width={50} height={50} borderRadius={12} sx={{ background: '#58d36e', cursor: 'pointer' }} display={'flex'} alignItems={'center'} justifyContent={'center'}>
+          <Box width={50} height={50} borderRadius={12} sx={{ background: '#58d36e', cursor: 'pointer' }} display={'flex'} alignItems={'center'} justifyContent={'center'}>
           <NotificationsIcon sx={{ color: "#fff" }} />
         </Box>
       </Box>

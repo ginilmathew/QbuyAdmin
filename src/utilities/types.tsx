@@ -5,4 +5,6 @@ export interface FormInputs {
     opentime?: any,
     closetime?: any,
     storename?: string
+    pickupTime?:string
+    dropTime:string
 }
