@@ -21,4 +21,5 @@ export interface FormInputs {
     stock?:string
     minquantity?:string
     productimage?:File
+    product_offer?:string
 }
