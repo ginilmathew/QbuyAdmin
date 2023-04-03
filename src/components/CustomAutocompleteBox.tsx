@@ -6,34 +6,26 @@ import { Box, Typography } from '@mui/material'
 
 type props = {
     fieldLabel: string
+    list:any,
+    setValues:any
+    onChnageValues:any
 }
 
 
-export default function CustomAutoComplete({ fieldLabel }: props) {
+export default function CustomAutoComplete({ fieldLabel,list,setValues,onChnageValues }: props) {
 
 
     // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-    const top100Films = [
-        { title: 'The Dark' },
-        { title: 'The Godfather' },
-        { title: 'The Godfather: Part II' },
-        { title: 'The Dark Knight' },
-        { title: '12 Angry Men' },
-        { title: "Schindler's List" },
-        { title: 'Pulp Fiction' },
-        {
-            title: 'The Lord of the Rings: The Return of the King',
+ 
+    const fixedOptions = [list];
+    const [value, setValue] = React.useState([list]);
 
-        },
 
-    ];
-    const fixedOptions = [top100Films[0]];
-    const [value, setValue] = React.useState([top100Films[3]]);
     const [items, setItems] = React.useState('')
 
 
     const onChangeValue = (e: any) => {
-        let filter = top100Films.map((res) => (
+        let filter = list.map((res:any) => (
             res?.title
         ))
         let data = e.target.value.trim().split(',')
@@ -43,14 +35,12 @@ export default function CustomAutoComplete({ fieldLabel }: props) {
         } else {
             let value = { title: data[0] }
             console.log({ value })
-            top100Films.push(value)
+            list.push(value)
         }
     }
 
     const ChangedValue = (e: any, newValue: any) => {
-
-        console.log({ e: e.target.value })
-
+        setValues([...newValue]);
         setValue([
             ...newValue.filter((option: any) => fixedOptions.indexOf(option) === -1),
         ]);
@@ -82,20 +72,23 @@ export default function CustomAutoComplete({ fieldLabel }: props) {
                     ChangedValue(event, newValue)
 
                 }}
-                options={top100Films}
+                options={list}
                 getOptionLabel={(option) => option.title}
                 renderTags={(tagValue, getTagProps) =>
                     tagValue.map((option, index) => (
                         <Chip
-                            label={option.title}
+                            label={option?.title}
                             {...getTagProps({ index })}
-                            disabled={fixedOptions.indexOf(option) !== -1}
+                            // disabled={fixedOptions.indexOf(option) !== -1}
                         />
                     ))
                 }
                 style={{ width: '100%' }}
                 renderInput={(params) => (
-                    <TextField {...params} placeholder="" onChange={onChangeValue} />
+                    <TextField {...params} placeholder="" onChange={(e)=>{
+                        onChangeValue(e)
+                        onChnageValues(e)
+                    }} />
                 )}
             />
         </>

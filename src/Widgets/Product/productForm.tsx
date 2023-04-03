@@ -20,8 +20,17 @@ const ProductForm = () => {
     const [addvarient, setAddVarient] = useState<boolean>(false)
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [attributes, setAttributes] = useState<any>([])
+    const [productTag,setProductTag]=useState<any>([])
+    const [productTagValue,setProductTagValue]=useState<any>([])
+    const [attributeTag,setattributeTag]=useState<any>([])
+    const [attributeTagValue,setattributeTagValue]=useState<any | null>(null)
+    const [index,setIndex]=useState<number>(0)
 
 
+    console.log({attributeTagValue})
+    
+
+  
   
 
     const { register,
@@ -105,7 +114,7 @@ const ProductForm = () => {
 
     const addAtributes = () => {
         if(attributes?.length <= 1 ){
-            setAttributes([...attributes, { name: '', content: '' ,varient : false}])
+            setAttributes([...attributes, { name: '', content:[] ,varient : false}])
         }
     }
 
@@ -116,15 +125,29 @@ const ProductForm = () => {
 
     }
 
-    const onChangeOptions=(e:any,i:number)=>{
-        console.log(e.target.value)
-        attributes[i].content = e.target.value;
+    const onChangeOptions=useCallback((e:any,i:number)=>{
+        setIndex(i)
+        console.log({e},'numer CONSOLE')
+       
       
+    },[attributeTagValue])
 
-    }
+
+    useEffect(() => {
+         
+            if(attributeTagValue?.length){
+                attributes[index].content=[...attributeTagValue]
+            }
+           
+     
+        
+        console.log({attributes})
+      
+    }, [attributeTagValue])
+    
 
     const AddVarientCheckbox = (e:any,i:number)=>{
-        console.log({e})
+        console.log({e},'EVENT CONSOLE')
         setAddVarient(e)
         attributes[i].varient = e;
         console.log({attributes})
@@ -379,7 +402,7 @@ const ProductForm = () => {
                         />
                     </Grid>
                     <Grid item xs={12} lg={3}>
-                        <CustomAutoComplete fieldLabel='Product Tag' />
+                        <CustomAutoComplete fieldLabel='Product Tag' list={productTag} setValues={setProductTagValue} onChnageValues={()=>null}/>
                     </Grid>
                     <Grid item xs={12} lg={3}>
                         <CustomImageUploader
@@ -631,18 +654,8 @@ const ProductForm = () => {
                             />
                         </Grid>
                         <Grid item xs={12} lg={4}>
-                            <CustomInput
-                               onChangeValue={(e:any)=>onChangeOptions(e,i)}
-                                disabled={false}
-                                type='text'
-                                control={control}
-                                error={errors.attributeOption}
-                                fieldName="attributeOption"
-                                placeholder={``}
-                                fieldLabel={"Attribute Option"}
-                                view={false}
-                                defaultValue={''}
-                            />
+                        <CustomAutoComplete fieldLabel='Attribute Option' list={attributeTag} setValues={setattributeTagValue} onChnageValues={(e:any)=>onChangeOptions(e,i)}/>
+                           
                         </Grid>
                         <Grid item xs={12} lg={2}>
                             <Typography mb={3}></Typography>
