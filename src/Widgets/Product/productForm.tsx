@@ -109,21 +109,21 @@ const ProductForm = () => {
         }
     }
 
-    const onChangeName=(e:any,i:any)=>{
+    const onChangeName=(e:any,i:number)=>{
         console.log(e.target.value)
         attributes[i].name = e.target.value;
         console.log({attributes})
 
     }
 
-    const onChangeOptions=(e:any,i:any)=>{
+    const onChangeOptions=(e:any,i:number)=>{
         console.log(e.target.value)
         attributes[i].content = e.target.value;
       
 
     }
 
-    const AddVarientCheckbox = (e:any,i:any)=>{
+    const AddVarientCheckbox = (e:any,i:number)=>{
         console.log({e})
         setAddVarient(e)
         attributes[i].varient = e;
