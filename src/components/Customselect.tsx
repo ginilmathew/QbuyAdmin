@@ -56,7 +56,7 @@ const Customselect = ({
             <Typography letterSpacing={1} px={'3px'} mb={'3px'}
                 sx={{
                     fontSize: {
-                        lg: 18,
+                        lg: 16,
                         md: 14,
                         sm: 12,
                         xs: 11,

@@ -17,9 +17,6 @@ const CategoryManagement = () => {
 
     }
 
-
-
-
     const columns: GridColDef[] = [
         { field: 'Dated Added', headerName: 'Dated Added', flex: 1, },
         {

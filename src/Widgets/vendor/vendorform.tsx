@@ -152,7 +152,6 @@ const Vendorform = () => {
                             disabled={false}
                             view={false}
                             defaultValue={''}
-
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
