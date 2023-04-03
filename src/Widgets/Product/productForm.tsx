@@ -11,6 +11,7 @@ import CustomAutoComplete from '@/components/CustomAutocompleteBox';
 import CustomTimepicker from '@/components/CustomTimepicker';
 import { GoogleMap, Polygon, useJsApiLoader, LoadScript, Marker, DrawingManager } from "@react-google-maps/api";
 import { CustomMultipleImageUploader } from '@/components/CustomMultipleImageUploder';
+import Custombutton from '@/components/Custombutton';
 const ProductForm = () => {
 
     const [franchise, setFranchise] = useState<string>('')
@@ -572,6 +573,12 @@ const ProductForm = () => {
                     </Grid>
                 </Grid>
             </CustomBox>
+            <CustomBox title='Attributes'>
+
+            </CustomBox>
+            <Box py={3}>
+                <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Product'} onClick={() => null} />
+            </Box>
         </Box>
     )
 }
