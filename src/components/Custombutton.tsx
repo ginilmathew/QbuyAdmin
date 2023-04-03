@@ -4,7 +4,7 @@ import React from 'react'
 
 type Inputs = {
     label: string,
-    onClick: React.MouseEventHandler,
+    onClick: React.MouseEventHandler | any,
     endIcon: boolean,
     startIcon: boolean,
     IconStart: any,

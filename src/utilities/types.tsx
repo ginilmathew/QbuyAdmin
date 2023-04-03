@@ -22,4 +22,6 @@ export interface FormInputs {
     minquantity?:string
     productimage?:File
     product_offer?:string
+    atrributeName?:string
+    attributeOption?:string
 }

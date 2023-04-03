@@ -12,11 +12,17 @@ import CustomTimepicker from '@/components/CustomTimepicker';
 import { GoogleMap, Polygon, useJsApiLoader, LoadScript, Marker, DrawingManager } from "@react-google-maps/api";
 import { CustomMultipleImageUploader } from '@/components/CustomMultipleImageUploder';
 import Custombutton from '@/components/Custombutton';
+import AddIcon from '@mui/icons-material/Add';
 const ProductForm = () => {
 
     const [franchise, setFranchise] = useState<string>('')
     const [stock, setStock] = useState<boolean>(false)
+    const [addvarient, setAddVarient] = useState<boolean>(false)
     const [imagefile, setImagefile] = useState<null | File>(null)
+    const [attributes, setAttributes] = useState<any>([])
+
+
+  
 
     const { register,
         handleSubmit,
@@ -94,6 +100,36 @@ const ProductForm = () => {
     const imageUploder = (file: any) => {
         setImagefile(file)
         console.log({ file })
+    }
+
+
+    const addAtributes = () => {
+        if(attributes?.length <= 2 ){
+            setAttributes([...attributes, { name: '', content: '' ,varient : false}])
+        }
+    }
+
+    const onChangeName=(e:any,i:any)=>{
+        console.log(e.target.value)
+        attributes[i].name = e.target.value;
+        console.log({attributes})
+
+    }
+
+    const onChangeOptions=(e:any,i:any)=>{
+        console.log(e.target.value)
+        attributes[i].content = e.target.value;
+      
+
+    }
+
+    const AddVarientCheckbox = (e:any,i:any)=>{
+        console.log({e})
+        setAddVarient(e)
+        attributes[i].varient = e;
+        console.log({attributes})
+
+
     }
 
 
@@ -396,7 +432,6 @@ const ProductForm = () => {
                     <Box py={1}>
                         <LoadScript googleMapsApiKey='AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I' libraries={['drawing', 'geometry']} >
                             <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={12}
-
                             >
 
                                 <Polygon
@@ -574,6 +609,50 @@ const ProductForm = () => {
                 </Grid>
             </CustomBox>
             <CustomBox title='Attributes'>
+                <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />
+
+
+                {attributes && attributes?.map((res: any, i: any) => (<>
+
+                    <Grid container spacing={2} py={1}>
+
+                        <Grid item xs={12} lg={2}>
+                            <CustomInput
+                               onChangeValue={(e:any)=>onChangeName(e,i)}
+                                disabled={false}
+                                type='text'
+                                control={control}
+                                error={errors.atrributeName}
+                                fieldName="atrributeName"
+                                placeholder={``}
+                                fieldLabel={"Name"}
+                                view={false}
+                                defaultValue={''}
+                            />
+                        </Grid>
+                        <Grid item xs={12} lg={4}>
+                            <CustomInput
+                               onChangeValue={(e:any)=>onChangeOptions(e,i)}
+                                disabled={false}
+                                type='text'
+                                control={control}
+                                error={errors.attributeOption}
+                                fieldName="attributeOption"
+                                placeholder={``}
+                                fieldLabel={"Attribute Option"}
+                                view={false}
+                                defaultValue={''}
+                            />
+                        </Grid>
+                        <Grid item xs={12} lg={2}>
+                            <Typography mb={3}></Typography>
+                            <CustomCheckBox isChecked={addvarient} label='' onChange={(e:any)=>AddVarientCheckbox(e,i)} title='Add Variant' />
+                        </Grid>
+                    </Grid>
+                </>
+                ))}
+
+
 
             </CustomBox>
             <Box py={3}>

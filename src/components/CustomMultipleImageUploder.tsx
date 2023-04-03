@@ -65,7 +65,7 @@ export const CustomMultipleImageUploader = ({ fieldLabel }: props) => {
                                 startIcon={false}
                                 endIcon={false}
                                 onClick={onImageUpload}
-                                label='Uploade Images' />
+                                label='Upload Images' />
                         </Box>
                         <Box minHeight={150} border={'1px solid #f5f5f5'} >
                             <Box display={'flex'} flexWrap={'wrap'} justifyContent={'initial'}>
@@ -77,15 +77,12 @@ export const CustomMultipleImageUploader = ({ fieldLabel }: props) => {
                                                 <DeleteOutlineIcon onClick={() => onImageRemove(index)} sx={{ color: 'red', cursor: 'pointer' }} />
                                                 <BorderColorIcon onClick={() => onImageUpdate(index)} sx={{ color: '#58d36e', cursor: 'pointer' }} />
                                             </Box>
-
                                         </Box>
                                     </Box>
                                 ))}
                             </Box>
-
                         </Box>
                     </Box>
-
                 )}
             </ImageUploading>
         </>

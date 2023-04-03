@@ -16,6 +16,7 @@ type props = {
     disabled: boolean,
     defaultValue: any
     type: string
+    onChangeValue?:any
 }
 
 
@@ -29,6 +30,7 @@ const CustomInput = (
         view,
         disabled,
         defaultValue,
+        onChangeValue,
         type,
     }: props
 ) => {
@@ -59,6 +61,7 @@ const CustomInput = (
                             defaultValue={defaultValue}
                             value={value}
                             onChange={(e) => {
+                                onChangeValue ? onChangeValue(e) :
                                 onChange(e)
                             }}
                             onBlur={onBlur}
