@@ -13,7 +13,7 @@ const AddProducts = () => {
 
 
     const addproductItems = () => {
-        router.push('/products')
+        router.push('/products/addProduct')
 
     }
 
