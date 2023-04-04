@@ -80,7 +80,7 @@ export const Admin_item = [
             {
                 id: 8.3,
                 item: "Customer Orders",
-                path:'',
+                path:'/customerOrderReport',
             },
             {
                 id: 8.4,
