@@ -13,6 +13,8 @@ import { GoogleMap, Polygon, useJsApiLoader, LoadScript, Marker, DrawingManager 
 import { CustomMultipleImageUploader } from '@/components/CustomMultipleImageUploder';
 import Custombutton from '@/components/Custombutton';
 import AddIcon from '@mui/icons-material/Add';
+import CustomProductVarient from './CustomProductVarient';
+
 const ProductForm = () => {
 
     const [franchise, setFranchise] = useState<string>('')
@@ -26,11 +28,10 @@ const ProductForm = () => {
     const [attributeTagValue, setattributeTagValue] = useState<any | null>(null)
     const [index, setIndex] = useState<number>(0)
     const [confirmbtn, setConfirmBtn] = useState(false)
+    const [varients, setVarients] = useState<any>([])
 
 
-    console.log({ index })
-
-
+    console.log({ varients })
 
 
 
@@ -114,7 +115,7 @@ const ProductForm = () => {
 
 
     const addAtributes = () => {
-        if (attributes?.length <= 1) {
+        if(attributes?.length  < 2){
             setAttributes([...attributes, { name: '', content: [], varient: false }])
         }
     }
@@ -126,12 +127,12 @@ const ProductForm = () => {
 
     }
 
-    const onChangeOptions = useCallback((e: any, i: number) => {
+    const onChangeOptions = (e: any, i: number) => {
         setIndex(i)
         console.log({ e }, 'numer CONSOLE')
-
-
-    }, [attributeTagValue])
+        console.log({ attributes })
+       
+    }
 
 
     useEffect(() => {
@@ -187,23 +188,57 @@ const ProductForm = () => {
         //     }
         // }
 
-        let output = "";
 
-     
-        const numIterations = attributes.reduce((acc:any, curr:any) => acc * curr.content.length, 1);
+        //loop all attributes
+
+        // let output = [];
+
+
+        // const numIterations = attributes.reduce((acc:any, curr:any) => acc * curr.content.length, 1);
+
+        // for (let i = 0; i < numIterations; i++) {
+        //     let combination = "";
+        //     let remainder = i;
+        //     for (let j = attributes.length - 1; j >= 0; j--) {
+        //         const contentIndex = remainder % attributes[j].content.length;
+        //         combination = attributes[j].content[contentIndex].title + " " + combination;
+        //         remainder = Math.floor(remainder / attributes[j].content.length);
+        //     }
+
+        //     console.log()
+        //     // output += combination.trim() + "\n";
+        //     output.push(combination.trim());
+        //     // output += combination
+
+        // }
+
+        // setVarients(output)
+
+
+
+        const output = [];
+        setVarients([])
+        // Filter attributes array to only include those with variant true
+        const variantAttributes = attributes.filter((attr: any) => attr.varient !== false)
+
+        console.log({ variantAttributes })
+
+        // Calculate the number of iterations required based on the length of the variantAttributes array
+        const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.content?.length, 1);
 
         for (let i = 0; i < numIterations; i++) {
             let combination = "";
             let remainder = i;
-            for (let j = attributes.length - 1; j >= 0; j--) {
-                const contentIndex = remainder % attributes[j].content.length;
-                combination = attributes[j].content[contentIndex].title + " " + combination;
-                remainder = Math.floor(remainder / attributes[j].content.length);
+            for (let j = variantAttributes.length - 1; j >= 0; j--) {
+                const contentIndex = remainder % variantAttributes[j].content?.length;
+                combination = variantAttributes[j].content[contentIndex].title + " " + combination;
+                remainder = Math.floor(remainder / variantAttributes[j].content?.length);
             }
-            output += combination.trim() + "\n";
-            console.log({combination})
+            output.push(combination.trim());
         }
-        
+
+        console.log({output})
+        setVarients(output)
     }
 
     return (
@@ -801,6 +836,18 @@ const ProductForm = () => {
                                 />
                             </Grid>
                         </Grid>}
+                    {attributes?.length && confirmbtn &&
+
+                        <Box>
+                            {varients?.map((res: any, i: any) => (
+                                <CustomProductVarient content={res} index={i+1} />
+                            ))}
+
+                        </Box>
+
+                    }
+
+
 
                 </CustomBox>}
             <Box py={3}>

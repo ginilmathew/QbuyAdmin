@@ -59,8 +59,9 @@ const CustomImageUploader = ({
                         sm: 12,
                         xs: 11,
                     },
-
+                    fontFamily: `'Poppins' sans-serif`,
                 }}
+                
             >{fieldLabel}
 
             </Typography>   
