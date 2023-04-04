@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useState } from 'react'
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
@@ -8,9 +8,22 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
 import CustomSwitch from '@/components/CustomSwitch';
+import CustomDelete from '@/Widgets/CustomDelete';
 const AddProducts = () => {
     const router = useRouter()
 
+
+    const [open, setOpen] = useState<boolean>(false)
+
+    console.log({ open })
+
+    const handleClose = () => {
+        setOpen(false)
+    }
+
+    const handleOpen = () => {
+        setOpen(true)
+    }
 
     const addproductItems = () => {
         router.push('/products/addProduct')
@@ -28,7 +41,7 @@ const AddProducts = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-           
+
         },
         {
             field: 'Product ',
@@ -36,7 +49,7 @@ const AddProducts = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-  
+
         },
         {
             field: 'Store Name',
@@ -44,7 +57,7 @@ const AddProducts = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            
+
         },
         {
             field: 'Price',
@@ -52,7 +65,7 @@ const AddProducts = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            
+
         },
         {
             field: 'Type',
@@ -60,7 +73,7 @@ const AddProducts = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            
+
         },
         {
             field: 'Quantity',
@@ -68,7 +81,7 @@ const AddProducts = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            
+
         },
         {
             field: 'Approval Status',
@@ -76,12 +89,12 @@ const AddProducts = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            
+
         },
         {
             field: 'Active Status',
             headerName: 'Active Status',
-            flex:1,
+            flex: 1,
             headerAlign: 'center',
             align: 'center',
             renderCell: ({ row }) => (
@@ -118,10 +131,10 @@ const AddProducts = () => {
                         }}
                     />
                     <DeleteOutlineTwoToneIcon
-
-                        style={{
+                        onClick={() => handleOpen()}
+                        sx={{
                             color: '#58D36E',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
                         }} />
                 </Stack>
             )
@@ -151,6 +164,8 @@ const AddProducts = () => {
                     <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
+
+            {open && <CustomDelete onClose={() => handleClose()} open={open} />}
         </Box>
     )
 }
