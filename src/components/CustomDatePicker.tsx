@@ -29,10 +29,10 @@ const CustomDatePicker = ({
     return (
         <>
             <FormGroup>
-                <Typography letterSpacing={1} px={'3px'} mb={'3px'}
+                <Typography letterSpacing={1} px={'3px'} mb={'1px'}
                     sx={{
                         fontSize: {
-                            lg: 18,
+                            lg: 16,
                             md: 14,
                             sm: 12,
                             xs: 11,
@@ -46,18 +46,18 @@ const CustomDatePicker = ({
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']}>
-                                <DatePicker label="Basic date picker" 
+                       
+                                <DatePicker 
                                   sx={{
                                     "& .MuiInputBase-input": {
-                                        height: "10px" // Set your height here.
+                                        height: "8px" // Set your height here.
                                     }
                                 }}
 
                                 value={value}
                                 onChange={changeValue ? (e: any) => changeValue(e) : onChange}
                                  />
-                            </DemoContainer >
+                        
 
                         </LocalizationProvider>
                     )}
