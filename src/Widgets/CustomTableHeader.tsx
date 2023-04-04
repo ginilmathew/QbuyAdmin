@@ -12,10 +12,11 @@ import AddIcon from '@mui/icons-material/Add';
 interface props {
     Headerlabel: string,
     onClick: any,
-    imprtBtn:boolean
+    imprtBtn:boolean,
+    addbtn:boolean
 }
 
-const CustomTableHeader = ({ Headerlabel, onClick ,imprtBtn}: props) => {
+const CustomTableHeader = ({ Headerlabel, onClick ,imprtBtn,addbtn}: props) => {
 
     type Inputs = {
         search: string,
@@ -38,7 +39,9 @@ const CustomTableHeader = ({ Headerlabel, onClick ,imprtBtn}: props) => {
                 {imprtBtn &&
                 <Custombutton btncolor={'#5889D3'} height={40} endIcon={false} startIcon={true} label={'import Product'} onClick={() => null} IconEnd={KeyboardArrowDownIcon} IconStart={FilterAltIcon} /> }
                 <Custombutton btncolor='' height={40} endIcon={true} startIcon={true} label={'Filter'} onClick={() => null} IconEnd={KeyboardArrowDownIcon} IconStart={FilterAltIcon} />
+                {addbtn &&
                 <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={onClick} IconEnd={''} IconStart={AddIcon} />
+                   }
             </Box>
         </Box>
     )

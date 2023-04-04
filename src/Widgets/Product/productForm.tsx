@@ -236,8 +236,6 @@ const ProductForm = () => {
             }
             output.push(combination.trim());
         }
-
-        console.log({ output })
         setVarients(output)
     }
 
@@ -841,7 +839,6 @@ const ProductForm = () => {
                             {varients?.map((res: any, i: any) => (
                                 <CustomProductVarient content={res} index={i + 1} />
                             ))}
-
                         </Box>
                     }
                 </CustomBox>}

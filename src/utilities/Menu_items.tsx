@@ -69,12 +69,12 @@ export const Admin_item = [
             {
                 id: 8.1,
                 item: "Customer Transaction",
-                path:'',
+                path:'/customerTransactions',
             },
             {
                 id: 8.2,
                 item: "Customer Activity",
-                path:'',
+                path:'/customerActivityReport',
 
             },
             {
@@ -100,7 +100,7 @@ export const Admin_item = [
             {
                 id: 8.7,
                 item: "Shipping Report",
-                path:'/dashboard',
+                path:'/shippingReport',
             },
             {
                 id: 8.8,
@@ -110,7 +110,7 @@ export const Admin_item = [
             {
                 id: 8.9,
                 item: "Sales Report",
-                path:'/dashboard',
+                path:'/salesReport',
             },
             {
                 id: 8.10,
