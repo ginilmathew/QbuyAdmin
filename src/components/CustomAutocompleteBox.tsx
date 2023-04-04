@@ -83,7 +83,7 @@ export default function CustomAutoComplete({ fieldLabel,list,setValues,onChnageV
                         />
                     ))
                 }
-                style={{ width: '100%' }}
+                style={{ width: '100%',}}
                 renderInput={(params) => (
                     <TextField {...params} placeholder="" onChange={(e)=>{
                         onChangeValue(e)

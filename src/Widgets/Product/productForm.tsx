@@ -20,18 +20,19 @@ const ProductForm = () => {
     const [addvarient, setAddVarient] = useState<boolean>(false)
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [attributes, setAttributes] = useState<any>([])
-    const [productTag,setProductTag]=useState<any>([])
-    const [productTagValue,setProductTagValue]=useState<any>([])
-    const [attributeTag,setattributeTag]=useState<any>([])
-    const [attributeTagValue,setattributeTagValue]=useState<any | null>(null)
-    const [index,setIndex]=useState<number>(0)
+    const [productTag, setProductTag] = useState<any>([])
+    const [productTagValue, setProductTagValue] = useState<any>([])
+    const [attributeTag, setattributeTag] = useState<any>([])
+    const [attributeTagValue, setattributeTagValue] = useState<any | null>(null)
+    const [index, setIndex] = useState<number>(0)
+    const [confirmbtn, setConfirmBtn] = useState(false)
 
 
-    console.log({attributeTagValue})
-    
+    console.log({ index })
 
-  
-  
+
+
+
 
     const { register,
         handleSubmit,
@@ -113,48 +114,97 @@ const ProductForm = () => {
 
 
     const addAtributes = () => {
-        if(attributes?.length <= 1 ){
-            setAttributes([...attributes, { name: '', content:[] ,varient : false}])
+        if (attributes?.length <= 1) {
+            setAttributes([...attributes, { name: '', content: [], varient: false }])
         }
     }
 
-    const onChangeName=(e:any,i:number)=>{
+    const onChangeName = (e: any, i: number) => {
         console.log(e.target.value)
         attributes[i].name = e.target.value;
-        console.log({attributes})
+        console.log({ attributes })
 
     }
 
-    const onChangeOptions=useCallback((e:any,i:number)=>{
+    const onChangeOptions = useCallback((e: any, i: number) => {
         setIndex(i)
-        console.log({e},'numer CONSOLE')
-       
-      
-    },[attributeTagValue])
+        console.log({ e }, 'numer CONSOLE')
+
+
+    }, [attributeTagValue])
 
 
     useEffect(() => {
-         
-            if(attributeTagValue?.length){
-                attributes[index].content=[...attributeTagValue]
-            }
-           
-     
-        
-        console.log({attributes})
-      
-    }, [attributeTagValue])
-    
 
-    const AddVarientCheckbox = (e:any,i:number)=>{
-        console.log({e},'EVENT CONSOLE')
+        if (attributeTagValue?.length) {
+            attributes[index].content = [...attributeTagValue]
+        }
+
+
+    }, [attributeTagValue])
+
+
+
+
+
+
+
+
+
+
+
+
+    const AddVarientCheckbox = (e: any, i: number) => {
+        console.log({ e }, 'EVENT CONSOLE')
+        setIndex(i)
         setAddVarient(e)
         attributes[i].varient = e;
-        console.log({attributes})
+        console.log({ attributes })
 
 
     }
 
+    const ConfirmVarients = () => {
+        setConfirmBtn(true)
+
+        // const attributeContent = [];
+        // for (let i = 0; i < attributes?.length; i++) {
+        //     attributeContent[i] = attributes[i].content;
+        // }
+
+        // console.log({attributeContent})
+        // for (let i = 0; i < attributeContent[0]?.length; i++) {
+        //     for (let j = 0; j < attributeContent[1]?.length; j++) {
+        //         for (let k = 0; k < attributeContent[2]?.length; k++) {
+        //             for (let l = 0; l < attributeContent[3]?.length; l++) {
+        //                 let outputString = attributeContent[0][i].title + " " + attributeContent[1][j].title + " " + attributeContent[2][k].title + " " + attributeContent[3][l].title;
+        //                 for (let m = 0; m < attributeContent[3]?.length; m++) {
+        //                     outputString += " " + attributeContent[3][m].title;
+        //                     console.log({ outputString });
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
+        let output = "";
+
+     
+        const numIterations = attributes.reduce((acc:any, curr:any) => acc * curr.content.length, 1);
+
+        for (let i = 0; i < numIterations; i++) {
+            let combination = "";
+            let remainder = i;
+            for (let j = attributes.length - 1; j >= 0; j--) {
+                const contentIndex = remainder % attributes[j].content.length;
+                combination = attributes[j].content[contentIndex].title + " " + combination;
+                remainder = Math.floor(remainder / attributes[j].content.length);
+            }
+            output += combination.trim() + "\n";
+            console.log({combination})
+        }
+        
+    }
 
     return (
         <Box>
@@ -402,7 +452,7 @@ const ProductForm = () => {
                         />
                     </Grid>
                     <Grid item xs={12} lg={3}>
-                        <CustomAutoComplete fieldLabel='Product Tag' list={productTag} setValues={setProductTagValue} onChnageValues={()=>null}/>
+                        <CustomAutoComplete fieldLabel='Product Tag' list={productTag} setValues={setProductTagValue} onChnageValues={() => null} />
                     </Grid>
                     <Grid item xs={12} lg={3}>
                         <CustomImageUploader
@@ -636,12 +686,10 @@ const ProductForm = () => {
 
 
                 {attributes && attributes?.map((res: any, i: any) => (<>
-
                     <Grid container spacing={2} py={1}>
-
                         <Grid item xs={12} lg={2}>
                             <CustomInput
-                               onChangeValue={(e:any)=>onChangeName(e,i)}
+                                onChangeValue={(e: any) => onChangeName(e, i)}
                                 disabled={false}
                                 type='text'
                                 control={control}
@@ -654,20 +702,107 @@ const ProductForm = () => {
                             />
                         </Grid>
                         <Grid item xs={12} lg={4}>
-                        <CustomAutoComplete fieldLabel='Attribute Option' list={attributeTag} setValues={setattributeTagValue} onChnageValues={(e:any)=>onChangeOptions(e,i)}/>
-                           
+                            <CustomAutoComplete fieldLabel='Attribute Options' list={attributeTag} setValues={setattributeTagValue} onChnageValues={(e: any) => onChangeOptions(e, i)} />
+
                         </Grid>
                         <Grid item xs={12} lg={2}>
                             <Typography mb={3}></Typography>
-                            <CustomCheckBox isChecked={addvarient} label='' onChange={(e:any)=>AddVarientCheckbox(e,i)} title='Add Variant' />
+                            <CustomCheckBox isChecked={attributes[i].varient} label='' onChange={(e: any) => AddVarientCheckbox(e, i)} title='Add Variant' />
                         </Grid>
                     </Grid>
                 </>
                 ))}
-
-
-
+                {attributes?.length > 0 &&
+                    <Box display={'flex'} justifyContent={'flex-end'}>
+                        <Custombutton btncolor='' height={40} endIcon={false} startIcon={false} label={'confirm'} onClick={ConfirmVarients} IconEnd={''} IconStart={''} />
+                    </Box>}
             </CustomBox>
+            {confirmbtn &&
+                <CustomBox title='Add Variant & Price'>
+                    {attributes?.every((res: any) => res.varient === false) && confirmbtn &&
+                        <Grid container spacing={2}>
+                            <Grid item lg={2} xs={12}>
+                                <CustomInput
+                                    disabled={false}
+                                    type='text'
+                                    control={control}
+                                    error={errors.product_offer}
+                                    fieldName="product_offer"
+                                    placeholder={``}
+                                    fieldLabel={"Selling Price"}
+                                    view={false}
+                                    defaultValue={''}
+                                />
+                            </Grid>
+                            <Grid item lg={2} xs={12}>
+                                <CustomInput
+                                    disabled={false}
+                                    type='text'
+                                    control={control}
+                                    error={errors.product_offer}
+                                    fieldName="product_offer"
+                                    placeholder={``}
+                                    fieldLabel={"Offer Price"}
+                                    view={false}
+                                    defaultValue={''}
+                                />
+                            </Grid>
+                            <Grid item lg={2} xs={12}>
+                                <CustomInput
+                                    disabled={false}
+                                    type='text'
+                                    control={control}
+                                    error={errors.product_offer}
+                                    fieldName="product_offer"
+                                    placeholder={``}
+                                    fieldLabel={"Purchase Price"}
+                                    view={false}
+                                    defaultValue={''}
+                                />
+                            </Grid>
+
+                            <Grid item lg={2} xs={12}>
+                                <CustomInput
+                                    disabled={false}
+                                    type='text'
+                                    control={control}
+                                    error={errors.product_offer}
+                                    fieldName="product_offer"
+                                    placeholder={``}
+                                    fieldLabel={"Offer From"}
+                                    view={false}
+                                    defaultValue={''}
+                                />
+                            </Grid>
+                            <Grid item lg={2} xs={12}>
+                                <CustomInput
+                                    disabled={false}
+                                    type='text'
+                                    control={control}
+                                    error={errors.product_offer}
+                                    fieldName="product_offer"
+                                    placeholder={``}
+                                    fieldLabel={"Offer To"}
+                                    view={false}
+                                    defaultValue={''}
+                                />
+                            </Grid>
+                            <Grid item lg={2} xs={12}>
+                                <CustomInput
+                                    disabled={false}
+                                    type='text'
+                                    control={control}
+                                    error={errors.product_offer}
+                                    fieldName="product_offer"
+                                    placeholder={``}
+                                    fieldLabel={"Stock"}
+                                    view={false}
+                                    defaultValue={''}
+                                />
+                            </Grid>
+                        </Grid>}
+
+                </CustomBox>}
             <Box py={3}>
                 <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Product'} onClick={() => null} />
             </Box>
