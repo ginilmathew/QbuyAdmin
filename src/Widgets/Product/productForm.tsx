@@ -836,18 +836,14 @@ const ProductForm = () => {
                                 />
                             </Grid>
                         </Grid>}
-                    {attributes?.length && confirmbtn &&
+                    {attributes?.every((res: any) => res.varient === true) && confirmbtn &&
                         <Box>
                             {varients?.map((res: any, i: any) => (
                                 <CustomProductVarient content={res} index={i+1} />
                             ))}
 
                         </Box>
-
                     }
-
-
-
                 </CustomBox>}
             <Box py={3}>
                 <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Product'} onClick={() => null} />

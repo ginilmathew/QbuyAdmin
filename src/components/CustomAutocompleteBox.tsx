@@ -2,21 +2,28 @@ import * as React from 'react';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, styled } from '@mui/material'
 
 type props = {
     fieldLabel: string
-    list:any,
-    setValues:any
-    onChnageValues:any
+    list: any,
+    setValues: any
+    onChnageValues: any
 }
 
 
-export default function CustomAutoComplete({ fieldLabel,list,setValues,onChnageValues }: props) {
+export default function CustomAutoComplete({ fieldLabel, list, setValues, onChnageValues }: props) {
+
+
+    const AutoCompleteStyled = styled(Autocomplete)`
+  & .MuiInputBase-input {
+    height: 1.5rem;
+  }
+`;
 
 
     // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
- 
+
     const fixedOptions = [list];
     const [value, setValue] = React.useState([list]);
 
@@ -25,7 +32,7 @@ export default function CustomAutoComplete({ fieldLabel,list,setValues,onChnageV
 
 
     const onChangeValue = (e: any) => {
-        let filter = list.map((res:any) => (
+        let filter = list.map((res: any) => (
             res?.title
         ))
         let data = e.target.value.trim().split(',')
@@ -34,7 +41,6 @@ export default function CustomAutoComplete({ fieldLabel,list,setValues,onChnageV
             return;
         } else {
             let value = { title: data[0] }
-            console.log({ value })
             list.push(value)
         }
     }
@@ -64,6 +70,13 @@ export default function CustomAutoComplete({ fieldLabel,list,setValues,onChnageV
 
             </Typography>
             <Autocomplete
+                sx={{
+                    "& .MuiInputBase-input": {
+                        height: "8px"
+                    }
+
+
+                }}
                 multiple
                 id="fixed-tags-demo"
                 value={value}
@@ -76,16 +89,28 @@ export default function CustomAutoComplete({ fieldLabel,list,setValues,onChnageV
                 getOptionLabel={(option) => option.title}
                 renderTags={(tagValue, getTagProps) =>
                     tagValue.map((option, index) => (
-                        <Chip
-                            label={option?.title}
-                            {...getTagProps({ index })}
-                            // disabled={fixedOptions.indexOf(option) !== -1}
-                        />
+                        <>
+                            {list?.length > 0 &&
+                                <Chip
+
+                                    label={option?.title}
+                                    {...getTagProps({ index })}
+                                // disabled={fixedOptions.indexOf(option) !== -1}
+                                />}
+                        </>
+
+
                     ))
                 }
-                style={{ width: '100%',}}
+                style={{ width: '100%', }}
                 renderInput={(params) => (
-                    <TextField {...params} placeholder="" onChange={(e)=>{
+                    <TextField {...params} placeholder="" sx={{
+                        "& .MuiInputBase-input": {
+                            height: "8px"
+                        }
+
+
+                    }} onChange={(e) => {
                         onChangeValue(e)
                         onChnageValues(e)
                     }} />
