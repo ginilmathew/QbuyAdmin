@@ -116,7 +116,7 @@ const ProductForm = () => {
 
     const addAtributes = () => {
         // if(attributes?.length  < 2){
-            setAttributes([...attributes, { name: '', content: [], varient: false }])
+        setAttributes([...attributes, { name: '', content: [], varient: false }])
         // }
     }
 
@@ -131,7 +131,7 @@ const ProductForm = () => {
         setIndex(i)
         console.log({ e }, 'numer CONSOLE')
         console.log({ attributes })
-       
+
     }
 
 
@@ -237,7 +237,7 @@ const ProductForm = () => {
             output.push(combination.trim());
         }
 
-        console.log({output})
+        console.log({ output })
         setVarients(output)
     }
 
@@ -836,10 +836,10 @@ const ProductForm = () => {
                                 />
                             </Grid>
                         </Grid>}
-                    {attributes?.every((res: any) => res.varient === true) && confirmbtn &&
+                    {attributes?.some((res: any) => res.varient === true) && confirmbtn &&
                         <Box>
                             {varients?.map((res: any, i: any) => (
-                                <CustomProductVarient content={res} index={i+1} />
+                                <CustomProductVarient content={res} index={i + 1} />
                             ))}
 
                         </Box>
