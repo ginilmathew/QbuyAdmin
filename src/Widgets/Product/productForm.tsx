@@ -115,9 +115,9 @@ const ProductForm = () => {
 
 
     const addAtributes = () => {
-        if(attributes?.length  < 2){
+        // if(attributes?.length  < 2){
             setAttributes([...attributes, { name: '', content: [], varient: false }])
-        }
+        // }
     }
 
     const onChangeName = (e: any, i: number) => {
@@ -837,7 +837,6 @@ const ProductForm = () => {
                             </Grid>
                         </Grid>}
                     {attributes?.length && confirmbtn &&
-
                         <Box>
                             {varients?.map((res: any, i: any) => (
                                 <CustomProductVarient content={res} index={i+1} />

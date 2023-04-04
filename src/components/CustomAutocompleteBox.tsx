@@ -40,7 +40,7 @@ export default function CustomAutoComplete({ fieldLabel,list,setValues,onChnageV
     }
 
     const ChangedValue = (e: any, newValue: any) => {
-        setValues([...newValue]);
+        setValues([...newValue.filter((option: any) => fixedOptions.indexOf(option) === -1),]);
         setValue([
             ...newValue.filter((option: any) => fixedOptions.indexOf(option) === -1),
         ]);
