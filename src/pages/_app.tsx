@@ -1,6 +1,5 @@
 import '@/styles/globals.css'
 import Header from '@/Widgets/Header';
-import { Box } from '@mui/material';
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import { Poppins } from 'next/font/google';
@@ -44,9 +43,9 @@ export default function App({ Component, pageProps }: AppProps) {
   return <main className={poppins.className}>
 
     {isLoading && (
-       <Stack sx={{ width: '100%', color: 'grey.500' }} >
-         <LinearProgress color="success" /> 
-        </Stack>
+      <Stack sx={{ width: '100%', color: 'grey.500' }} >
+        <LinearProgress color="success" />
+      </Stack>
     )}
     {/* <LoadScript googleMapsApiKey="AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I" libraries={["drawing"]}> */}
     <ProtectedRoute>

@@ -13,40 +13,54 @@ const FranchiseAccounts = () => {
       field: 'Franchise Accounts',
       headerName: 'Franchise Accounts',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: 'Franchise Name',
       headerName: 'Franchise Name',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: 'Owner Name',
       headerName: 'Owner Name',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
     },
  
     {
       field: 'Total Scores',
       headerName: 'Total Scores',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
 
     },
     {
       field: 'Location',
       headerName: 'Location',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
 
     },
     {
       field: 'Total Orders',
       headerName: 'Total Orders',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
 
     },
     {
       field: 'Last Payment Date',
       headerName: 'Last Payment Date',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
 
     },
  

@@ -30,13 +30,13 @@ export const Admin_item = [
             {
                 id: 3.3,
                 item: "Riders",
-                path:'/dashboard',
+                path:'/riderAccounts',
             },
             
             {
                 id: 3.4,
                 item: "cusomers",
-                path:'/dashboard',
+                path:'/customerAccounts',
             },
         ]
 
@@ -49,7 +49,24 @@ export const Admin_item = [
     {
         id: 5,
         item: "Panda Tools",
-        path:'',
+        path:null,
+        list:[
+            {
+                id: 5.1,
+                item: "OTP View",
+                path:'/otpView',
+            },
+            {
+                id: 5.2,
+                item: "Abandoned Cart",
+                path:'/abandonedCart',
+            },
+            {
+                id: 5.3,
+                item: "Panda Config",
+                path:'/pandaConfig',
+            },
+        ]
     },
     {
         id: 6,
@@ -85,17 +102,17 @@ export const Admin_item = [
             {
                 id: 8.4,
                 item: "Reward Points",
-                path:'',
+                path:'customerRewardReport',
             },
             {
                 id: 8.5,
                 item: "Search Report",
-                path:'/dashboard',
+                path:'/customerSearchReport',
             },
             {
                 id: 8.6,
                 item: "Tax Report",
-                path:'/dashboard',
+                path:'/taxReport',
             },
             {
                 id: 8.7,
@@ -105,7 +122,7 @@ export const Admin_item = [
             {
                 id: 8.8,
                 item: "Return Report",
-                path:'/dashboard',
+                path:'/returnReport',
             },
             {
                 id: 8.9,
@@ -115,7 +132,7 @@ export const Admin_item = [
             {
                 id: 8.10,
                 item: "Coupons Report",
-                path:'/dashboard',
+                path:'/couponsReports',
             },
             {
                 id: 8.11,
@@ -125,7 +142,7 @@ export const Admin_item = [
             {
                 id: 8.12,
                 item: "Product Purchased",
-                path:'/dashboard',
+                path:'/productPurchasedReport',
             },
         ]
     },

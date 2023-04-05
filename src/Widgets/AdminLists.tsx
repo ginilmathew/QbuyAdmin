@@ -42,8 +42,8 @@ export const ListItems = ({ res, handleOpen, open, handleClose }: props) => {
 
     return (
         <>
-            <ListItemButton onClick={handleOpen}>
-                <ListItemText><Typography fontSize={13} onClick={() => NavigatePath(res?.path && res?.path)} sx={{fontFamily:`'Poppins' sans-serif`,}} letterSpacing={1}>{res?.item}</Typography></ListItemText>
+            <ListItemButton onClick={handleOpen} sx={{height:30}}>
+                <ListItemText><Typography fontSize={13} onClick={() => NavigatePath(res?.path && res?.path)} sx={{fontFamily:`'Poppins' sans-serif`,}}>{res?.item}</Typography></ListItemText>
                 {(res?.list && res?.list?.length > 0) ? open === res?.id ? <ExpandLess /> : <ExpandMore /> : null}
             </ListItemButton>
 

@@ -6,48 +6,31 @@ import CustomTable from '@/components/CustomTable';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { useRouter } from 'next/router';
 
-const VendorAccounts = () => {
-
+const RiderAccounts = () => {
 
   const columns: GridColDef[] = [
     {
-      field: 'Vendor ID',
-      headerName: 'Vendor ID',
+      field: 'Customer ID',
+      headerName: 'Customer ID',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
     },
     {
-      field: 'Vendor Name',
-      headerName: 'Vendor Name',
+      field: 'Customer Name',
+      headerName: 'Customer Name',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
     },
     {
-      field: 'Store Name',
-      headerName: 'Store Name',
+      field: 'Phone',
+      headerName: 'Phone',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
     },
- 
-    {
-      field: 'Franchise',
-      headerName: 'Franchise',
-      flex: 1,
-      headerAlign: 'center',
-      align: 'center',
 
-    },
-    {
-      field: 'Location',
-      headerName: 'Location',
-      flex: 1,
-      headerAlign: 'center',
-      align: 'center',
-
-    },
     {
       field: 'Total Orders',
       headerName: 'Total Orders',
@@ -57,15 +40,13 @@ const VendorAccounts = () => {
 
     },
     {
-      field: 'Last Payment Date',
-      headerName: 'Last Payment Date',
+      field: 'Total Order Amount',
+      headerName: 'Total Order Amount',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
 
     },
- 
- 
     {
       field: 'Actions',
       headerName: 'Actions',
@@ -97,16 +78,17 @@ const VendorAccounts = () => {
     { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
     { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
   ];
+
   return (
     <Box px={5} py={2} pt={10} mt={0}>
-    <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-      <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Vendor Accounts' onClick={() => null} />
-      <Box py={5}>
-        <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+      <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
+        <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Rider' onClick={() => null} />
+        <Box py={5}>
+          <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+        </Box>
       </Box>
     </Box>
-  </Box>
   )
 }
 
-export default VendorAccounts
+export default RiderAccounts
