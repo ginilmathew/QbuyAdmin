@@ -7,6 +7,7 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { useRouter } from 'next/router';
 
 const AbandonedCart = () => {
+    
     const columns: GridColDef[] = [
      
         {

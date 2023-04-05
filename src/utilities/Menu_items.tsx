@@ -222,12 +222,12 @@ export const Admin_item = [
             {
                 id:12.1,
                 item:'Coupons',
-                path:'/dashboard',
+                path:'/coupons',
             },
             {
                 id:12.2,
                 item:'Panda Coins',
-                path:'/dashboard',
+                path:'/pandaCoins',
             },
             
             {
