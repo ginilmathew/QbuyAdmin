@@ -8,33 +8,17 @@ import Customselect from '@/components/Customselect';
 import { FormInputs } from '@/utilities/types';
 import CustomDatePicker from '@/components/CustomDatePicker';
 import CustomTextarea from '@/components/CustomTextarea';
-
-const CouponForm = () => {
-
+const PandaCoinsForm = () => {
     const { register,
         handleSubmit,
         control,
         formState: { errors },
         reset,
         setValue, } = useForm<FormInputs>();
-
     return (
         <Box>
-            <CustomBox title='Coupon/Promo Code Details'>
+            <CustomBox title='Panda Coin Details'>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} lg={2.4}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.email}
-                            fieldName="enter your email"
-                            placeholder={``}
-                            fieldLabel={"Coupon Title"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
                     <Grid item xs={12} lg={2.4}>
                         <Customselect
                             type='text'
@@ -42,7 +26,7 @@ const CouponForm = () => {
                             error={errors.name}
                             fieldName="enter your email"
                             placeholder={``}
-                            fieldLabel={"Discount Type"}
+                            fieldLabel={"Type"}
                             selectvalue={""}
                             height={40}
                             label={''}
@@ -64,7 +48,7 @@ const CouponForm = () => {
                             error={errors.email}
                             fieldName="enter your email"
                             placeholder={``}
-                            fieldLabel={"Coupon Value"}
+                            fieldLabel={"Coupon Type"}
                             disabled={false}
                             view={false}
                             defaultValue={''}
@@ -77,42 +61,7 @@ const CouponForm = () => {
                             error={errors.email}
                             fieldName="enter your email"
                             placeholder={``}
-                            fieldLabel={"Coupon Code"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={2.4}>
-                        <CustomDatePicker
-                            changeValue={() => null}
-                            fieldName='pickupTime'
-                            control={control}
-                            error={errors.pickupTime}
-                            fieldLabel={'Expiry Date'}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={2.4}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.email}
-                            fieldName="enter your email"
-                            placeholder={``}
-                            fieldLabel={"Limitations"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={2.4}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.email}
-                            fieldName="enter your email"
-                            placeholder={``}
-                            fieldLabel={"Minimum Cart Value"}
+                            fieldLabel={"Code"}
                             disabled={false}
                             view={false}
                             defaultValue={''}
@@ -131,26 +80,41 @@ const CouponForm = () => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={4.8}>
-                        <CustomTextarea
-
+                    <Grid item xs={12} lg={2.4}>
+                        <CustomInput
+                            type='text'
                             control={control}
                             error={errors.email}
                             fieldName="enter your email"
                             placeholder={``}
-                            fieldLabel={"Coupon/Promo Description"}
+                            fieldLabel={"Value"}
+                            disabled={false}
+                            view={false}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={2.4}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.email}
+                            fieldName="enter your email"
+                            placeholder={``}
+                            fieldLabel={"Minimum Cart Value"}
                             disabled={false}
                             view={false}
                             defaultValue={''}
                         />
                     </Grid>
                 </Grid>
+
             </CustomBox>
             <Box py={3}>
-                <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Coupon'} onClick={() => null} />
+                <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Panda Coins'} onClick={() => null} />
             </Box>
+
         </Box>
     )
 }
 
-export default CouponForm
+export default PandaCoinsForm

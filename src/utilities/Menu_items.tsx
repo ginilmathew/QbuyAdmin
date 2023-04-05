@@ -233,7 +233,7 @@ export const Admin_item = [
             {
                 id:12.3,
                 item:'Offers',
-                path:'/dashboard',
+                path:'/offers',
             },
             
 
