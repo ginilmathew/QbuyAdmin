@@ -110,8 +110,8 @@ const AddProducts = () => {
             )
         },
         {
-            field: 'Action',
-            headerName: 'Action',
+            field: 'Actions',
+            headerName: 'Actions',
             width: 200,
             headerAlign: 'center',
             align: 'center',

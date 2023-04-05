@@ -7,50 +7,56 @@ import { useRouter } from 'next/router';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
-
-const VendorSignup = () => {
-
+const Franchise = () => {
     const router = useRouter();
 
     const columns: GridColDef[] = [
-        { field: ' Vendor ID', headerName: 'Vendor ID', flex: 1, },
-        {
-            field: 'Vendor Name',
-            headerName: 'Vendor Name',
-            flex: 1,
-            editable: true,
+        { field: ' Franchise ID',
+         headerName: 'Franchise ID', 
+         flex: 1, 
+         headerAlign: 'center',
+         align: 'center',
         },
         {
-            field: 'Contact No',
+            field: 'Franchise Name',
+            headerName: 'Franchise Name',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+           
+        },
+        {
+            field: 'Owner',
+            headerName: 'Owner.',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+           
+        },
+        {
+            field: 'Contact No.',
             headerName: 'Contact No.',
-            flex: 1,
-            editable: true,
-        },
-        {
-            field: 'Store Name',
-            headerName: 'Store Name',
             type: 'number',
             flex: 1,
-          
+            headerAlign: 'center',
+            align: 'center',
+
         },
         {
-            field: 'Category',
-            headerName: 'category',
+            field: 'Email',
+            headerName: 'Email',
             flex: 1,
+            headerAlign: 'center',
+            align: 'center',
             valueGetter: (params: GridValueGetterParams) =>
                 `${params.row.firstName || ''} ${params.row.lastName || ''}`,
         },
         {
-            field: 'Location',
-            headerName: 'Location',
+            field: 'Address',
+            headerName: 'Address',
             flex: 1,
-            valueGetter: (params: GridValueGetterParams) =>
-                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-        },
-        {
-            field: 'Approval Status',
-            headerName: 'Approval Status',
-            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
             valueGetter: (params: GridValueGetterParams) =>
                 `${params.row.firstName || ''} ${params.row.lastName || ''}`,
         },
@@ -58,13 +64,17 @@ const VendorSignup = () => {
             field: 'Status',
             headerName: 'Status',
             flex: 1,
+            headerAlign: 'center',
+            align: 'center',
             valueGetter: (params: GridValueGetterParams) =>
                 `${params.row.firstName || ''} ${params.row.lastName || ''}`,
         },
         {
-            field: 'Actions',
-            headerName: 'Actions',
+            field: 'Action',
+            headerName: 'Action',
             width: 200,
+            headerAlign: 'center',
+            align: 'center',
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
@@ -103,23 +113,20 @@ const VendorSignup = () => {
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
     ];
 
-    const addvaendor = ()=>{
-        router.push('/vendor/addVendor')
-
+    const addvaendor = () => {
+        router.push('/franchise/addFranchise')
     }
-
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-
-                <CustomTableHeader addbtn={true} imprtBtn={false} Headerlabel='Vendor Signup' onClick={addvaendor} />
+                <CustomTableHeader addbtn={true} imprtBtn={false} Headerlabel='Franchise' onClick={addvaendor} />
                 <Box py={5}>
-                 <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity'/>
+                    <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
         </Box>
     )
 }
 
-export default VendorSignup
+export default Franchise

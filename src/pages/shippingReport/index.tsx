@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
@@ -46,8 +45,8 @@ const ShippingReport = () => {
 
     },
     {
-      field: 'Action',
-      headerName: 'Action',
+      field: 'Actions',
+      headerName: 'Actions',
       width: 200,
       headerAlign: 'center',
       align: 'center',

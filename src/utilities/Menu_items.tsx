@@ -20,12 +20,12 @@ export const Admin_item = [
             {
                 id: 3.1,
                 item: "Franchis",
-                path:'/dashboard',
+                path:'/franchiseAccounts',
             },
             {
                 id: 3.2,
                 item: "vendors",
-                path:'/dashboard',
+                path:'/vendorAccounts',
             },
             {
                 id: 3.3,
@@ -232,12 +232,12 @@ export const sales_item = [
     {
         id: 1,
         item: "Franchisee",
-        path:'/dashboard',
+        path:'/franchise',
     },
     {
         id: 2,
         item: "Vendor Profile",
-        path:'#'
+        path:'/vendorProfile'
     },
     {
         id: 3,
@@ -264,12 +264,12 @@ export const sales_item = [
     {
         id: 5,
         item: "Referred Restaurants",
-        path:'/dashboard',
+        path:'/restaurantReferral',
     },
     {
         id: 6,
         item: "Franchisee Enquires",
-        path:'/dashboard',
+        path:'/franchiseEnquires',
     },
     {
         id: 7,

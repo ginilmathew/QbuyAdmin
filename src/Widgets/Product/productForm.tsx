@@ -145,16 +145,6 @@ const ProductForm = () => {
     }, [attributeTagValue])
 
 
-
-
-
-
-
-
-
-
-
-
     const AddVarientCheckbox = (e: any, i: number) => {
         console.log({ e }, 'EVENT CONSOLE')
         setIndex(i)
@@ -520,7 +510,7 @@ const ProductForm = () => {
                             fieldLabel={'Product Availibility'} />
                     </Grid>
                     <Grid item xs={12} lg={1.8}>
-                        <Typography mb={3.5}></Typography>
+                        <Typography mb={3}></Typography>
                         <CustomTimepicker
                             changeValue={() => null}
                             fieldName='dropTime'

@@ -6,38 +6,49 @@ import CustomTable from '@/components/CustomTable';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { useRouter } from 'next/router';
 
-const SalesReport = () => {
-
-    
+const VendorAccounts = () => {
   const columns: GridColDef[] = [
     {
-      field: 'Date',
-      headerName: 'Date',
+      field: 'Vendor ID',
+      headerName: 'Vendor ID',
       flex: 1,
     },
     {
-      field: 'Customer ID',
-      headerName: 'Customer ID',
+      field: 'Vendor Name',
+      headerName: 'Vendor Name',
       flex: 1,
     },
     {
-      field: 'Franchise',
-      headerName: 'Franchise',
+      field: 'Store Name',
+      headerName: 'Store Name',
       flex: 1,
     },
  
     {
-      field: 'Total Sales',
-      headerName: 'Total Sales',
+      field: 'Franchise',
+      headerName: 'Franchise',
       flex: 1,
 
     },
     {
-      field: 'Total Revenue',
-      headerName: 'Total Revenue',
+      field: 'Location',
+      headerName: 'Location',
       flex: 1,
 
     },
+    {
+      field: 'Total Orders',
+      headerName: 'Total Orders',
+      flex: 1,
+
+    },
+    {
+      field: 'Last Payment Date',
+      headerName: 'Last Payment Date',
+      flex: 1,
+
+    },
+ 
  
     {
       field: 'Actions',
@@ -72,15 +83,14 @@ const SalesReport = () => {
   ];
   return (
     <Box px={5} py={2} pt={10} mt={0}>
-      <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-        <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Sales Report' onClick={() => null} />
-        <Box py={5}>
-          <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
-        </Box>
+    <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
+      <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Vendor Accounts' onClick={() => null} />
+      <Box py={5}>
+        <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
       </Box>
     </Box>
-
+  </Box>
   )
 }
 
-export default SalesReport
+export default VendorAccounts
