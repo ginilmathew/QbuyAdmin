@@ -1,70 +1,83 @@
-import CustomTable from '@/components/CustomTable'
-import CustomTableHeader from '@/Widgets/CustomTableHeader'
-import { Box, Stack } from '@mui/material'
 import React from 'react'
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { useRouter } from 'next/router';
+import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { Box, Stack } from '@mui/material';
+import CustomTableHeader from '@/Widgets/CustomTableHeader';
+import CustomTable from '@/components/CustomTable';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import { useRouter } from 'next/router';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
 
-const VendorSignup = () => {
 
+const Offers = () => {
     const router = useRouter();
 
     const columns: GridColDef[] = [
-        { field: ' Vendor ID', headerName: 'Vendor ID', flex: 1, },
         {
-            field: 'Vendor Name',
-            headerName: 'Vendor Name',
+            field: 'Created Date',
+            headerName: 'Created Date',
             flex: 1,
-            editable: true,
+            headerAlign: 'center',
+            align: 'center',
         },
         {
-            field: 'Contact No',
-            headerName: 'Contact No.',
+            field: 'Coupon Title',
+            headerName: 'Coupon Title',
             flex: 1,
-            editable: true,
+            headerAlign: 'center',
+            align: 'center',
         },
         {
-            field: 'Store Name',
-            headerName: 'Store Name',
-            type: 'number',
+            field: 'Code',
+            headerName: 'Code',
             flex: 1,
-          
+            headerAlign: 'center',
+            align: 'center',
+        },
+
+        {
+            field: 'Discount Type',
+            headerName: 'Discount Type',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
         },
         {
-            field: 'Category',
-            headerName: 'category',
+            field: 'Coupon Value',
+            headerName: 'Coupon Value',
             flex: 1,
-            valueGetter: (params: GridValueGetterParams) =>
-                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+            headerAlign: 'center',
+            align: 'center',
+
         },
         {
-            field: 'Location',
-            headerName: 'Location',
+            field: 'Cart Value',
+            headerName: 'Cart Value',
             flex: 1,
-            valueGetter: (params: GridValueGetterParams) =>
-                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+            headerAlign: 'center',
+            align: 'center',
         },
         {
-            field: 'Approval Status',
-            headerName: 'Approval Status',
+            field: 'Limitation',
+            headerName: 'Limitation',
             flex: 1,
-            valueGetter: (params: GridValueGetterParams) =>
-                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+            headerAlign: 'center',
+            align: 'center',
         },
         {
-            field: 'Status',
-            headerName: 'Status',
+            field: 'Expiry Date',
+            headerName: 'Expiry Date',
             flex: 1,
-            valueGetter: (params: GridValueGetterParams) =>
-                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+            headerAlign: 'center',
+            align: 'center',
         },
         {
             field: 'Actions',
             headerName: 'Actions',
             width: 200,
+            headerAlign: 'center',
+            align: 'center',
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
@@ -86,6 +99,7 @@ const VendorSignup = () => {
                             color: '#58D36E',
                             cursor: 'pointer'
                         }} />
+
                 </Stack>
             )
         }
@@ -103,23 +117,21 @@ const VendorSignup = () => {
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
     ];
 
-    const addvaendor = ()=>{
-        router.push('/vendor/addVendor')
+    const addOffers = () => {
+        router.push('/offers/addOffers')
 
     }
-
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-
-                <CustomTableHeader addbtn={true} imprtBtn={false} Headerlabel='Vendor Signup' onClick={addvaendor} />
+                <CustomTableHeader addbtn={true} imprtBtn={false} Headerlabel='Offers' onClick={addOffers} />
                 <Box py={5}>
-                 <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity'/>
+                    <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
         </Box>
     )
 }
 
-export default VendorSignup
+export default Offers

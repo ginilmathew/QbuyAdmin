@@ -126,6 +126,6 @@ a {
 }
 
 .MuiDataGrid-columnHeaderTitle{
-  font-weight: bolder !important;
+  font-weight: bold !important;
   font-size:medium !important;
 }

@@ -1,37 +1,58 @@
-import CustomTableHeader from '@/Widgets/CustomTableHeader'
-import { Box } from '@mui/system'
-import { useRouter } from 'next/router'
-import React from 'react'
+import React from 'react';
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { Box, Stack } from '@mui/material';
+import CustomTableHeader from '@/Widgets/CustomTableHeader';
 import CustomTable from '@/components/CustomTable';
-import { Stack } from '@mui/material';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
-import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
-const CategoryManagement = () => {
-    const router = useRouter()
+import { useRouter } from 'next/router';
 
 
-    const addvaendor = () => {
-        router.push('/category/addCategory')
+ const CustomerActivityReport = () => {
 
-    }
 
     const columns: GridColDef[] = [
-        { field: 'Dated Added', headerName: 'Dated Added', flex: 1, },
         {
-            field: 'Category Name',
-            headerName: 'Category Name',
+            field: 'Date',
+            headerName: 'Date',
             flex: 1,
         },
         {
-            field: 'lastName',
-            headerName: 'Last name',
+            field: 'Customer ID',
+            headerName: 'Customer ID',
             flex: 1,
         },
         {
-            field: 'Attributes',
-            headerName: 'Attributes',
+            field: 'Customer Name',
+            headerName: 'Customer Name',
+            flex: 1,
+        },
+        {
+            field: 'Last Login Time',
+            headerName: 'Last Login Time',
+            flex: 1,
+
+        },
+        {
+            field: 'Last Logout Time',
+            headerName: 'Last Logout Time',
+            flex: 1,
+
+        },
+        {
+            field: 'Total Login Hrs',
+            headerName: 'Total Login Hrs',
+            flex: 1,
+
+        },
+        {
+            field: 'Recently Ordered',
+            headerName: 'Recently Ordered',
+            flex: 1,
+
+        },
+        {
+            field: 'Recently Viewed store',
+            headerName: 'Recently Viewed store',
             flex: 1,
 
         },
@@ -39,6 +60,8 @@ const CategoryManagement = () => {
             field: 'Action',
             headerName: 'Action',
             width: 200,
+            headerAlign: 'center',
+            align: 'center',
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
@@ -47,19 +70,7 @@ const CategoryManagement = () => {
                             color: '#58D36E',
                             cursor: 'pointer'
                         }} />
-                    <BorderColorTwoToneIcon
 
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }}
-                    />
-                    <DeleteOutlineTwoToneIcon
-
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }} />
                 </Stack>
             )
         }
@@ -78,18 +89,18 @@ const CategoryManagement = () => {
     ];
 
 
-
     return (
         <Box px={5} py={2} pt={10} mt={0}>
-
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader imprtBtn={false} Headerlabel='Category Management' onClick={addvaendor} addbtn={true}/>
+                <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Customer Transaction Report' onClick={() => null} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
         </Box>
-    )
+
+  )
 }
 
-export default CategoryManagement
+
+export default CustomerActivityReport

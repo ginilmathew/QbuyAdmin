@@ -1,31 +1,38 @@
-import React, { useState } from 'react'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import React from 'react'
+import TextareaAutosize from '@mui/base/TextareaAutosize';
 import { Controller } from "react-hook-form";
 import { Avatar, Box, FormGroup, styled, Typography } from "@mui/material";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 
 type props = {
     fieldName: string,
     control: any,
     fieldLabel: string,
+    placeholder: string,
     error: any,
-    changeValue: (value: any) => void,
-
+    view: boolean,
+    // changeValue:React.ChangeEvent<HTMLInputElement>
+    disabled: boolean,
+    defaultValue: any
+    onChangeValue?: any
 }
 
-
-const CustomDatePicker = ({
+const CustomTextarea = ({
     fieldName,
     control,
     fieldLabel,
+    placeholder,
     error,
-    changeValue,
+    view,
+    disabled,
+    defaultValue,
+    onChangeValue,
+
 }: props) => {
     return (
         <>
             <FormGroup>
-                <Typography letterSpacing={1} px={'3px'} mb={'1px'}
+                <Typography letterSpacing={1} px={'3px'} mb={'3px'}
                     sx={{
                         fontSize: {
                             lg: 16,
@@ -34,28 +41,31 @@ const CustomDatePicker = ({
                             xs: 11,
                         },
                         fontFamily: `'Poppins' sans-serif`,
+
                     }}
                 >{fieldLabel}
+
                 </Typography>
+
                 <Controller
                     name={fieldName}
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                       
-                                <DatePicker 
-                                  sx={{
-                                    "& .MuiInputBase-input": {
-                                        height: "8px" // Set your height here.
-                                    }
-                                }}
-
-                                value={value}
-                                onChange={changeValue ? (e: any) => changeValue(e) : onChange}
-                                 />
-                        
-
-                        </LocalizationProvider>
+                        <TextareaAutosize
+                        minRows={6}
+                            defaultValue={defaultValue}
+                            value={value}
+                            onChange={(e) => {
+                                onChangeValue ? onChangeValue(e) :
+                                    onChange(e)
+                            }}
+                            onBlur={onBlur}
+                            aria-invalid={error ? "true" : "false"}
+                            className="form-control"
+                            placeholder={placeholder}
+                            id="exampleInputEmail1"
+                           
+                        />
                     )}
                 />
                 {error && (
@@ -72,11 +82,8 @@ const CustomDatePicker = ({
                     </p>
                 )}
             </FormGroup>
-
-
         </>
-
     )
 }
 
-export default CustomDatePicker
+export default CustomTextarea

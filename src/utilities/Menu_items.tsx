@@ -20,23 +20,23 @@ export const Admin_item = [
             {
                 id: 3.1,
                 item: "Franchis",
-                path:'/dashboard',
+                path:'/franchiseAccounts',
             },
             {
                 id: 3.2,
                 item: "vendors",
-                path:'/dashboard',
+                path:'/vendorAccounts',
             },
             {
                 id: 3.3,
                 item: "Riders",
-                path:'/dashboard',
+                path:'/riderAccounts',
             },
             
             {
                 id: 3.4,
                 item: "cusomers",
-                path:'/dashboard',
+                path:'/customerAccounts',
             },
         ]
 
@@ -49,7 +49,24 @@ export const Admin_item = [
     {
         id: 5,
         item: "Panda Tools",
-        path:'',
+        path:null,
+        list:[
+            {
+                id: 5.1,
+                item: "OTP View",
+                path:'/otpView',
+            },
+            {
+                id: 5.2,
+                item: "Abandoned Cart",
+                path:'/abandonedCart',
+            },
+            {
+                id: 5.3,
+                item: "Panda Config",
+                path:'/pandaConfig',
+            },
+        ]
     },
     {
         id: 6,
@@ -69,53 +86,53 @@ export const Admin_item = [
             {
                 id: 8.1,
                 item: "Customer Transaction",
-                path:'',
+                path:'/customerTransactions',
             },
             {
                 id: 8.2,
                 item: "Customer Activity",
-                path:'',
+                path:'/customerActivityReport',
 
             },
             {
                 id: 8.3,
                 item: "Customer Orders",
-                path:'',
+                path:'/customerOrderReport',
             },
             {
                 id: 8.4,
                 item: "Reward Points",
-                path:'',
+                path:'customerRewardReport',
             },
             {
                 id: 8.5,
                 item: "Search Report",
-                path:'/dashboard',
+                path:'/customerSearchReport',
             },
             {
                 id: 8.6,
                 item: "Tax Report",
-                path:'/dashboard',
+                path:'/taxReport',
             },
             {
                 id: 8.7,
                 item: "Shipping Report",
-                path:'/dashboard',
+                path:'/shippingReport',
             },
             {
                 id: 8.8,
                 item: "Return Report",
-                path:'/dashboard',
+                path:'/returnReport',
             },
             {
                 id: 8.9,
                 item: "Sales Report",
-                path:'/dashboard',
+                path:'/salesReport',
             },
             {
                 id: 8.10,
                 item: "Coupons Report",
-                path:'/dashboard',
+                path:'/couponsReports',
             },
             {
                 id: 8.11,
@@ -125,7 +142,7 @@ export const Admin_item = [
             {
                 id: 8.12,
                 item: "Product Purchased",
-                path:'/dashboard',
+                path:'/productPurchasedReport',
             },
         ]
     },
@@ -205,18 +222,18 @@ export const Admin_item = [
             {
                 id:12.1,
                 item:'Coupons',
-                path:'/dashboard',
+                path:'/coupons',
             },
             {
                 id:12.2,
                 item:'Panda Coins',
-                path:'/dashboard',
+                path:'/pandaCoins',
             },
             
             {
                 id:12.3,
                 item:'Offers',
-                path:'/dashboard',
+                path:'/offers',
             },
             
 
@@ -232,12 +249,12 @@ export const sales_item = [
     {
         id: 1,
         item: "Franchisee",
-        path:'/dashboard',
+        path:'/franchise',
     },
     {
         id: 2,
         item: "Vendor Profile",
-        path:'#'
+        path:'/vendorProfile'
     },
     {
         id: 3,
@@ -264,12 +281,12 @@ export const sales_item = [
     {
         id: 5,
         item: "Referred Restaurants",
-        path:'/dashboard',
+        path:'/restaurantReferral',
     },
     {
         id: 6,
         item: "Franchisee Enquires",
-        path:'/dashboard',
+        path:'/franchiseEnquires',
     },
     {
         id: 7,

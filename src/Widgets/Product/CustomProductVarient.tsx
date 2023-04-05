@@ -4,14 +4,15 @@ import { Content } from 'next/font/google'
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FormInputs } from '@/utilities/types';
 import CustomInput from '@/components/CustomInput';
+import CustomDatePicker from '@/components/CustomDatePicker';
 type props = {
     content: string,
-    index:number
+    index: number
 }
 
 
 
-const CustomProductVarient = ({ content,index }: props) => {
+const CustomProductVarient = ({ content, index }: props) => {
 
     const { register,
         handleSubmit,
@@ -22,7 +23,7 @@ const CustomProductVarient = ({ content,index }: props) => {
 
     return (
         <Box>
-            <Typography py={2} sx={{ fontFamily: `'Poppins' sans-serif`}} fontSize={16} fontWeight={'bold'}>{index}. {content}</Typography>
+            <Typography py={2} sx={{ fontFamily: `'Poppins' sans-serif` }} fontSize={16} fontWeight={'bold'}>{index}. {content}</Typography>
             <Grid container spacing={2}>
                 <Grid item lg={2} xs={12}>
                     <CustomInput
@@ -65,29 +66,21 @@ const CustomProductVarient = ({ content,index }: props) => {
                 </Grid>
 
                 <Grid item lg={2} xs={12}>
-                    <CustomInput
-                        disabled={false}
-                        type='text'
+                    < CustomDatePicker
+                        changeValue={() => null}
+                        fieldName='pickupTime'
                         control={control}
-                        error={errors.product_offer}
-                        fieldName="product_offer"
-                        placeholder={``}
-                        fieldLabel={"Offer From"}
-                        view={false}
-                        defaultValue={''}
+                        error={errors.pickupTime}
+                        fieldLabel={'Offer From'}
                     />
                 </Grid>
                 <Grid item lg={2} xs={12}>
-                    <CustomInput
-                        disabled={false}
-                        type='text'
+                    <CustomDatePicker
+                        changeValue={() => null}
+                        fieldName='pickupTime'
                         control={control}
-                        error={errors.product_offer}
-                        fieldName="product_offer"
-                        placeholder={``}
-                        fieldLabel={"Offer To"}
-                        view={false}
-                        defaultValue={''}
+                        error={errors.pickupTime}
+                        fieldLabel={'Offer To'}
                     />
                 </Grid>
                 <Grid item lg={2} xs={12}>

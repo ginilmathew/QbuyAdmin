@@ -1,44 +1,61 @@
-import CustomTableHeader from '@/Widgets/CustomTableHeader'
-import { Box } from '@mui/system'
-import { useRouter } from 'next/router'
 import React from 'react'
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { Box, Stack } from '@mui/material';
+import CustomTableHeader from '@/Widgets/CustomTableHeader';
 import CustomTable from '@/components/CustomTable';
-import { Stack } from '@mui/material';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
-import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
-const CategoryManagement = () => {
-    const router = useRouter()
+import { useRouter } from 'next/router';
 
 
-    const addvaendor = () => {
-        router.push('/category/addCategory')
-
-    }
+const CustomerOrderReport = () => {
 
     const columns: GridColDef[] = [
-        { field: 'Dated Added', headerName: 'Dated Added', flex: 1, },
         {
-            field: 'Category Name',
-            headerName: 'Category Name',
+            field: 'Date',
+            headerName: 'Date',
             flex: 1,
         },
         {
-            field: 'lastName',
-            headerName: 'Last name',
+            field: 'Customer ID',
+            headerName: 'Customer ID',
             flex: 1,
         },
         {
-            field: 'Attributes',
-            headerName: 'Attributes',
+            field: 'Customer Name',
+            headerName: 'Customer Name',
+            flex: 1,
+        },
+        {
+            field: 'Order ID',
+            headerName: 'Order ID',
             flex: 1,
 
         },
+        {
+            field: 'Store',
+            headerName: 'Store',
+            flex: 1,
+
+        },
+        {
+            field: 'Total Amount',
+            headerName: 'Total Amount',
+            flex: 1,
+
+        },
+        {
+            field: 'Status',
+            headerName: 'Status',
+            flex: 1,
+
+        },
+      
         {
             field: 'Action',
             headerName: 'Action',
             width: 200,
+            headerAlign: 'center',
+            align: 'center',
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
@@ -47,19 +64,7 @@ const CategoryManagement = () => {
                             color: '#58D36E',
                             cursor: 'pointer'
                         }} />
-                    <BorderColorTwoToneIcon
 
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }}
-                    />
-                    <DeleteOutlineTwoToneIcon
-
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }} />
                 </Stack>
             )
         }
@@ -77,19 +82,16 @@ const CategoryManagement = () => {
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
     ];
 
-
-
-    return (
-        <Box px={5} py={2} pt={10} mt={0}>
-
+  return (
+    <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader imprtBtn={false} Headerlabel='Category Management' onClick={addvaendor} addbtn={true}/>
+                <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Customer Order Report' onClick={() => null} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
         </Box>
-    )
+  )
 }
 
-export default CategoryManagement
+export default CustomerOrderReport
