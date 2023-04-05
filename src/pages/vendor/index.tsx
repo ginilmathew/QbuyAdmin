@@ -113,7 +113,7 @@ const VendorSignup = () => {
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
 
-                <CustomTableHeader imprtBtn={false} Headerlabel='Vendor Signup' onClick={addvaendor} />
+                <CustomTableHeader addbtn={true} imprtBtn={false} Headerlabel='Vendor Signup' onClick={addvaendor} />
                 <Box py={5}>
                  <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity'/>
                 </Box>

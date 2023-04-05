@@ -6,6 +6,11 @@ import { useRouter } from 'next/router'
 import { Poppins } from 'next/font/google';
 import { StandaloneSearchBox, LoadScript } from "@react-google-maps/api";
 import UserProvider from '@/helpers/user/UserContext';
+import ProtectedRoute from '@/Routes/protectedRoutes';
+import React from 'react';
+import Router from 'next/router';
+import LinearProgress from '@mui/material/LinearProgress';
+import Stack from '@mui/material/Stack';
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['200', '600', '700']
@@ -17,14 +22,40 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const showHeader = router.pathname === '/login' ? false : true;
 
+  const [isLoading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleStart = () => setLoading(true);
+    const handleComplete = () => setLoading(false);
+
+    Router.events.on('routeChangeStart', handleStart);
+    Router.events.on('routeChangeComplete', handleComplete);
+    Router.events.on('routeChangeError', handleComplete);
+
+    return () => {
+      Router.events.off('routeChangeStart', handleStart);
+      Router.events.off('routeChangeComplete', handleComplete);
+      Router.events.off('routeChangeError', handleComplete);
+    };
+  }, []);
+
 
 
   return <main className={poppins.className}>
+
+    {isLoading && (
+       <Stack sx={{ width: '100%', color: 'grey.500' }} >
+         <LinearProgress color="success" /> 
+        </Stack>
+    )}
     {/* <LoadScript googleMapsApiKey="AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I" libraries={["drawing"]}> */}
-    <UserProvider>
-      {showHeader && <Header />}
-      <Component {...pageProps} />
-    </UserProvider>
+    <ProtectedRoute>
+      <UserProvider>
+        {showHeader && <Header />}
+        <Component {...pageProps} />
+      </UserProvider>
+    </ProtectedRoute>
+
     {/* </LoadScript> */}
   </main>
 
