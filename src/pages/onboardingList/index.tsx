@@ -1,99 +1,63 @@
+import CustomTableHeader from '@/Widgets/CustomTableHeader'
+import { Box } from '@mui/system'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
-import { GridColDef } from '@mui/x-data-grid';
-import { Box, Stack } from '@mui/material';
-import CustomTableHeader from '@/Widgets/CustomTableHeader';
+import React from 'react'
+import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import CustomTable from '@/components/CustomTable';
+import { Stack } from '@mui/material';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 
 
-const PickupAndDrop = () => {
+const OnBoardingList = () => {
     const router = useRouter()
 
-
-    const [open, setOpen] = useState<boolean>(false)
-
-    console.log({ open })
-
-    const handleClose = () => {
-        setOpen(false)
-    }
-
-    const handleOpen = () => {
-        setOpen(true)
-    }
-
-    const addproductItems = () => {
-        router.push('/products/addProduct')
-
-    }
-
-
-
-
     const columns: GridColDef[] = [
-        { field: 'Ticket ID', headerName: 'Ticket ID', flex: 1, },
+
+        { field: 'Rider ID', headerName: 'Rider ID', flex: 1, },
         {
-            field: 'Created Date',
-            headerName: 'Created Date',
+            field: 'Rider Name',
+            headerName: 'Rider Name',
             flex: 1,
-            headerAlign: 'center',
-            align: 'center',
+        },
+        {
+            field: 'Contact No.',
+            headerName: 'Contact No.',
+            flex: 1,
+        },
+        {
+            field: 'Franchise',
+            headerName: 'Franchise',
+            flex: 1,
 
         },
         {
-            field: 'Customer Name ',
-            headerName: 'Customer Name',
+            field: 'City',
+            headerName: 'City',
             flex: 1,
-            headerAlign: 'center',
-            align: 'center',
 
         },
         {
-            field: 'Phone Number',
-            headerName: 'Phone Number',
+            field: 'PAN',
+            headerName: 'PAN',
             flex: 1,
-            headerAlign: 'center',
-            align: 'center',
 
         },
         {
-            field: 'Store Name',
-            headerName: 'Store Name',
+            field: 'Vehicle No.',
+            headerName: 'Vehicle No.',
             flex: 1,
-            headerAlign: 'center',
-            align: 'center',
 
         },
         {
-            field: 'Assign Rider',
-            headerName: 'Assign Rider',
+            field: 'Onboarding status',
+            headerName: 'Onboarding status',
             flex: 1,
-            headerAlign: 'center',
-            align: 'center',
 
         },
         {
-            field: 'Rider Number',
-            headerName: 'Rider Number',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-
-        },
-        {
-            field: ' Status',
-            headerName: ' Status',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-
-        },
-        
-        {
-            field: 'Actions',
-            headerName: 'Actions',
+            field: 'Action',
+            headerName: 'Action',
             width: 200,
             headerAlign: 'center',
             align: 'center',
@@ -112,7 +76,7 @@ const PickupAndDrop = () => {
                             cursor: 'pointer'
                         }}
                     />
-                    
+
                 </Stack>
             )
         }
@@ -134,7 +98,7 @@ const PickupAndDrop = () => {
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader imprtBtn={false} Headerlabel='Pick up & Drop' onClick={() => null} addbtn={true} />
+                <CustomTableHeader imprtBtn={false} Headerlabel='Riders' onClick={() => null} addbtn={true} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
@@ -143,4 +107,4 @@ const PickupAndDrop = () => {
     )
 }
 
-export default PickupAndDrop
+export default OnBoardingList

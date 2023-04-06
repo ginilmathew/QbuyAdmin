@@ -10,7 +10,7 @@ export const Admin_item = [
     {
         id: 2,
         item: "Shipments",
-        path:'/dashboard'
+        path:'/shipments'
     },
     {
         id: 3,
@@ -76,7 +76,7 @@ export const Admin_item = [
     {
         id: 7,
         item: "Pick Up & Drop",
-        path:null,
+        path:"/pickupAndDrop",
     },
     {
         id: 8,
@@ -269,12 +269,12 @@ export const sales_item = [
             {
                 id:4.1,
                 item:"Merchant Marketing",
-                path:'/dashboard',
+                path:'/merchantMarketing',
             },
             {
                 id:4.2,
                 item:"Franchisee Marketing",
-                path:'/dashboard',
+                path:'/franchiseMarketing',
             },
         ]
     },
@@ -310,42 +310,42 @@ export const Logs_item = [
     {
         id: 1,
         item: "Smart Suggest List",
-        path:'/dashboard',
+        path:'/smartSuggestList',
     },
     {
         id: 2,
         item: "Rider Onboarding",
-        path:'/dashboard',
+        path:'/riderOnboarding',
     },
     {
         id: 3,
         item: "Onboarding List",
-        path:'/dashboard',
+        path:'/onboardingList',
     },
     {
         id: 4,
         item: "Delivery Riders",
-        path:'/dashboard',
+        path:'/deliveryRiders',
     },
     {
         id: 5,
         item: "Rider Lifecycle",
-        path:'/dashboard',
+        path:'/riderLifecycle',
     },
     {
         id: 6,
         item: "Rider Support",
-        path:'/dashboard',
+        path:'/riderSupport',
     },
     {
         id: 7,
         item: "Rider Summary",
-        path:'/dashboard',
+        path:'/riderSummary',
     },
     {
         id: 8,
         item: "Rider Referrals",
-        path:'/dashboard',
+        path:'/riderRefferal',
     },
 
 

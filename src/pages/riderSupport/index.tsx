@@ -7,90 +7,52 @@ import CustomTable from '@/components/CustomTable';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 
-
-const PickupAndDrop = () => {
+const RiderSupport = () => {
     const router = useRouter()
 
 
-    const [open, setOpen] = useState<boolean>(false)
-
-    console.log({ open })
-
-    const handleClose = () => {
-        setOpen(false)
-    }
-
-    const handleOpen = () => {
-        setOpen(true)
-    }
-
-    const addproductItems = () => {
-        router.push('/products/addProduct')
-
-    }
-
-
-
-
     const columns: GridColDef[] = [
-        { field: 'Ticket ID', headerName: 'Ticket ID', flex: 1, },
+        { field: 'Rider ID', headerName: 'Rider ID', flex: 1, },
         {
-            field: 'Created Date',
-            headerName: 'Created Date',
+            field: 'Rider Name',
+            headerName: 'Rider Name',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
 
         },
         {
-            field: 'Customer Name ',
-            headerName: 'Customer Name',
+            field: 'Contact No. ',
+            headerName: 'Contact No.',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
 
         },
         {
-            field: 'Phone Number',
-            headerName: 'Phone Number',
+            field: 'Franchise',
+            headerName: 'Franchise',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
 
         },
         {
-            field: 'Store Name',
-            headerName: 'Store Name',
+            field: 'City',
+            headerName: 'City',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
 
         },
         {
-            field: 'Assign Rider',
-            headerName: 'Assign Rider',
+            field: 'status',
+            headerName: 'status',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
 
         },
-        {
-            field: 'Rider Number',
-            headerName: 'Rider Number',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-
-        },
-        {
-            field: ' Status',
-            headerName: ' Status',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-
-        },
-        
         {
             field: 'Actions',
             headerName: 'Actions',
@@ -112,7 +74,7 @@ const PickupAndDrop = () => {
                             cursor: 'pointer'
                         }}
                     />
-                    
+
                 </Stack>
             )
         }
@@ -129,18 +91,18 @@ const PickupAndDrop = () => {
         { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
     ];
-
     return (
         <Box px={5} py={2} pt={10} mt={0}>
-
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader imprtBtn={false} Headerlabel='Pick up & Drop' onClick={() => null} addbtn={true} />
+                <CustomTableHeader imprtBtn={false} Headerlabel='Rider Support' onClick={null} addbtn={false} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
+
+
         </Box>
     )
 }
 
-export default PickupAndDrop
+export default RiderSupport

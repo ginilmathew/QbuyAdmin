@@ -1,58 +1,32 @@
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-import { GridColDef } from '@mui/x-data-grid';
+import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
 import CustomTable from '@/components/CustomTable';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
+import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
+import CustomSwitch from '@/components/CustomSwitch';
+import CustomDelete from '@/Widgets/CustomDelete';
 
-
-const PickupAndDrop = () => {
-    const router = useRouter()
-
-
-    const [open, setOpen] = useState<boolean>(false)
-
-    console.log({ open })
-
-    const handleClose = () => {
-        setOpen(false)
-    }
-
-    const handleOpen = () => {
-        setOpen(true)
-    }
-
-    const addproductItems = () => {
-        router.push('/products/addProduct')
-
-    }
-
-
+const Shipments = () => {
+    
 
 
     const columns: GridColDef[] = [
-        { field: 'Ticket ID', headerName: 'Ticket ID', flex: 1, },
+        { field: 'Product ID', headerName: 'Product ID', flex: 1, },
         {
-            field: 'Created Date',
-            headerName: 'Created Date',
+            field: 'Product Name',
+            headerName: 'Product Name',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
 
         },
         {
-            field: 'Customer Name ',
-            headerName: 'Customer Name',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-
-        },
-        {
-            field: 'Phone Number',
-            headerName: 'Phone Number',
+            field: 'Product ',
+            headerName: 'Last Name',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
@@ -67,30 +41,55 @@ const PickupAndDrop = () => {
 
         },
         {
-            field: 'Assign Rider',
-            headerName: 'Assign Rider',
+            field: 'Price',
+            headerName: 'Price',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
 
         },
         {
-            field: 'Rider Number',
-            headerName: 'Rider Number',
+            field: 'Type',
+            headerName: 'Type',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
 
         },
         {
-            field: ' Status',
-            headerName: ' Status',
+            field: 'Quantity',
+            headerName: 'Quantity',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
 
         },
-        
+        {
+            field: 'Approval Status',
+            headerName: 'Approval Status',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+        {
+            field: 'Active Status',
+            headerName: 'Active Status',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            renderCell: ({ row }) => (
+                <Stack alignItems={'center'} gap={1} direction={'row'}>
+                    <CustomSwitch
+                        changeRole={''}
+                        checked={false}
+                        defaultChecked={false}
+                        onClick={() => null}
+                    />
+
+                </Stack>
+            )
+        },
         {
             field: 'Actions',
             headerName: 'Actions',
@@ -112,7 +111,12 @@ const PickupAndDrop = () => {
                             cursor: 'pointer'
                         }}
                     />
-                    
+                    <DeleteOutlineTwoToneIcon
+                       
+                        sx={{
+                            color: '#58D36E',
+                            cursor: 'pointer',
+                        }} />
                 </Stack>
             )
         }
@@ -130,17 +134,19 @@ const PickupAndDrop = () => {
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
     ];
 
-    return (
-        <Box px={5} py={2} pt={10} mt={0}>
+  return (
+    <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader imprtBtn={false} Headerlabel='Pick up & Drop' onClick={() => null} addbtn={true} />
+                <CustomTableHeader imprtlabel={'Export'} imprtBtn={true} Headerlabel='Orders' onClick={()=>null} addbtn={true} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
+
+           
         </Box>
-    )
+  )
 }
 
-export default PickupAndDrop
+export default Shipments
