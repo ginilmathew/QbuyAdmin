@@ -11,7 +11,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
     const [token, setToken] = useState(true)
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (!token) {
             router.push('/login')
         }

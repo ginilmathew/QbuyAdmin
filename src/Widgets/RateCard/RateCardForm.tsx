@@ -6,9 +6,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Custombutton from '@/components/Custombutton';
 import Customselect from '@/components/Customselect';
 import { FormInputs } from '@/utilities/types';
-
-
-const PandaCoinsForm = () => {
+import CustomTextarea from '@/components/CustomTextarea';
+const RateCardForm = () => {
     const { register,
         handleSubmit,
         control,
@@ -17,9 +16,9 @@ const PandaCoinsForm = () => {
         setValue, } = useForm<FormInputs>();
     return (
         <Box>
-            <CustomBox title='Panda Coin Details'>
+            <CustomBox title='Add Rate'>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} lg={2.4}>
+                    <Grid item xs={12} lg={2.5}>
                         <Customselect
                             type='text'
                             control={control}
@@ -40,8 +39,9 @@ const PandaCoinsForm = () => {
                             <MenuItem value={20}>Twenty</MenuItem>
                             <MenuItem value={30}>Thirty</MenuItem>
                         </Customselect>
+
                     </Grid>
-                    <Grid item xs={12} lg={2.4}>
+                    <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -53,68 +53,43 @@ const PandaCoinsForm = () => {
                             view={false}
                             defaultValue={''}
                         />
+
                     </Grid>
-                    <Grid item xs={12} lg={2.4}>
+                    <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
                             control={control}
                             error={errors.email}
                             fieldName="enter your email"
                             placeholder={``}
-                            fieldLabel={"Code"}
+                            fieldLabel={"Coupon Type"}
                             disabled={false}
                             view={false}
                             defaultValue={''}
                         />
+
                     </Grid>
-                    <Grid item xs={12} lg={2.4}>
-                        <CustomInput
-                            type='text'
+                    <Grid item xs={12} lg={4.5}>
+                        <CustomTextarea
                             control={control}
                             error={errors.email}
                             fieldName="enter your email"
                             placeholder={``}
-                            fieldLabel={"Locality"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={2.4}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.email}
-                            fieldName="enter your email"
-                            placeholder={``}
-                            fieldLabel={"Value"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={2.4}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.email}
-                            fieldName="enter your email"
-                            placeholder={``}
-                            fieldLabel={"Minimum Cart Value"}
+                            fieldLabel={"Reason"}
                             disabled={false}
                             view={false}
                             defaultValue={''}
                         />
                     </Grid>
                 </Grid>
-
             </CustomBox>
             <Box py={3}>
-                <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Panda Coins'} onClick={() => null} />
+                <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Rate'} onClick={() => null} />
             </Box>
 
         </Box>
+
     )
 }
 
-export default PandaCoinsForm
+export default RateCardForm

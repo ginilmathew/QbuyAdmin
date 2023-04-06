@@ -25,7 +25,7 @@ const CustomDatePicker = ({
     return (
         <>
             <FormGroup>
-                <Typography letterSpacing={1} px={'3px'} mb={'1px'}
+                <Typography letterSpacing={.5} px={'3px'} mb={'1px'}
                     sx={{
                         fontSize: {
                             lg: 16,

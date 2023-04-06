@@ -44,7 +44,7 @@ export const Admin_item = [
     {
         id: 4,
         item: "Revenue",
-        path:'',
+        path:'/revenue',
     },
     {
         id: 5,
@@ -71,7 +71,7 @@ export const Admin_item = [
     {
         id: 6,
         item: "Multivendor",
-        path:'',
+        path:'/multivendor',
     },
     {
         id: 7,
@@ -149,7 +149,7 @@ export const Admin_item = [
     {
         id: 9,
         item: "User Management",
-        path:'/dashboard',
+        path:'/userManagement',
         
     },
     {
@@ -160,52 +160,52 @@ export const Admin_item = [
             {
               id:10.1,
               item:'Slider Management',
-              path:'/dashboard',
+              path:'/sliderManagement',
             },
             {
                 id:10.2,
                 item:'Feedbacks',
-                path:'/dashboard',
+                path:'/feedbacks',
               },
               {
                 id:10.3,
                 item:'Message Banner',
-                path:'/dashboard',
+                path:'/messageBanner',
               },
               {
                 id:10.4,
                 item:'Rush Hour',
-                path:'/dashboard',
+                path:'/rushHour',
               },
               {
                 id:10.5,
                 item:'Attendance',
-                path:'/dashboard',
+                path:'/attendance',
               },
               {
                 id:10.6,
                 item:'Rate Card',
-                path:'/dashboard',
+                path:'/rateCard',
               },
               {
                 id:10.7,
                 item:'Pickup & Drop Charges',
-                path:'/dashboard',
+                path:'/pickupAndDropCharges',
               },
               {
                 id:10.8,
                 item:'Delivery Charges',
-                path:'/dashboard',
+                path:'/deliveryCharges',
               },
               {
                 id:10.9,
                 item:'Extra Charges',
-                path:'/dashboard',
+                path:'/extraCharges',
               },
               {
                 id:10.9,
                 item:'Order Assign Criteria',
-                path:'/dashboard',
+                path:'/orderAssignCriteria',
               },
         ]
     },
