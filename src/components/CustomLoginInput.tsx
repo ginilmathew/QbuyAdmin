@@ -67,8 +67,9 @@ const CustomLoginInput = ({ control, fieldName, placeholder, error, Icon, type }
                         style={{
                             color: "red",
                             display: "flex",
-                            paddingLeft: "10px",
+                            paddingLeft: "5px",
                             fontSize: "12px",
+                            fontFamily:`'Poppins' sans-serif`
                         }}
                     >
                         {error?.message}

@@ -11,9 +11,6 @@ import CustomSwitch from '@/components/CustomSwitch';
 import CustomDelete from '@/Widgets/CustomDelete';
 
 const Shipments = () => {
-    
-
-
     const columns: GridColDef[] = [
         { field: 'Product ID', headerName: 'Product ID', flex: 1, },
         {

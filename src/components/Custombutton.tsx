@@ -10,17 +10,18 @@ type Inputs = {
     IconStart: any,
     IconEnd: any,
     height:any,
-    btncolor:string
+    btncolor:string,
+    disabled?:boolean
 
 }
 
 
-const Custombutton = ({ label, onClick, endIcon, startIcon, IconStart, IconEnd ,height,btncolor}: Inputs) => {
+const Custombutton = ({ label, onClick, endIcon, startIcon,disabled, IconStart, IconEnd ,height,btncolor}: Inputs) => {
     return (
         <>
 
             <Button
-            
+                 disabled={disabled ? disabled : false}
                 variant='contained'
                 onClick={onClick} sx={{
                     fontFamily:`'Poppins' sans-serif`,

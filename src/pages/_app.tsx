@@ -10,6 +10,8 @@ import React from 'react';
 import Router from 'next/router';
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['200', '600', '700']
@@ -42,7 +44,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return <main className={poppins.className}>
 
-    {isLoading && (
+    {isLoading && showHeader && (
       <Stack sx={{ width: '100%', color: 'grey.500' }} >
         <LinearProgress color="success" />
       </Stack>
@@ -52,6 +54,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <UserProvider>
         {showHeader && <Header />}
         <Component {...pageProps} />
+        <ToastContainer />
       </UserProvider>
     </ProtectedRoute>
 

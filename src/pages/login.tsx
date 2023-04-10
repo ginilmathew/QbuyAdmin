@@ -1,18 +1,22 @@
 import CustomLoginInput from '@/components/CustomLoginInput'
-import React from 'react'
+import React, { useState } from 'react'
 import PersonIcon from '@mui/icons-material/Person';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Avatar, Box, Stack, styled, Typography } from '@mui/material';
-// import banner from '../../public/images/Login.png'
-// import panda from '../../public/images/panda.png'
 import LockIcon from '@mui/icons-material/Lock';
 import Custombutton from '@/components/Custombutton';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-
+import { postData } from '@/CustomAxios';
+import { toast } from "react-toastify";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from 'yup';
 const Login = () => {
 
     const router = useRouter();
+
+    const [loading, setLoading] = useState<boolean>(false)
+
 
     type Inputs = {
         email: string,
@@ -24,15 +28,27 @@ const Login = () => {
         password: string | number,
     }
 
+
+    const schema = yup
+        .object()
+        .shape({
+            email: yup.string().email().required(),
+            password: yup.string().required(),
+        })
+        .required();
+
+
     const { register,
         handleSubmit,
         control,
         formState: { errors },
         reset,
-        setValue, } = useForm<Inputs>();
+        setValue, } = useForm<Inputs>({
+            resolver: yupResolver(schema),
+        });
 
     const BOX = styled(Box)({
-        width: '100vw',
+        width: '100%',
         height: '100vh',
         backgroundImage: `url(${`/images/login.png`})`,
         alignItems: 'center',
@@ -42,7 +58,22 @@ const Login = () => {
         flexDirection: 'column'
     })
 
-    const onSubmit: SubmitHandler<IFormInput> = data => router.push('/dashboard');
+
+    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        try {
+            setLoading(true)
+            const response = await postData('/auth/login', data)
+            await localStorage.setItem("user", JSON.stringify(response.data.user));
+            await localStorage.setItem("token", response.data.access_token);
+            router.push('/dashboard')
+            toast.success(`Login Successfull`);
+        } catch (error) {
+            toast.error(`error`);
+            setLoading(false)
+        } finally {
+            setLoading(false)
+        }
+    }
 
 
     return (
@@ -62,7 +93,7 @@ const Login = () => {
                     Icon={PersonIcon}
                     control={control}
                     error={errors.email}
-                    fieldName="enter your email"
+                    fieldName="email"
                     placeholder={`Username`}
                 />
                 <CustomLoginInput
@@ -74,6 +105,7 @@ const Login = () => {
                     placeholder={`Password`}
                 />
                 <Custombutton
+                    disabled={loading}
                     btncolor=''
                     height={40}
                     IconEnd={""}
