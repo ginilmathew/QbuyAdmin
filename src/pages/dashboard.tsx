@@ -1,12 +1,15 @@
 import CustomTable from '@/components/CustomTable'
+import UserContext from '@/helpers/user';
 import CustomerCard from '@/Widgets/CustomerCard'
 import Profitchart from '@/Widgets/Profitchart'
 import { Grid } from '@mui/material'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import React from 'react'
+import React,{useContext} from 'react'
 
 const Dashboard = () => {
+    const userContext = useContext(UserContext);
 
+    console.log(userContext.user,"get user")
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', flex: 1, },
         {

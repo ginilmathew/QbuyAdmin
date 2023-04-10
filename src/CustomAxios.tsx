@@ -64,8 +64,18 @@ const postData = async (url: string, data?: any): Promise<AxiosResponse> => {
   }
 };
 
+const deleteData = async (url: string): Promise<AxiosResponse> => {
+  try {
+    const response: AxiosResponse = await axiosInstance.delete(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
 function errorHandler(error: any) {
   throw new Error(error.response.data.message);
 }
 
-export { axiosInstance, fetchData, postData };
+export { axiosInstance, fetchData, postData,deleteData };

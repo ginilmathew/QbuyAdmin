@@ -1,5 +1,5 @@
 import { Avatar, Box, Typography } from '@mui/material'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState,useContext } from 'react'
 import KeyIcon from '@mui/icons-material/Key';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
@@ -11,10 +11,15 @@ import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import Menus from './Menu';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import UserContext from '@/helpers/user';
 
 
 const Header = () => {
+
+
   const router = useRouter()
+  const userContext = useContext(UserContext);
+
 
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -156,8 +161,8 @@ const Header = () => {
       <Box display={'flex'} gap={1} >
         <Box width={140} height={50} sx={{ background: '#58d36e' }} borderRadius={10} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
           <Box px={1.5}>
-            <Typography sx={{ fontFamily: `'Poppins' sans-serif`, }}>john deo</Typography>
-            <Typography fontSize={12} color={'#fff'} sx={{ fontFamily: `'Poppins' sans-serif`, }}>admin</Typography>
+            <Typography sx={{ fontFamily: `'Poppins' sans-serif`, }}>{userContext?.user?.name}</Typography>
+            <Typography fontSize={12} color={'#fff'} sx={{ fontFamily: `'Poppins' sans-serif`, }}>{userContext?.user?.role}</Typography>
           </Box>
           <Avatar sx={{ height: 40, borderRadius: 10 }}></Avatar>
         </Box>

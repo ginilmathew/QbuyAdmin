@@ -7,7 +7,7 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { Controller } from "react-hook-form";
 import { Avatar, Box, FormGroup, styled, Typography } from "@mui/material";
-
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
 type props = {
     fieldName: string,
@@ -45,8 +45,8 @@ const CustomTimepicker = ({
                     name={fieldName}
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <TimeField
+                        <LocalizationProvider dateAdapter={AdapterMoment}>
+                            <TimePicker
                                 sx={{
                                     "& .MuiInputBase-input": {
                                         height: "10px" // Set your height here.

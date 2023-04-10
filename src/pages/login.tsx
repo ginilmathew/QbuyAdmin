@@ -1,5 +1,5 @@
 import CustomLoginInput from '@/components/CustomLoginInput'
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import PersonIcon from '@mui/icons-material/Person';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Avatar, Box, Stack, styled, Typography } from '@mui/material';
@@ -11,11 +11,13 @@ import { postData } from '@/CustomAxios';
 import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
+import UserContext from '@/helpers/user';
 const Login = () => {
 
     const router = useRouter();
 
     const [loading, setLoading] = useState<boolean>(false)
+    const userContext = useContext(UserContext);
 
 
     type Inputs = {
@@ -32,8 +34,10 @@ const Login = () => {
     const schema = yup
         .object()
         .shape({
-            email: yup.string().email().required(),
-            password: yup.string().required(),
+            email: yup.string().email().required('Email is required'),
+            password: yup.string()
+                .required('No password provided.')
+                .min(6, 'Password is too short')
         })
         .required();
 
@@ -65,10 +69,11 @@ const Login = () => {
             const response = await postData('/auth/login', data)
             await localStorage.setItem("user", JSON.stringify(response.data.user));
             await localStorage.setItem("token", response.data.access_token);
+            await userContext.setUser(response.data.user)
             router.push('/dashboard')
             toast.success(`Login Successfull`);
-        } catch (error) {
-            toast.error(`error`);
+        } catch (error: any) {
+            toast.error(error);
             setLoading(false)
         } finally {
             setLoading(false)
@@ -104,6 +109,7 @@ const Login = () => {
                     fieldName="password"
                     placeholder={`Password`}
                 />
+
                 <Custombutton
                     disabled={loading}
                     btncolor=''
