@@ -104,7 +104,6 @@ type IFormInput = {
 const ProductForm = () => {
     const [multipleImage, setMultipleImage] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
-    const [franchise, setFranchise] = useState<string>('')
     const [stock, setStock] = useState<boolean>(false)
     const [addvarient, setAddVarient] = useState<boolean>(false)
     const [imagefile, setImagefile] = useState<null | File>(null)
@@ -124,7 +123,8 @@ const ProductForm = () => {
     const [subcategorySelect, setSubCategorySelect] = useState<any>(null);
     const [categoryList, setCategoryList] = useState<any>([]);
     const [subcategoryList, setSubCategoryList] = useState<any>([]);
-    const [applicationType, setApplicationType] = useState<any>([
+    const [selectType, setSelectType] = useState<any>(null);
+    const [pandType, setPandType] = useState<any>([
         {
             name: 'Qbuy Panda',
             value: 'panda'
@@ -178,13 +178,11 @@ const ProductForm = () => {
             }
         });
 
-    const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFranchise(e.target.value)
+    const onChangeSelectType = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectType(e.target.value)
+
     }
 
-    const onChangeApplicationType = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectApplicationType(e.target.value)
-    }
 
     const StockCheck = (e: any) => {
         setStock(e)
@@ -384,7 +382,7 @@ const ProductForm = () => {
                 name: get?.name
             }
         ))
-        setValue('sub_category',result)
+        setValue('sub_category', result)
     }
 
 
@@ -435,11 +433,6 @@ const ProductForm = () => {
 
 
     }
-
-
-
-
-
 
     const ConfirmVarients = () => {
         setConfirmBtn(true)
@@ -537,38 +530,8 @@ const ProductForm = () => {
                             {vendorList && vendorList?.map((res: any) => (
                                 <MenuItem value={res?._id}>{res?.store_name}</MenuItem>
                             ))}
-
-
                         </Customselect>
                     </Grid>
-                    <Grid item xs={12} lg={3}>
-                        <Customselect
-                            type='text'
-                            control={control}
-                            error={errors.application_type}
-                            fieldName="application_type"
-                            placeholder={``}
-                            fieldLabel={"Application Type"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={selectApplicationType}
-                            options={''}
-                            onChangeValue={onChangeApplicationType}
-                            background={'#fff'}
-                        >
-                            <MenuItem value="" disabled >
-                                <>Select Application Type</>
-                            </MenuItem>
-                            {applicationType && applicationType?.map((res: any) => (
-                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
-                            ))}
-
-
-                        </Customselect>
-                    </Grid>
-
                     <Grid item xs={12} lg={3}>
                         <Customselect
                             type='text'
@@ -581,14 +544,16 @@ const ProductForm = () => {
                             height={40}
                             label={''}
                             size={16}
-                            value={'category'}
+                            value={selectType}
                             options={''}
-                            onChangeValue={onChangeSelect}
+                            onChangeValue={onChangeSelectType}
                             background={'#fff'}
                         >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                            {pandType && pandType?.map((res: any) => (
+                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                            ))}
+
+
                         </Customselect>
                     </Grid>
                     <Grid item xs={12} lg={3}>
@@ -603,7 +568,6 @@ const ProductForm = () => {
                             view={false}
                             defaultValue={''}
                         />
-
                     </Grid>
 
                     <Grid item xs={12} lg={1.5}>
