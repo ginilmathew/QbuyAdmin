@@ -1,8 +1,6 @@
-import { Box, Grid, MenuItem } from '@mui/material'
 import React, { useState } from 'react'
 import CustomBox from '../CustomBox'
-import { useForm, SubmitHandler } from "react-hook-form";
-import { FormInputs } from '@/utilities/types';
+import { Box, Grid, MenuItem } from '@mui/material'
 import CustomInput from '@/components/CustomInput';
 import Customselect from '@/components/Customselect';
 import CustomImageUploader from '@/components/CustomImageUploader';
@@ -11,7 +9,8 @@ import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { fetchData, postData } from '@/CustomAxios';
-import SubCategoryForm from './subCategoryForm';
+import { useForm, SubmitHandler } from "react-hook-form";
+
 
 type Inputs = {
     name: string,
@@ -19,7 +18,8 @@ type Inputs = {
     order_number: string,
     image: any,
     seo_title: string,
-    seo_description: string
+    seo_description: string,
+    category_id: string
 }
 
 type IFormInput = {
@@ -28,26 +28,30 @@ type IFormInput = {
     order_number: string,
     image: any,
     seo_title: string,
-    seo_description: string
+    seo_description: string,
+    category_id: string
 
 }
+type props = {
+    res: any,
+    setRes: any
+}
 
+const SubCategoryForm = ({ res, setRes }: props) => {
 
-
-const CategoryForm = () => {
-
+    console.log({ res })
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [type, settype] = useState<string>("");
-    const [res, setRes] = useState<any>(null);
+    const [_id, set_id] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false)
+
 
 
     const schema = yup
         .object()
         .shape({
             name: yup.string().required('Required'),
-            type: yup.string().required('Required'),
             order_number: yup.string().required('Required')
         })
         .required();
@@ -60,13 +64,11 @@ const CategoryForm = () => {
         reset,
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
+            defaultValues: {
+                name: '',
+                order_number: '',
+            }
         });
-
-
-    const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        settype(e.target.value)
-        setValue('type', e.target.value)
-    }
 
     const imageUploder = (file: any) => {
         setImagefile(file)
@@ -78,14 +80,17 @@ const CategoryForm = () => {
         const formData = new FormData();
         formData.append("name", data?.name);
         formData.append("order_number", data?.order_number);
-        formData.append("image", data?.image);
-        formData.append("type", data?.type);
+        if (data?.image) {
+            formData.append("image", data?.image);
+        }
+        formData.append("type", res?.type);
         formData.append("seo_title", data?.name);
-        formData.append("seo_description", data?.name + data?.type);
+        formData.append("seo_description", data?.name + res?.type);
+        formData.append("category_id", res?._id);
         try {
-
-            const response = await postData('/admin/category/create', formData)
-            setRes(response?.data?.data)
+            const response = await postData('/admin/subcategory/create', formData)
+            reset()
+            setRes(null)
             toast.success('Created Successfully')
 
         } catch (err: any) {
@@ -98,11 +103,9 @@ const CategoryForm = () => {
 
     }
 
-
-
     return (
-        <Box>
-            <CustomBox title='Basic Details'>
+        <>
+            <CustomBox title='Sub Category'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput
@@ -130,40 +133,15 @@ const CategoryForm = () => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
-                        <Customselect
-                            type='text'
-                            control={control}
-                            error={errors.type}
-                            fieldName="type"
-                            placeholder={``}
-                            fieldLabel={"Types"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={type}
-                            options={''}
-                            onChangeValue={onChangeSelect}
-                            background={'#fff'}
-                        >
-                            <MenuItem value="" disabled >
-                                <>Select Types</>
-                            </MenuItem>
-                            <MenuItem value={'Qbuy Panda'}>Qbuy Panda</MenuItem>
-                            <MenuItem value={'Qbuy Fashion'}>Qbuy Fashion</MenuItem>
-                            <MenuItem value={'Qbuy Green'}>Qbuy Green</MenuItem>
-                        </Customselect>
-                    </Grid>
-                    <Grid item xs={12} lg={2.5}>
+                    <Grid item xs={12} lg={2}>
                         <CustomImageUploader
                             ICON={""}
                             error={errors.image}
-                            fieldName="image"
+                            fieldName="Subcategory"
                             placeholder={``}
                             fieldLabel={"Image"}
                             control={control}
-                            height={130}
+                            height={120}
                             max={5}
                             onChangeValue={imageUploder}
                             preview={imagefile}
@@ -171,26 +149,27 @@ const CategoryForm = () => {
                             type={"file"}
                             background="#e7f5f7"
                             myid="contained-button-file"
-                            width={"90%"}
+                            width={"100%"}
                         />
+
                     </Grid>
                 </Grid>
             </CustomBox>
-
             <Box py={3}>
                 <Custombutton
-                    disabled={loading}
                     btncolor=''
                     IconEnd={''}
                     IconStart={''}
-                    endIcon={false} startIcon={false} height={''} label={'Add Category'} onClick={handleSubmit(onSubmit)} />
+                    endIcon={false}
+                    startIcon={false}
+                    height={''}
+                    label={'Add SubCategory'}
+                    onClick={handleSubmit(onSubmit)}
+                    disabled={loading}
+                />
             </Box>
-
-            {res && <SubCategoryForm res={res} setRes={setRes} />}
-
-
-        </Box>
+        </>
     )
 }
 
-export default CategoryForm
+export default SubCategoryForm

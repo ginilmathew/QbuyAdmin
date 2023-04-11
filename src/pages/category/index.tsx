@@ -23,8 +23,7 @@ const CategoryManagement = () => {
     const [_id, set_id] = useState<string>('');
 
 
-    console.log({ categoryList })
-
+  
 
     const addvaendor = () => {
         router.push('/category/addCategory')

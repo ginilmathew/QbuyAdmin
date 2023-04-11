@@ -72,25 +72,23 @@ type IFormInput = {
 };
 
 const Vendorform = () => {
-    const [pickTime, setPickTime] = React.useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
+   
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [category, setCategory] = useState<string>('')
     const [franchise, setFranchise] = useState<string>('')
     const [getfranchise, setGetFranchise] = useState<any>([])
     const [getcategory, setGetCategory] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
+  
 
-    console.log({ franchise })
-
-    console.log({ category })
-
+    const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
     const schema = yup
         .object()
         .shape({
             vendor_name: yup.string().required('Required'),
             vendor_email: yup.string().email("Email must be a valid email").required('Required'),
-            vendor_mobile: yup.string().required('Required'),
+            vendor_mobile: yup.string().min(10,'Phone number is not valid').matches(phoneRegExp, 'Phone number is not valid').required(' Required'),
             store_name: yup.string().required('Required'),
             store_address: yup.string().required('Required'),
             franchise_id: yup.string().required('Required'),
@@ -123,6 +121,30 @@ const Vendorform = () => {
         setError,
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
+            defaultValues: {
+                vendor_name: '',
+                vendor_email: '',
+                vendor_mobile: '',
+                store_name: '',
+                store_address: '',
+                franchise_id: '',
+                category_id: '',
+                start_time: '',
+                end_time: '',
+                store_logo: '',
+                license_number: '',
+                ffsai_number: '',
+                pan_card_number: '',
+                aadhar_card_number: '',
+                account_number: '',
+                ifsc: '',
+                branch: '',
+                recipient_name: '',
+                commission: '',
+                offer_description: '',
+                tax: '',
+
+            }
         });
 
 
@@ -226,6 +248,10 @@ const Vendorform = () => {
             setLoading(true)
             const response = await fetchData('/admin/franchise/list')
             setGetFranchise(response?.data?.data?.data)
+            reset()
+            setCategory('')
+            setFranchise('')
+            setImagefile(null)
             setLoading(false)
 
         } catch (err: any) {
@@ -264,13 +290,13 @@ const Vendorform = () => {
 
 
     const onChangeStartTime = (value: any) => {
-        setValue('start_time', moment(value, 'hh:mm A').format('hh:mm'))
+        setValue('start_time',value )
         setError('start_time', { message: '' })
 
     }
 
     const onChangeEndTime = (value: any) => {
-        setValue('end_time', moment(value, 'hh:mm A').format('hh:mm'))
+        setValue('end_time',value)
         setError('end_time', { message: '' })
     }
 
@@ -298,8 +324,8 @@ const Vendorform = () => {
         formData.append("store_address", data?.store_address);
         formData.append("franchise_id", data?.franchise_id);
         formData.append("category_id", data?.category_id);
-        formData.append("start_time", data?.start_time);
-        formData.append("end_time", data?.end_time);
+        formData.append("start_time", moment(data?.start_time,'hh:mm A').format('hh:mm'));
+        formData.append("end_time", moment(data?.end_time,'hh:mm A').format('hh:mm'));
         formData.append("store_logo", data?.store_logo);
         formData.append("license_number", data?.license_number);
         formData.append("ffsai_number", data?.ffsai_number);
@@ -316,6 +342,9 @@ const Vendorform = () => {
         try {
             await postData('/admin/vendor/create', formData)
             toast.success('Vendor Created')
+            reset()
+            setFranchise('')
+            setCategory('')
             setLoading(false)
 
         } catch (err: any) {
@@ -328,7 +357,7 @@ const Vendorform = () => {
 
 
     }
-   
+
 
     return (
         <Box>
