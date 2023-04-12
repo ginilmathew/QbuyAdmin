@@ -67,6 +67,7 @@ const CustomProductVarient =memo(({ content, index }: props) => {
 
                 <Grid item lg={2} xs={12}>
                     < CustomDatePicker
+                        values={''}
                         changeValue={() => null}
                         fieldName='pickupTime'
                         control={control}
@@ -76,6 +77,7 @@ const CustomProductVarient =memo(({ content, index }: props) => {
                 </Grid>
                 <Grid item lg={2} xs={12}>
                     <CustomDatePicker
+                      values={''}
                         changeValue={() => null}
                         fieldName='pickupTime'
                         control={control}

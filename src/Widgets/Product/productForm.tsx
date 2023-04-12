@@ -18,12 +18,14 @@ import { fetchData, postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
+import moment from 'moment'
+import CustomDatePicker from '@/components/CustomDatePicker';
 
 type Inputs = {
     name: string,
     description: string,
-    store: string,
-    franchisee: string,
+    store: any,
+    franchisee: any,
     weight: string,
     dimensions: any,
     width: string,
@@ -31,13 +33,13 @@ type Inputs = {
     model: string,
     type: string,
     product_type: string,
-    category: string,
-    sub_category: string,
+    category: any,
+    sub_category: any,
     display_order: any,
     panda_suggession: boolean,
     stock: boolean,
-    stock_value: number,
-    minimum_qty: number,
+    stock_value: any,
+    minimum_qty: any,
     product_availability_from: string,
     product_availability_to: string,
     require_shipping: boolean,
@@ -47,15 +49,15 @@ type Inputs = {
     image: any,
     product_image: any,
     video_link: string,
-    related_products: string,
+    related_products: any,
     attributess: any,
     regular_price: any,
     seller_price: any,
     offer_price: any,
     offer_date: any,
     variant: boolean,
-    offer_date_from: string,
-    offer_date_to: string,
+    offer_date_from: any,
+    offer_date_to: any,
     stock_values: string,
     application_type: string
 }
@@ -63,8 +65,8 @@ type Inputs = {
 type IFormInput = {
     name: string,
     description: string,
-    store: string,
-    franchisee: string,
+    store: any,
+    franchisee: any,
     weight: string,
     dimensions: any,
     width: string,
@@ -72,13 +74,13 @@ type IFormInput = {
     model: string,
     type: string,
     product_type: string,
-    category: string,
-    sub_category: string,
+    category: any,
+    sub_category: any,
     display_order: any,
     panda_suggession: boolean,
     stock: boolean,
-    stock_value: number,
-    minimum_qty: number,
+    stock_value: any,
+    minimum_qty: any,
     product_availability_from: string,
     product_availability_to: string,
     require_shipping: boolean,
@@ -88,15 +90,15 @@ type IFormInput = {
     image: any,
     product_image: any,
     video_link: string,
-    related_products: string,
+    related_products: any,
     attributess: any,
     regular_price: any,
     seller_price: any,
     offer_price: any,
     offer_date: any,
     variant: boolean,
-    offer_date_from: string,
-    offer_date_to: string,
+    offer_date_from: any,
+    offer_date_to: any,
     stock_values: string,
     application_type: string
 }
@@ -110,6 +112,8 @@ const ProductForm = () => {
     const [attributes, setAttributes] = useState<any>([])
     const [productTag, setProductTag] = useState<any>([])
     const [productTagValue, setProductTagValue] = useState<any>([])
+    const [metaTagValue, setmetaTagValue] = useState<any>([])
+    const [metaTag, setMetaTag] = useState<any>([])
     const [attributeTag, setattributeTag] = useState<any>([])
     const [attributeTagValue, setattributeTagValue] = useState<any | null>(null)
     const [index, setIndex] = useState<number>(0)
@@ -124,6 +128,7 @@ const ProductForm = () => {
     const [categoryList, setCategoryList] = useState<any>([]);
     const [subcategoryList, setSubCategoryList] = useState<any>([]);
     const [selectType, setSelectType] = useState<any>(null);
+    const [pandaSuggesion, setPandaSuggesions] = useState<boolean>(false);
     const [pandType, setPandType] = useState<any>([
         {
             name: 'Qbuy Panda',
@@ -138,22 +143,22 @@ const ProductForm = () => {
             value: 'fashion'
         },
     ])
-    const [selectApplicationType, setSelectApplicationType] = useState<string>('')
+    const [requireShipping, setRequireShipping] = useState<boolean>(false)
 
 
 
-    console.log({ categoryList })
+    console.log({ attributes })
 
     const schema = yup
         .object()
         .shape({
-            name: yup.string().required('Required'),
-            description: yup.string().required('Required'),
-            weight: yup.string().required('Required'),
-            model: yup.string().required('Required'),
-            width: yup.string().required('Required'),
-            height: yup.string().required('Required'),
-            display_order: yup.number().nullable().required('Required').typeError("Must be Integer")
+            // name: yup.string().required('Required'),
+            // description: yup.string().required('Required'),
+            // weight: yup.string().required('Required'),
+            // model: yup.string().required('Required'),
+            // width: yup.string().required('Required'),
+            // height: yup.string().required('Required'),
+            // display_order: yup.number().nullable().required('Required').typeError("Must be Integer")
         })
         .required();
 
@@ -173,6 +178,19 @@ const ProductForm = () => {
                 width: '',
                 height: '',
                 display_order: '',
+                panda_suggession: false,
+                stock: false,
+                stock_value: '',
+                franchisee: '',
+                category: '',
+                sub_category: null,
+                store: '',
+                product_image: null,
+                require_shipping: false,
+                video_link: '',
+                related_products: null,
+                image: null
+
 
 
             }
@@ -180,12 +198,15 @@ const ProductForm = () => {
 
     const onChangeSelectType = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelectType(e.target.value)
+        setValue('type', e.target.value)
 
     }
 
 
     const StockCheck = (e: any) => {
+        setValue('stock', e)
         setStock(e)
+        setValue('stock_value', '')
     }
 
 
@@ -252,7 +273,7 @@ const ProductForm = () => {
         try {
             setLoading(true)
             const response = await postData('admin/product/uploadimage', formData)
-            setValue('image', response?.data?.data)
+            setValue('product_image', response?.data?.data)
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)
@@ -273,7 +294,7 @@ const ProductForm = () => {
         try {
             setLoading(true)
             const response = await postData('admin/product/multipleupload', formData)
-            setValue('product_image', response?.data?.data)
+            setValue('image', response?.data?.data)
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)
@@ -389,7 +410,7 @@ const ProductForm = () => {
 
     const addAtributes = () => {
         // if(attributes?.length  < 2){
-        setAttributes([...attributes, { name: '', content: [], varient: false }])
+        setAttributes([...attributes, { name: '', options: [], varient: false }])
         // }
     }
 
@@ -409,6 +430,39 @@ const ProductForm = () => {
 
     }
 
+    const onCheckShipping = (e: boolean) => {
+        setValue('require_shipping', e)
+        setRequireShipping(e)
+
+    }
+
+
+    const onChangeProductFrom = (e: any) => {
+        setValue('product_availability_from', e)
+
+    }
+
+    const onChangeProductTo = (e: any) => {
+        setValue('product_availability_to', e)
+
+    }
+
+
+    const onCheckPandasuggestion = (e: any) => {
+        setPandaSuggesions(e)
+        setValue('panda_suggession', e)
+    }
+
+    const onChangeOffer_date_from = (e: any) => {
+        setValue('offer_date_from', e)
+    }
+
+    const onChangeOffer_date_to = (e: any) => {
+        console.log({ e })
+        setValue('offer_date_to', e)
+
+    }
+
 
     useEffect(() => {
         getFranchiseList()
@@ -419,7 +473,7 @@ const ProductForm = () => {
 
     useEffect(() => {
         if (attributeTagValue?.length) {
-            attributes[index].content = [...attributeTagValue]
+            attributes[index].options = [...attributeTagValue]
         }
     }, [attributeTagValue])
 
@@ -461,6 +515,105 @@ const ProductForm = () => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
+        const metatagsres = metaTagValue?.map((res: any) => (
+            res.title
+        ))
+        setValue('meta_tags', metatagsres)
+
+
+        let newData = attributes.map((item: any) => ({
+            "name": item.name,
+            "options": item.options.map((option: any) => option.title)
+        }));
+        let value = {
+            name: data?.name,
+            franchisee: {
+                id: data?.franchisee?.[0]?.id,
+                name: data?.franchisee?.[0]?.name
+            },
+            description: data?.description,
+            store: {
+                id: data?.store?.[0]?.id,
+                name: data?.store?.[0]?.name
+
+            },
+            weight: data?.weight,
+            dimensions: {
+                width: data?.width,
+                height: data?.height
+            },
+            model: data?.model,
+            type: data?.type,
+            product_Type: null,
+            image: data?.image,
+            product_image: data?.product_image,
+            category: {
+                id: data?.category?.[0]?.id,
+                name: data?.category?.[0]?.name
+            },
+            sub_category: {
+                id: data?.sub_category?.[0]?.id,
+                name: data?.sub_category?.[0]?.name
+            },
+            display_order: data?.display_order,
+            panda_suggession: data?.panda_suggession,
+            stock: data?.stock,
+            stock_value: data?.stock_value,
+            minimum_qty: data?.minimum_qty,
+            product_availability_from: moment(data?.product_availability_from, 'hh:mm A').format('hh:mm'),
+            product_availability_to: moment(data?.product_availability_to, 'hh:mm A').format('hh:mm'),
+            require_shipping: data?.require_shipping,
+            delivery_locations: [
+                [
+                    8.670514,
+                    76.770417
+                ],
+                [
+                    8.770963,
+                    77.179658
+                ],
+                [
+                    8.464103,
+                    77.333466
+                ],
+                [
+                    8.347269,
+                    77.185151
+                ],
+                [
+                    8.311940,
+                    77.064301
+                ],
+                [
+                    8.662368,
+                    76.775910
+                ]
+            ],
+            coupon_details: null,
+            meta_tags: data?.meta_tags,
+            video_link: data?.video_link,
+            related_products: data?.related_products,
+            attributes: newData,
+            regular_price: data?.regular_price,
+            seller_price: data?.seller_price,
+            offer_price: data?.offer_price,
+            offer_date_from: moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY/MM/DD'),
+            offer_date_to: moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY/MM/DD'),
+            variant: false,
+            approval_status: "approved"
+        }
+
+        try {
+            setLoading(true)
+            await postData('admin/product/create', value)
+            toast.success('Created Successfully')
+        } catch (err: any) {
+            toast.error(err?.message)
+            setLoading(false)
+
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -683,7 +836,7 @@ const ProductForm = () => {
                     </Grid>
                     <Grid item xs={12} lg={3}>
                         <Typography mb={3}></Typography>
-                        <CustomCheckBox isChecked={true} label='' onChange={() => null} title='Panda Suggestion' />
+                        <CustomCheckBox isChecked={pandaSuggesion} label='' onChange={onCheckPandasuggestion} title='Panda Suggestion' />
                     </Grid>
                     <Grid item xs={12} lg={3}>
                         <Typography mb={3}></Typography>
@@ -694,8 +847,8 @@ const ProductForm = () => {
                             <CustomInput
                                 type='text'
                                 control={control}
-                                error={errors.stock}
-                                fieldName="stock"
+                                error={errors.stock_value}
+                                fieldName="stock_value"
                                 placeholder={``}
                                 fieldLabel={"Stock"}
                                 disabled={false}
@@ -716,9 +869,9 @@ const ProductForm = () => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={3}>
+                    {/* <Grid item xs={12} lg={3}>
                         <CustomAutoComplete fieldLabel='Product Tag' list={productTag} setValues={setProductTagValue} onChnageValues={() => null} />
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} lg={3}>
                         <CustomImageUploader
                             ICON={""}
@@ -745,7 +898,7 @@ const ProductForm = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={1.8}>
                         <CustomTimepicker
-                            changeValue={() => null}
+                            changeValue={onChangeProductFrom}
                             fieldName='product_availability_from'
                             control={control}
                             error={errors.product_availability_from}
@@ -754,7 +907,7 @@ const ProductForm = () => {
                     <Grid item xs={12} lg={1.8}>
                         <Typography mb={3}></Typography>
                         <CustomTimepicker
-                            changeValue={() => null}
+                            changeValue={onChangeProductTo}
                             fieldName='product_availability_to'
                             control={control}
                             error={errors.product_availability_to}
@@ -762,7 +915,7 @@ const ProductForm = () => {
                     </Grid>
                     <Grid item xs={12} lg={3}>
                         <Typography mb={3}></Typography>
-                        <CustomCheckBox isChecked={true} label='' onChange={() => null} title='Requires Shipping' />
+                        <CustomCheckBox isChecked={requireShipping} label='' onChange={onCheckShipping} title='Requires Shipping' />
                     </Grid>
                 </Grid>
                 <Box py={2}>
@@ -890,18 +1043,9 @@ const ProductForm = () => {
             <CustomBox title='Additional Options'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={6}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.meta_tags}
-                            fieldName="meta_tags"
-                            placeholder={``}
-                            fieldLabel={"Meta Tags"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
+                        <CustomAutoComplete fieldLabel='Meta Tag' list={metaTag} setValues={setmetaTagValue} onChnageValues={() => null} />
                     </Grid>
+
                     {/* <Grid item xs={12} lg={3}>
                         <CustomInput
                             type='text'
@@ -1032,30 +1176,26 @@ const ProductForm = () => {
                             </Grid>
 
                             <Grid item lg={2} xs={12}>
-                                <CustomInput
-                                    disabled={false}
-                                    type='text'
+                                <CustomDatePicker
+                                    values={getValues('offer_date_from')}
+                                    changeValue={onChangeOffer_date_from}
+                                    fieldName='offer_date_from'
                                     control={control}
                                     error={errors.offer_date_from}
-                                    fieldName="offer_date_from"
-                                    placeholder={``}
-                                    fieldLabel={"Offer From"}
-                                    view={false}
-                                    defaultValue={''}
+                                    fieldLabel={'Offer From'}
                                 />
+
                             </Grid>
                             <Grid item lg={2} xs={12}>
-                                <CustomInput
-                                    disabled={false}
-                                    type='text'
+                                <CustomDatePicker
+                                    values={getValues('offer_date_to')}
+                                    changeValue={onChangeOffer_date_to}
+                                    fieldName='offer_date_to'
                                     control={control}
-                                    error={errors.offer_date_from}
-                                    fieldName="offer_date_from"
-                                    placeholder={``}
-                                    fieldLabel={"Offer To"}
-                                    view={false}
-                                    defaultValue={''}
+                                    error={errors.offer_date_to}
+                                    fieldLabel={'Offer To'}
                                 />
+
                             </Grid>
 
                         </Grid>}
@@ -1068,10 +1208,15 @@ const ProductForm = () => {
                     }
                 </CustomBox>}
             <Box py={3}>
-                <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Product'} onClick={handleSubmit(onSubmit)} />
+                <Custombutton  disabled={loading} btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Product'} onClick={handleSubmit(onSubmit)} />
             </Box>
         </Box>
     )
 }
 
 export default ProductForm
+
+
+
+
+
