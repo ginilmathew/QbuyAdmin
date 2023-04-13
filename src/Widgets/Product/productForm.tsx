@@ -144,21 +144,26 @@ const ProductForm = () => {
         },
     ])
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
+    const [varientsarray, setVarientsArray] = useState<any>([])
 
 
-
-    console.log({ attributes })
+    console.log({ varientsarray })
 
     const schema = yup
         .object()
         .shape({
-            // name: yup.string().required('Required'),
-            // description: yup.string().required('Required'),
-            // weight: yup.string().required('Required'),
-            // model: yup.string().required('Required'),
-            // width: yup.string().required('Required'),
-            // height: yup.string().required('Required'),
-            // display_order: yup.number().nullable().required('Required').typeError("Must be Integer")
+            name: yup.string().required('Required'),
+            description: yup.string().required('Required'),
+            weight: yup.string().required('Required'),
+            model: yup.string().required('Required'),
+            width: yup.string().required('Required'),
+            height: yup.string().required('Required'),
+            display_order: yup.number().nullable().required('Required').typeError("Must be Integer"),
+            franchisee:yup.array().required('Required'),
+            store:yup.array().required('Required'),
+            type:yup.string().required('Required'),
+            category:yup.array().required('Required'),
+        
         })
         .required();
 
@@ -168,6 +173,7 @@ const ProductForm = () => {
         formState: { errors },
         reset,
         getValues,
+        setError,
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
             defaultValues: {
@@ -189,16 +195,20 @@ const ProductForm = () => {
                 require_shipping: false,
                 video_link: '',
                 related_products: null,
-                image: null
-
-
-
+                image: null,
+                regular_price: null,
+                offer_price:null,
+                offer_date_from:null,
+                offer_date_to:null,
+                seller_price:null,
+                minimum_qty:'',
             }
         });
 
     const onChangeSelectType = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelectType(e.target.value)
         setValue('type', e.target.value)
+        setError('type', { message: '' })
 
     }
 
@@ -328,7 +338,8 @@ const ProductForm = () => {
                 name: get?.franchise_name
             }
         ))
-        setValue('franchisee', result)
+        setValue('franchisee', e.target.value)
+        setError('franchisee', { message: '' })
         setFranchiseSelect(e.target.value)
         try {
             setLoading(true)
@@ -353,6 +364,7 @@ const ProductForm = () => {
             }
         ))
         setValue('store', result)
+        setError('store', { message: '' })
 
     }
 
@@ -383,6 +395,7 @@ const ProductForm = () => {
             }
         ))
         setValue('category', result)
+        setError('category', { message: '' })
         try {
             setLoading(true)
             const response = await fetchData(`admin/subcategory-list/${e.target.value}`)
@@ -404,6 +417,7 @@ const ProductForm = () => {
             }
         ))
         setValue('sub_category', result)
+        setError('sub_category', { message: '' })
     }
 
 
@@ -416,18 +430,15 @@ const ProductForm = () => {
 
 
 
-    const onChangeName = (e: any, i: number) => {
+    const onChangeName = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
         console.log(e.target.value)
         attributes[i].name = e.target.value;
-        console.log({ attributes })
+
 
     }
 
-    const onChangeOptions = (e: any, i: number) => {
+    const onChangeOptions = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
         setIndex(i)
-        console.log({ e }, 'numer CONSOLE')
-        console.log({ attributes })
-
     }
 
     const onCheckShipping = (e: boolean) => {
@@ -479,38 +490,62 @@ const ProductForm = () => {
 
 
     const AddVarientCheckbox = (e: any, i: number) => {
-        console.log({ e }, 'EVENT CONSOLE')
+        let find = attributes?.every((res: any) => res.varient === false)
+        setVarientsArray([])
+        if(find){
+           setVarients([])
+         
+           setConfirmBtn(false)
+        }
         setIndex(i)
         setAddVarient(e)
         attributes[i].varient = e;
-        console.log({ attributes })
-
-
+        setValue('seller_price','')
+        setValue('offer_price','')
+        setValue('offer_date_from','')
+        setValue('regular_price','')
+        setValue('offer_date_to','')
     }
 
     const ConfirmVarients = () => {
+
+
         setConfirmBtn(true)
         const output = [];
         setVarients([])
+        setVarientsArray([])
+
         // Filter attributes array to only include those with variant true
         const variantAttributes = attributes.filter((attr: any) => attr.varient !== false)
-
-        console.log({ variantAttributes })
-
         // Calculate the number of iterations required based on the length of the variantAttributes array
-        const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.content?.length, 1);
-
+        const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
         for (let i = 0; i < numIterations; i++) {
             let combination = "";
             let remainder = i;
+            let contentIndex
+
+            varientsarray.push({
+                attributs: [],
+                seller_price: '',
+                regular_price: '',
+                offer_price: '',
+                offer_date_from: '',
+                offer_date_to: '',
+                stock: true,
+                stock_value: ''
+            })
+            setVarientsArray([...varientsarray])
             for (let j = variantAttributes.length - 1; j >= 0; j--) {
-                const contentIndex = remainder % variantAttributes[j].content?.length;
-                combination = variantAttributes[j].content[contentIndex].title + " " + combination;
-                remainder = Math.floor(remainder / variantAttributes[j].content?.length);
+                contentIndex = remainder % variantAttributes[j].options?.length;
+                combination = variantAttributes[j].options[contentIndex].title + " " + combination;
+                remainder = Math.floor(remainder / variantAttributes[j].options?.length);
+
             }
+
             output.push(combination.trim());
         }
         setVarients(output)
+
     }
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
@@ -525,6 +560,8 @@ const ProductForm = () => {
             "name": item.name,
             "options": item.options.map((option: any) => option.title)
         }));
+
+
         let value = {
             name: data?.name,
             franchisee: {
@@ -551,17 +588,17 @@ const ProductForm = () => {
                 id: data?.category?.[0]?.id,
                 name: data?.category?.[0]?.name
             },
-            sub_category: {
+            sub_category: data?.sub_category ? {
                 id: data?.sub_category?.[0]?.id,
                 name: data?.sub_category?.[0]?.name
-            },
+            } : null,
             display_order: data?.display_order,
             panda_suggession: data?.panda_suggession,
             stock: data?.stock,
             stock_value: data?.stock_value,
             minimum_qty: data?.minimum_qty,
-            product_availability_from: moment(data?.product_availability_from, 'hh:mm A').format('hh:mm'),
-            product_availability_to: moment(data?.product_availability_to, 'hh:mm A').format('hh:mm'),
+            product_availability_from:data?.product_availability_from ? moment(data?.product_availability_from, 'hh:mm A').format('hh:mm') : null,
+            product_availability_to:data?.product_availability_to ? moment(data?.product_availability_to, 'hh:mm A').format('hh:mm'):null,
             require_shipping: data?.require_shipping,
             delivery_locations: [
                 [
@@ -597,11 +634,13 @@ const ProductForm = () => {
             regular_price: data?.regular_price,
             seller_price: data?.seller_price,
             offer_price: data?.offer_price,
-            offer_date_from: moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY/MM/DD'),
-            offer_date_to: moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY/MM/DD'),
-            variant: false,
+            offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') :null,
+            offer_date_to:data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD'): null,
+            variant: varientsarray?.length > 0 ? true : false,
+            variants: varientsarray?.length > 0 ? varientsarray : null,
             approval_status: "approved"
         }
+           console.log({value})
 
         try {
             setLoading(true)
@@ -662,6 +701,7 @@ const ProductForm = () => {
 
                     <Grid item xs={12} lg={3}>
                         <Customselect
+                            disabled={getValues('franchisee') ? false : true}
                             type='text'
                             control={control}
                             error={errors.store}
@@ -801,6 +841,7 @@ const ProductForm = () => {
 
                     <Grid item xs={12} lg={3}>
                         <Customselect
+                           disabled={getValues('category') ? false : true}
                             type='text'
                             control={control}
                             error={errors.sub_category}
@@ -1202,13 +1243,13 @@ const ProductForm = () => {
                     {attributes?.some((res: any) => res.varient === true) && confirmbtn &&
                         <Box>
                             {varients?.map((res: any, i: any) => (
-                                <CustomProductVarient content={res} index={i + 1} />
+                                <CustomProductVarient content={res} index={i} setState={setVarientsArray} state={varientsarray} />
                             ))}
                         </Box>
                     }
                 </CustomBox>}
             <Box py={3}>
-                <Custombutton  disabled={loading} btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Product'} onClick={handleSubmit(onSubmit)} />
+                <Custombutton disabled={loading} btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Product'} onClick={handleSubmit(onSubmit)} />
             </Box>
         </Box>
     )

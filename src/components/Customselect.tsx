@@ -20,7 +20,8 @@ type props = {
     options: any,
     value: any,
     size: number,
-    label: string
+    label: string,
+    disabled?:boolean
 }
 
 
@@ -37,6 +38,7 @@ const Customselect = ({
     size,
     value,
     label,
+    disabled
 
 }: props) => {
 
@@ -75,8 +77,8 @@ const Customselect = ({
                         onClose={handleClose}
                         onOpen={handleOpen}
                         displayEmpty
-
                         onChange={onChangeValue}
+                        disabled={disabled}
                         onBlur={onBlur}
                         value={value}
                         label={label}
