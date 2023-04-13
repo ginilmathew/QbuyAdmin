@@ -1,13 +1,13 @@
 import { type } from 'os'
 import React from 'react'
 
-type params = {
-    params:{
-        userId:string
-    }
-}
+// type params = {
+//     params:{
+//         userId:string
+//     }
+// }
 
-const RiderRefferalView = ({params:{userId}}:params) => {
+const RiderRefferalView = () => {
   return (
     <div>
       
