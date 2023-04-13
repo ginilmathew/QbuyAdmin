@@ -159,11 +159,11 @@ const ProductForm = () => {
             width: yup.string().required('Required'),
             height: yup.string().required('Required'),
             display_order: yup.number().nullable().required('Required').typeError("Must be Integer"),
-            franchisee:yup.array().required('Required'),
-            store:yup.array().required('Required'),
-            type:yup.string().required('Required'),
-            category:yup.array().required('Required'),
-        
+            franchisee: yup.array().required('Required'),
+            store: yup.array().required('Required'),
+            type: yup.string().required('Required'),
+            category: yup.array().required('Required'),
+
         })
         .required();
 
@@ -197,11 +197,11 @@ const ProductForm = () => {
                 related_products: null,
                 image: null,
                 regular_price: null,
-                offer_price:null,
-                offer_date_from:null,
-                offer_date_to:null,
-                seller_price:null,
-                minimum_qty:'',
+                offer_price: null,
+                offer_date_from: null,
+                offer_date_to: null,
+                seller_price: null,
+                minimum_qty: '',
                 // product_availability_from:'',
                 // product_availability_to:''
 
@@ -224,60 +224,51 @@ const ProductForm = () => {
 
 
     const containerStyle = {
-        width: "100%",
-        height: "300px",
+        height: '300',
+        width: '100%',
     };
 
     const center = {
-        lat: 37.7749,
-        lng: -122.4194,
+        lat: 40.7128,
+        lng: -74.006,
     };
 
+    const polygonCoords = [
+        { lat: 40.7128, lng: -74.006 },
+        { lat: 40.7128, lng: -73.979 },
+        { lat: 40.731, lng: -73.979 },
+        { lat: 40.731, lng: -74.006 },
+    ];
 
+    const options = {
+        fillColor: '#000',
+        fillOpacity: 0.4,
+        strokeColor: '#000',
+        strokeOpacity: 1,
+        strokeWeight: 1,
+    };
 
-    const [path, setPath] = useState([
-        { lat: 52.52549080781086, lng: 13.398118538856465 },
-        { lat: 52.48578559055679, lng: 13.36653284549709 },
-        { lat: 52.48871246221608, lng: 13.44618372440334 }
-    ]);
+    const { isLoaded } = useJsApiLoader({
+        id: 'google-map-script',
+        googleMapsApiKey: 'AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I',
+    });
 
-    // Define refs for Polygon instance and listeners
-    const polygonRef = useRef<google.maps.Polygon | null>(null);
-    const listenersRef = useRef<google.maps.MapsEventListener[]>([]);
+    console.log({isLoaded})
 
-    // Call setPath with new edited path
-    const onEdit = useCallback(() => {
-        if (polygonRef.current) {
-            const nextPath = polygonRef.current
-                .getPath()
-                .getArray()
-                .map((latLng: google.maps.LatLng) => {
-                    return { lat: latLng.lat(), lng: latLng.lng() };
-                });
-            setPath(nextPath);
-        }
-    }, [setPath]);
+    const [map, setMap] = React.useState<google.maps.Map | null>(null);
 
-    // Bind refs to current Polygon and listeners
-    const onLoad = useCallback(
-        (polygon: google.maps.Polygon) => {
-            polygonRef.current = polygon;
-            const path = polygon.getPath();
-            listenersRef.current.push(
-                path.addListener("set_at", onEdit),
-                path.addListener("insert_at", onEdit),
-                path.addListener("remove_at", onEdit)
-            );
-        },
-        [onEdit]
-    );
-
-    // Clean up refs
-    const onUnmount = useCallback(() => {
-        listenersRef.current.forEach((lis: google.maps.MapsEventListener) => lis.remove());
-        polygonRef.current = null;
+    const onLoad = React.useCallback((mapInstance: google.maps.Map) => {
+      setMap(mapInstance);
     }, []);
-
+  
+    const onUnmount = React.useCallback(() => {
+      setMap(null);
+    }, []);
+  
+    const handlePolygonClick = (event: google.maps.MapMouseEvent) => {
+      console.log('Polygon clicked:', event);
+    };
+  
 
     const imageUploder = async (file: any) => {
         setImagefile(file)
@@ -495,19 +486,19 @@ const ProductForm = () => {
     const AddVarientCheckbox = (e: any, i: number) => {
         let find = attributes?.every((res: any) => res.varient === false)
         setVarientsArray([])
-        if(find){
-           setVarients([])
-         
-           setConfirmBtn(false)
+        if (find) {
+            setVarients([])
+
+            setConfirmBtn(false)
         }
         setIndex(i)
         setAddVarient(e)
         attributes[i].varient = e;
-        setValue('seller_price','')
-        setValue('offer_price','')
-        setValue('offer_date_from','')
-        setValue('regular_price','')
-        setValue('offer_date_to','')
+        setValue('seller_price', '')
+        setValue('offer_price', '')
+        setValue('offer_date_from', '')
+        setValue('regular_price', '')
+        setValue('offer_date_to', '')
     }
 
     const ConfirmVarients = () => {
@@ -600,8 +591,8 @@ const ProductForm = () => {
             stock: data?.stock,
             stock_value: data?.stock_value,
             minimum_qty: data?.minimum_qty,
-            product_availability_from:data?.product_availability_from ? moment(data?.product_availability_from, 'hh:mm A').format('hh:mm') : null,
-            product_availability_to:data?.product_availability_to ? moment(data?.product_availability_to, 'hh:mm A').format('hh:mm'):null,
+            product_availability_from: data?.product_availability_from ? moment(data?.product_availability_from, 'hh:mm A').format('hh:mm') : null,
+            product_availability_to: data?.product_availability_to ? moment(data?.product_availability_to, 'hh:mm A').format('hh:mm') : null,
             require_shipping: data?.require_shipping,
             delivery_locations: [
                 [
@@ -637,13 +628,13 @@ const ProductForm = () => {
             regular_price: data?.regular_price,
             seller_price: data?.seller_price,
             offer_price: data?.offer_price,
-            offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') :null,
-            offer_date_to:data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD'): null,
+            offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
+            offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             variant: varientsarray?.length > 0 ? true : false,
             variants: varientsarray?.length > 0 ? varientsarray : null,
             approval_status: "approved"
         }
-           console.log({value})
+        console.log({ value })
 
         try {
             setLoading(true)
@@ -670,6 +661,9 @@ const ProductForm = () => {
             setLoading(false)
         }
     }
+
+
+
 
     return (
         <Box>
@@ -857,7 +851,7 @@ const ProductForm = () => {
 
                     <Grid item xs={12} lg={3}>
                         <Customselect
-                           disabled={getValues('category') ? false : true}
+                            disabled={getValues('category') ? false : true}
                             type='text'
                             control={control}
                             error={errors.sub_category}
@@ -977,32 +971,21 @@ const ProductForm = () => {
                 </Grid>
                 <Box py={2}>
                     <Divider />
+                    {isLoaded &&
                     <Box py={1}>
-                        <LoadScript googleMapsApiKey='AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I' libraries={['drawing', 'geometry']} >
-                            <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={12}
-                            >
-
-                                <Polygon
-                                    // Make the Polygon editable / draggable
-                                    editable
-                                    draggable
-                                    path={path}
-                                    // Event used when manipulating and adding points
-                                    onMouseUp={onEdit}
-                                    // Event used when dragging the whole Polygon
-                                    onDragEnd={onEdit}
-                                    onLoad={onLoad}
-                                    onUnmount={onUnmount}
-                                    options={
-                                        {
-                                            clickable: true
-                                        }
-                                    }
-                                />
-                            </GoogleMap>
-                        </LoadScript>
-                    </Box>
-                </Box>
+                       
+                        <GoogleMap
+                            mapContainerStyle={containerStyle}
+                            center={center}
+                            zoom={13}
+                            onLoad={onLoad}
+                            onUnmount={onUnmount}
+                        >
+                            <Polygon paths={polygonCoords} options={options} onClick={handlePolygonClick} />
+                        </GoogleMap>
+                      
+                    </Box> }
+                </Box> 
             </CustomBox>
             {/* <CustomBox title='offers & Promotions'>
                 <Grid container spacing={2}>

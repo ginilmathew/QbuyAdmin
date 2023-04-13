@@ -141,7 +141,7 @@ const ExtraCharges = () => {
         </Box>
     </Box>
 
-    {open && <CustomDelete onClose={() => handleClose()} open={open} />}
+    {open && <CustomDelete _id='' data={''} setData={''} url='' onClose={() => handleClose()} open={open} />}
 </Box>
   )
 }

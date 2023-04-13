@@ -71,6 +71,7 @@ const MerchantMarketingForm = () => {
                         </Grid>
                         <Grid item lg={3} xs={12}>
                             <CustomDatePicker
+                                values={''}
                                 changeValue={() => null}
                                 fieldName='pickupTime'
                                 control={control}
