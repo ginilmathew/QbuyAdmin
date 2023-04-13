@@ -202,6 +202,9 @@ const ProductForm = () => {
                 offer_date_to:null,
                 seller_price:null,
                 minimum_qty:'',
+                // product_availability_from:'',
+                // product_availability_to:''
+
             }
         });
 
@@ -338,7 +341,7 @@ const ProductForm = () => {
                 name: get?.franchise_name
             }
         ))
-        setValue('franchisee', e.target.value)
+        setValue('franchisee', result)
         setError('franchisee', { message: '' })
         setFranchiseSelect(e.target.value)
         try {
@@ -645,6 +648,19 @@ const ProductForm = () => {
         try {
             setLoading(true)
             await postData('admin/product/create', value)
+            reset()
+            setFranchiseSelect(null)
+            setCategorySelect(null)
+            setSelectType(null)
+            setImagefile(null)
+            setSubCategorySelect(null)
+            setvendorSelect(null)
+            setConfirmBtn(false)
+            setVarientsArray([])
+            setmetaTagValue([])
+            setMetaTag([])
+            setattributeTag([])
+            setAttributes([])
             toast.success('Created Successfully')
         } catch (err: any) {
             toast.error(err?.message)
