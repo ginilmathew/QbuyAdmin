@@ -1,5 +1,5 @@
 import { Box, Divider, Grid, MenuItem, Typography } from '@mui/material'
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
+import React, { MutableRefObject, useCallback, useEffect, useRef, useState ,useTransition} from 'react'
 import CustomBox from '../CustomBox'
 import CustomInput from '@/components/CustomInput'
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -145,10 +145,10 @@ const ProductForm = () => {
     ])
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
-
+  
     const MAX_FILE_SIZE = 102400; //100KB
 
-const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
+    const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
     const schema = yup
         .object()
         .shape({
@@ -158,11 +158,11 @@ const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'
             store: yup.array().typeError('Store is Required').required('Store is Required'),
             type: yup.string().required('Type is Required'),
             category: yup.array().typeError('Category is Required').required('Category is Required'),
-            product_image:yup
-            .mixed()
-            .required("Product Image is Required"),
-            meta_tags:yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
-           
+            product_image: yup
+                .mixed()
+                .required("Product Image is Required"),
+            meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
+
         })
         .required();
 
@@ -256,17 +256,17 @@ const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'
     const [map, setMap] = React.useState<google.maps.Map | null>(null);
 
     const onLoad = React.useCallback((mapInstance: google.maps.Map) => {
-      setMap(mapInstance);
+        setMap(mapInstance);
     }, []);
-  
+
     const onUnmount = React.useCallback(() => {
-      setMap(null);
+        setMap(null);
     }, []);
-  
+
     const handlePolygonClick = (event: google.maps.MapMouseEvent) => {
-      console.log('Polygon clicked:', event);
+        console.log('Polygon clicked:', event);
     };
-  
+
 
     const imageUploder = async (file: any) => {
         setImagefile(file)
@@ -850,7 +850,7 @@ const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'
                         </Customselect>
                     </Grid>
 
-                   {subcategoryList?.length > 0 && <Grid item xs={12} lg={3}>
+                    {subcategoryList?.length > 0 && <Grid item xs={12} lg={3}>
                         <Customselect
                             disabled={getValues('category') ? false : true}
                             type='text'
@@ -872,7 +872,7 @@ const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'
                                 <MenuItem value={res?._id}>{res?.name}</MenuItem>
                             ))}
                         </Customselect>
-                    </Grid> }
+                    </Grid>}
                     <Grid item xs={12} lg={3}>
                         <CustomInput
                             type='text'
@@ -973,20 +973,20 @@ const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'
                 <Box py={2}>
                     <Divider />
                     {isLoaded &&
-                    <Box py={1}>
-                       
-                        <GoogleMap
-                            mapContainerStyle={containerStyle}
-                            center={center}
-                            zoom={13}
-                            onLoad={onLoad}
-                            onUnmount={onUnmount}
-                        >
-                            <Polygon paths={polygonCoords} options={options} onClick={handlePolygonClick} />
-                        </GoogleMap>
-                      
-                    </Box> }
-                </Box> 
+                        <Box py={1}>
+
+                            <GoogleMap
+                                mapContainerStyle={containerStyle}
+                                center={center}
+                                zoom={13}
+                                onLoad={onLoad}
+                                onUnmount={onUnmount}
+                            >
+                                <Polygon paths={polygonCoords} options={options} onClick={handlePolygonClick} />
+                            </GoogleMap>
+
+                        </Box>}
+                </Box>
             </CustomBox>
             {/* <CustomBox title='offers & Promotions'>
                 <Grid container spacing={2}>

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useTransition } from 'react'
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
@@ -15,11 +15,14 @@ const AddProducts = () => {
     const router = useRouter()
 
 
+    const [pending, startTransition] = useTransition();
     const [open, setOpen] = useState<boolean>(false)
     const [loading, setLoding] = useState<boolean>(false)
     const [productList, setProductList] = useState<any>([])
-
-    console.log({ productList })
+    const [setSerachList, setSearchList] = useState<any>([])
+  
+ 
+ console.log({productList})
 
     const handleClose = () => {
         setOpen(false)
@@ -38,8 +41,10 @@ const AddProducts = () => {
 
 
     const columns: GridColDef[] = [
-        { field: 'product_id', headerName: 'Product ID', flex: 1,headerAlign: 'center',
-        align: 'center',},
+        {
+            field: 'product_id', headerName: 'Product ID', flex: 1, headerAlign: 'center',
+            align: 'center',
+        },
         {
             field: 'name',
             headerName: 'Product Name',
@@ -48,7 +53,7 @@ const AddProducts = () => {
             align: 'center',
 
         },
-   
+
         {
             field: 'Store Name',
             headerName: 'Store Name',
@@ -139,26 +144,16 @@ const AddProducts = () => {
         }
     ];
 
-    const rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-    ];
+
 
 
     const fetchproduct = async () => {
         try {
             setLoding(true)
             const response = await fetchData('/admin/product/list')
-            console.log({response})
+            console.log({ response })
             setProductList(response?.data?.data?.data)
-
+            setSearchList(response.data.data?.data);
         } catch (err: any) {
             setLoding(false)
             toast.error(err?.message)
@@ -168,9 +163,19 @@ const AddProducts = () => {
         }
     }
 
-    useEffect(()=>{
-        fetchproduct()
+
+    const searchProducts = useCallback((value:any) => {
+        let competitiions = setSerachList?.filter((com:any) => com?.name.toString().toLowerCase().includes(value.toLowerCase()) ||
+            com?.product_id.toString().toLowerCase().includes(value.toLowerCase())
+        )
+        startTransition(() => {
+            setProductList(competitiions)
+        })
     },[])
+
+    useEffect(() => {
+        fetchproduct()
+    }, [])
 
 
 
@@ -178,7 +183,7 @@ const AddProducts = () => {
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
-                <CustomTableHeader imprtBtn={true} Headerlabel='Products' onClick={addproductItems} addbtn={true} />
+                <CustomTableHeader setState={searchProducts} imprtBtn={true} Headerlabel='Products' onClick={addproductItems} addbtn={true} />
                 <Box py={3}>
                     <CustomTable dashboard={false} columns={columns} rows={productList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
