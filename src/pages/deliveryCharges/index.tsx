@@ -118,13 +118,13 @@ const DeliveryCharges = () => {
     <Box px={5} py={2} pt={10} mt={0}>
 
     <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-        <CustomTableHeader imprtBtn={false} Headerlabel='Delivery Charges' onClick={()=>null} addbtn={true} />
+        <CustomTableHeader imprtBtn={false} Headerlabel='' onClick={()=>null} addbtn={true} />
         <Box py={5}>
             <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
         </Box>
     </Box>
 
-    {open && <CustomDelete onClose={() => handleClose()} open={open} />}
+    {open && <CustomDelete  _id='' data={''} setData={''} url='' onClose={() => handleClose()} open={open} />}
 </Box>
   )
 }

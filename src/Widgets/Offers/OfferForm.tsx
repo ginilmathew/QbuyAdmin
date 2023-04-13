@@ -84,6 +84,7 @@ const OfferForm = () => {
           </Grid>
           <Grid item xs={12} lg={2.4}>
             <CustomDatePicker
+              values={''}
               changeValue={() => null}
               fieldName='pickupTime'
               control={control}

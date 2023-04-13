@@ -119,7 +119,7 @@ const RateCard = () => {
                     <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
-            {open && <CustomDelete onClose={() => handleClose()} open={open} />}
+            {open && <CustomDelete _id='' data={''} setData={''} url='' onClose={() => handleClose()} open={open} />}
         </Box>
     )
 }
