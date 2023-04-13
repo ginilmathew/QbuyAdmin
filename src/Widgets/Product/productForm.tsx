@@ -338,7 +338,7 @@ const ProductForm = () => {
                 name: get?.franchise_name
             }
         ))
-        setValue('franchisee', e.target.value)
+        setValue('franchisee', result)
         setError('franchisee', { message: '' })
         setFranchiseSelect(e.target.value)
         try {
