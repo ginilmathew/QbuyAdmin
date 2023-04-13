@@ -6,8 +6,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Custombutton from '@/components/Custombutton';
 import Customselect from '@/components/Customselect';
 import { FormInputs } from '@/utilities/types';
-import CustomDatePicker from '@/components/CustomDatePicker';
-import CustomTextarea from '@/components/CustomTextarea';
+
+
 const PandaCoinsForm = () => {
     const { register,
         handleSubmit,

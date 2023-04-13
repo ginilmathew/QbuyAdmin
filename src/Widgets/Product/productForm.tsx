@@ -14,41 +14,199 @@ import { CustomMultipleImageUploader } from '@/components/CustomMultipleImageUpl
 import Custombutton from '@/components/Custombutton';
 import AddIcon from '@mui/icons-material/Add';
 import CustomProductVarient from './CustomProductVarient';
+import { fetchData, postData } from '@/CustomAxios';
+import { toast } from 'react-toastify';
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from 'yup';
+import moment from 'moment'
+import CustomDatePicker from '@/components/CustomDatePicker';
+
+type Inputs = {
+    name: string,
+    description: string,
+    store: any,
+    franchisee: any,
+    weight: string,
+    dimensions: any,
+    width: string,
+    height: string,
+    model: string,
+    type: string,
+    product_type: string,
+    category: any,
+    sub_category: any,
+    display_order: any,
+    panda_suggession: boolean,
+    stock: boolean,
+    stock_value: any,
+    minimum_qty: any,
+    product_availability_from: string,
+    product_availability_to: string,
+    require_shipping: boolean,
+    delivery_locations: any,
+    coupon_details: string,
+    meta_tags: any,
+    image: any,
+    product_image: any,
+    video_link: string,
+    related_products: any,
+    attributess: any,
+    regular_price: any,
+    seller_price: any,
+    offer_price: any,
+    offer_date: any,
+    variant: boolean,
+    offer_date_from: any,
+    offer_date_to: any,
+    stock_values: string,
+    application_type: string
+}
+
+type IFormInput = {
+    name: string,
+    description: string,
+    store: any,
+    franchisee: any,
+    weight: string,
+    dimensions: any,
+    width: string,
+    height: string,
+    model: string,
+    type: string,
+    product_type: string,
+    category: any,
+    sub_category: any,
+    display_order: any,
+    panda_suggession: boolean,
+    stock: boolean,
+    stock_value: any,
+    minimum_qty: any,
+    product_availability_from: string,
+    product_availability_to: string,
+    require_shipping: boolean,
+    delivery_locations: any,
+    coupon_details: string,
+    meta_tags: any,
+    image: any,
+    product_image: any,
+    video_link: string,
+    related_products: any,
+    attributess: any,
+    regular_price: any,
+    seller_price: any,
+    offer_price: any,
+    offer_date: any,
+    variant: boolean,
+    offer_date_from: any,
+    offer_date_to: any,
+    stock_values: string,
+    application_type: string
+}
 
 const ProductForm = () => {
-
-    const [franchise, setFranchise] = useState<string>('')
+    const [multipleImage, setMultipleImage] = useState<any>([])
+    const [loading, setLoading] = useState<boolean>(false)
     const [stock, setStock] = useState<boolean>(false)
     const [addvarient, setAddVarient] = useState<boolean>(false)
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [attributes, setAttributes] = useState<any>([])
     const [productTag, setProductTag] = useState<any>([])
     const [productTagValue, setProductTagValue] = useState<any>([])
+    const [metaTagValue, setmetaTagValue] = useState<any>([])
+    const [metaTag, setMetaTag] = useState<any>([])
     const [attributeTag, setattributeTag] = useState<any>([])
     const [attributeTagValue, setattributeTagValue] = useState<any | null>(null)
     const [index, setIndex] = useState<number>(0)
     const [confirmbtn, setConfirmBtn] = useState(false)
     const [varients, setVarients] = useState<any>([])
+    const [vendorList, setVendorList] = useState<any>([])
+    const [vendorSelect, setvendorSelect] = useState<any>(null);
+    const [franchiseList, setFranchiseList] = useState<any>([]);
+    const [franchiseSelect, setFranchiseSelect] = useState<any>(null);
+    const [categorySelect, setCategorySelect] = useState<any>(null);
+    const [subcategorySelect, setSubCategorySelect] = useState<any>(null);
+    const [categoryList, setCategoryList] = useState<any>([]);
+    const [subcategoryList, setSubCategoryList] = useState<any>([]);
+    const [selectType, setSelectType] = useState<any>(null);
+    const [pandaSuggesion, setPandaSuggesions] = useState<boolean>(false);
+    const [pandType, setPandType] = useState<any>([
+        {
+            name: 'Qbuy Panda',
+            value: 'panda'
+        },
+        {
+            name: 'Qbuy Green',
+            value: 'green'
+        },
+        {
+            name: 'Qbuy Fashion',
+            value: 'fashion'
+        },
+    ])
+    const [requireShipping, setRequireShipping] = useState<boolean>(false)
 
 
-    console.log({ varients })
 
+    console.log({ attributes })
 
+    const schema = yup
+        .object()
+        .shape({
+            // name: yup.string().required('Required'),
+            // description: yup.string().required('Required'),
+            // weight: yup.string().required('Required'),
+            // model: yup.string().required('Required'),
+            // width: yup.string().required('Required'),
+            // height: yup.string().required('Required'),
+            // display_order: yup.number().nullable().required('Required').typeError("Must be Integer")
+        })
+        .required();
 
     const { register,
         handleSubmit,
         control,
         formState: { errors },
         reset,
-        setValue, } = useForm<FormInputs>();
+        getValues,
+        setValue, } = useForm<Inputs>({
+            resolver: yupResolver(schema),
+            defaultValues: {
+                name: '',
+                description: '',
+                weight: '',
+                model: '',
+                width: '',
+                height: '',
+                display_order: '',
+                panda_suggession: false,
+                stock: false,
+                stock_value: '',
+                franchisee: '',
+                category: '',
+                sub_category: null,
+                store: '',
+                product_image: null,
+                require_shipping: false,
+                video_link: '',
+                related_products: null,
+                image: null
 
-    const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFranchise(e.target.value)
+
+
+            }
+        });
+
+    const onChangeSelectType = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectType(e.target.value)
+        setValue('type', e.target.value)
+
     }
 
+
     const StockCheck = (e: any) => {
-        console.log({ e })
+        setValue('stock', e)
         setStock(e)
+        setValue('stock_value', '')
     }
 
 
@@ -108,17 +266,155 @@ const ProductForm = () => {
     }, []);
 
 
-    const imageUploder = (file: any) => {
+    const imageUploder = async (file: any) => {
         setImagefile(file)
-        console.log({ file })
+        const formData = new FormData();
+        formData.append("image", file);
+        try {
+            setLoading(true)
+            const response = await postData('admin/product/uploadimage', formData)
+            setValue('product_image', response?.data?.data)
+        } catch (err: any) {
+            toast.error(err?.message)
+            setLoading(false)
+        } finally {
+            setLoading(false)
+        }
     }
+
+    const multipleImageUploder = async (image: any) => {
+        setMultipleImage(image)
+    }
+
+    const submitImage = async () => {
+        const formData = new FormData();
+        multipleImage?.map((img: any, i: number) => {
+            formData.append(`image[${i}]`, img.file);
+        })
+        try {
+            setLoading(true)
+            const response = await postData('admin/product/multipleupload', formData)
+            setValue('image', response?.data?.data)
+        } catch (err: any) {
+            toast.error(err?.message)
+            setLoading(false)
+
+        } finally {
+            setLoading(false)
+        }
+
+    }
+
+
+    const getFranchiseList = async () => {
+        try {
+            setLoading(true)
+            const response = await fetchData('/admin/franchise/list')
+            setFranchiseList(response?.data?.data?.data)
+        } catch (err: any) {
+            toast.error(err?.message)
+            setLoading(false)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
+
+    const onselectFranchise = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        let result = franchiseList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
+            {
+                id: get?._id,
+                name: get?.franchise_name
+            }
+        ))
+        setValue('franchisee', result)
+        setFranchiseSelect(e.target.value)
+        try {
+            setLoading(true)
+            const response = await fetchData(`admin/vendor-list/${e.target.value}`)
+            setVendorList(response?.data?.data?.data)
+        } catch (err: any) {
+            toast.error(err.message)
+            setLoading(false)
+        } finally {
+            setLoading(false)
+
+        }
+
+    }
+
+    const onSelectStore = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setvendorSelect(e.target.value)
+        let result = vendorList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
+            {
+                id: get?._id,
+                name: get?.store_name
+            }
+        ))
+        setValue('store', result)
+
+    }
+
+
+
+    const fetchCategoryList = async () => {
+        try {
+            setLoading(true)
+            const response = await fetchData('/admin/category/list')
+            setCategoryList(response?.data?.data?.data)
+        }
+        catch (err: any) {
+            setLoading(false)
+            toast.error(err)
+        }
+        finally {
+            setLoading(false)
+        }
+
+    }
+
+    const onSelectCategory = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCategorySelect(e.target.value)
+        let result = categoryList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
+            {
+                id: get?._id,
+                name: get?.name
+            }
+        ))
+        setValue('category', result)
+        try {
+            setLoading(true)
+            const response = await fetchData(`admin/subcategory-list/${e.target.value}`)
+            setSubCategoryList(response?.data?.data?.data)
+        } catch (err: any) {
+            toast.error(err.message)
+            setLoading(false)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const onSelectSubCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSubCategorySelect(e.target.value)
+        let result = subcategoryList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
+            {
+                id: get?._id,
+                name: get?.name
+            }
+        ))
+        setValue('sub_category', result)
+    }
+
 
 
     const addAtributes = () => {
         // if(attributes?.length  < 2){
-        setAttributes([...attributes, { name: '', content: [], varient: false }])
+        setAttributes([...attributes, { name: '', options: [], varient: false }])
         // }
     }
+
+
 
     const onChangeName = (e: any, i: number) => {
         console.log(e.target.value)
@@ -134,14 +430,51 @@ const ProductForm = () => {
 
     }
 
+    const onCheckShipping = (e: boolean) => {
+        setValue('require_shipping', e)
+        setRequireShipping(e)
+
+    }
+
+
+    const onChangeProductFrom = (e: any) => {
+        setValue('product_availability_from', e)
+
+    }
+
+    const onChangeProductTo = (e: any) => {
+        setValue('product_availability_to', e)
+
+    }
+
+
+    const onCheckPandasuggestion = (e: any) => {
+        setPandaSuggesions(e)
+        setValue('panda_suggession', e)
+    }
+
+    const onChangeOffer_date_from = (e: any) => {
+        setValue('offer_date_from', e)
+    }
+
+    const onChangeOffer_date_to = (e: any) => {
+        console.log({ e })
+        setValue('offer_date_to', e)
+
+    }
+
 
     useEffect(() => {
+        getFranchiseList()
+        fetchCategoryList()
+    }, [])
 
+
+
+    useEffect(() => {
         if (attributeTagValue?.length) {
-            attributes[index].content = [...attributeTagValue]
+            attributes[index].options = [...attributeTagValue]
         }
-
-
     }, [attributeTagValue])
 
 
@@ -157,55 +490,6 @@ const ProductForm = () => {
 
     const ConfirmVarients = () => {
         setConfirmBtn(true)
-
-        // const attributeContent = [];
-        // for (let i = 0; i < attributes?.length; i++) {
-        //     attributeContent[i] = attributes[i].content;
-        // }
-
-        // console.log({attributeContent})
-        // for (let i = 0; i < attributeContent[0]?.length; i++) {
-        //     for (let j = 0; j < attributeContent[1]?.length; j++) {
-        //         for (let k = 0; k < attributeContent[2]?.length; k++) {
-        //             for (let l = 0; l < attributeContent[3]?.length; l++) {
-        //                 let outputString = attributeContent[0][i].title + " " + attributeContent[1][j].title + " " + attributeContent[2][k].title + " " + attributeContent[3][l].title;
-        //                 for (let m = 0; m < attributeContent[3]?.length; m++) {
-        //                     outputString += " " + attributeContent[3][m].title;
-        //                     console.log({ outputString });
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-
-        //loop all attributes
-
-        // let output = [];
-
-
-        // const numIterations = attributes.reduce((acc:any, curr:any) => acc * curr.content.length, 1);
-
-        // for (let i = 0; i < numIterations; i++) {
-        //     let combination = "";
-        //     let remainder = i;
-        //     for (let j = attributes.length - 1; j >= 0; j--) {
-        //         const contentIndex = remainder % attributes[j].content.length;
-        //         combination = attributes[j].content[contentIndex].title + " " + combination;
-        //         remainder = Math.floor(remainder / attributes[j].content.length);
-        //     }
-
-        //     console.log()
-        //     // output += combination.trim() + "\n";
-        //     output.push(combination.trim());
-        //     // output += combination
-
-        // }
-
-        // setVarients(output)
-
-
-
         const output = [];
         setVarients([])
         // Filter attributes array to only include those with variant true
@@ -229,6 +513,109 @@ const ProductForm = () => {
         setVarients(output)
     }
 
+    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+
+        const metatagsres = metaTagValue?.map((res: any) => (
+            res.title
+        ))
+        setValue('meta_tags', metatagsres)
+
+
+        let newData = attributes.map((item: any) => ({
+            "name": item.name,
+            "options": item.options.map((option: any) => option.title)
+        }));
+        let value = {
+            name: data?.name,
+            franchisee: {
+                id: data?.franchisee?.[0]?.id,
+                name: data?.franchisee?.[0]?.name
+            },
+            description: data?.description,
+            store: {
+                id: data?.store?.[0]?.id,
+                name: data?.store?.[0]?.name
+
+            },
+            weight: data?.weight,
+            dimensions: {
+                width: data?.width,
+                height: data?.height
+            },
+            model: data?.model,
+            type: data?.type,
+            product_Type: null,
+            image: data?.image,
+            product_image: data?.product_image,
+            category: {
+                id: data?.category?.[0]?.id,
+                name: data?.category?.[0]?.name
+            },
+            sub_category: {
+                id: data?.sub_category?.[0]?.id,
+                name: data?.sub_category?.[0]?.name
+            },
+            display_order: data?.display_order,
+            panda_suggession: data?.panda_suggession,
+            stock: data?.stock,
+            stock_value: data?.stock_value,
+            minimum_qty: data?.minimum_qty,
+            product_availability_from: moment(data?.product_availability_from, 'hh:mm A').format('hh:mm'),
+            product_availability_to: moment(data?.product_availability_to, 'hh:mm A').format('hh:mm'),
+            require_shipping: data?.require_shipping,
+            delivery_locations: [
+                [
+                    8.670514,
+                    76.770417
+                ],
+                [
+                    8.770963,
+                    77.179658
+                ],
+                [
+                    8.464103,
+                    77.333466
+                ],
+                [
+                    8.347269,
+                    77.185151
+                ],
+                [
+                    8.311940,
+                    77.064301
+                ],
+                [
+                    8.662368,
+                    76.775910
+                ]
+            ],
+            coupon_details: null,
+            meta_tags: data?.meta_tags,
+            video_link: data?.video_link,
+            related_products: data?.related_products,
+            attributes: newData,
+            regular_price: data?.regular_price,
+            seller_price: data?.seller_price,
+            offer_price: data?.offer_price,
+            offer_date_from: moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY/MM/DD'),
+            offer_date_to: moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY/MM/DD'),
+            variant: false,
+            approval_status: "approved"
+        }
+
+        try {
+            setLoading(true)
+            await postData('admin/product/create', value)
+            toast.success('Created Successfully')
+        } catch (err: any) {
+            toast.error(err?.message)
+            setLoading(false)
+
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <Box>
             <CustomBox title='Product Details'>
@@ -246,50 +633,56 @@ const ProductForm = () => {
                             defaultValue={''}
                         />
                     </Grid>
-
-                    <Grid item xs={12} lg={3}>
-                        <Customselect
-                            type='text'
-                            control={control}
-                            error={errors.storename}
-                            fieldName="storename"
-                            placeholder={``}
-                            fieldLabel={"Store Name"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={'category'}
-                            options={''}
-                            onChangeValue={onChangeSelect}
-                            background={'#fff'}
-                        >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
-                        </Customselect>
-                    </Grid>
                     <Grid item xs={12} lg={3}>
 
                         <Customselect
                             type='text'
                             control={control}
-                            error={errors.franchise}
-                            fieldName="franchise"
+                            error={errors.franchisee}
+                            fieldName="franchisee"
                             placeholder={``}
                             fieldLabel={"Franchise"}
                             selectvalue={""}
                             height={40}
                             label={''}
                             size={16}
-                            value={'category'}
+                            value={franchiseSelect}
                             options={''}
-                            onChangeValue={onChangeSelect}
+                            onChangeValue={onselectFranchise}
                             background={'#fff'}
                         >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                            <MenuItem value="" disabled >
+                                <>Select Franchise</>
+                            </MenuItem>
+                            {franchiseList && franchiseList?.map((res: any) => (
+                                <MenuItem value={res?._id}>{res?.franchise_name}</MenuItem>
+                            ))}
+                        </Customselect>
+                    </Grid>
+
+                    <Grid item xs={12} lg={3}>
+                        <Customselect
+                            type='text'
+                            control={control}
+                            error={errors.store}
+                            fieldName="store"
+                            placeholder={``}
+                            fieldLabel={"Store Name"}
+                            selectvalue={""}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={vendorSelect}
+                            options={''}
+                            onChangeValue={onSelectStore}
+                            background={'#fff'}
+                        >
+                            <MenuItem value="" disabled >
+                                <>Select Store</>
+                            </MenuItem>
+                            {vendorList && vendorList?.map((res: any) => (
+                                <MenuItem value={res?._id}>{res?.store_name}</MenuItem>
+                            ))}
                         </Customselect>
                     </Grid>
                     <Grid item xs={12} lg={3}>
@@ -304,14 +697,16 @@ const ProductForm = () => {
                             height={40}
                             label={''}
                             size={16}
-                            value={'category'}
+                            value={selectType}
                             options={''}
-                            onChangeValue={onChangeSelect}
+                            onChangeValue={onChangeSelectType}
                             background={'#fff'}
                         >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                            {pandType && pandType?.map((res: any) => (
+                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                            ))}
+
+
                         </Customselect>
                     </Grid>
                     <Grid item xs={12} lg={3}>
@@ -326,7 +721,6 @@ const ProductForm = () => {
                             view={false}
                             defaultValue={''}
                         />
-
                     </Grid>
 
                     <Grid item xs={12} lg={1.5}>
@@ -393,14 +787,15 @@ const ProductForm = () => {
                             height={40}
                             label={''}
                             size={16}
-                            value={'category'}
+                            value={categorySelect}
                             options={''}
-                            onChangeValue={onChangeSelect}
+                            onChangeValue={onSelectCategory}
                             background={'#fff'}
                         >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                            {categoryList && categoryList?.map((res: any) => (
+                                <MenuItem value={res?._id}>{res?.name}</MenuItem>
+                            ))}
+
                         </Customselect>
                     </Grid>
 
@@ -408,30 +803,30 @@ const ProductForm = () => {
                         <Customselect
                             type='text'
                             control={control}
-                            error={errors.subcategory}
-                            fieldName="subcategory"
+                            error={errors.sub_category}
+                            fieldName="sub_category"
                             placeholder={``}
                             fieldLabel={"SubCategory"}
                             selectvalue={""}
                             height={40}
                             label={''}
                             size={16}
-                            value={'subcategory'}
+                            value={subcategorySelect}
                             options={''}
-                            onChangeValue={onChangeSelect}
+                            onChangeValue={onSelectSubCategory}
                             background={'#fff'}
                         >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                            {subcategoryList && subcategoryList?.map((res: any) => (
+                                <MenuItem value={res?._id}>{res?.name}</MenuItem>
+                            ))}
                         </Customselect>
                     </Grid>
                     <Grid item xs={12} lg={3}>
                         <CustomInput
                             type='text'
                             control={control}
-                            error={errors.order}
-                            fieldName="order"
+                            error={errors.display_order}
+                            fieldName="display_order"
                             placeholder={``}
                             fieldLabel={"Display Order(Homepage)"}
                             disabled={false}
@@ -441,7 +836,7 @@ const ProductForm = () => {
                     </Grid>
                     <Grid item xs={12} lg={3}>
                         <Typography mb={3}></Typography>
-                        <CustomCheckBox isChecked={true} label='' onChange={() => null} title='Panda Suggestion' />
+                        <CustomCheckBox isChecked={pandaSuggesion} label='' onChange={onCheckPandasuggestion} title='Panda Suggestion' />
                     </Grid>
                     <Grid item xs={12} lg={3}>
                         <Typography mb={3}></Typography>
@@ -452,8 +847,8 @@ const ProductForm = () => {
                             <CustomInput
                                 type='text'
                                 control={control}
-                                error={errors.stock}
-                                fieldName="stock"
+                                error={errors.stock_value}
+                                fieldName="stock_value"
                                 placeholder={``}
                                 fieldLabel={"Stock"}
                                 disabled={false}
@@ -465,8 +860,8 @@ const ProductForm = () => {
                         <CustomInput
                             type='text'
                             control={control}
-                            error={errors.minquantity}
-                            fieldName="minquantity"
+                            error={errors.minimum_qty}
+                            fieldName="minimum_qty"
                             placeholder={``}
                             fieldLabel={"Minimum Quantity (Optional)"}
                             disabled={false}
@@ -474,14 +869,14 @@ const ProductForm = () => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={3}>
+                    {/* <Grid item xs={12} lg={3}>
                         <CustomAutoComplete fieldLabel='Product Tag' list={productTag} setValues={setProductTagValue} onChnageValues={() => null} />
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} lg={3}>
                         <CustomImageUploader
                             ICON={""}
-                            error={errors.productimage}
-                            fieldName="productimage"
+                            error={errors.image}
+                            fieldName="image"
                             placeholder={``}
                             fieldLabel={"Product Image"}
                             control={control}
@@ -503,24 +898,24 @@ const ProductForm = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={1.8}>
                         <CustomTimepicker
-                            changeValue={() => null}
-                            fieldName='pickupTime'
+                            changeValue={onChangeProductFrom}
+                            fieldName='product_availability_from'
                             control={control}
-                            error={errors.pickupTime}
+                            error={errors.product_availability_from}
                             fieldLabel={'Product Availibility'} />
                     </Grid>
                     <Grid item xs={12} lg={1.8}>
                         <Typography mb={3}></Typography>
                         <CustomTimepicker
-                            changeValue={() => null}
-                            fieldName='dropTime'
+                            changeValue={onChangeProductTo}
+                            fieldName='product_availability_to'
                             control={control}
-                            error={errors.dropTime}
+                            error={errors.product_availability_to}
                             fieldLabel={''} />
                     </Grid>
                     <Grid item xs={12} lg={3}>
                         <Typography mb={3}></Typography>
-                        <CustomCheckBox isChecked={true} label='' onChange={() => null} title='Requires Shipping' />
+                        <CustomCheckBox isChecked={requireShipping} label='' onChange={onCheckShipping} title='Requires Shipping' />
                     </Grid>
                 </Grid>
                 <Box py={2}>
@@ -552,7 +947,7 @@ const ProductForm = () => {
                     </Box>
                 </Box>
             </CustomBox>
-            <CustomBox title='offers & Promotions'>
+            {/* <CustomBox title='offers & Promotions'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={3}>
                         <CustomInput
@@ -644,23 +1039,14 @@ const ProductForm = () => {
                         />
                     </Grid>
                 </Grid>
-            </CustomBox>
+            </CustomBox> */}
             <CustomBox title='Additional Options'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={6}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
-                            placeholder={``}
-                            fieldLabel={"Meta Tags"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
+                        <CustomAutoComplete fieldLabel='Meta Tag' list={metaTag} setValues={setmetaTagValue} onChnageValues={() => null} />
                     </Grid>
-                    <Grid item xs={12} lg={3}>
+
+                    {/* <Grid item xs={12} lg={3}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -672,13 +1058,13 @@ const ProductForm = () => {
                             view={false}
                             defaultValue={''}
                         />
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} lg={3}>
                         <CustomInput
                             type='text'
                             control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
+                            error={errors.video_link}
+                            fieldName="video_link"
                             placeholder={``}
                             fieldLabel={"Product Video Link"}
                             disabled={false}
@@ -687,15 +1073,20 @@ const ProductForm = () => {
                         />
                     </Grid>
                     <Grid item xs={12} lg={6}>
-                        <CustomMultipleImageUploader fieldLabel='Add Additional Images' />
+                        <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />
+                        {multipleImage?.length > 0 &&
+                            <Box py={1}>
+                                <Custombutton btncolor='' disabled={loading} height={40} endIcon={false} startIcon={false} label={'Submit'} onClick={submitImage} IconEnd={''} IconStart={''} />
+                            </Box>}
+
                     </Grid>
                     <Grid item xs={12} lg={6}>
                         <CustomInput
                             disabled={false}
                             type='text'
                             control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
+                            error={errors.related_products}
+                            fieldName="related_products"
                             placeholder={``}
                             fieldLabel={"Related Products"}
                             view={false}
@@ -716,8 +1107,8 @@ const ProductForm = () => {
                                 disabled={false}
                                 type='text'
                                 control={control}
-                                error={errors.atrributeName}
-                                fieldName="atrributeName"
+                                error={errors.attributess}
+                                fieldName="attributess"
                                 placeholder={``}
                                 fieldLabel={"Name"}
                                 view={false}
@@ -749,8 +1140,8 @@ const ProductForm = () => {
                                     disabled={false}
                                     type='text'
                                     control={control}
-                                    error={errors.product_offer}
-                                    fieldName="product_offer"
+                                    error={errors.seller_price}
+                                    fieldName="seller_price"
                                     placeholder={``}
                                     fieldLabel={"Selling Price"}
                                     view={false}
@@ -762,8 +1153,8 @@ const ProductForm = () => {
                                     disabled={false}
                                     type='text'
                                     control={control}
-                                    error={errors.product_offer}
-                                    fieldName="product_offer"
+                                    error={errors.offer_price}
+                                    fieldName="offer_price"
                                     placeholder={``}
                                     fieldLabel={"Offer Price"}
                                     view={false}
@@ -775,8 +1166,8 @@ const ProductForm = () => {
                                     disabled={false}
                                     type='text'
                                     control={control}
-                                    error={errors.product_offer}
-                                    fieldName="product_offer"
+                                    error={errors.regular_price}
+                                    fieldName="regular_price"
                                     placeholder={``}
                                     fieldLabel={"Purchase Price"}
                                     view={false}
@@ -785,44 +1176,28 @@ const ProductForm = () => {
                             </Grid>
 
                             <Grid item lg={2} xs={12}>
-                                <CustomInput
-                                    disabled={false}
-                                    type='text'
+                                <CustomDatePicker
+                                    values={getValues('offer_date_from')}
+                                    changeValue={onChangeOffer_date_from}
+                                    fieldName='offer_date_from'
                                     control={control}
-                                    error={errors.product_offer}
-                                    fieldName="product_offer"
-                                    placeholder={``}
-                                    fieldLabel={"Offer From"}
-                                    view={false}
-                                    defaultValue={''}
+                                    error={errors.offer_date_from}
+                                    fieldLabel={'Offer From'}
                                 />
+
                             </Grid>
                             <Grid item lg={2} xs={12}>
-                                <CustomInput
-                                    disabled={false}
-                                    type='text'
+                                <CustomDatePicker
+                                    values={getValues('offer_date_to')}
+                                    changeValue={onChangeOffer_date_to}
+                                    fieldName='offer_date_to'
                                     control={control}
-                                    error={errors.product_offer}
-                                    fieldName="product_offer"
-                                    placeholder={``}
-                                    fieldLabel={"Offer To"}
-                                    view={false}
-                                    defaultValue={''}
+                                    error={errors.offer_date_to}
+                                    fieldLabel={'Offer To'}
                                 />
+
                             </Grid>
-                            <Grid item lg={2} xs={12}>
-                                <CustomInput
-                                    disabled={false}
-                                    type='text'
-                                    control={control}
-                                    error={errors.product_offer}
-                                    fieldName="product_offer"
-                                    placeholder={``}
-                                    fieldLabel={"Stock"}
-                                    view={false}
-                                    defaultValue={''}
-                                />
-                            </Grid>
+
                         </Grid>}
                     {attributes?.some((res: any) => res.varient === true) && confirmbtn &&
                         <Box>
@@ -833,10 +1208,15 @@ const ProductForm = () => {
                     }
                 </CustomBox>}
             <Box py={3}>
-                <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Product'} onClick={() => null} />
+                <Custombutton  disabled={loading} btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Product'} onClick={handleSubmit(onSubmit)} />
             </Box>
         </Box>
     )
 }
 
 export default ProductForm
+
+
+
+
+

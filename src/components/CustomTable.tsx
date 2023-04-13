@@ -25,18 +25,18 @@ const CustomTable = ({ columns, rows, id, bg, label, dashboard }: props) => {
     return (
         <>
             {dashboard &&
-                <Box height={`"95vh" / ${3}`} display={'flex'} justifyContent={'space-between'} alignItems={'center'} bgcolor={'#fff'} px={2} py={1} borderRadius={'5px 5px 0px 0px'}>
+                <Box  display={'flex'} justifyContent={'space-between'} alignItems={'center'} bgcolor={'#fff'} px={2} py={1} borderRadius={'5px 5px 0px 0px'}>
                     <Typography> <span style={{ borderBottom: '3px solid #58d36e', paddingBottom: 2 ,fontFamily:`'Poppins' sans-serif`,}}>{texttruncate}</span>{custtext}</Typography>
                     <Custombutton
                         btncolor=''
-                        height={"100%"}
+                        height={""}
                         IconEnd={""}
                         IconStart={''}
                         startIcon={false}
                         endIcon={false}
                         label='View All' onClick={() => null} />
                 </Box>}
-            <Box height={dashboard ? 215 : '65vh'} boxShadow={dashboard ? 'rgba(17, 12, 46, 0.15) 0px 48px 100px 0px' : 0}>
+            <Box height={dashboard ? 215 : '63vh'} boxShadow={dashboard ? 'rgba(17, 12, 46, 0.15) 0px 48px 100px 0px' : 0}>
                 <DataGrid
                     style={{
                         background: "#ffff",

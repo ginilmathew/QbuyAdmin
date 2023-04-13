@@ -10,7 +10,7 @@ export const Admin_item = [
     {
         id: 2,
         item: "Shipments",
-        path:'/dashboard'
+        path:'/shipments'
     },
     {
         id: 3,
@@ -44,7 +44,7 @@ export const Admin_item = [
     {
         id: 4,
         item: "Revenue",
-        path:'',
+        path:'/revenue',
     },
     {
         id: 5,
@@ -71,12 +71,12 @@ export const Admin_item = [
     {
         id: 6,
         item: "Multivendor",
-        path:'',
+        path:'/multivendor',
     },
     {
         id: 7,
         item: "Pick Up & Drop",
-        path:null,
+        path:"/pickupAndDrop",
     },
     {
         id: 8,
@@ -149,8 +149,13 @@ export const Admin_item = [
     {
         id: 9,
         item: "User Management",
+<<<<<<< HEAD
         path:'/dashboard',
             
+=======
+        path:'/userManagement',
+        
+>>>>>>> 3b9d931c45ba98e365e178e82f556aa983c73ff4
     },
     {
         id: 10,
@@ -160,52 +165,52 @@ export const Admin_item = [
             {
               id:10.1,
               item:'Slider Management',
-              path:'/dashboard',
+              path:'/sliderManagement',
             },
             {
                 id:10.2,
                 item:'Feedbacks',
-                path:'/dashboard',
+                path:'/feedbacks',
               },
               {
                 id:10.3,
                 item:'Message Banner',
-                path:'/dashboard',
+                path:'/messageBanner',
               },
               {
                 id:10.4,
                 item:'Rush Hour',
-                path:'/dashboard',
+                path:'/rushHour',
               },
               {
                 id:10.5,
                 item:'Attendance',
-                path:'/dashboard',
+                path:'/attendance',
               },
               {
                 id:10.6,
                 item:'Rate Card',
-                path:'/dashboard',
+                path:'/rateCard',
               },
               {
                 id:10.7,
                 item:'Pickup & Drop Charges',
-                path:'/dashboard',
+                path:'/pickupAndDropCharges',
               },
               {
                 id:10.8,
                 item:'Delivery Charges',
-                path:'/dashboard',
+                path:'/deliveryCharges',
               },
               {
                 id:10.9,
                 item:'Extra Charges',
-                path:'/dashboard',
+                path:'/extraCharges',
               },
               {
                 id:10.9,
                 item:'Order Assign Criteria',
-                path:'/dashboard',
+                path:'/orderAssignCriteria',
               },
         ]
     },
@@ -269,12 +274,12 @@ export const sales_item = [
             {
                 id:4.1,
                 item:"Merchant Marketing",
-                path:'/dashboard',
+                path:'/merchantMarketing',
             },
             {
                 id:4.2,
                 item:"Franchisee Marketing",
-                path:'/dashboard',
+                path:'/franchiseMarketing',
             },
         ]
     },
@@ -310,42 +315,42 @@ export const Logs_item = [
     {
         id: 1,
         item: "Smart Suggest List",
-        path:'/dashboard',
+        path:'/smartSuggestList',
     },
     {
         id: 2,
         item: "Rider Onboarding",
-        path:'/dashboard',
+        path:'/riderOnboarding',
     },
     {
         id: 3,
         item: "Onboarding List",
-        path:'/dashboard',
+        path:'/onboardingList',
     },
     {
         id: 4,
         item: "Delivery Riders",
-        path:'/dashboard',
+        path:'/deliveryRiders',
     },
     {
         id: 5,
         item: "Rider Lifecycle",
-        path:'/dashboard',
+        path:'/riderLifecycle',
     },
     {
         id: 6,
         item: "Rider Support",
-        path:'/dashboard',
+        path:'/riderSupport',
     },
     {
         id: 7,
         item: "Rider Summary",
-        path:'/dashboard',
+        path:'/riderSummary',
     },
     {
         id: 8,
         item: "Rider Referrals",
-        path:'/dashboard',
+        path:'/riderRefferal',
     },
 
 

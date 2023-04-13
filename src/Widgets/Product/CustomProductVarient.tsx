@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Box, Divider, Grid, MenuItem, Typography } from '@mui/material'
 import { Content } from 'next/font/google'
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -12,7 +12,7 @@ type props = {
 
 
 
-const CustomProductVarient = ({ content, index }: props) => {
+const CustomProductVarient =memo(({ content, index }: props) => {
 
     const { register,
         handleSubmit,
@@ -67,6 +67,7 @@ const CustomProductVarient = ({ content, index }: props) => {
 
                 <Grid item lg={2} xs={12}>
                     < CustomDatePicker
+                        values={''}
                         changeValue={() => null}
                         fieldName='pickupTime'
                         control={control}
@@ -76,6 +77,7 @@ const CustomProductVarient = ({ content, index }: props) => {
                 </Grid>
                 <Grid item lg={2} xs={12}>
                     <CustomDatePicker
+                      values={''}
                         changeValue={() => null}
                         fieldName='pickupTime'
                         control={control}
@@ -99,6 +101,6 @@ const CustomProductVarient = ({ content, index }: props) => {
             </Grid>
         </Box>
     )
-}
+})
 
 export default CustomProductVarient

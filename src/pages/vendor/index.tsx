@@ -1,70 +1,100 @@
 import CustomTable from '@/components/CustomTable'
 import CustomTableHeader from '@/Widgets/CustomTableHeader'
-import { Box, Stack } from '@mui/material'
-import React from 'react'
+import { Box, Stack, Typography } from '@mui/material'
+import React, { useEffect, useState, useCallback } from 'react'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useRouter } from 'next/router';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
+import { fetchData } from '@/CustomAxios';
+import { toast } from 'react-toastify';
+import CustomDelete from '@/Widgets/CustomDelete';
 
 const VendorSignup = () => {
 
     const router = useRouter();
 
+    const [vendorList, setVendorList] = useState([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [open, setOpen] = useState<boolean>(false);
+    const [_id, set_id] = useState<string>('');
+
+
+    console.log({ vendorList })
+
     const columns: GridColDef[] = [
-        { field: ' Vendor ID', headerName: 'Vendor ID', flex: 1, },
         {
-            field: 'Vendor Name',
+            field: 'vendor_id', headerName: 'Vendor ID', flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
+            field: 'vendor_name',
             headerName: 'Vendor Name',
             flex: 1,
-            editable: true,
+            headerAlign: 'center',
+            align: 'center',
         },
         {
-            field: 'Contact No',
+            field: 'vendor_mobile',
             headerName: 'Contact No.',
             flex: 1,
-            editable: true,
+            headerAlign: 'center',
+            align: 'center',
         },
         {
-            field: 'Store Name',
+            field: 'store_name',
             headerName: 'Store Name',
-            type: 'number',
             flex: 1,
-          
+            headerAlign: 'center',
+            align: 'center',
+
         },
         {
             field: 'Category',
             headerName: 'category',
             flex: 1,
+            headerAlign: 'center',
+            align: 'center',
             valueGetter: (params: GridValueGetterParams) =>
-                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+                `${params.row.category?.name}`,
         },
         {
-            field: 'Location',
+            field: 'delivery_location',
             headerName: 'Location',
             flex: 1,
-            valueGetter: (params: GridValueGetterParams) =>
-                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+            headerAlign: 'center',
+            align: 'center',
+
         },
         {
             field: 'Approval Status',
             headerName: 'Approval Status',
             flex: 1,
+            headerAlign: 'center',
+            align: 'center',
             valueGetter: (params: GridValueGetterParams) =>
                 `${params.row.firstName || ''} ${params.row.lastName || ''}`,
         },
         {
-            field: 'Status',
+            field: 'status',
             headerName: 'Status',
             flex: 1,
-            valueGetter: (params: GridValueGetterParams) =>
-                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+            headerAlign: 'center',
+            align: 'center',
+            renderCell: ({ row }) => (
+                <Stack>
+                    <Typography variant="body1" sx={{ color: '#58D36E' }} fontSize={14} letterSpacing={.5} >{row?.status === 'active' ? "ONLINE" : ''}</Typography>
+                </Stack>
+            )
         },
         {
             field: 'Actions',
             headerName: 'Actions',
             width: 200,
+            headerAlign: 'center',
+            align: 'center',
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
@@ -81,7 +111,7 @@ const VendorSignup = () => {
                         }}
                     />
                     <DeleteOutlineTwoToneIcon
-
+                        onClick={() => handleOpen(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -103,7 +133,40 @@ const VendorSignup = () => {
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
     ];
 
-    const addvaendor = ()=>{
+    const fetchVendorList = useCallback(async () => {
+        try {
+            setLoading(true)
+            const response = await fetchData('/admin/vendor/list')
+            setVendorList(response?.data?.data?.data)
+        }
+        catch (err: any) {
+            setLoading(false)
+            toast.error(err)
+        }
+        finally {
+            setLoading(false)
+        }
+
+    }, [vendorList])
+
+
+    useEffect(() => {
+        fetchVendorList()
+    }, [])
+
+
+
+    const handleClose = () => {
+        setOpen(false)
+    }
+
+    const handleOpen = (id: any) => {
+        set_id(id)
+        setOpen(true)
+    }
+
+
+    const addvaendor = () => {
         router.push('/vendor/addVendor')
 
     }
@@ -111,13 +174,19 @@ const VendorSignup = () => {
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
-            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-
+            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader addbtn={true} imprtBtn={false} Headerlabel='Vendor Signup' onClick={addvaendor} />
-                <Box py={5}>
-                 <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity'/>
+                <Box py={3}>
+                    <CustomTable dashboard={false} columns={columns} rows={vendorList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
+            {open && <CustomDelete
+                _id={_id}
+                setData={setVendorList}
+                data={vendorList}
+                url={`/admin/vendor/delete/${_id}`}
+                onClose={handleClose}
+                open={open} />}
         </Box>
     )
 }

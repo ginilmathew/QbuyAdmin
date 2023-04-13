@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,memo } from 'react'
 import { Controller } from "react-hook-form";
 import { Avatar, Box, FormGroup, styled } from "@mui/material";
 import TextField from "@mui/material/TextField";
@@ -18,7 +18,7 @@ type Inputs = {
 
 
 
-const CustomLoginInput = ({ control, fieldName, placeholder, error, Icon, type }: Inputs) => {
+const CustomLoginInput = memo(({ control, fieldName, placeholder, error, Icon, type }: Inputs) => {
 
     const [show, setShow] = useState<boolean>(false)
 
@@ -67,8 +67,9 @@ const CustomLoginInput = ({ control, fieldName, placeholder, error, Icon, type }
                         style={{
                             color: "red",
                             display: "flex",
-                            paddingLeft: "10px",
+                            paddingLeft: "5px",
                             fontSize: "12px",
+                            fontFamily:`'Poppins' sans-serif`
                         }}
                     >
                         {error?.message}
@@ -77,6 +78,6 @@ const CustomLoginInput = ({ control, fieldName, placeholder, error, Icon, type }
             </FormGroup>
         </>
     )
-}
+})
 
 export default CustomLoginInput

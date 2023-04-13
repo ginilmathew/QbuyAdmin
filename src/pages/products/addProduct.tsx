@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Box } from '@mui/material'
 import ProductForm from '@/Widgets/Product/productForm'
 import CustomHeaderBack from '@/Widgets/CustomHeaderBack'

@@ -51,7 +51,7 @@ const CustomImageUploader = ({
     return (
         <>
             <FormGroup>
-            <Typography letterSpacing={1} px={'3px'} mb={'3px'}
+            <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
                 sx={{
                     fontSize: {
                         lg: 16,

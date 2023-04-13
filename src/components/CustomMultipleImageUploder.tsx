@@ -5,6 +5,7 @@ import { Avatar, Box, FormGroup, styled, Typography, Button } from "@mui/materia
 import Custombutton from './Custombutton';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
+import { AnyARecord } from 'dns';
 
 
 const MAX_IMAGES = 5;
@@ -12,23 +13,26 @@ const MAX_IMAGE_SIZE = 5242880; // 5 MB in bytes
 
 type props = {
     fieldLabel: string
+    onChangeImage?:any,
+    state:any,
 }
 
-export const CustomMultipleImageUploader = ({ fieldLabel }: props) => {
-    const [images, setImages] = React.useState([]);
+export const CustomMultipleImageUploader = ({ fieldLabel ,onChangeImage,state}: props) => {
+    // const [images, setImages] = React.useState([]);
     const maxNumber = 10;
 
-    const onChange = (imageList: any, addUpdateIndex: any) => {
-        // data for submit
-        console.log(imageList, addUpdateIndex);
-        setImages(imageList);
-    };
+
+    // const onChangeImage = (imageList: any, addUpdateIndex: any) => {
+    //     // data for submit
+    //     console.log(imageList, addUpdateIndex);
+    //     setImages(imageList);
+    // };
     return (
         <>
             <ImageUploading
                 multiple
-                value={images}
-                onChange={onChange}
+                value={state}
+                onChange={onChangeImage}
                 maxNumber={maxNumber}
                 dataURLKey="data_url"
             >
@@ -43,7 +47,7 @@ export const CustomMultipleImageUploader = ({ fieldLabel }: props) => {
                 }) => (
                     <Box >
                         <Box py={1} display={'flex'} justifyContent={'space-between'}>
-                            <Typography letterSpacing={1} px={'3px'} mb={'3px'}
+                            <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
                                 sx={{
                                     fontSize: {
                                         lg: 16,

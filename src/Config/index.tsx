@@ -8,7 +8,7 @@ export const env = "dev"
 
 const URLS = {
     live: "https://api.fast2fastpay.com/",
-    dev: "http://18.220.19.226:3010/"
+    dev: "https://apiqbuypanda.diginestsolutions.in/public/api/"
 }
 const url = {
     dev: "https://apibulletinly.diginestsolutions.in/public/api",

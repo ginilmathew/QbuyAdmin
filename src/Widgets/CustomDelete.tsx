@@ -1,5 +1,5 @@
 import { Box, Dialog, Typography } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
@@ -7,13 +7,43 @@ import DialogTitle from '@mui/material/DialogTitle';
 import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 import PriorityHighRoundedIcon from '@mui/icons-material/PriorityHighRounded';
 import Custombutton from '@/components/Custombutton';
+import { deleteData } from '@/CustomAxios';
+import { toast } from 'react-toastify';
+
+
 interface SimpleDialogProps {
     open: boolean;
     onClose: any;
+    url: string;
+    setData: any,
+    data: any,
+    _id: string
+
 }
 
+const CustomDelete = ({ open, onClose, url, setData, data, _id }: SimpleDialogProps) => {
+    const [loading, setLoading] = useState<boolean>(false)
 
-const CustomDelete = ({ open, onClose }: SimpleDialogProps) => {
+    const handleDelete = async () => {
+        try {
+            setLoading(true)
+            await deleteData(url)
+            let filter = data?.filter((res: any) => res?._id !== _id)
+            setData(filter)
+            toast.success('Deleted Successfully')
+            setLoading(false)
+            onClose()
+        } catch (err: any) {
+            toast.error(err?.message)
+            setLoading(false)
+
+        } finally {
+            setLoading(false)
+        }
+
+
+    }
+
     return (
         <Dialog
             maxWidth={'xs'}
@@ -31,22 +61,23 @@ const CustomDelete = ({ open, onClose }: SimpleDialogProps) => {
                 </Box>
                 <DialogContentText id="alert-dialog-description">
                     <Box py={1} display={'flex'} justifyContent={'center'}>
-                        <Typography variant="body1" color="#000" fontFamily={`'Poppins' sans-serif`} fontSize={28} fontWeight={'bold'}>Delete Order</Typography>
+                        <Typography variant="body1" color="#000" fontFamily={`'Poppins' sans-serif`} fontSize={24} fontWeight={'bold'}>Delete Order</Typography>
                     </Box>
                     <Box display={'flex'} justifyContent={'center'}>
-                        <Typography width={'70%'} textAlign={'center'} fontFamily={`'Poppins' sans-serif`} fontSize={22} fontWeight={'bold'}>Are you sure you want to delete this order?</Typography>
+                        <Typography width={'70%'} textAlign={'center'} fontFamily={`'Poppins' sans-serif`} fontSize={18} fontWeight={'bold'}>Are you sure you want to delete this order?</Typography>
 
                     </Box>
                 </DialogContentText>
                 <Box display={'flex'} justifyContent={'center'} py={1} >
                     <Custombutton
+                        disabled={loading}
                         btncolor=''
                         height={40}
                         IconEnd={""}
                         IconStart={''}
                         startIcon={false}
                         endIcon={false}
-                        onClick={() => null}
+                        onClick={handleDelete}
                         label='Yes' />
                 </Box>
             </DialogContent>

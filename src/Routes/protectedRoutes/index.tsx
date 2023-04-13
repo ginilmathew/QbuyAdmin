@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useEffect, useState, useContext } from 'react'
+import { useRouter } from 'next/router';
+import UserContext from '@/helpers/user';
 
 
 type ProtectedRouteProps = {
@@ -8,11 +9,11 @@ type ProtectedRouteProps = {
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     const router = useRouter()
+    const userContext = useContext(UserContext);
 
-    const [token, setToken] = useState(true)
-
-    useLayoutEffect(() => {
-        if (!token) {
+    useEffect(() => {
+        let token = localStorage.getItem("token")
+        if (!token && !userContext.user) {
             router.push('/login')
         }
     }, [])

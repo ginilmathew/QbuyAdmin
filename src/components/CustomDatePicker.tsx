@@ -4,13 +4,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Controller } from "react-hook-form";
 import { Avatar, Box, FormGroup, styled, Typography } from "@mui/material";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 type props = {
     fieldName: string,
     control: any,
     fieldLabel: string,
     error: any,
     changeValue: (value: any) => void,
+    values:any
 
 }
 
@@ -20,12 +21,13 @@ const CustomDatePicker = ({
     control,
     fieldLabel,
     error,
+    values,
     changeValue,
 }: props) => {
     return (
         <>
             <FormGroup>
-                <Typography letterSpacing={1} px={'3px'} mb={'1px'}
+                <Typography letterSpacing={.5} px={'3px'} mb={'1px'}
                     sx={{
                         fontSize: {
                             lg: 16,
@@ -41,7 +43,7 @@ const CustomDatePicker = ({
                     name={fieldName}
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <LocalizationProvider dateAdapter={AdapterMoment}>
                        
                                 <DatePicker 
                                   sx={{
@@ -50,7 +52,7 @@ const CustomDatePicker = ({
                                     }
                                 }}
 
-                                value={value}
+                                value={values ? values : value}
                                 onChange={changeValue ? (e: any) => changeValue(e) : onChange}
                                  />
                         
