@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import moment from 'moment'
+import CustomMultiselect from '@/components/CustomMultiselect';
 
 
 
@@ -27,7 +28,7 @@ type Inputs = {
     store_name: string,
     store_address: string,
     franchise_id: string,
-    category_id: string,
+    category_id: any,
     start_time: any,
     end_time: any,
     store_logo: any,
@@ -53,7 +54,7 @@ type IFormInput = {
     store_name: string,
     store_address: string,
     franchise_id: string,
-    category_id: string,
+    category_id: any,
     start_time: any,
     end_time: any,
     store_logo: any,
@@ -72,42 +73,44 @@ type IFormInput = {
 };
 
 const Vendorform = () => {
-   
+
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [category, setCategory] = useState<string>('')
     const [franchise, setFranchise] = useState<string>('')
     const [getfranchise, setGetFranchise] = useState<any>([])
     const [getcategory, setGetCategory] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
-  
+    const [multpleArray, setMultipleArray] = useState<any>([]);
+    const [postArray, setPostArray] = React.useState<any>([]);
+
+
+    console.log({ postArray })
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
     const schema = yup
         .object()
         .shape({
-            vendor_name: yup.string().required('Required'),
-            vendor_email: yup.string().email("Email must be a valid email").required('Required'),
-            vendor_mobile: yup.string().min(10,'Phone number is not valid').matches(phoneRegExp, 'Phone number is not valid').required(' Required'),
-            store_name: yup.string().required('Required'),
-            store_address: yup.string().required('Required'),
-            franchise_id: yup.string().required('Required'),
-            category_id: yup.string().required('Required'),
+            vendor_name: yup.string().required('Vendor Name is Required'),
+            vendor_email: yup.string().email("Email must be a valid email").required('Email is Required'),
+            vendor_mobile: yup.string().min(10, 'Phone number is not valid').matches(phoneRegExp, 'Phone number is not valid').required('Mobile Number is  Required'),
+            store_name: yup.string().required('Store Name is Required'),
+            store_address: yup.string().required('Store Address is Required'),
+            franchise_id: yup.string().required('Franchise is  Required'),
+            category_id: yup.array().typeError('Category is Required').required('Category is Required'),
             start_time: yup.string().required('Required'),
             end_time: yup.string().required('Required'),
-            store_logo: yup.string().required('Required'),
+            store_logo: yup.string().required('Logo is Required'),
             // coordinates: any,
-            license_number: yup.string().required('Required'),
-            ffsai_number: yup.string().required('Required'),
-            pan_card_number: yup.string().required('Required'),
-            aadhar_card_number: yup.string().required('Required'),
-            account_number: yup.string().required('Required'),
-            ifsc: yup.string().required('Required'),
-            branch: yup.string().required('Required'),
-            recipient_name: yup.string().required('Required'),
-            commission: yup.string().required('Required'),
-            offer_description: yup.string().required('Required'),
-            tax: yup.string().required('Required'),
+            license_number: yup.string().required('License Number is Required'),
+            ffsai_number: yup.string().required('FFASI Number is Required'),
+            pan_card_number: yup.string().required('PAN card Number is Required'),
+            aadhar_card_number: yup.string().required('Adhar card Number is Required'),
+            account_number: yup.string().required('Account Number is Required'),
+            ifsc: yup.string().required('IFSC is Required'),
+            branch: yup.string().required('Branch is Required'),
+            recipient_name: yup.string().required('Recipient Name is Required'),
+
 
         })
         .required();
@@ -241,8 +244,6 @@ const Vendorform = () => {
 
     }
 
-
-
     const getFranchiseList = async () => {
         try {
             setLoading(true)
@@ -290,19 +291,42 @@ const Vendorform = () => {
 
 
     const onChangeStartTime = (value: any) => {
-        setValue('start_time',value )
+        setValue('start_time', value)
         setError('start_time', { message: '' })
 
     }
 
     const onChangeEndTime = (value: any) => {
-        setValue('end_time',value)
+        setValue('end_time', value)
         setError('end_time', { message: '' })
     }
 
 
 
 
+    const onChangeMultiple = (event: any) => {
+        const {
+            target: { value },
+        } = event;
+
+        const values = event.target.value
+        let find = getcategory?.filter((res:any, I:number) => event.target.value.includes(res._id))
+        let data = find?.map((res:any) => ({
+          id: res?._id,
+          name: res?.name
+    
+        }))
+        if(data){
+            setValue('category_id',data)
+            setError('category_id', { message: '' })
+          }
+         
+        setPostArray(data)
+        setMultipleArray(
+            values
+        );
+
+    }
 
     const cordinates: any =
         [
@@ -323,9 +347,9 @@ const Vendorform = () => {
         formData.append("store_name", data?.store_name);
         formData.append("store_address", data?.store_address);
         formData.append("franchise_id", data?.franchise_id);
-        formData.append("category_id", data?.category_id);
-        formData.append("start_time", moment(data?.start_time,'hh:mm A').format('hh:mm'));
-        formData.append("end_time", moment(data?.end_time,'hh:mm A').format('hh:mm'));
+        formData.append("category_id", JSON.stringify(data?.category_id));
+        formData.append("start_time", moment(data?.start_time, 'hh:mm A').format('hh:mm'));
+        formData.append("end_time", moment(data?.end_time, 'hh:mm A').format('hh:mm'));
         formData.append("store_logo", data?.store_logo);
         formData.append("license_number", data?.license_number);
         formData.append("ffsai_number", data?.ffsai_number);
@@ -345,6 +369,7 @@ const Vendorform = () => {
             reset()
             setFranchise('')
             setCategory('')
+            setMultipleArray([])
             setLoading(false)
 
         } catch (err: any) {
@@ -460,7 +485,26 @@ const Vendorform = () => {
                             </Customselect>
                         </Grid>
                         <Grid item xs={12} lg={3}>
-                            <Customselect
+                            <CustomMultiselect
+                                multiple={true}
+                                control={control}
+                                error={errors.category_id}
+                                fieldName="category_id"
+                                placeholder={``}
+                                fieldLabel={"Category"}
+                                readOnly={false}
+                                value={multpleArray}
+                                onChangeValue={onChangeMultiple}
+                                type=''
+                            >
+                                <MenuItem value="" disabled >
+                                    <>Select Category</>
+                                </MenuItem>
+                                {getcategory && getcategory.map((res: any) => (
+                                    <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
+                                ))}
+                            </CustomMultiselect>
+                            {/* <Customselect
                                 type='text'
                                 control={control}
                                 error={errors.category_id}
@@ -482,7 +526,7 @@ const Vendorform = () => {
                                 {getcategory && getcategory.map((res: any) => (
                                     <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
                                 ))}
-                            </Customselect>
+                            </Customselect> */}
                         </Grid>
                         <Grid item xs={12} lg={2.1}>
                             <CustomTimepicker

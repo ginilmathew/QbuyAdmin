@@ -12,6 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { fetchData, postData } from '@/CustomAxios';
 import SubCategoryForm from './subCategoryForm';
+import { Message } from '@mui/icons-material';
 
 type Inputs = {
     name: string,
@@ -46,9 +47,9 @@ const CategoryForm = () => {
     const schema = yup
         .object()
         .shape({
-            name: yup.string().required('Required'),
-            type: yup.string().required('Required'),
-            order_number: yup.string().required('Required')
+            name: yup.string().required('Category Name Required'),
+            type: yup.string().required('Type is Required'),
+            order_number: yup.string().required('Order Number is Required')
         })
         .required();
 
@@ -56,6 +57,7 @@ const CategoryForm = () => {
     const { register,
         handleSubmit,
         control,
+        setError,
         formState: { errors },
         reset,
         setValue, } = useForm<Inputs>({
@@ -66,6 +68,8 @@ const CategoryForm = () => {
     const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         settype(e.target.value)
         setValue('type', e.target.value)
+        setError('type', { message: '' })
+
     }
 
     const imageUploder = (file: any) => {

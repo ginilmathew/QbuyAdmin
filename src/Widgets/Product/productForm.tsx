@@ -146,24 +146,23 @@ const ProductForm = () => {
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
 
+    const MAX_FILE_SIZE = 102400; //100KB
 
-    console.log({ varientsarray })
-
+const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
     const schema = yup
         .object()
         .shape({
-            name: yup.string().required('Required'),
-            description: yup.string().required('Required'),
-            weight: yup.string().required('Required'),
-            model: yup.string().required('Required'),
-            width: yup.string().required('Required'),
-            height: yup.string().required('Required'),
-            display_order: yup.number().nullable().required('Required').typeError("Must be Integer"),
-            franchisee: yup.array().required('Required'),
-            store: yup.array().required('Required'),
-            type: yup.string().required('Required'),
-            category: yup.array().required('Required'),
-
+            name: yup.string().required('Product Name Required'),
+            display_order: yup.number().nullable().typeError("Must be Integer"),
+            franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
+            store: yup.array().typeError('Store is Required').required('Store is Required'),
+            type: yup.string().required('Type is Required'),
+            category: yup.array().typeError('Category is Required').required('Category is Required'),
+            product_image:yup
+            .mixed()
+            .required("Product Image is Required"),
+            meta_tags:yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
+           
         })
         .required();
 
@@ -253,7 +252,6 @@ const ProductForm = () => {
         googleMapsApiKey: 'AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I',
     });
 
-    console.log({isLoaded})
 
     const [map, setMap] = React.useState<google.maps.Map | null>(null);
 
@@ -278,6 +276,7 @@ const ProductForm = () => {
             setLoading(true)
             const response = await postData('admin/product/uploadimage', formData)
             setValue('product_image', response?.data?.data)
+            setError('product_image', { message: '' })
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)
@@ -299,6 +298,7 @@ const ProductForm = () => {
             setLoading(true)
             const response = await postData('admin/product/multipleupload', formData)
             setValue('image', response?.data?.data)
+            setError('image', { message: '' })
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)
@@ -390,6 +390,7 @@ const ProductForm = () => {
         ))
         setValue('category', result)
         setError('category', { message: '' })
+        setSubCategoryList([])
         try {
             setLoading(true)
             const response = await fetchData(`admin/subcategory-list/${e.target.value}`)
@@ -849,7 +850,7 @@ const ProductForm = () => {
                         </Customselect>
                     </Grid>
 
-                    <Grid item xs={12} lg={3}>
+                   {subcategoryList?.length > 0 && <Grid item xs={12} lg={3}>
                         <Customselect
                             disabled={getValues('category') ? false : true}
                             type='text'
@@ -871,7 +872,7 @@ const ProductForm = () => {
                                 <MenuItem value={res?._id}>{res?.name}</MenuItem>
                             ))}
                         </Customselect>
-                    </Grid>
+                    </Grid> }
                     <Grid item xs={12} lg={3}>
                         <CustomInput
                             type='text'
@@ -926,7 +927,7 @@ const ProductForm = () => {
                     <Grid item xs={12} lg={3}>
                         <CustomImageUploader
                             ICON={""}
-                            error={errors.image}
+                            error={errors.product_image}
                             fieldName="image"
                             placeholder={``}
                             fieldLabel={"Product Image"}

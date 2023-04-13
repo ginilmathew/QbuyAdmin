@@ -36,7 +36,7 @@ export const ListItems = ({ res, handleOpen, open, handleClose }: props) => {
     const NavigatePath = (path: any) => {
         if (path) {
             router.push(path)
-            // handleClose()
+            handleClose()
         }
     }
 
