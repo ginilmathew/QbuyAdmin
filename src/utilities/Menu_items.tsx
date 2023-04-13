@@ -149,13 +149,8 @@ export const Admin_item = [
     {
         id: 9,
         item: "User Management",
-<<<<<<< HEAD
-        path:'/dashboard',
-            
-=======
         path:'/userManagement',
         
->>>>>>> 3b9d931c45ba98e365e178e82f556aa983c73ff4
     },
     {
         id: 10,
