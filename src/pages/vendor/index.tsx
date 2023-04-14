@@ -1,7 +1,7 @@
 import CustomTable from '@/components/CustomTable'
 import CustomTableHeader from '@/Widgets/CustomTableHeader'
 import { Box, Stack, Typography } from '@mui/material'
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useTransition } from 'react'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useRouter } from 'next/router';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
@@ -10,6 +10,7 @@ import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
 import { fetchData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import CustomDelete from '@/Widgets/CustomDelete';
+import { CleanHands } from '@mui/icons-material';
 
 const VendorSignup = () => {
 
@@ -19,6 +20,8 @@ const VendorSignup = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(false);
     const [_id, set_id] = useState<string>('');
+    const [serachList, setSearchList] = useState<any>([])
+    const [pending, startTransition] = useTransition();
 
 
     console.log({ vendorList })
@@ -58,7 +61,14 @@ const VendorSignup = () => {
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params: GridValueGetterParams) =>
-                `${params.row.category?.name}`,
+                <>
+                    {/* <Stack>
+                        {params?.row?.category_id.map((res: any) => {
+                            <Typography>{res?.name}</Typography>
+                        }
+                        )}
+                    </Stack> */}
+                </>
         },
         {
             field: 'delivery_location',
@@ -121,23 +131,13 @@ const VendorSignup = () => {
         }
     ];
 
-    const rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-    ];
 
     const fetchVendorList = useCallback(async () => {
         try {
             setLoading(true)
             const response = await fetchData('/admin/vendor/list')
             setVendorList(response?.data?.data?.data)
+            setSearchList(response?.data?.data?.data)
         }
         catch (err: any) {
             setLoading(false)
@@ -148,6 +148,15 @@ const VendorSignup = () => {
         }
 
     }, [vendorList])
+
+
+    const searchVendor = useCallback((value: any) => {
+        console.log({ value })
+        let Result = serachList?.filter((com: any) => com?.store_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase()))
+        startTransition(() => {
+            setVendorList(Result)
+        })
+    }, [])
 
 
     useEffect(() => {
@@ -175,7 +184,7 @@ const VendorSignup = () => {
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
-                <CustomTableHeader addbtn={true} imprtBtn={false} Headerlabel='Vendor Signup' onClick={addvaendor} />
+                <CustomTableHeader setState={searchVendor} addbtn={true} imprtBtn={false} Headerlabel='Vendor Signup' onClick={addvaendor} />
                 <Box py={3}>
                     <CustomTable dashboard={false} columns={columns} rows={vendorList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>

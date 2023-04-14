@@ -15,12 +15,11 @@ const AddProducts = () => {
     const router = useRouter()
 
 
-    const [pending, startTransition] = useTransition();
     const [open, setOpen] = useState<boolean>(false)
     const [loading, setLoding] = useState<boolean>(false)
     const [productList, setProductList] = useState<any>([])
     const [setSerachList, setSearchList] = useState<any>([])
-  
+    const [pending, startTransition] = useTransition();
  
  console.log({productList})
 

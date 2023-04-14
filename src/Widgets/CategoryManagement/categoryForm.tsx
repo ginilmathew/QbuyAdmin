@@ -47,9 +47,9 @@ const CategoryForm = () => {
     const schema = yup
         .object()
         .shape({
-            name: yup.string().required('Category Name Required'),
-            type: yup.string().required('Type is Required'),
-            order_number: yup.string().required('Order Number is Required')
+            // name: yup.string().required('Category Name Required'),
+            // type: yup.string().required('Type is Required'),
+            // order_number: yup.string().required('Order Number is Required')
         })
         .required();
 
@@ -154,9 +154,9 @@ const CategoryForm = () => {
                             <MenuItem value="" disabled >
                                 <>Select Types</>
                             </MenuItem>
-                            <MenuItem value={'Qbuy Panda'}>Qbuy Panda</MenuItem>
-                            <MenuItem value={'Qbuy Fashion'}>Qbuy Fashion</MenuItem>
-                            <MenuItem value={'Qbuy Green'}>Qbuy Green</MenuItem>
+                            <MenuItem value={'panda'}>Qbuy Panda</MenuItem>
+                            <MenuItem value={'fashion'}>Qbuy Fashion</MenuItem>
+                            <MenuItem value={'green'}>Qbuy Green</MenuItem>
                         </Customselect>
                     </Grid>
                     <Grid item xs={12} lg={2.5}>

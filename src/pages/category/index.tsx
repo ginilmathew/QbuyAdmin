@@ -1,10 +1,10 @@
 import CustomTableHeader from '@/Widgets/CustomTableHeader'
 import { Box } from '@mui/system'
 import { useRouter } from 'next/router'
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useTransition } from 'react'
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import CustomTable from '@/components/CustomTable';
-import { Stack } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
@@ -21,9 +21,15 @@ const CategoryManagement = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(false);
     const [_id, set_id] = useState<string>('');
+    const [pending, startTransition] = useTransition();
+    const [serachList, setSearchList] = useState<any>([])
 
 
-  
+
+
+
+
+
 
     const addvaendor = () => {
         router.push('/category/addCategory')
@@ -45,6 +51,7 @@ const CategoryManagement = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+         
         },
         {
             field: 'order_number',
@@ -93,13 +100,14 @@ const CategoryManagement = () => {
         }
     ];
 
-  
+
 
     const fetchCategoryList = useCallback(async () => {
         try {
             setLoading(true)
             const response = await fetchData('/admin/category/list')
             setCategoryList(response?.data?.data?.data)
+            setSearchList(response?.data?.data?.data)
         }
         catch (err: any) {
             setLoading(false)
@@ -110,6 +118,16 @@ const CategoryManagement = () => {
         }
 
     }, [categoryList])
+
+
+    const searchProducts = useCallback((value: any) => {
+        let Results = serachList?.filter((com: any) => com?.name.toString().toLowerCase().includes(value.toLowerCase()) ||
+            com?.order_number.toString().toLowerCase().includes(value.toLowerCase())
+        )
+        startTransition(() => {
+            setCategoryList(Results)
+        })
+    }, [])
 
 
     useEffect(() => {
@@ -131,7 +149,7 @@ const CategoryManagement = () => {
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
-                <CustomTableHeader imprtBtn={false} Headerlabel='Category Management' onClick={addvaendor} addbtn={true} />
+                <CustomTableHeader setState={searchProducts} imprtBtn={false} Headerlabel='Category Management' onClick={addvaendor} addbtn={true} />
                 <Box py={3}>
                     <CustomTable dashboard={false} columns={columns} rows={categoryList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>

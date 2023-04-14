@@ -152,16 +152,16 @@ const ProductForm = () => {
     const schema = yup
         .object()
         .shape({
-            name: yup.string().required('Product Name Required'),
-            display_order: yup.number().nullable().typeError("Must be Integer"),
-            franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
-            store: yup.array().typeError('Store is Required').required('Store is Required'),
-            type: yup.string().required('Type is Required'),
-            category: yup.array().typeError('Category is Required').required('Category is Required'),
-            product_image: yup
-                .mixed()
-                .required("Product Image is Required"),
-            meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
+            // name: yup.string().required('Product Name Required'),
+            // display_order: yup.number().nullable().typeError("Must be Integer"),
+            // franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
+            // store: yup.array().typeError('Store is Required').required('Store is Required'),
+            // type: yup.string().required('Type is Required'),
+            // category: yup.array().typeError('Category is Required').required('Category is Required'),
+            // product_image: yup
+            //     .mixed()
+            //     .required("Product Image is Required"),
+            // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
 
         })
         .required();

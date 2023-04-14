@@ -11,7 +11,7 @@ type props = {
     fieldLabel: string,
     placeholder: string,
     error: any,
-    type: string,
+    type: any,
     onChangeValue: any,
     height: number,
     background: string,

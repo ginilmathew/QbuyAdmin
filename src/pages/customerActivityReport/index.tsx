@@ -1,14 +1,21 @@
-import React from 'react';
+import React, { useState, useTransition, useEffect } from 'react';
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
 import CustomTable from '@/components/CustomTable';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { useRouter } from 'next/router';
+import { fetchData } from '@/CustomAxios';
+import { toast } from 'react-toastify';
 
 
- const CustomerActivityReport = () => {
+const CustomerActivityReport = () => {
 
+
+    const [loading, setLoading] = useState<boolean>(false);
+    const [reportList, setReportList] = useState<any>([])
+    const [pending, startTransition] = useTransition();
+    const [serachList, setSearchList] = useState<any>([])
 
     const columns: GridColDef[] = [
         {
@@ -76,6 +83,29 @@ import { useRouter } from 'next/router';
         }
     ];
 
+
+    const activityreport = async () => {
+
+        try {
+            setLoading(true)
+            const response = await fetchData('admin/customer-activity-report')
+            console.log({ response })
+        } catch (err: any) {
+            toast.error(err.message)
+            setLoading(false)
+
+        } finally {
+            setLoading(false)
+        }
+
+
+
+    }
+
+    useEffect(() => {
+        activityreport()
+    }, [])
+
     const rows = [
         { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
         { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
@@ -99,7 +129,7 @@ import { useRouter } from 'next/router';
             </Box>
         </Box>
 
-  )
+    )
 }
 
 

@@ -36,16 +36,16 @@ const FranchiseForm = () => {
     const schema = yup
         .object()
         .shape({
-            franchise_name: yup.string().required('Franchise Name is Required'),
-            owner_name: yup.string().required('Owner Name is Required'),
-            email: yup.string().email('Email is valid').required('Email is Required'),
-            mobile: yup.number()
-            .typeError("That doesn't look like a mobile number")
-            .positive("A mobile number can't start with a minus")
-            .integer("A mobile number can't include a decimal point")
-            .min(10)
-            .required('A Mobile number is required'),
-            address: yup.string().required('Address is Required'),
+            // franchise_name: yup.string().required('Franchise Name is Required'),
+            // owner_name: yup.string().required('Owner Name is Required'),
+            // email: yup.string().email('Email is valid').required('Email is Required'),
+            // mobile: yup.number()
+            // .typeError("That doesn't look like a mobile number")
+            // .positive("A mobile number can't start with a minus")
+            // .integer("A mobile number can't include a decimal point")
+            // .min(10)
+            // .required('A Mobile number is required'),
+            // address: yup.string().required('Address is Required'),
         })
         .required();
 

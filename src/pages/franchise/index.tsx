@@ -1,7 +1,7 @@
 import CustomTable from '@/components/CustomTable'
 import CustomTableHeader from '@/Widgets/CustomTableHeader'
 import { Box, Stack } from '@mui/material'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useTransition, useCallback } from 'react'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useRouter } from 'next/router';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
@@ -18,7 +18,8 @@ const Franchise = () => {
     const [franchiseList, setFranchiseList] = useState<any>([]);
     const [_id, set_id] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);
-
+    const [serachList, setSearchList] = useState<any>([])
+    const [pending, startTransition] = useTransition();
 
 
 
@@ -131,12 +132,23 @@ const Franchise = () => {
             setLoading(true)
             const response = await fetchData('/admin/franchise/list')
             setFranchiseList(response?.data?.data?.data)
+            setSearchList(response?.data?.data?.data)
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)
         } finally {
             setLoading(false)
         }
+    }
+
+
+    
+    const searchfranchise = (value:any) => {
+        let Results = serachList?.filter((com:any) => com?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.franchise_id.toString().toLowerCase().includes(value.toLowerCase)
+        )
+        startTransition(() => {
+            setFranchiseList(Results)
+        })
     }
 
 
@@ -148,7 +160,7 @@ const Franchise = () => {
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
-                <CustomTableHeader addbtn={true} imprtBtn={false} Headerlabel='Franchise' onClick={addvaendor} />
+                <CustomTableHeader setState={searchfranchise} addbtn={true} imprtBtn={false} Headerlabel='Franchise' onClick={addvaendor} />
                 <Box py={3}>
                     <CustomTable dashboard={false} columns={columns} rows={franchiseList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
