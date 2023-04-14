@@ -54,22 +54,22 @@ const VendorSignup = () => {
             align: 'center',
 
         },
-        {
-            field: 'Category',
-            headerName: 'category',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-            valueGetter: (params: GridValueGetterParams) =>
-                <>
-                    {/* <Stack>
-                        {params?.row?.category_id.map((res: any) => {
-                            <Typography>{res?.name}</Typography>
-                        }
-                        )}
-                    </Stack> */}
-                </>
-        },
+        // {
+        //     field: 'Category',
+        //     headerName: 'category',
+        //     flex: 1,
+        //     headerAlign: 'center',
+        //     align: 'center',
+        //     valueGetter: (params: GridValueGetterParams) =>
+        //         <>
+        //             {/* <Stack>
+        //                 {params?.row?.category_id.map((res: any) => {
+        //                     <Typography>{res?.name}</Typography>
+        //                 }
+        //                 )}
+        //             </Stack> */}
+        //         </>
+        // },
         {
             field: 'delivery_location',
             headerName: 'Location',

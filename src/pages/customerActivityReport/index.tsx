@@ -7,6 +7,7 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { useRouter } from 'next/router';
 import { fetchData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
+import moment from 'moment'
 
 
 const CustomerActivityReport = () => {
@@ -17,50 +18,70 @@ const CustomerActivityReport = () => {
     const [pending, startTransition] = useTransition();
     const [serachList, setSearchList] = useState<any>([])
 
+
+   console.log({reportList})
+
     const columns: GridColDef[] = [
         {
             field: 'Date',
             headerName: 'Date',
             flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => (moment(params.row.created_at).format('DD/MM/YYYY')),
         },
         {
             field: 'Customer ID',
             headerName: 'Customer ID',
             flex: 1,
+            headerAlign: 'center',
+            align: 'center',
         },
         {
             field: 'Customer Name',
             headerName: 'Customer Name',
             flex: 1,
+            headerAlign: 'center',
+            align: 'center',
         },
         {
             field: 'Last Login Time',
             headerName: 'Last Login Time',
             flex: 1,
+            headerAlign: 'center',
+            align: 'center',
 
         },
         {
             field: 'Last Logout Time',
             headerName: 'Last Logout Time',
             flex: 1,
+            headerAlign: 'center',
+            align: 'center',
 
         },
         {
             field: 'Total Login Hrs',
             headerName: 'Total Login Hrs',
             flex: 1,
+            headerAlign: 'center',
+            align: 'center',
 
         },
         {
             field: 'Recently Ordered',
             headerName: 'Recently Ordered',
             flex: 1,
+            headerAlign: 'center',
+            align: 'center',
 
         },
         {
             field: 'Recently Viewed store',
             headerName: 'Recently Viewed store',
             flex: 1,
+            headerAlign: 'center',
+            align: 'center',
 
         },
         {
@@ -90,6 +111,9 @@ const CustomerActivityReport = () => {
             setLoading(true)
             const response = await fetchData('admin/customer-activity-report')
             console.log({ response })
+            console.log({response})
+            setReportList(response?.data?.data)
+            setSearchList(response?.data?.data)
         } catch (err: any) {
             toast.error(err.message)
             setLoading(false)
@@ -121,10 +145,10 @@ const CustomerActivityReport = () => {
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
-            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Customer Transaction Report' onClick={() => null} />
-                <Box py={5}>
-                    <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+            <Box bgcolor={"#ffff"} mt={1} p={2} borderRadius={5} height={'85vh'}>
+                <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Customer Activity Report' onClick={() => null} />
+                <Box py={3}>
+                    <CustomTable dashboard={false} columns={columns} rows={reportList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
         </Box>
