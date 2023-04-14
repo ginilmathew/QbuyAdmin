@@ -51,7 +51,7 @@ export const ListItems = ({ res, handleOpen, open, handleClose }: props) => {
                 <Collapse in={res?.id === open ? true : false}>
                     {res?.list?.map((itm: any, index: number) => (
                         <Box ml={2} key={index}>
-                            <ListItems res={itm} handleOpen={() => handleOpenC(itm)} open={openc} />
+                            <ListItems res={itm} handleOpen={() => handleOpenC(itm)} open={openc} handleClose={()=>handleClose()}/>
                         </Box>
                     ))}
                 </Collapse>

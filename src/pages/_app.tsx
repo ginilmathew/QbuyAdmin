@@ -12,6 +12,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import HeaderProvider from '@/helpers/header/HeaderContext';
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['200', '600', '700']
@@ -51,11 +52,13 @@ export default function App({ Component, pageProps }: AppProps) {
     )}
     {/* <LoadScript googleMapsApiKey="AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I" libraries={["drawing"]}> */}
     <ProtectedRoute>
-      <UserProvider>
-        {showHeader && <Header />}
-        <Component {...pageProps} />
-        <ToastContainer />
-      </UserProvider>
+      <HeaderProvider>
+        <UserProvider>
+          {showHeader && <Header />}
+          <Component {...pageProps} />
+          <ToastContainer />
+        </UserProvider>
+      </HeaderProvider>
     </ProtectedRoute>
 
     {/* </LoadScript> */}

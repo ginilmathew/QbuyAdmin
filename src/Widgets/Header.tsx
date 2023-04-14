@@ -1,5 +1,5 @@
 import { Avatar, Box, Typography } from '@mui/material'
-import React, { useCallback, useState,useContext } from 'react'
+import React, { useCallback, useState, useContext } from 'react'
 import KeyIcon from '@mui/icons-material/Key';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
@@ -49,12 +49,12 @@ const Header = () => {
     setAnchorE4(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setAnchorEl(null);
     setAnchorE2(null);
     setAnchorE3(null);
     setAnchorE4(null);
-  }
+  },[anchorEl,anchorE2,anchorE3,anchorE4])
 
   const Menudropdown = useCallback((e: React.MouseEvent<HTMLButtonElement>, value: string) => {
     switch (value) {
@@ -105,6 +105,7 @@ const Header = () => {
       />
 
       <Menus
+       
         unique={unique}
         open={open}
         handleClose={handleClose}
@@ -166,7 +167,7 @@ const Header = () => {
           </Box>
           <Avatar sx={{ height: 40, borderRadius: 10 }}></Avatar>
         </Box>
-          <Box width={50} height={50} borderRadius={12} sx={{ background: '#58d36e', cursor: 'pointer' }} display={'flex'} alignItems={'center'} justifyContent={'center'}>
+        <Box width={50} height={50} borderRadius={12} sx={{ background: '#58d36e', cursor: 'pointer' }} display={'flex'} alignItems={'center'} justifyContent={'center'}>
           <NotificationsIcon sx={{ color: "#fff" }} />
         </Box>
       </Box>
