@@ -17,6 +17,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import moment from 'moment'
 import CustomMultiselect from '@/components/CustomMultiselect';
+import Maps from '@/components/maps/maps';
 
 
 
@@ -43,7 +44,7 @@ type Inputs = {
     recipient_name: string,
     commission: string,
     offer_description: string,
-    tax: string
+    tax: string,
 };
 
 
@@ -91,13 +92,13 @@ const Vendorform = () => {
     const schema = yup
         .object()
         .shape({
-            // vendor_name: yup.string().required('Vendor Name is Required'),
-            // vendor_email: yup.string().email("Email must be a valid email").required('Email is Required'),
-            // vendor_mobile: yup.string().min(10, 'Phone number is not valid').matches(phoneRegExp, 'Phone number is not valid').required('Mobile Number is  Required'),
-            // store_name: yup.string().required('Store Name is Required'),
+            vendor_name: yup.string().required('Vendor Name is Required'),
+            vendor_email: yup.string().email("Email must be a valid email").required('Email is Required'),
+            vendor_mobile: yup.string().min(10, 'Phone number is not valid').matches(phoneRegExp, 'Phone number is not valid').required('Mobile Number is  Required'),
+            store_name: yup.string().required('Store Name is Required'),
             // store_address: yup.string().required('Store Address is Required'),
-            // franchise_id: yup.string().required('Franchise is  Required'),
-            // category_id: yup.array().typeError('Category is Required').required('Category is Required'),
+            franchise_id: yup.string().required('Franchise is  Required'),
+            category_id: yup.array().typeError('Category is Required').required('Category is Required'),
             // start_time: yup.string().required('Required'),
             // end_time: yup.string().required('Required'),
             // store_logo: yup.string().required('Logo is Required'),
@@ -110,7 +111,7 @@ const Vendorform = () => {
             // ifsc: yup.string().required('IFSC is Required'),
             // branch: yup.string().required('Branch is Required'),
             // recipient_name: yup.string().required('Recipient Name is Required'),
-
+            coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required")
 
         })
         .required();
@@ -146,7 +147,7 @@ const Vendorform = () => {
                 commission: '',
                 offer_description: '',
                 tax: '',
-
+                coordinates: null
             }
         });
 
@@ -328,13 +329,6 @@ const Vendorform = () => {
 
     }
 
-    const cordinates: any =
-        [
-            [-0.1450383, 51.5069158],
-            [-0.1367563, 51.5100913],
-            [-0.1270247, 51.5013233],
-            [-0.1450383, 51.5069158],
-        ]
 
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
@@ -362,7 +356,7 @@ const Vendorform = () => {
         formData.append("commission", data?.commission);
         formData.append("offer_description", data?.offer_description);
         formData.append("tax", data?.tax);
-        formData.append("coordinates", cordinates);
+        formData.append("coordinates", JSON.stringify(data?.coordinates));
         try {
             await postData('/admin/vendor/create', formData)
             toast.success('Vendor Created')
@@ -381,6 +375,11 @@ const Vendorform = () => {
         }
 
 
+    }
+
+
+    const polygonComplete = (value: any) => {
+        setValue("coordinates", value)
     }
 
 
@@ -570,32 +569,8 @@ const Vendorform = () => {
                     <Divider />
                     {/* {isLoaded && */}
                     <Box py={1}>
-                        <LoadScript googleMapsApiKey='AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I' libraries={['drawing', 'geometry']} >
-                            <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={12}
-
-                            >
-
-                                <Polygon
-                                    // Make the Polygon editable / draggable
-                                    editable
-                                    draggable
-                                    path={path}
-                                    // Event used when manipulating and adding points
-                                    onMouseUp={onEdit}
-                                    // Event used when dragging the whole Polygon
-                                    onDragEnd={onEdit}
-                                    onLoad={onLoad}
-                                    onUnmount={onUnmount}
-                                    options={
-                                        {
-                                            clickable: true
-                                        }
-                                    }
-                                />
-
-                            </GoogleMap>
-                        </LoadScript>
-
+                        <Maps onPolygonComplete={polygonComplete} />
+                        {(errors && errors?.coordinates) && <span style={{ color: 'red', fontSize: 12 }}>{errors?.coordinates?.message}</span>}
                     </Box>
                 </Box>
             </CustomBox>

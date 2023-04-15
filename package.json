@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev  -p 3005",
+    "dev": "next dev  -p 3001",
     "build": "next build",
-    "start": "next start  -p 3005",
+    "start": "next start  -p 3001",
     "lint": "next lint"
   },
   "dependencies": {
@@ -29,6 +29,7 @@
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
     "faker": "^6.6.6",
+    "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "next": "13.2.4",
     "react": "18.2.0",
@@ -39,5 +40,8 @@
     "react-toastify": "^9.1.2",
     "typescript": "5.0.2",
     "yup": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.194"
   }
 }

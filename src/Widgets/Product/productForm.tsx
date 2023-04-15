@@ -130,6 +130,7 @@ const ProductForm = () => {
     const [subcategoryList, setSubCategoryList] = useState<any>([]);
     const [selectType, setSelectType] = useState<any>(null);
     const [pandaSuggesion, setPandaSuggesions] = useState<boolean>(false);
+    const [enableVariants, setEnableVariants] = useState<boolean>(false)
     const [pandType, setPandType] = useState<any>([
         {
             name: 'Qbuy Panda',
@@ -153,12 +154,12 @@ const ProductForm = () => {
     const schema = yup
         .object()
         .shape({
-            // name: yup.string().required('Product Name Required'),
-            // display_order: yup.number().nullable().typeError("Must be Integer"),
-            // franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
-            // store: yup.array().typeError('Store is Required').required('Store is Required'),
-            // type: yup.string().required('Type is Required'),
-            // category: yup.array().typeError('Category is Required').required('Category is Required'),
+            name: yup.string().required('Product Name Required'),
+            display_order: yup.number().nullable().typeError("Must be Integer"),
+            franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
+            store: yup.array().typeError('Store is Required').required('Store is Required'),
+            category: yup.array().typeError('Category is Required').required('Category is Required'),
+            delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
             // product_image: yup
             //     .mixed()
             //     .required("Product Image is Required"),
@@ -351,7 +352,7 @@ const ProductForm = () => {
     const fetchCategoryList = async () => {
         try {
             setLoading(true)
-            const response = await fetchData('/admin/category/list')
+            const response = await fetchData(`/admin/category/list/${process.env.NEXT_PUBLIC_TYPE}`)
             setCategoryList(response?.data?.data?.data)
         }
         catch (err: any) {
@@ -506,10 +507,19 @@ const ProductForm = () => {
         for (let i = 0; i < numIterations; i++) {
             let combination = "";
             let remainder = i;
-            let contentIndex
+            let contentIndex;
+            let vari = [];
+
+           
+            for (let j = variantAttributes.length - 1; j >= 0; j--) {
+                contentIndex = remainder % variantAttributes[j].options?.length;
+                combination = variantAttributes[j].options[contentIndex].title + " " + combination;
+                vari.push(variantAttributes[j].options[contentIndex].title)
+                remainder = Math.floor(remainder / variantAttributes[j].options?.length);
+            }
 
             varientsarray.push({
-                attributs: [],
+                attributs: vari,
                 seller_price: '',
                 regular_price: '',
                 offer_price: '',
@@ -519,12 +529,6 @@ const ProductForm = () => {
                 stock_value: ''
             })
             setVarientsArray([...varientsarray])
-            for (let j = variantAttributes.length - 1; j >= 0; j--) {
-                contentIndex = remainder % variantAttributes[j].options?.length;
-                combination = variantAttributes[j].options[contentIndex].title + " " + combination;
-                remainder = Math.floor(remainder / variantAttributes[j].options?.length);
-
-            }
 
             output.push(combination.trim());
         }
@@ -533,6 +537,22 @@ const ProductForm = () => {
     }
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+
+        let find = attributes?.find((res: any) => res.varient === true)
+
+        if(!find){
+            if(!data?.seller_price  || !data?.regular_price){
+                toast.warning("Please add product price to continue")
+                return false;
+            }
+        }
+        else{
+            let price = varientsarray?.find((va: any) => va.seller_price === "" || va.regular_price === "")
+            if(price){
+                toast.warning("Please add product price to continue")
+                return false;
+            }
+        }
 
         const metatagsres = metaTagValue?.map((res: any) => (
             res.title
@@ -564,7 +584,7 @@ const ProductForm = () => {
                 height: data?.height
             },
             model: data?.model,
-            type: data?.type,
+            type: process.env.NEXT_PUBLIC_TYPE,
             product_Type: null,
             image: data?.image,
             product_image: data?.product_image,
@@ -599,32 +619,32 @@ const ProductForm = () => {
             variants: varientsarray?.length > 0 ? varientsarray : null,
             approval_status: "approved"
         }
-        console.log({ value })
+        //console.log({ value })
 
-        // try {
-        //     setLoading(true)
-        //     await postData('admin/product/create', value)
-        //     reset()
-        //     setFranchiseSelect(null)
-        //     setCategorySelect(null)
-        //     setSelectType(null)
-        //     setImagefile(null)
-        //     setSubCategorySelect(null)
-        //     setvendorSelect(null)
-        //     setConfirmBtn(false)
-        //     setVarientsArray([])
-        //     setmetaTagValue([])
-        //     setMetaTag([])
-        //     setattributeTag([])
-        //     setAttributes([])
-        //     toast.success('Created Successfully')
-        // } catch (err: any) {
-        //     toast.error(err?.message)
-        //     setLoading(false)
+        try {
+            setLoading(true)
+            await postData('admin/product/create', value)
+            reset()
+            setFranchiseSelect(null)
+            setCategorySelect(null)
+            setSelectType(null)
+            setImagefile(null)
+            setSubCategorySelect(null)
+            setvendorSelect(null)
+            setConfirmBtn(false)
+            setVarientsArray([])
+            setmetaTagValue([])
+            setMetaTag([])
+            setattributeTag([])
+            setAttributes([])
+            toast.success('Created Successfully')
+        } catch (err: any) {
+            toast.error(err?.message)
+            setLoading(false)
 
-        // } finally {
-        //     setLoading(false)
-        // }
+        } finally {
+            setLoading(false)
+        }
     }
 
 
@@ -700,7 +720,7 @@ const ProductForm = () => {
                             ))}
                         </Customselect>
                     </Grid>
-                    <Grid item xs={12} lg={3}>
+                    {/* <Grid item xs={12} lg={3}>
                         <Customselect
                             type='text'
                             control={control}
@@ -723,7 +743,7 @@ const ProductForm = () => {
 
 
                         </Customselect>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} lg={3}>
                         <CustomInput
                             type='text'
@@ -937,6 +957,7 @@ const ProductForm = () => {
                 <Box py={2}>
                     <Divider />
                     <Maps onPolygonComplete={onPolygonComplete} />
+                    {(errors && errors?.delivery_locations) && <span style={{ color: 'red', fontSize: 12 }}>{errors?.delivery_locations?.message}</span>}
                 </Box>
             </CustomBox>
             {/* <CustomBox title='offers & Promotions'>
@@ -1088,7 +1109,7 @@ const ProductForm = () => {
                 </Grid>
             </CustomBox>
             <CustomBox title='Attributes'>
-                <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />
+            {!confirmbtn &&<Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
 
 
                 {attributes && attributes?.map((res: any, i: any) => (<>
@@ -1120,12 +1141,79 @@ const ProductForm = () => {
                 ))}
                 {attributes?.length > 0 &&
                     <Box display={'flex'} justifyContent={'flex-end'}>
-                        <Custombutton btncolor='' height={40} endIcon={false} startIcon={false} label={'confirm'} onClick={ConfirmVarients} IconEnd={''} IconStart={''} />
+                        {!confirmbtn && <Custombutton btncolor='' height={40} endIcon={false} startIcon={false} label={'confirm'} onClick={ConfirmVarients} IconEnd={''} IconStart={''} />}
                     </Box>}
             </CustomBox>
-            {confirmbtn &&
+            {(!confirmbtn || (confirmbtn && !attributes?.some((res: any) => res.varient === true))) && <CustomBox title='Price'>
+                <Grid container spacing={2}>
+                    <Grid item lg={2} xs={12}>
+                        <CustomInput
+                            disabled={false}
+                            type='text'
+                            control={control}
+                            error={errors.seller_price}
+                            fieldName="seller_price"
+                            placeholder={``}
+                            fieldLabel={"Selling Price"}
+                            view={false}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item lg={2} xs={12}>
+                        <CustomInput
+                            disabled={false}
+                            type='text'
+                            control={control}
+                            error={errors.regular_price}
+                            fieldName="regular_price"
+                            placeholder={``}
+                            fieldLabel={"Purchase Price"}
+                            view={false}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item lg={2} xs={12}>
+                        <CustomInput
+                            disabled={false}
+                            type='text'
+                            control={control}
+                            error={errors.offer_price}
+                            fieldName="offer_price"
+                            placeholder={``}
+                            fieldLabel={"Offer Price"}
+                            view={false}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    
+
+                    <Grid item lg={2} xs={12}>
+                        <CustomDatePicker
+                            values={getValues('offer_date_from')}
+                            changeValue={onChangeOffer_date_from}
+                            fieldName='offer_date_from'
+                            control={control}
+                            error={errors.offer_date_from}
+                            fieldLabel={'Offer From'}
+                        />
+
+                    </Grid>
+                    <Grid item lg={2} xs={12}>
+                        <CustomDatePicker
+                            values={getValues('offer_date_to')}
+                            changeValue={onChangeOffer_date_to}
+                            fieldName='offer_date_to'
+                            control={control}
+                            error={errors.offer_date_to}
+                            fieldLabel={'Offer To'}
+                        />
+
+                    </Grid>
+                </Grid>
+            </CustomBox>}
+            {confirmbtn && attributes?.some((res: any) => res.varient === true) &&
                 <CustomBox title='Add Variant & Price'>
-                    {attributes?.every((res: any) => res.varient === false) && confirmbtn &&
+                    {/* {attributes?.every((res: any) => res.varient === false) && confirmbtn &&
                         <Grid container spacing={2}>
                             <Grid item lg={2} xs={12}>
                                 <CustomInput
@@ -1190,7 +1278,7 @@ const ProductForm = () => {
 
                             </Grid>
 
-                        </Grid>}
+                        </Grid>} */}
                     {attributes?.some((res: any) => res.varient === true) && confirmbtn &&
                         <Box>
                             {varients?.map((res: any, i: any) => (

@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { postData } from '@/CustomAxios';
+import Maps from '@/components/maps/maps';
 
 type Inputs = {
     franchise_name: string,
@@ -36,16 +37,17 @@ const FranchiseForm = () => {
     const schema = yup
         .object()
         .shape({
-            // franchise_name: yup.string().required('Franchise Name is Required'),
-            // owner_name: yup.string().required('Owner Name is Required'),
-            // email: yup.string().email('Email is valid').required('Email is Required'),
-            // mobile: yup.number()
-            // .typeError("That doesn't look like a mobile number")
-            // .positive("A mobile number can't start with a minus")
-            // .integer("A mobile number can't include a decimal point")
-            // .min(10)
-            // .required('A Mobile number is required'),
-            // address: yup.string().required('Address is Required'),
+            franchise_name: yup.string().required('Franchise Name is Required'),
+            owner_name: yup.string().required('Owner Name is Required'),
+            email: yup.string().email('Email is valid').required('Email is Required'),
+            mobile: yup.number()
+            .typeError("That doesn't look like a mobile number")
+            .positive("A mobile number can't start with a minus")
+            .integer("A mobile number can't include a decimal point")
+            .min(10)
+            .required('A Mobile number is required'),
+            //address: yup.string().required('Address is Required'),
+            coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required")
         })
         .required();
 
@@ -63,25 +65,15 @@ const FranchiseForm = () => {
                 email: '',
                 mobile: '',
                 address: '',
+                coordinates: null
             }
         });
 
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         setLoading(true)
-        let value = {
-            ...data,
-            coordinates: [
-                [8.670514, 76.770417],
-                [8.770963, 77.179658],
-                [8.464103, 77.333466],
-                [8.347269, 77.185151],
-                [8.311940, 77.064301],
-                [8.662368, 76.775910]
-            ]
-        }
         try {
-            await postData('/admin/franchise/create', value)
+            await postData('/admin/franchise/create', data)
             toast.success('Created Successfully')
             reset()
         } catch (err: any) {
@@ -90,6 +82,10 @@ const FranchiseForm = () => {
         } finally {
             setLoading(false)
         }
+    }
+
+    const setDeliveryLocation = (value: any) => {
+        setValue("coordinates", value)
     }
 
     return (
@@ -165,7 +161,8 @@ const FranchiseForm = () => {
                 <Box mt={2}>
                     <Divider />
                 </Box>
-                <p>map</p>
+                <Maps onPolygonComplete={setDeliveryLocation} />
+                {(errors && errors?.coordinates) && <span style={{ color: 'red', fontSize: 12 }}>{errors?.coordinates?.message}</span>}
             </CustomBox>
             <Box py={3}>
                 <Custombutton

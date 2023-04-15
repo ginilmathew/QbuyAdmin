@@ -61,14 +61,6 @@ const CategoryManagement = () => {
             align: 'center',
         },
         {
-            field: 'type',
-            headerName: 'Types',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-
-        },
-        {
             field: 'Action',
             headerName: 'Action',
             width: 200,

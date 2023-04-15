@@ -87,20 +87,6 @@ const CustomProductVarient = memo(({ content, index, setState, state }: props) =
                 </Grid>
                 <Grid item lg={2} xs={12}>
                     <CustomInput
-                        onChangeValue={onChangeOfferPrice}
-                        disabled={false}
-                        type='text'
-                        control={control}
-                        error={errors.offer_price}
-                        fieldName="offer_price"
-                        placeholder={``}
-                        fieldLabel={"Offer Price"}
-                        view={false}
-                        defaultValue={''}
-                    />
-                </Grid>
-                <Grid item lg={2} xs={12}>
-                    <CustomInput
                         onChangeValue={onChangePurchasePrice}
                         disabled={false}
                         type='text'
@@ -113,6 +99,21 @@ const CustomProductVarient = memo(({ content, index, setState, state }: props) =
                         defaultValue={''}
                     />
                 </Grid>
+                <Grid item lg={2} xs={12}>
+                    <CustomInput
+                        onChangeValue={onChangeOfferPrice}
+                        disabled={false}
+                        type='text'
+                        control={control}
+                        error={errors.offer_price}
+                        fieldName="offer_price"
+                        placeholder={``}
+                        fieldLabel={"Offer Price"}
+                        view={false}
+                        defaultValue={''}
+                    />
+                </Grid>
+                
 
                 <Grid item lg={2} xs={12}>
                     < CustomDatePicker

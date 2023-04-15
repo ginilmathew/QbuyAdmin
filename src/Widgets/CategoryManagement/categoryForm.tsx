@@ -78,12 +78,18 @@ const CategoryForm = () => {
     }
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        //console.log({data, type: process.env.NEXT_PUBLIC_TYPE})
+
+        let type = process.env.NEXT_PUBLIC_TYPE;
         setLoading(true)
         const formData = new FormData();
         formData.append("name", data?.name);
         formData.append("order_number", data?.order_number);
-        formData.append("image", data?.image);
-        formData.append("type", data?.type);
+        if(data?.image){
+            formData.append("image", data?.image);
+        }
+        
+        formData.append("type", type);
         formData.append("seo_title", data?.name);
         formData.append("seo_description", data?.name + data?.type);
         try {
@@ -134,7 +140,7 @@ const CategoryForm = () => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
+                    {/* <Grid item xs={12} lg={2.5}>
                         <Customselect
                             type='text'
                             control={control}
@@ -158,7 +164,7 @@ const CategoryForm = () => {
                             <MenuItem value={'fashion'}>Qbuy Fashion</MenuItem>
                             <MenuItem value={'green'}>Qbuy Green</MenuItem>
                         </Customselect>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} lg={2.5}>
                         <CustomImageUploader
                             ICON={""}

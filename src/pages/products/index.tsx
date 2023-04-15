@@ -11,6 +11,7 @@ import CustomSwitch from '@/components/CustomSwitch';
 import CustomDelete from '@/Widgets/CustomDelete';
 import { fetchData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
+import { max, min } from 'lodash'
 const AddProducts = () => {
     const router = useRouter()
 
@@ -67,15 +68,14 @@ const AddProducts = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-
-        },
-        {
-            field: 'type',
-            headerName: 'Type',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-
+            valueGetter: (params) => {
+                if(params?.row?.variants?.length > 0){
+                    let price = params?.row?.variants?.map((vari: any) => {
+                        return parseFloat(vari.seller_price) 
+                    })
+                    return `₹${min(price)} - ₹${max(price)} `
+                }
+            }
         },
         {
             field: 'minimum_qty',
@@ -103,7 +103,7 @@ const AddProducts = () => {
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <CustomSwitch
                         changeRole={''}
-                        checked={false}
+                        checked={row.status}
                         defaultChecked={false}
                         onClick={() => null}
                     />
@@ -149,7 +149,7 @@ const AddProducts = () => {
     const fetchproduct = async () => {
         try {
             setLoding(true)
-            const response = await fetchData('/admin/product/list')
+            const response = await fetchData(`/admin/product/list/${process.env.NEXT_PUBLIC_TYPE}`)
             console.log({ response })
             setProductList(response?.data?.data?.data)
             setSearchList(response.data.data?.data);
