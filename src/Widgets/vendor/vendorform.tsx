@@ -570,7 +570,7 @@ const Vendorform = () => {
                     {/* {isLoaded && */}
                     <Box py={1}>
                         <Maps onPolygonComplete={polygonComplete} />
-                        {(errors && errors?.coordinates) && <span style={{ color: 'red', fontSize: 12 }}>{errors?.coordinates?.message}</span>}
+                        {(errors && errors?.coordinates) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates?.message}`}</span>}
                     </Box>
                 </Box>
             </CustomBox>

@@ -39,7 +39,7 @@ const CategoryForm = () => {
 
 
     const [imagefile, setImagefile] = useState<null | File>(null)
-    const [type, settype] = useState<string>("");
+    const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
     const [res, setRes] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -80,7 +80,6 @@ const CategoryForm = () => {
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         //console.log({data, type: process.env.NEXT_PUBLIC_TYPE})
 
-        let type = process.env.NEXT_PUBLIC_TYPE;
         setLoading(true)
         const formData = new FormData();
         formData.append("name", data?.name);

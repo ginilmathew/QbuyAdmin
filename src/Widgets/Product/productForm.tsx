@@ -957,7 +957,7 @@ const ProductForm = () => {
                 <Box py={2}>
                     <Divider />
                     <Maps onPolygonComplete={onPolygonComplete} />
-                    {(errors && errors?.delivery_locations) && <span style={{ color: 'red', fontSize: 12 }}>{errors?.delivery_locations?.message}</span>}
+                    {(errors && errors?.delivery_locations) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.delivery_locations?.message}`}</span>}
                 </Box>
             </CustomBox>
             {/* <CustomBox title='offers & Promotions'>

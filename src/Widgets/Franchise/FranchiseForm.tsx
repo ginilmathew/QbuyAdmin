@@ -162,7 +162,7 @@ const FranchiseForm = () => {
                     <Divider />
                 </Box>
                 <Maps onPolygonComplete={setDeliveryLocation} />
-                {(errors && errors?.coordinates) && <span style={{ color: 'red', fontSize: 12 }}>{errors?.coordinates?.message}</span>}
+                {errors  && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates?.message}`}</span>}
             </CustomBox>
             <Box py={3}>
                 <Custombutton
