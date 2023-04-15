@@ -20,6 +20,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import moment from 'moment'
 import CustomDatePicker from '@/components/CustomDatePicker';
+import Maps from '../../components/maps/maps'
 
 type Inputs = {
     name: string,
@@ -201,6 +202,7 @@ const ProductForm = () => {
                 offer_date_to: null,
                 seller_price: null,
                 minimum_qty: '',
+                delivery_locations: null
                 // product_availability_from:'',
                 // product_availability_to:''
 
@@ -247,25 +249,7 @@ const ProductForm = () => {
         strokeWeight: 1,
     };
 
-    const { isLoaded } = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: 'AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I',
-    });
 
-
-    const [map, setMap] = React.useState<google.maps.Map | null>(null);
-
-    const onLoad = React.useCallback((mapInstance: google.maps.Map) => {
-        setMap(mapInstance);
-    }, []);
-
-    const onUnmount = React.useCallback(() => {
-        setMap(null);
-    }, []);
-
-    const handlePolygonClick = (event: google.maps.MapMouseEvent) => {
-        console.log('Polygon clicked:', event);
-    };
 
 
     const imageUploder = async (file: any) => {
@@ -484,6 +468,11 @@ const ProductForm = () => {
     }, [attributeTagValue])
 
 
+    const onPolygonComplete = (value: any) => {
+        setValue("delivery_locations", value)
+    }
+
+
     const AddVarientCheckbox = (e: any, i: number) => {
         let find = attributes?.every((res: any) => res.varient === false)
         setVarientsArray([])
@@ -595,32 +584,7 @@ const ProductForm = () => {
             product_availability_from: data?.product_availability_from ? moment(data?.product_availability_from, 'hh:mm A').format('hh:mm') : null,
             product_availability_to: data?.product_availability_to ? moment(data?.product_availability_to, 'hh:mm A').format('hh:mm') : null,
             require_shipping: data?.require_shipping,
-            delivery_locations: [
-                [
-                    8.670514,
-                    76.770417
-                ],
-                [
-                    8.770963,
-                    77.179658
-                ],
-                [
-                    8.464103,
-                    77.333466
-                ],
-                [
-                    8.347269,
-                    77.185151
-                ],
-                [
-                    8.311940,
-                    77.064301
-                ],
-                [
-                    8.662368,
-                    76.775910
-                ]
-            ],
+            delivery_locations: data?.delivery_locations,
             coupon_details: null,
             meta_tags: data?.meta_tags,
             video_link: data?.video_link,
@@ -637,30 +601,30 @@ const ProductForm = () => {
         }
         console.log({ value })
 
-        try {
-            setLoading(true)
-            await postData('admin/product/create', value)
-            reset()
-            setFranchiseSelect(null)
-            setCategorySelect(null)
-            setSelectType(null)
-            setImagefile(null)
-            setSubCategorySelect(null)
-            setvendorSelect(null)
-            setConfirmBtn(false)
-            setVarientsArray([])
-            setmetaTagValue([])
-            setMetaTag([])
-            setattributeTag([])
-            setAttributes([])
-            toast.success('Created Successfully')
-        } catch (err: any) {
-            toast.error(err?.message)
-            setLoading(false)
+        // try {
+        //     setLoading(true)
+        //     await postData('admin/product/create', value)
+        //     reset()
+        //     setFranchiseSelect(null)
+        //     setCategorySelect(null)
+        //     setSelectType(null)
+        //     setImagefile(null)
+        //     setSubCategorySelect(null)
+        //     setvendorSelect(null)
+        //     setConfirmBtn(false)
+        //     setVarientsArray([])
+        //     setmetaTagValue([])
+        //     setMetaTag([])
+        //     setattributeTag([])
+        //     setAttributes([])
+        //     toast.success('Created Successfully')
+        // } catch (err: any) {
+        //     toast.error(err?.message)
+        //     setLoading(false)
 
-        } finally {
-            setLoading(false)
-        }
+        // } finally {
+        //     setLoading(false)
+        // }
     }
 
 
@@ -972,20 +936,7 @@ const ProductForm = () => {
                 </Grid>
                 <Box py={2}>
                     <Divider />
-                    {isLoaded &&
-                        <Box py={1}>
-
-                            <GoogleMap
-                                mapContainerStyle={containerStyle}
-                                center={center}
-                                zoom={13}
-                                onLoad={onLoad}
-                                onUnmount={onUnmount}
-                            >
-                                <Polygon paths={polygonCoords} options={options} onClick={handlePolygonClick} />
-                            </GoogleMap>
-
-                        </Box>}
+                    <Maps onPolygonComplete={onPolygonComplete} />
                 </Box>
             </CustomBox>
             {/* <CustomBox title='offers & Promotions'>
