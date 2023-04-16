@@ -7,7 +7,7 @@
 export const env = "dev"
 
 const URLS = {
-    live: "https://api.fast2fastpay.com/",
+    live: "https://api.qbuygreen.com/",
     dev: "https://apiqbuypanda.diginestsolutions.in/public/api/"
 }
 const url = {
