@@ -97,7 +97,7 @@ const CategoryManagement = () => {
     const fetchCategoryList = useCallback(async () => {
         try {
             setLoading(true)
-            const response = await fetchData('/admin/category/list')
+            const response = await fetchData(`/admin/category/list/${process.env.NEXT_PUBLIC_TYPE}`)
             setCategoryList(response?.data?.data?.data)
             setSearchList(response?.data?.data?.data)
         }

@@ -75,6 +75,9 @@ const AddProducts = () => {
                     })
                     return `₹${min(price)} - ₹${max(price)} `
                 }
+                else{
+                    return `₹${params?.row?.seller_price}`
+                }
             }
         },
         {

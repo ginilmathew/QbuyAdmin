@@ -22,11 +22,13 @@ const requestHandler = (request: InternalAxiosRequestConfig): InternalAxiosReque
     return request;
 };
 
-const responseHandler = (response: AxiosResponse) => {
+const responseHandler = async(response: AxiosResponse) => {
+
   if (response.status === 200) {
     // handle success case
-  } else if (response.status === 401) {
+  } else if (response.status === 403) {
     // handle unauthorized case
+    await localStorage.clear();
   } else if (response.status === 404) {
     // handle not found case
   } else {
@@ -75,6 +77,9 @@ const deleteData = async (url: string): Promise<AxiosResponse> => {
 
 
 function errorHandler(error: any) {
+  if(error.status === 403){
+    localStorage.clear()
+  }
   throw new Error(error.response.data.message);
 }
 

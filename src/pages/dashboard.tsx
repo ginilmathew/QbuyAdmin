@@ -2,14 +2,28 @@ import CustomTable from '@/components/CustomTable'
 import UserContext from '@/helpers/user';
 import CustomerCard from '@/Widgets/CustomerCard'
 import Profitchart from '@/Widgets/Profitchart'
-import { Grid } from '@mui/material'
+import { Grid, LinearProgress, Stack } from '@mui/material'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import React,{useContext} from 'react'
+import { useRouter } from 'next/router';
+import React,{useContext, useState, useEffect} from 'react'
 
 const Dashboard = () => {
     const userContext = useContext(UserContext);
+    const [loading, setLoading] = useState(true)
+    const router = useRouter();
 
-    console.log(userContext.user,"get user")
+    useEffect(() => {
+        if(userContext.user){
+            console.log(userContext.user,"get user")
+            setLoading(false)
+        }
+        else{
+            router.push('/login')
+        }
+    }, [])
+    
+
+    
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', flex: 1, },
         {
@@ -53,6 +67,12 @@ const Dashboard = () => {
         { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
     ];
+
+    if(loading){
+        <Stack sx={{ width: '100%', color: 'grey.500' }} >
+            <LinearProgress color="success" />
+        </Stack>
+    }
 
     return (
         <Grid container px={5} py={2} spacing={2} bgcolor={'#f5f5f5'} pt={10} mt={0}>
