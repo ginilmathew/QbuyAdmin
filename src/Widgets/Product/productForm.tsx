@@ -299,7 +299,7 @@ const ProductForm = () => {
         try {
             setLoading(true)
             const response = await fetchData('/admin/franchise/list')
-            setFranchiseList(response?.data?.data?.data)
+            setFranchiseList(response?.data?.data)
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)
@@ -323,7 +323,7 @@ const ProductForm = () => {
         try {
             setLoading(true)
             const response = await fetchData(`admin/vendor-list/${e.target.value}`)
-            setVendorList(response?.data?.data?.data)
+            setVendorList(response?.data?.data)
         } catch (err: any) {
             toast.error(err.message)
             setLoading(false)
@@ -353,7 +353,7 @@ const ProductForm = () => {
         try {
             setLoading(true)
             const response = await fetchData(`/admin/category/list/${process.env.NEXT_PUBLIC_TYPE}`)
-            setCategoryList(response?.data?.data?.data)
+            setCategoryList(response?.data?.data)
         }
         catch (err: any) {
             setLoading(false)
@@ -379,7 +379,7 @@ const ProductForm = () => {
         try {
             setLoading(true)
             const response = await fetchData(`admin/subcategory-list/${e.target.value}`)
-            setSubCategoryList(response?.data?.data?.data)
+            setSubCategoryList(response?.data?.data)
         } catch (err: any) {
             toast.error(err.message)
             setLoading(false)

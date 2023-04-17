@@ -139,8 +139,8 @@ const Franchise = () => {
         try {
             setLoading(true)
             const response = await fetchData('/admin/franchise/list')
-            setFranchiseList(response?.data?.data?.data)
-            setSearchList(response?.data?.data?.data)
+            setFranchiseList(response?.data?.data)
+            setSearchList(response?.data?.data)
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)

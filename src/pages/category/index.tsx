@@ -103,8 +103,8 @@ const CategoryManagement = () => {
         try {
             setLoading(true)
             const response = await fetchData(`/admin/category/list/${process.env.NEXT_PUBLIC_TYPE}`)
-            setCategoryList(response?.data?.data?.data)
-            setSearchList(response?.data?.data?.data)
+            setCategoryList(response?.data?.data)
+            setSearchList(response?.data?.data)
         }
         catch (err: any) {
             setLoading(false)

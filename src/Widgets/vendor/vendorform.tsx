@@ -249,7 +249,7 @@ const Vendorform = () => {
         try {
             setLoading(true)
             const response = await fetchData('/admin/franchise/list')
-            setGetFranchise(response?.data?.data?.data)
+            setGetFranchise(response?.data?.data)
             reset()
             setCategory('')
             setFranchise('')
@@ -271,7 +271,7 @@ const Vendorform = () => {
         try {
             setLoading(true)
             const response = await fetchData('/admin/category/list')
-            setGetCategory(response?.data?.data?.data)
+            setGetCategory(response?.data?.data)
             setLoading(false)
 
         } catch (err: any) {
