@@ -52,14 +52,14 @@ export default function App({ Component, pageProps }: AppProps) {
     )}
     {/* <LoadScript googleMapsApiKey="AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I" libraries={["drawing"]}> */}
     <UserProvider>
-    <ProtectedRoute>
+    {/* <ProtectedRoute> */}
       <HeaderProvider>
         
           {showHeader && <Header />}
           <Component {...pageProps} />
           <ToastContainer />
       </HeaderProvider>
-    </ProtectedRoute>
+    {/* </ProtectedRoute> */}
     </UserProvider>
     {/* </LoadScript> */}
   </main>

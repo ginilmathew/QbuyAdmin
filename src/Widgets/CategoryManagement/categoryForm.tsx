@@ -1,5 +1,5 @@
 import { Box, Grid, MenuItem } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import CustomBox from '../CustomBox'
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FormInputs } from '@/utilities/types';
@@ -11,7 +11,6 @@ import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { fetchData, postData } from '@/CustomAxios';
-import SubCategoryForm from './subCategoryForm';
 import { Message } from '@mui/icons-material';
 
 type Inputs = {
@@ -34,22 +33,31 @@ type IFormInput = {
 }
 
 
+type props = {
+    resData?: any
+}
 
-const CategoryForm = () => {
 
+const CategoryForm = ({ resData }: props) => {
+
+    console.log({ resData })
 
     const [imagefile, setImagefile] = useState<null | File>(null)
+    const [imagePreview, setImagePreview] = useState<null | File>(null)
     const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
-    const [res, setRes] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(false)
 
 
     const schema = yup
         .object()
         .shape({
-            // name: yup.string().required('Category Name Required'),
+            name: yup.string().required('Category Name Required'),
             // type: yup.string().required('Type is Required'),
-            // order_number: yup.string().required('Order Number is Required')
+
+            order_number: yup.number().typeError('Order must be integer').required('Order Number is Required'),
+            image: yup
+                .mixed()
+                .required('Image is Required')
         })
         .required();
 
@@ -74,28 +82,34 @@ const CategoryForm = () => {
 
     const imageUploder = (file: any) => {
         setImagefile(file)
+        setImagePreview(null)
         setValue('image', file)
+        setError('image', { message: '' })
     }
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         //console.log({data, type: process.env.NEXT_PUBLIC_TYPE})
 
+        const URL_CREATE = '/admin/category/create'
+        const URL_EDIT = '/admin/category/update'
+
+
         setLoading(true)
         const formData = new FormData();
+        if (resData) {
+            formData.append("id", resData?._id);
+        }
         formData.append("name", data?.name);
         formData.append("order_number", data?.order_number);
-        if(data?.image){
+        if (imagefile) {
             formData.append("image", data?.image);
         }
-        
         formData.append("type", type);
         formData.append("seo_title", data?.name);
         formData.append("seo_description", data?.name + data?.type);
         try {
-
-            const response = await postData('/admin/category/create', formData)
-            setRes(response?.data?.data)
-            toast.success('Created Successfully')
+           await postData(resData ? URL_EDIT : URL_CREATE, formData)
+            toast.success(resData ? 'Updated Successfully' : 'Created Successfully')
 
         } catch (err: any) {
             toast.error(err?.message)
@@ -107,6 +121,18 @@ const CategoryForm = () => {
 
     }
 
+
+
+    useEffect(() => {
+        if (resData) {
+            setValue('name', resData?.name)
+            setValue('order_number', resData?.order_number)
+            setValue('seo_description', resData?.seo_description)
+            setValue('seo_title', resData?.seo_title)
+            setValue('image', resData?.image)
+            setImagePreview(resData?.image)
+        }
+    }, [resData])
 
 
     return (
@@ -128,7 +154,7 @@ const CategoryForm = () => {
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput
-                            type='text'
+                            type='number'
                             control={control}
                             error={errors.order_number}
                             fieldName="order_number"
@@ -175,12 +201,13 @@ const CategoryForm = () => {
                             height={130}
                             max={5}
                             onChangeValue={imageUploder}
+                            viewImage={imagePreview}
                             preview={imagefile}
                             previewEditimage={""}
                             type={"file"}
                             background="#e7f5f7"
                             myid="contained-button-file"
-                            width={"90%"}
+                            width={"100%"}
                         />
                     </Grid>
                 </Grid>
@@ -192,10 +219,13 @@ const CategoryForm = () => {
                     btncolor=''
                     IconEnd={''}
                     IconStart={''}
-                    endIcon={false} startIcon={false} height={''} label={'Add Category'} onClick={handleSubmit(onSubmit)} />
+                    endIcon={false} startIcon={false}
+                    height={''}
+                    label={resData ? 'Edit Category' : ' Add Category'}
+                    onClick={handleSubmit(onSubmit)} />
             </Box>
 
-            {res && <SubCategoryForm res={res} setRes={setRes} />}
+          
 
 
         </Box>

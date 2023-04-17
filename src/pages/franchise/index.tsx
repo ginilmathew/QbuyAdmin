@@ -33,6 +33,12 @@ const Franchise = () => {
     }
 
 
+    const EditFranchise = (id: any) =>{
+        console.log({id})
+        router.push(`/franchise/edit/${id}`)
+
+    }
+
     const columns: GridColDef[] = [
         {
             field: 'franchise_id',
@@ -105,7 +111,7 @@ const Franchise = () => {
                             cursor: 'pointer'
                         }} />
                     <BorderColorTwoToneIcon
-
+                        onClick={() => EditFranchise(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -126,6 +132,8 @@ const Franchise = () => {
         router.push('/franchise/addFranchise')
     }
 
+
+ 
 
     const getFranchiseList = async () => {
         try {

@@ -295,6 +295,11 @@ export const sales_item = [
     },
     {
         id: 8,
+        item: "SubCategory",
+        path:'/subCategory',
+    },
+    {
+        id: 9,
         item: "Product Adding",
         path:'/products',
     },

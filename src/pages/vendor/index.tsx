@@ -28,7 +28,9 @@ const VendorSignup = () => {
 
     const columns: GridColDef[] = [
         {
-            field: 'vendor_id', headerName: 'Vendor ID', flex: 1,
+            field: 'vendor_id',
+             headerName: 'Vendor ID',
+              flex: 1,
             headerAlign: 'center',
             align: 'center',
         },
@@ -54,22 +56,7 @@ const VendorSignup = () => {
             align: 'center',
 
         },
-        // {
-        //     field: 'Category',
-        //     headerName: 'category',
-        //     flex: 1,
-        //     headerAlign: 'center',
-        //     align: 'center',
-        //     valueGetter: (params: GridValueGetterParams) =>
-        //         <>
-        //             {/* <Stack>
-        //                 {params?.row?.category_id.map((res: any) => {
-        //                     <Typography>{res?.name}</Typography>
-        //                 }
-        //                 )}
-        //             </Stack> */}
-        //         </>
-        // },
+    
         {
             field: 'delivery_location',
             headerName: 'Location',
@@ -84,8 +71,7 @@ const VendorSignup = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params: GridValueGetterParams) =>
-                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+           
         },
         {
             field: 'status',
@@ -136,8 +122,8 @@ const VendorSignup = () => {
         try {
             setLoading(true)
             const response = await fetchData('/admin/vendor/list')
-            setVendorList(response?.data?.data?.data)
-            setSearchList(response?.data?.data?.data)
+            setVendorList(response?.data?.data)
+            setSearchList(response?.data?.data)
         }
         catch (err: any) {
             setLoading(false)
