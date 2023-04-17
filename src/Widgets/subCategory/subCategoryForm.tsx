@@ -10,6 +10,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { fetchData, postData } from '@/CustomAxios';
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useRouter } from 'next/router';
 
 
 type Inputs = {
@@ -34,14 +35,14 @@ type IFormInput = {
 }
 type props = {
     res?: any,
-  
+
 }
 
-const SubCategoryForm = ({res}:props) => {
+const SubCategoryForm = ({ res }: props) => {
 
-  
+  const router = useRouter()
 
-    console.log({res})
+    console.log({ res })
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
@@ -54,12 +55,12 @@ const SubCategoryForm = ({res}:props) => {
     const schema = yup
         .object()
         .shape({
-            category_id:yup.string().required('Category is Required'),
+            category_id: yup.string().required('Category is Required'),
             name: yup.string().required('Name is Required'),
             order_number: yup.string().required('Order Number is Required'),
             image: yup
-            .mixed()
-            .required('Image is Required')
+                .mixed()
+                .required('Image is Required')
         })
         .required();
 
@@ -75,11 +76,12 @@ const SubCategoryForm = ({res}:props) => {
             defaultValues: {
                 name: '',
                 order_number: '',
-                category_id:''
+                category_id: ''
             }
         });
 
     const imageUploder = (file: any) => {
+        setImagePreview(null)
         setImagefile(file)
         setValue('image', file)
     }
@@ -87,7 +89,7 @@ const SubCategoryForm = ({res}:props) => {
 
     const onChangeSelectCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCategoryID(e.target.value)
-        setValue('category_id',e.target.value)
+        setValue('category_id', e.target.value)
         setError('category_id', { message: '' })
     }
 
@@ -113,20 +115,27 @@ const SubCategoryForm = ({res}:props) => {
 
 
 
-    useEffect(()=>{
-        if(res){
-            setValue('category_id',res?.category_id)
+    useEffect(() => {
+        if (res) {
+            setValue('category_id', res?.category_id)
             setCategoryID(res?.category_id)
-            setValue('order_number',res?.order_number)
-            setValue('name',res?.name)
+            setValue('order_number', res?.order_number)
+            setValue('name', res?.name)
             setImagePreview(res?.image)
-            setValue('image',res?.image)
+            setValue('image', res?.image)
         }
-    },[res])
+    }, [res])
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        const URL_CREATE = '/admin/subcategory/create'
+        const URL_EDIT = '/admin/subcategory/update'
+
+
         setLoading(true)
         const formData = new FormData();
+        if (res) {
+            formData.append("id", res?._id);
+        }
         formData.append("name", data?.name);
         formData.append("order_number", data?.order_number);
         if (data?.image) {
@@ -137,10 +146,14 @@ const SubCategoryForm = ({res}:props) => {
         formData.append("seo_description", data?.name + type);
         formData.append("category_id", data?.category_id);
         try {
-            const response = await postData('/admin/subcategory/create', formData)
+            await postData(res ? URL_EDIT : URL_CREATE, formData)
+            setImagePreview(null)
             setCategoryID('')
             reset()
-            toast.success('Created Successfully')
+            if(res){
+                router.push('/subCategory')
+            }
+            toast.success(res ? 'Updated Successfully' : 'Created Successfully')
 
         } catch (err: any) {
             toast.error(err?.message)
@@ -210,7 +223,6 @@ const SubCategoryForm = ({res}:props) => {
                         <CustomImageUploader
                             ICON={""}
                             viewImage={imagePreview}
-                            
                             error={errors.image}
                             fieldName="Subcategory"
                             placeholder={``}

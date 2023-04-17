@@ -26,6 +26,17 @@ const VendorSignup = () => {
 
     console.log({ vendorList })
 
+
+    const addvaendor = () => {
+        router.push('/vendor/addVendor')
+
+    }
+
+    const EditVendor = (id:string)=>{
+      router.push(`/vendor/edit/${id}`)
+    }
+
+
     const columns: GridColDef[] = [
         {
             field: 'vendor_id',
@@ -100,7 +111,7 @@ const VendorSignup = () => {
                             cursor: 'pointer'
                         }} />
                     <BorderColorTwoToneIcon
-
+                      onClick={()=>EditVendor(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -161,11 +172,7 @@ const VendorSignup = () => {
     }
 
 
-    const addvaendor = () => {
-        router.push('/vendor/addVendor')
-
-    }
-
+ 
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>

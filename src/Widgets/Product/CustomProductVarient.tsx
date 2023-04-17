@@ -40,7 +40,7 @@ const CustomProductVarient = memo(({ content, index, setState, state }: props) =
 
     const onChangeSellingPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
         state[index].attributs = content.split(" ")
-        state[index].seller_price = e.target.value;
+        state[index].regular_price = e.target.value;
     }
 
     const onChangeOfferPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +49,7 @@ const CustomProductVarient = memo(({ content, index, setState, state }: props) =
     }
 
     const onChangePurchasePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
-        state[index].regular_price = e.target.value;
+        state[index].seller_price = e.target.value;
     }
 
     const onChangeStock = (e: React.ChangeEvent<HTMLInputElement>) => {
