@@ -41,8 +41,8 @@ type Inputs = {
     stock: boolean,
     stock_value: any,
     minimum_qty: any,
-    product_availability_from: string,
-    product_availability_to: string,
+    product_availability_from: any,
+    product_availability_to: any,
     require_shipping: boolean,
     delivery_locations: any,
     coupon_details: string,
@@ -82,8 +82,8 @@ type IFormInput = {
     stock: boolean,
     stock_value: any,
     minimum_qty: any,
-    product_availability_from: string,
-    product_availability_to: string,
+    product_availability_from: any,
+    product_availability_to: any,
     require_shipping: boolean,
     delivery_locations: any,
     coupon_details: string,
@@ -203,9 +203,9 @@ const ProductForm = () => {
                 offer_date_to: null,
                 seller_price: null,
                 minimum_qty: '',
-                delivery_locations: null
-                // product_availability_from:'',
-                // product_availability_to:''
+                delivery_locations: null,
+                product_availability_from:null,
+                product_availability_to:null
 
             }
         });
@@ -646,9 +646,6 @@ const ProductForm = () => {
             setLoading(false)
         }
     }
-
-
-
 
     return (
         <Box>

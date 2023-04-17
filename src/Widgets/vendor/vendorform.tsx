@@ -73,7 +73,13 @@ type IFormInput = {
     coordinates: any
 };
 
-const Vendorform = () => {
+type props ={
+    res?:any
+}
+
+const Vendorform = ({res}:props) => {
+
+    console.log({res},'VENDOR LIST')
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [category, setCategory] = useState<string>('')
@@ -83,7 +89,7 @@ const Vendorform = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [multpleArray, setMultipleArray] = useState<any>([]);
     const [postArray, setPostArray] = React.useState<any>([]);
-
+    const [imagePreview, setImagePreview] = useState<null | File>(null)
 
     console.log({ postArray })
 
@@ -291,8 +297,29 @@ const Vendorform = () => {
         getCategoryList();
     }, [])
 
+    useEffect(() => {
+     if(res){
+        setValue('vendor_name',res?.vendor_name)
+        setValue('vendor_mobile',res?.vendor_mobile)
+        setValue('vendor_email',res?.vendor_email)
+        setValue('store_name',res?.store_name)
+        setValue('store_address',res?.store_address)
+        setValue('franchise_id',res?.franchise_id)
+        setFranchise(res?.franchise_id)
+        setValue('category_id',res?.category_id)
+        setCategory(res?.category_id)
+        setValue('store_logo',res?.store_logo)
+        setImagePreview(res?.store_logo)
+        setValue('start_time',moment(res?.start_time,'HH:mm A'))
+        setValue('end_time',moment(res?.end_time,'HH:mm A'))
+
+     }
+    }, [res])
+    
+
 
     const onChangeStartTime = (value: any) => {
+        console.log({value})
         setValue('start_time', value)
         setError('start_time', { message: '' })
 
@@ -549,6 +576,7 @@ const Vendorform = () => {
                     <Box flex={.3} sx={{}}>
                         <CustomImageUploader
                             ICON={""}
+                            viewImage={imagePreview}
                             error={errors.store_logo}
                             fieldName="store_logo"
                             placeholder={``}
