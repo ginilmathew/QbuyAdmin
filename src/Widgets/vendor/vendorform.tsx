@@ -18,6 +18,7 @@ import * as yup from 'yup';
 import moment from 'moment'
 import CustomMultiselect from '@/components/CustomMultiselect';
 import Maps from '@/components/maps/maps';
+import { Router, useRouter } from 'next/router';
 
 
 
@@ -73,13 +74,14 @@ type IFormInput = {
     coordinates: any
 };
 
-type props ={
-    res?:any
+type props = {
+    res?: any
 }
 
-const Vendorform = ({res}:props) => {
+const Vendorform = ({ res }: props) => {
 
-    console.log({res},'VENDOR LIST')
+    const router = useRouter()
+    console.log({ res }, 'VENDOR LIST')
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [category, setCategory] = useState<string>('')
@@ -277,7 +279,7 @@ const Vendorform = ({res}:props) => {
         try {
             setLoading(true)
             const response = await fetchData(`/admin/category/list/${process.env.NEXT_PUBLIC_TYPE}`)
-            console.log({response})
+            console.log({ response })
             setGetCategory(response?.data?.data)
             setLoading(false)
 
@@ -298,28 +300,42 @@ const Vendorform = ({res}:props) => {
     }, [])
 
     useEffect(() => {
-     if(res){
-        setValue('vendor_name',res?.vendor_name)
-        setValue('vendor_mobile',res?.vendor_mobile)
-        setValue('vendor_email',res?.vendor_email)
-        setValue('store_name',res?.store_name)
-        setValue('store_address',res?.store_address)
-        setValue('franchise_id',res?.franchise_id)
-        setFranchise(res?.franchise_id)
-        setValue('category_id',res?.category_id)
-        setCategory(res?.category_id)
-        setValue('store_logo',res?.store_logo)
-        setImagePreview(res?.store_logo)
-        setValue('start_time',moment(res?.start_time,'HH:mm A'))
-        setValue('end_time',moment(res?.end_time,'HH:mm A'))
+        let array = res?.category_id?.map((res: any) => res?.id)
+        if (res && array) {
+            setValue('vendor_name', res?.vendor_name)
+            setValue('vendor_mobile', res?.vendor_mobile)
+            setValue('vendor_email', res?.vendor_email)
+            setValue('store_name', res?.store_name)
+            setValue('store_address', res?.store_address)
+            setValue('franchise_id', res?.franchise_id)
+            setFranchise(res?.franchise_id)
+            setValue('category_id', res?.category_id)
+            setCategory(res?.category_id)
+            setValue('store_logo', res?.store_logo)
+            setImagePreview(res?.store_logo)
+            setValue('start_time', moment(res?.start_time, 'HH:mm A'))
+            setValue('end_time', moment(res?.end_time, 'HH:mm A'))
+            setValue('license_number', res?.kyc_details?.license_number)
+            setValue('ffsai_number', res?.kyc_details?.ffsai_number)
+            setValue('pan_card_number', res?.kyc_details?.pan_card_number)
+            setValue('aadhar_card_number', res?.kyc_details?.aadhar_card_number)
+            setValue('account_number', res?.kyc_details?.account_number)
+            setValue('ifsc', res?.kyc_details?.ifsc)
+            setValue('branch', res?.kyc_details?.branch)
+            setValue('recipient_name', res?.kyc_details?.recipient_name)
+            setValue('commission', res?.additional_details?.commission)
+            setValue('offer_description', res?.additional_details?.offer_description)
+            setValue('tax', res?.additional_details?.tax)
+            setMultipleArray(array)
+            setValue('coordinates', res?.delivery_location)
 
-     }
+        }
     }, [res])
-    
+
 
 
     const onChangeStartTime = (value: any) => {
-        console.log({value})
+        console.log({ value })
         setValue('start_time', value)
         setError('start_time', { message: '' })
 
@@ -339,17 +355,19 @@ const Vendorform = ({res}:props) => {
         } = event;
 
         const values = event.target.value
-        let find = getcategory?.filter((res:any, I:number) => event.target.value.includes(res._id))
-        let data = find?.map((res:any) => ({
-          id: res?._id,
-          name: res?.name
-    
+        let find = getcategory?.filter((res: any, I: number) => event.target.value.includes(res._id))
+        let data = find?.map((res: any) => ({
+            id: res?._id,
+            name: res?.name
+
         }))
-        if(data){
-            setValue('category_id',data)
+
+        console.log({ values })
+        if (data) {
+            setValue('category_id', data)
             setError('category_id', { message: '' })
-          }
-         
+        }
+
         setPostArray(data)
         setMultipleArray(
             values
@@ -360,6 +378,27 @@ const Vendorform = ({res}:props) => {
 
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+
+        const URL_CREATE = '/admin/vendor/create'
+        const URL_EDIT = '/admin/vendor/update'
+
+
+        let kyc_details = {
+            license_number: data?.license_number ? data?.license_number : null,
+            ffsai_number: data?.ffsai_number ? data?.ffsai_number : null,
+            pan_card_number: data?.pan_card_number ? data?.pan_card_number : null,
+            aadhar_card_number: data?.pan_card_number ? data?.pan_card_number : null,
+            account_number: data?.account_number ? data?.account_number : null,
+            branch: data?.branch ? data?.branch : null,
+            recipient_name: data?.recipient_name ? data?.recipient_name : null,
+            ifsc: data?.ifsc ? data?.ifsc : null
+        }
+
+        let additional_details = {
+            commission: data?.commission ? data?.commission : null,
+            offer_description: data?.offer_description ? data?.offer_description : null,
+            tax: data?.tax ? data?.tax : null
+        }
 
         setLoading(true)
         const formData = new FormData();
@@ -373,21 +412,29 @@ const Vendorform = ({res}:props) => {
         formData.append("start_time", moment(data?.start_time, 'hh:mm A').format('hh:mm'));
         formData.append("end_time", moment(data?.end_time, 'hh:mm A').format('hh:mm'));
         formData.append("store_logo", data?.store_logo);
-        formData.append("license_number", data?.license_number);
-        formData.append("ffsai_number", data?.ffsai_number);
-        formData.append("pan_card_number", data?.pan_card_number);
-        formData.append("aadhar_card_number", data?.aadhar_card_number);
-        formData.append("account_number", data?.account_number);
-        formData.append("ifsc", data?.ifsc);
-        formData.append("branch", data?.branch);
-        formData.append("recipient_name", data?.recipient_name);
-        formData.append("commission", data?.commission);
-        formData.append("offer_description", data?.offer_description);
-        formData.append("tax", data?.tax);
+        if (res) {
+            formData.append("id", res?._id);
+        }
+        // formData.append("license_number", data?.license_number);
+        // formData.append("ffsai_number", data?.ffsai_number);
+        // formData.append("pan_card_number", data?.pan_card_number);
+        // formData.append("aadhar_card_number", data?.aadhar_card_number);
+        // formData.append("account_number", data?.account_number);
+        // formData.append("ifsc", data?.ifsc);
+        // formData.append("branch", data?.branch);
+        // formData.append("recipient_name", data?.recipient_name);
+        formData.append('kyc_details', JSON.stringify((kyc_details)));
+        formData.append('additional_details', JSON.stringify((additional_details)));
+        // formData.append("commission", data?.commission);
+        // formData.append("offer_description", data?.offer_description);
+        // formData.append("tax", data?.tax);
         formData.append("coordinates", JSON.stringify(data?.coordinates));
         try {
-            await postData('/admin/vendor/create', formData)
-            toast.success('Vendor Created')
+            await postData(res ? URL_EDIT : URL_CREATE, formData)
+            toast.success(res ? 'Updated Successfully' : 'Created Successfully')
+            if (res) {
+                router.push('/vendor')
+            }
             reset()
             setFranchise('')
             setCategory('')
@@ -767,7 +814,7 @@ const Vendorform = ({res}:props) => {
                     endIcon={false}
                     startIcon={false}
                     height={''}
-                    label={'Add Vendor'}
+                    label={res ? 'Edit Vendor' : 'Add Vendor'}
                     disabled={loading}
                     onClick={handleSubmit(onSubmit)} />
             </Box>

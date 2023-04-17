@@ -538,6 +538,7 @@ const ProductForm = () => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
+       
         let find = attributes?.find((res: any) => res.varient === true)
 
         if(!find){
