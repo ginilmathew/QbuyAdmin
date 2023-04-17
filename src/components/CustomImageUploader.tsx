@@ -23,7 +23,8 @@ type props = {
     width: string | number,
     preview: any,
     previewEditimage: any,
-    myid: string
+    myid: string,
+    viewImage?: any
 
 }
 
@@ -46,32 +47,33 @@ const CustomImageUploader = ({
     width,
     preview,
     previewEditimage,
-    myid
+    myid, 
+    viewImage
 }: props) => {
     return (
         <>
             <FormGroup>
-            <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
-                sx={{
-                    fontSize: {
-                        lg: 16,
-                        md: 14,
-                        sm: 12,
-                        xs: 11,
-                    },
-                    fontFamily: `'Poppins' sans-serif`,
-                }}
-                
-            >{fieldLabel}
+                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                    sx={{
+                        fontSize: {
+                            lg: 16,
+                            md: 14,
+                            sm: 12,
+                            xs: 11,
+                        },
+                        fontFamily: `'Poppins' sans-serif`,
+                    }}
 
-            </Typography>   
+                >{fieldLabel}
+
+                </Typography>
                 <Controller
                     name={fieldName}
                     control={control}
                     render={({ field: { onChange, onBlur, value } }) =>
-                        <Box sx={{ height: height ? height : 150, border: '1px solid #f5f5f5', width:width ? width : "50%", position: 'relative',fontFamily:`'Poppins' sans-serif`, }} >
-                             <Avatar src={preview ? URL.createObjectURL(preview):""} style={{width:'100%',height:'100%'}} variant="square"></Avatar>
-                             
+                        <Box sx={{ height: height ? height : 150, border: '1px solid #f5f5f5', width: width ? width : "50%", position: 'relative', fontFamily: `'Poppins' sans-serif`, }} >
+                            <Avatar src={viewImage ? viewImage : preview ? URL?.createObjectURL(preview):''} style={{ width: '100%', height: '100%' }} variant="square"></Avatar>
+
                             <label htmlFor={myid} >
                                 <Input
                                     style={{ display: 'none' }}

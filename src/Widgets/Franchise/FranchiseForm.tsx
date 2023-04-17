@@ -1,5 +1,5 @@
 import { FormInputs } from '@/utilities/types';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Box, Divider, Grid, MenuItem } from '@mui/material'
 import CustomInput from '@/components/CustomInput';
@@ -10,6 +10,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { postData } from '@/CustomAxios';
 import Maps from '@/components/maps/maps';
+import { Route } from '@mui/icons-material';
+import { useRouter } from 'next/router';
 
 type Inputs = {
     franchise_name: string,
@@ -28,9 +30,14 @@ type IFormInput = {
     address: string,
     coordinates: any
 }
+type props = {
+    res?: any
+}
 
 
-const FranchiseForm = () => {
+const FranchiseForm = ({ res }: props) => {
+
+   const router = useRouter()
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -41,11 +48,11 @@ const FranchiseForm = () => {
             owner_name: yup.string().required('Owner Name is Required'),
             email: yup.string().email('Email is valid').required('Email is Required'),
             mobile: yup.number()
-            .typeError("That doesn't look like a mobile number")
-            .positive("A mobile number can't start with a minus")
-            .integer("A mobile number can't include a decimal point")
-            .min(10)
-            .required('A Mobile number is required'),
+                .typeError("That doesn't look like a mobile number")
+                .positive("A mobile number can't start with a minus")
+                .integer("A mobile number can't include a decimal point")
+                .min(10)
+                .required('A Mobile number is required'),
             //address: yup.string().required('Address is Required'),
             coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required")
         })
@@ -59,7 +66,7 @@ const FranchiseForm = () => {
         reset,
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
-            defaultValues:{
+            defaultValues: {
                 franchise_name: '',
                 owner_name: '',
                 email: '',
@@ -72,9 +79,22 @@ const FranchiseForm = () => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         setLoading(true)
+
+        const url_Create = '/admin/franchise/create'
+        const url_Edit = 'admin/franchise/update'
+        
+        const create_data = data
+        const edit_Data = {
+            ...data,
+            id : res?._id
+        }
+
         try {
-            await postData('/admin/franchise/create', data)
-            toast.success('Created Successfully')
+            await postData(res ? url_Edit : url_Create, res ? edit_Data : create_data)
+            toast.success(res ? 'Edited Successfully' : 'Created Successfully')
+            if(res){
+                router.push(`/franchise`)
+            }
             reset()
         } catch (err: any) {
             toast.error(err?.message)
@@ -87,6 +107,17 @@ const FranchiseForm = () => {
     const setDeliveryLocation = (value: any) => {
         setValue("coordinates", value)
     }
+
+    useEffect(() => {
+        if (res) {
+            setValue('franchise_name', res?.franchise_name)
+            setValue('owner_name', res?.owner_name)
+            setValue('email', res?.email)
+            setValue('mobile', res?.mobile)
+            setValue('address', res?.address)
+            setValue('coordinates',res?.delivery_location)
+        }
+    }, [res])
 
     return (
         <Box>
@@ -162,7 +193,7 @@ const FranchiseForm = () => {
                     <Divider />
                 </Box>
                 <Maps onPolygonComplete={setDeliveryLocation} />
-                {errors  && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates?.message}`}</span>}
+                {errors && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates?.message}`}</span>}
             </CustomBox>
             <Box py={3}>
                 <Custombutton
@@ -172,10 +203,10 @@ const FranchiseForm = () => {
                     endIcon={false}
                     startIcon={false}
                     height={''}
-                    label={'Add Franchise'}
-                    onClick={handleSubmit(onSubmit)} 
+                    label={res ? 'Edit Franchise' : 'Add Franchise'}
+                    onClick={handleSubmit(onSubmit)}
                     disabled={loading}
-                    />
+                />
             </Box>
         </Box>
     )

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CustomBox from '../CustomBox'
 import { Box, Grid, MenuItem } from '@mui/material'
 import CustomInput from '@/components/CustomInput';
@@ -33,26 +33,33 @@ type IFormInput = {
 
 }
 type props = {
-    res: any,
-    setRes: any
+    res?: any,
+  
 }
 
-const SubCategoryForm = ({ res, setRes }: props) => {
+const SubCategoryForm = ({res}:props) => {
 
-    console.log({ res })
+  
+
+    console.log({res})
 
     const [imagefile, setImagefile] = useState<null | File>(null)
-    const [type, settype] = useState<string>("");
+    const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
     const [_id, set_id] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false)
-
-
+    const [categoryList, setCategoryList] = useState<any>([])
+    const [categoryID, setCategoryID] = useState<string>('')
+    const [imagePreview, setImagePreview] = useState<null | File>(null)
 
     const schema = yup
         .object()
         .shape({
-            name: yup.string().required('Required'),
-            order_number: yup.string().required('Required')
+            category_id:yup.string().required('Category is Required'),
+            name: yup.string().required('Name is Required'),
+            order_number: yup.string().required('Order Number is Required'),
+            image: yup
+            .mixed()
+            .required('Image is Required')
         })
         .required();
 
@@ -62,11 +69,13 @@ const SubCategoryForm = ({ res, setRes }: props) => {
         control,
         formState: { errors },
         reset,
+        setError,
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
             defaultValues: {
                 name: '',
                 order_number: '',
+                category_id:''
             }
         });
 
@@ -74,6 +83,46 @@ const SubCategoryForm = ({ res, setRes }: props) => {
         setImagefile(file)
         setValue('image', file)
     }
+
+
+    const onChangeSelectCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCategoryID(e.target.value)
+        setValue('category_id',e.target.value)
+        setError('category_id', { message: '' })
+    }
+
+    const getCategoryList = async () => {
+        try {
+            setLoading(true)
+            const response = await fetchData(`admin/category/list/${process.env.NEXT_PUBLIC_TYPE}`)
+            setCategoryList(response?.data?.data)
+        } catch (err: any) {
+            toast.error(err.message)
+            setLoading(false)
+
+        }
+        finally {
+            setLoading(false)
+
+        }
+    }
+
+    useEffect(() => {
+        getCategoryList()
+    }, [])
+
+
+
+    useEffect(()=>{
+        if(res){
+            setValue('category_id',res?.category_id)
+            setCategoryID(res?.category_id)
+            setValue('order_number',res?.order_number)
+            setValue('name',res?.name)
+            setImagePreview(res?.image)
+            setValue('image',res?.image)
+        }
+    },[res])
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         setLoading(true)
@@ -83,14 +132,14 @@ const SubCategoryForm = ({ res, setRes }: props) => {
         if (data?.image) {
             formData.append("image", data?.image);
         }
-        formData.append("type", res?.type);
+        formData.append("type", type);
         formData.append("seo_title", data?.name);
-        formData.append("seo_description", data?.name + res?.type);
-        formData.append("category_id", res?._id);
+        formData.append("seo_description", data?.name + type);
+        formData.append("category_id", data?.category_id);
         try {
             const response = await postData('/admin/subcategory/create', formData)
+            setCategoryID('')
             reset()
-            setRes(null)
             toast.success('Created Successfully')
 
         } catch (err: any) {
@@ -100,7 +149,6 @@ const SubCategoryForm = ({ res, setRes }: props) => {
             setLoading(false)
         }
 
-
     }
 
     return (
@@ -108,13 +156,38 @@ const SubCategoryForm = ({ res, setRes }: props) => {
             <CustomBox title='Sub Category'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
+                        <Customselect
+                            type='text'
+                            control={control}
+                            error={errors.category_id}
+                            fieldName="franchise_id"
+                            placeholder={``}
+                            fieldLabel={"Category"}
+                            selectvalue={""}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={categoryID}
+                            options={''}
+                            onChangeValue={onChangeSelectCategory}
+                            background={'#fff'}
+                        >
+                            <MenuItem value="" disabled >
+                                <>Select Category</>
+                            </MenuItem>
+                            {categoryList && categoryList?.map((res: any) => (
+                                <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
+                            ))}
+                        </Customselect>
+                    </Grid>
+                    <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
                             control={control}
                             error={errors.name}
                             fieldName="name"
                             placeholder={``}
-                            fieldLabel={"Category Name"}
+                            fieldLabel={"SubCategory Name"}
                             disabled={false}
                             view={false}
                             defaultValue={''}
@@ -133,15 +206,17 @@ const SubCategoryForm = ({ res, setRes }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2}>
+                    <Grid item xs={12} lg={2.5}>
                         <CustomImageUploader
                             ICON={""}
+                            viewImage={imagePreview}
+                            
                             error={errors.image}
                             fieldName="Subcategory"
                             placeholder={``}
                             fieldLabel={"Image"}
                             control={control}
-                            height={120}
+                            height={130}
                             max={5}
                             onChangeValue={imageUploder}
                             preview={imagefile}
@@ -163,7 +238,7 @@ const SubCategoryForm = ({ res, setRes }: props) => {
                     endIcon={false}
                     startIcon={false}
                     height={''}
-                    label={'Add SubCategory'}
+                    label={res ? 'Edit SubCategory' : 'Add SubCategory'}
                     onClick={handleSubmit(onSubmit)}
                     disabled={loading}
                 />

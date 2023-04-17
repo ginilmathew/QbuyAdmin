@@ -154,8 +154,8 @@ const AddProducts = () => {
             setLoding(true)
             const response = await fetchData(`/admin/product/list/${process.env.NEXT_PUBLIC_TYPE}`)
             console.log({ response })
-            setProductList(response?.data?.data?.data)
-            setSearchList(response.data.data?.data);
+            setProductList(response?.data?.data)
+            setSearchList(response.data.data);
         } catch (err: any) {
             setLoding(false)
             toast.error(err?.message)
