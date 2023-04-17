@@ -610,7 +610,7 @@ const ProductForm = () => {
             meta_tags: data?.meta_tags,
             video_link: data?.video_link,
             related_products: data?.related_products,
-            attributes: newData,
+            attributess: newData,
             regular_price: data?.regular_price,
             seller_price: data?.seller_price,
             offer_price: data?.offer_price,
