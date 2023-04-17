@@ -270,7 +270,8 @@ const Vendorform = () => {
     const getCategoryList = async () => {
         try {
             setLoading(true)
-            const response = await fetchData('/admin/category/list')
+            const response = await fetchData(`/admin/category/list/${process.env.NEXT_PUBLIC_TYPE}`)
+            console.log({response})
             setGetCategory(response?.data?.data)
             setLoading(false)
 
