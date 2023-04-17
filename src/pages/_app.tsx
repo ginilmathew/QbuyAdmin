@@ -51,16 +51,17 @@ export default function App({ Component, pageProps }: AppProps) {
       </Stack>
     )}
     {/* <LoadScript googleMapsApiKey="AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I" libraries={["drawing"]}> */}
-    <UserProvider>
+    
     <ProtectedRoute>
       <HeaderProvider>
-        
+      <UserProvider>
           {showHeader && <Header />}
           <Component {...pageProps} />
           <ToastContainer />
+          </UserProvider>
       </HeaderProvider>
     </ProtectedRoute>
-    </UserProvider>
+   
     {/* </LoadScript> */}
   </main>
 

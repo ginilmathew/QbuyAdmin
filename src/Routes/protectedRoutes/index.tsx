@@ -14,8 +14,8 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     const userContext = useContext(UserContext);
 
     useEffect(() => {
-        //let token = localStorage.getItem("token")
-        if (!userContext.user) {
+        let token = localStorage.getItem("token")
+        if (!token) {
             router.push('/login')
             setTimeout(() => {
                 setLoading(false)

@@ -85,7 +85,7 @@ const VendorSignup = () => {
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params: GridValueGetterParams) =>
-                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+                `${params?.row?.firstName || ''} ${params?.row?.lastName || ''}`,
         },
         {
             field: 'status',
