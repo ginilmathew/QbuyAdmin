@@ -1148,8 +1148,8 @@ const ProductForm = () => {
                             disabled={false}
                             type='text'
                             control={control}
-                            error={errors.seller_price}
-                            fieldName="seller_price"
+                            error={errors.regular_price}
+                            fieldName="regular_price"
                             placeholder={``}
                             fieldLabel={"Selling Price"}
                             view={false}
@@ -1161,8 +1161,8 @@ const ProductForm = () => {
                             disabled={false}
                             type='text'
                             control={control}
-                            error={errors.regular_price}
-                            fieldName="regular_price"
+                            error={errors.seller_price}
+                            fieldName=" seller_price"
                             placeholder={``}
                             fieldLabel={"Purchase Price"}
                             view={false}
