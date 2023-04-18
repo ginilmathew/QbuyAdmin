@@ -242,6 +242,7 @@ const ProductForm = ({ res }: props) => {
 
     const imageUploder = async (file: any) => {
         setImagefile(file)
+        setImagePreview(null)
         const formData = new FormData();
         formData.append("image", file);
         try {
@@ -528,7 +529,6 @@ const ProductForm = ({ res }: props) => {
                 })
             }
 
-            console.log({ attributes })
         }
 
     }, [res])
