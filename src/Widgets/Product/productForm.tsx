@@ -9,7 +9,7 @@ import CustomCheckBox from '@/components/CustomCheckBox';
 import CustomImageUploader from '@/components/CustomImageUploader';
 import CustomAutoComplete from '@/components/CustomAutocompleteBox';
 import CustomTimepicker from '@/components/CustomTimepicker';
-import { GoogleMap, Polygon, useJsApiLoader, LoadScript, Marker, DrawingManager } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, LoadScript, Marker, DrawingManager } from "@react-google-maps/api";
 import { CustomMultipleImageUploader } from '@/components/CustomMultipleImageUploder';
 import Custombutton from '@/components/Custombutton';
 import AddIcon from '@mui/icons-material/Add';
@@ -23,6 +23,7 @@ import CustomDatePicker from '@/components/CustomDatePicker';
 import Maps from '../../components/maps/maps'
 import { type } from 'os';
 import { set } from 'lodash';
+import Polygon from '@/components/maps/Polygon';
 
 type Inputs = {
     name: string,
@@ -117,13 +118,13 @@ type props = {
 const ProductForm = ({ res }: props) => {
 
 
-   console.log({res})
+    console.log({ res })
 
     const [multipleImage, setMultipleImage] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [stock, setStock] = useState<boolean>(false)
     const [addvarient, setAddVarient] = useState<boolean>(false)
-    const [imagePreview, setImagePreview] = useState<null | File>(null)
+    const [imagePreview, setImagePreview] = useState<any>(null)
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [attributes, setAttributes] = useState<any>([])
     const [productTag, setProductTag] = useState<any>([])
@@ -147,24 +148,11 @@ const ProductForm = ({ res }: props) => {
     const [pandaSuggesion, setPandaSuggesions] = useState<boolean>(false);
     const [enableVariants, setEnableVariants] = useState<boolean>(false);
     const [paths, setPaths] = useState<any>(null)
-    const [pandType, setPandType] = useState<any>([
-        {
-            name: 'Qbuy Panda',
-            value: 'panda'
-        },
-        {
-            name: 'Qbuy Green',
-            value: 'green'
-        },
-        {
-            name: 'Qbuy Fashion',
-            value: 'fashion'
-        },
-    ])
+
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
 
-    console.log({attributes})
+    console.log({ paths })
 
     const MAX_FILE_SIZE = 102400; //100KB
 
@@ -172,12 +160,12 @@ const ProductForm = ({ res }: props) => {
     const schema = yup
         .object()
         .shape({
-            name: yup.string().required('Product Name Required'),
-            display_order: yup.number().nullable().typeError("Must be Integer"),
-            franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
-            store: yup.array().typeError('Store is Required').required('Store is Required'),
-            category: yup.array().typeError('Category is Required').required('Category is Required'),
-            delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
+            // name: yup.string().required('Product Name Required'),
+            // display_order: yup.number().nullable().typeError("Must be Integer"),
+            // franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
+            // store: yup.array().typeError('Store is Required').required('Store is Required'),
+            // category: yup.array().typeError('Category is Required').required('Category is Required'),
+            // delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
             // product_image: yup
             //     .mixed()
             //     .required("Product Image is Required"),
@@ -248,7 +236,7 @@ const ProductForm = ({ res }: props) => {
     }
 
 
-  
+
 
 
 
@@ -419,7 +407,6 @@ const ProductForm = ({ res }: props) => {
     ///
 
     const onChangeName = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
-    
         attributes[i].name = e.target.value;
 
 
@@ -507,7 +494,16 @@ const ProductForm = ({ res }: props) => {
             setStock(res?.stock)
             setValue('stock_value', res?.stock_value)
             setValue('minimum_qty', res?.minimum_qty)
-            setImagePreview(res?.product_image)
+            setImagePreview(`${res?.base_url}${res?.product_image}`)
+            setValue('delivery_locations', res?.delivery_location)
+            let paths = res?.delivery_locations?.map((loc: any) => {
+                return {
+                    lat: loc[0],
+                    lng: loc[1]
+                }
+            })
+            setPaths(paths)
+
             setValue('product_availability_from', moment(res?.product_availability_from, 'HH:mm'))
             setValue('product_availability_to', moment(res?.product_availability_to, 'HH:mm'))
             setValue('require_shipping', res?.require_shipping)
@@ -521,20 +517,18 @@ const ProductForm = ({ res }: props) => {
             setValue('related_products', res?.related_products)
             let attributesArray: { name: any; options: any; varient: boolean; }[] = []
             if (res?.attributes?.length > 0) {
-               res?.attributes.map((item:any)=>{
-                attributesArray.push({
-                    name:item?.name,
-                    options:item?.options,
-                    varient:false
-                
-                })
+                res?.attributes.map((item: any) => {
+                    attributesArray.push({
+                        name: item?.name,
+                        options: item?.options,
+                        varient: false
 
-                console.log({attributesArray})
-                setAttributes(attributesArray)
-               })
+                    })
+                    setAttributes(attributesArray)
+                })
             }
 
-            console.log({attributes})
+            console.log({ attributes })
         }
 
     }, [res])
@@ -672,6 +666,56 @@ const ProductForm = ({ res }: props) => {
 
     // }
 
+
+    const [path, setPath] = useState([
+        { lat: 52.52549080781086, lng: 13.398118538856465 },
+        { lat: 52.48578559055679, lng: 13.36653284549709 },
+        { lat: 52.48871246221608, lng: 13.44618372440334 }
+    ]);
+
+    // Define refs for Polygon instance and listeners
+    const polygonRef = useRef<google.maps.Polygon | null>(null);
+    const listenersRef = useRef<google.maps.MapsEventListener[]>([]);
+
+    // Call setPath with new edited path
+    const onEdit = useCallback(() => {
+        if (polygonRef.current) {
+            const nextPath = polygonRef.current
+                .getPath()
+                .getArray()
+                .map((latLng: google.maps.LatLng) => {
+                    return { lat: latLng.lat(), lng: latLng.lng() };
+                });
+            setPath(nextPath);
+        }
+    }, [setPath]);
+
+    // Bind refs to current Polygon and listeners
+    const onLoad = useCallback(
+        (polygon: google.maps.Polygon) => {
+            polygonRef.current = polygon;
+            const path = polygon.getPath();
+            listenersRef.current.push(
+                path.addListener("set_at", onEdit),
+                path.addListener("insert_at", onEdit),
+                path.addListener("remove_at", onEdit)
+            );
+        },
+        [onEdit]
+    );
+
+    // Clean up refs
+    const onUnmount = useCallback(() => {
+        listenersRef.current.forEach((lis: google.maps.MapsEventListener) => lis.remove());
+        polygonRef.current = null;
+    }, []);
+
+
+
+
+
+    //posting products ...................................................................................................
+
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
         if (multipleImage?.length > 0) {
@@ -725,7 +769,12 @@ const ProductForm = ({ res }: props) => {
             "options": item.options.map((option: any) => option.title)
         }));
 
-        let value = {
+        const CREATE_URL = '/admin/product/create'
+        const EDIT_URL = 'admin/product/update'
+
+
+        let value: any = {
+
             name: data?.name,
             franchisee: {
                 id: data?.franchisee?.[0]?.id,
@@ -778,10 +827,12 @@ const ProductForm = ({ res }: props) => {
             variants: varientsarray?.length > 0 ? varientsarray : null,
             approval_status: "approved"
         }
-     
+        if (res) {
+            value["id"] = res?._id;
+        }
         try {
             setLoading(true)
-            await postData('admin/product/create', value)
+            await postData(res ? EDIT_URL : CREATE_URL, value)
             reset()
             setFranchiseSelect(null)
             setCategorySelect(null)
@@ -797,7 +848,7 @@ const ProductForm = ({ res }: props) => {
             setAttributes([])
             setRequireShipping(false)
             setMultipleImage([])
-            toast.success('Created Successfully')
+            toast.success(res ? 'Updated Successfully' : 'Created Successfully')
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)
@@ -1027,11 +1078,11 @@ const ProductForm = ({ res }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={3}>
+                    <Grid item xs={12} lg={1.5}>
                         <Typography mb={3}></Typography>
                         <CustomCheckBox isChecked={pandaSuggesion} label='' onChange={onCheckPandasuggestion} title='Panda Suggestion' />
                     </Grid>
-                    <Grid item xs={12} lg={3}>
+                    <Grid item xs={12} lg={1.5}>
                         <Typography mb={3}></Typography>
                         <CustomCheckBox isChecked={stock} label='' onChange={StockCheck} title='Enable Stock' />
                     </Grid>
@@ -1068,6 +1119,7 @@ const ProductForm = ({ res }: props) => {
                     <Grid item xs={12} lg={3}>
                         <CustomImageUploader
                             ICON={""}
+                            viewImage={imagePreview}
                             error={errors.product_image}
                             fieldName="image"
                             placeholder={``}
@@ -1113,7 +1165,8 @@ const ProductForm = ({ res }: props) => {
                 </Grid>
                 <Box py={2}>
                     <Divider />
-                    <Maps onPolygonComplete={onPolygonComplete} />
+                    {res ? <Polygon onComplete={onPolygonComplete} path={paths} /> :
+                        <Maps onPolygonComplete={onPolygonComplete} />}
                     {(errors && errors?.delivery_locations) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.delivery_locations?.message}`}</span>}
                 </Box>
             </CustomBox>
@@ -1303,6 +1356,20 @@ const ProductForm = ({ res }: props) => {
                             disabled={false}
                             type='text'
                             control={control}
+                            error={errors.seller_price}
+                            fieldName=" seller_price"
+                            placeholder={``}
+                            fieldLabel={"Purchase Price"}
+                            view={false}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item lg={1.71} xs={12}>
+
+                        <CustomInput
+                            disabled={false}
+                            type='text'
+                            control={control}
                             error={errors.regular_price}
                             fieldName="regular_price"
                             placeholder={``}
@@ -1311,15 +1378,30 @@ const ProductForm = ({ res }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
+
+
                     <Grid item lg={1.71} xs={12}>
                         <CustomInput
                             disabled={false}
                             type='text'
                             control={control}
-                            error={errors.seller_price}
-                            fieldName=" seller_price"
+                            error={errors.commission}
+                            fieldName="commission"
+                            placeholder={''}
+                            fieldLabel={"Commission(%)"}
+                            view={false}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item lg={1.71} xs={12}>
+                        <CustomInput
+                            disabled={false}
+                            type='number'
+                            control={control}
+                            error={errors.fixed_delivery_price}
+                            fieldName=" fixed_delivery_price"
                             placeholder={``}
-                            fieldLabel={"Purchase Price"}
+                            fieldLabel={"Fixed Delivery Price"}
                             view={false}
                             defaultValue={''}
                         />
@@ -1337,36 +1419,6 @@ const ProductForm = ({ res }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item lg={1.71} xs={12}>
-                        <CustomInput
-                            disabled={false}
-                            type='text'
-                            control={control}
-                            error={errors.commission}
-                            fieldName="commission"
-                            placeholder={''}
-                            fieldLabel={"Commission(%)"}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-
-                    <Grid item lg={1.71} xs={12}>
-                        <CustomInput
-                            disabled={false}
-                            type='number'
-                            control={control}
-                            error={errors.fixed_delivery_price}
-                            fieldName=" fixed_delivery_price"
-                            placeholder={``}
-                            fieldLabel={"Fixed Delivery Price"}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-
-
-
                     <Grid item lg={1.71} xs={12}>
                         <CustomDatePicker
                             values={getValues('offer_date_from')}

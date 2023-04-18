@@ -42,7 +42,6 @@ const CustomProductVarient = memo(({ content, index, setState, state ,deafultCom
 
 
     const onChangeSellingPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log({state})
         state[index].attributs = content.split(" ")
         state[index].regular_price = e.target.value;
     }
@@ -82,21 +81,7 @@ const CustomProductVarient = memo(({ content, index, setState, state ,deafultCom
         <Box>
             <Typography py={2} sx={{ fontFamily: `'Poppins' sans-serif` }} fontSize={16} fontWeight={'bold'}>{index + 1}. {content}</Typography>
             <Grid container spacing={2}>
-                <Grid item lg={1.5} xs={12}>
-                    <CustomInput
-                        disabled={false}
-                        type='text'
-                        control={control}
-                        error={errors.seller_price}
-                        fieldName="seller_price"
-                        placeholder={``}
-                        onChangeValue={onChangeSellingPrice}
-                        fieldLabel={"Selling Price"}
-                        view={false}
-                        defaultValue={''}
-                    />
-                </Grid>
-                <Grid item lg={1.5} xs={12}>
+            <Grid item lg={1.5} xs={12}>
                     <CustomInput
                         onChangeValue={onChangePurchasePrice}
                         disabled={false}
@@ -112,18 +97,20 @@ const CustomProductVarient = memo(({ content, index, setState, state ,deafultCom
                 </Grid>
                 <Grid item lg={1.5} xs={12}>
                     <CustomInput
-                        onChangeValue={onChangeOfferPrice}
                         disabled={false}
                         type='text'
                         control={control}
-                        error={errors.offer_price}
-                        fieldName="offer_price"
+                        error={errors.seller_price}
+                        fieldName="seller_price"
                         placeholder={``}
-                        fieldLabel={"Offer Price"}
+                        onChangeValue={onChangeSellingPrice}
+                        fieldLabel={"Selling Price"}
                         view={false}
                         defaultValue={''}
                     />
                 </Grid>
+                
+               
                 <Grid item lg={1.5} xs={12}>
                     <CustomInput
                         onChangeValue={onChangeCommision}
@@ -152,7 +139,20 @@ const CustomProductVarient = memo(({ content, index, setState, state ,deafultCom
                         defaultValue={''}
                     />
                 </Grid>
-
+                <Grid item lg={1.5} xs={12}>
+                    <CustomInput
+                        onChangeValue={onChangeOfferPrice}
+                        disabled={false}
+                        type='text'
+                        control={control}
+                        error={errors.offer_price}
+                        fieldName="offer_price"
+                        placeholder={``}
+                        fieldLabel={"Offer Price"}
+                        view={false}
+                        defaultValue={''}
+                    />
+                </Grid>
 
                 <Grid item lg={1.5} xs={12}>
                     < CustomDatePicker
