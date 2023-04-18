@@ -73,7 +73,7 @@ export const CustomMultipleImageUploader = ({ fieldLabel ,onChangeImage,state}: 
                         </Box>
                         <Box minHeight={150} border={'1px solid #f5f5f5'} >
                             <Box display={'flex'} flexWrap={'wrap'} justifyContent={'initial'}>
-                                {imageList.map((image, index) => (
+                                {imageList?.map((image, index) => (
                                     <Box key={index} display={'flex'} px={1} py={2}>
                                         <Box display={'flex'} flexDirection={'column'}  >
                                             <img src={image['data_url']} alt="" width="100px" height={'80px'} />

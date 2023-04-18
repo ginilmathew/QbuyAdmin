@@ -20,7 +20,7 @@ import CustomMultiselect from '@/components/CustomMultiselect';
 import Maps from '@/components/maps/maps';
 import Polygon from '@/components/maps/Polygon';
 import { Router, useRouter } from 'next/router';
-
+import { IMAGE_URL } from '../../Config/index';
 
 
 
@@ -81,6 +81,10 @@ type props = {
 
 const Vendorform = ({ res }: props) => {
 
+    console.log({res})
+    
+    console.log({IMAGE_URL})
+
     const router = useRouter()
     console.log({ res }, 'VENDOR LIST')
 
@@ -92,10 +96,10 @@ const Vendorform = ({ res }: props) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [multpleArray, setMultipleArray] = useState<any>([]);
     const [postArray, setPostArray] = React.useState<any>([]);
-    const [imagePreview, setImagePreview] = useState<null | File>(null)
+    const [imagePreview, setImagePreview] = useState<any>(null)
     const [paths, setPaths] = useState<any>(null)
 
-    console.log({ postArray })
+    console.log({ imagePreview })
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
@@ -318,7 +322,7 @@ const Vendorform = ({ res }: props) => {
             setValue('category_id', res?.category_id)
             setCategory(res?.category_id)
             setValue('store_logo', res?.store_logo)
-            setImagePreview(res?.store_logo)
+            setImagePreview(`${IMAGE_URL}${res?.store_logo}`)
             setValue('start_time', moment(res?.start_time, 'HH:mm A'))
             setValue('end_time', moment(res?.end_time, 'HH:mm A'))
             setValue('license_number', res?.kyc_details?.license_number)

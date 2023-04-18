@@ -24,7 +24,7 @@ import Maps from '../../components/maps/maps'
 import { type } from 'os';
 import { set } from 'lodash';
 import Polygon from '@/components/maps/Polygon';
-
+import { IMAGE_URL } from '../../Config/index';
 type Inputs = {
     name: string,
     description: string,
@@ -118,7 +118,7 @@ type props = {
 const ProductForm = ({ res }: props) => {
 
 
-
+    console.log({ res })
 
     const [multipleImage, setMultipleImage] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
@@ -152,7 +152,8 @@ const ProductForm = ({ res }: props) => {
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
 
-    console.log({ paths })
+
+    console.log({multipleImage})
 
     const MAX_FILE_SIZE = 102400; //100KB
 
@@ -175,7 +176,6 @@ const ProductForm = ({ res }: props) => {
         .required();
 
 
-    console.log({ attributes })
 
     const { register,
         handleSubmit,
@@ -495,7 +495,7 @@ const ProductForm = ({ res }: props) => {
             setStock(res?.stock)
             setValue('stock_value', res?.stock_value)
             setValue('minimum_qty', res?.minimum_qty)
-            setImagePreview(`${res?.base_url}${res?.product_image}`)
+            setImagePreview(`${IMAGE_URL}${res?.product_image}`)
             setValue('delivery_locations', res?.delivery_location)
             let paths = res?.delivery_locations?.map((loc: any) => {
                 return {
@@ -516,6 +516,12 @@ const ProductForm = ({ res }: props) => {
             }
             setValue('video_link', res?.video_link)
             setValue('related_products', res?.related_products)
+            // if(res?.image){
+            //     res?.image?.map((res:any)=>(
+            //        console.log({res}),"MULTIPLE IMAGEsssss"
+            //     ))
+
+            // }
             let attributesArray: { name: any; options: any; varient: boolean; }[] = []
             if (res?.attributes?.length > 0) {
                 res?.attributes.map((item: any) => {
@@ -528,6 +534,9 @@ const ProductForm = ({ res }: props) => {
                     setAttributes(attributesArray)
                 })
             }
+            setValue('commission', res?.commision)
+            setValue('regular_price', res?.regular_price)
+            setValue('offer_price', res?.offer_price)
 
         }
 
