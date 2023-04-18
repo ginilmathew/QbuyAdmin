@@ -111,7 +111,10 @@ const Vendorform = ({ res }: props) => {
             category_id: yup.array().typeError('Category is Required').required('Category is Required'),
             // start_time: yup.string().required('Required'),
             // end_time: yup.string().required('Required'),
-            // store_logo: yup.string().required('Logo is Required'),
+            store_logo:yup
+            .mixed()
+            .typeError("Store Logo is Required")
+            .required("Store Logo is Required"),
             // // coordinates: any,
             // license_number: yup.string().required('License Number is Required'),
             // ffsai_number: yup.string().required('FFASI Number is Required'),
@@ -121,7 +124,8 @@ const Vendorform = ({ res }: props) => {
             // ifsc: yup.string().required('IFSC is Required'),
             // branch: yup.string().required('Branch is Required'),
             // recipient_name: yup.string().required('Recipient Name is Required'),
-            coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required")
+            coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required"),
+            commission:yup.string().required('Commission is Required')
 
         })
         .required();

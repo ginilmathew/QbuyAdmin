@@ -821,6 +821,8 @@ const ProductForm = ({ res }: props) => {
             regular_price: data?.regular_price,
             seller_price: data?.seller_price,
             offer_price: data?.offer_price,
+            commission: data?.regular_price ? 0 : data?.commission,
+            fixed_delivery_price: data?.fixed_delivery_price,
             offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             variant: varientsarray?.length > 0 ? true : false,
@@ -1378,8 +1380,6 @@ const ProductForm = ({ res }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-
-
                     <Grid item lg={1.71} xs={12}>
                         <CustomInput
                             disabled={false}
@@ -1389,7 +1389,7 @@ const ProductForm = ({ res }: props) => {
                             fieldName="commission"
                             placeholder={''}
                             fieldLabel={"Commission(%)"}
-                            view={false}
+                            view={getValues('regular_price') ? true : false}
                             defaultValue={''}
                         />
                     </Grid>

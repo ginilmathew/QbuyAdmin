@@ -250,7 +250,7 @@ const SubCategoryForm = ({ res }: props) => {
                     endIcon={false}
                     startIcon={false}
                     height={''}
-                    label={res ? 'Edit SubCategory' : 'Add SubCategory'}
+                    label={res ? 'Update' : 'Add SubCategory'}
                     onClick={handleSubmit(onSubmit)}
                     disabled={loading}
                 />

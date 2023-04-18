@@ -221,7 +221,7 @@ const CategoryForm = ({ resData }: props) => {
                     IconStart={''}
                     endIcon={false} startIcon={false}
                     height={''}
-                    label={resData ? 'Edit Category' : ' Add Category'}
+                    label={resData ? 'update' : ' Add Category'}
                     onClick={handleSubmit(onSubmit)} />
             </Box>
 
