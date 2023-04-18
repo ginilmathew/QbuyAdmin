@@ -22,6 +22,7 @@ import moment from 'moment'
 import CustomDatePicker from '@/components/CustomDatePicker';
 import Maps from '../../components/maps/maps'
 import { type } from 'os';
+import { set } from 'lodash';
 
 type Inputs = {
     name: string,
@@ -61,7 +62,9 @@ type Inputs = {
     offer_date_from: any,
     offer_date_to: any,
     stock_values: string,
-    application_type: string
+    application_type: string,
+    commission: any,
+    fixed_delivery_price: any
 }
 
 type IFormInput = {
@@ -102,7 +105,9 @@ type IFormInput = {
     offer_date_from: any,
     offer_date_to: any,
     stock_values: string,
-    application_type: string
+    application_type: string,
+    commission: any,
+    fixed_delivery_price: any
 }
 
 type props = {
@@ -217,7 +222,9 @@ const ProductForm = ({ res }: props) => {
                 minimum_qty: '',
                 delivery_locations: null,
                 product_availability_from: null,
-                product_availability_to: null
+                product_availability_to: null,
+                fixed_delivery_price: null,
+                commission: null
 
             }
         });
@@ -284,27 +291,28 @@ const ProductForm = ({ res }: props) => {
 
     const multipleImageUploder = async (image: any) => {
         setMultipleImage(image)
+        setError('image', { message: '' })
     }
 
-    const submitImage = async () => {
-        const formData = new FormData();
-        multipleImage?.map((img: any, i: number) => {
-            formData.append(`image[${i}]`, img.file);
-        })
-        try {
-            setLoading(true)
-            const response = await postData('admin/product/multipleupload', formData)
-            setValue('image', response?.data?.data)
-            setError('image', { message: '' })
-        } catch (err: any) {
-            toast.error(err?.message)
-            setLoading(false)
+    // const submitImage = async () => {
+        // const formData = new FormData();
+        // multipleImage?.map((img: any, i: number) => {
+        //     formData.append(`image[${i}]`, img.file);
+        // })
+        // try {
+        //     setLoading(true)
+        //     const response = await postData('admin/product/multipleupload', formData)
+        //     setValue('image', response?.data?.data)
+        //     setError('image', { message: '' })
+        // } catch (err: any) {
+        //     toast.error(err?.message)
+        //     setLoading(false)
 
-        } finally {
-            setLoading(false)
-        }
+        // } finally {
+        //     setLoading(false)
+        // }
 
-    }
+    // }
 
 
     const getFranchiseList = async () => {
@@ -350,12 +358,18 @@ const ProductForm = ({ res }: props) => {
         setvendorSelect(e.target.value)
         let result = vendorList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
             {
+                commision: get?.additional_details ? get?.additional_details.commission : 0,
                 id: get?._id,
                 name: get?.store_name
             }
         ))
+
+
+        setValue('commission', result[0]?.commision)
         setValue('store', result)
         setError('store', { message: '' })
+
+
 
     }
 
@@ -461,7 +475,6 @@ const ProductForm = ({ res }: props) => {
     }
 
     const onChangeOffer_date_to = (e: any) => {
-        console.log({ e })
         setValue('offer_date_to', e)
 
     }
@@ -475,7 +488,7 @@ const ProductForm = ({ res }: props) => {
 
 
 
-
+    //edit product details..................................................................
     useEffect(() => {
         if (res) {
             const getvendorlist = async () => {
@@ -577,6 +590,7 @@ const ProductForm = ({ res }: props) => {
         setValue('offer_date_from', '')
         setValue('regular_price', '')
         setValue('offer_date_to', '')
+        setValue('fixed_delivery_price','')
     }
 
     const ConfirmVarients = () => {
@@ -613,7 +627,9 @@ const ProductForm = ({ res }: props) => {
                 offer_date_from: '',
                 offer_date_to: '',
                 stock: true,
-                stock_value: ''
+                stock_value: '',
+                commission: 0,
+                fixed_delivery_price: ''
             })
             setVarientsArray([...varientsarray])
 
@@ -625,9 +641,29 @@ const ProductForm = ({ res }: props) => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
+        if (multipleImage?.length > 0) {
+            const formData = new FormData();
+            multipleImage?.map((img: any, i: number) => {
+                formData.append(`image[${i}]`, img.file);
+            })
+            try {
+                setLoading(true)
+                const response = await postData('admin/product/multipleupload', formData)
+                setValue('image', response?.data?.data)
+                setError('image', { message: '' })
+            } catch (err: any) {
+                toast.error(err?.message)
+                setLoading(false)
 
-        let find = attributes?.find((res: any) => res.varient === true)
+            } finally {
+                setLoading(false)
+            }
 
+        }
+
+
+        let find = attributes?.every((res: any) => res.varient === true)
+     
         if (!find) {
             if (!data?.seller_price || !data?.regular_price) {
                 toast.warning("Please add product price to continue")
@@ -635,9 +671,9 @@ const ProductForm = ({ res }: props) => {
             }
         }
         else {
-            let price = varientsarray?.find((va: any) => va.seller_price === "" || va.regular_price === "")
+            let price = varientsarray?.find((va: any) => va.seller_price === " " || va.regular_price === " ")
             if (price) {
-                toast.warning("Please add product price to continue")
+                toast.warning("Please add product price to v continue")
                 return false;
             }
         }
@@ -725,6 +761,7 @@ const ProductForm = ({ res }: props) => {
             setMetaTag([])
             setattributeTag([])
             setAttributes([])
+            setMultipleImage([])
             toast.success('Created Successfully')
         } catch (err: any) {
             toast.error(err?.message)
@@ -1172,11 +1209,6 @@ const ProductForm = ({ res }: props) => {
                     </Grid>
                     <Grid item xs={12} lg={6}>
                         <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />
-                        {multipleImage?.length > 0 &&
-                            <Box py={1}>
-                                <Custombutton btncolor='' disabled={loading} height={40} endIcon={false} startIcon={false} label={'Submit'} onClick={submitImage} IconEnd={''} IconStart={''} />
-                            </Box>}
-
                     </Grid>
                     <Grid item xs={12} lg={6}>
                         <CustomInput
@@ -1231,7 +1263,7 @@ const ProductForm = ({ res }: props) => {
             </CustomBox>
             {(!confirmbtn || (confirmbtn && !attributes?.some((res: any) => res.varient === true))) && <CustomBox title='Price'>
                 <Grid container spacing={2}>
-                    <Grid item lg={2} xs={12}>
+                    <Grid item lg={1.71} xs={12}>
                         <CustomInput
                             disabled={false}
                             type='text'
@@ -1244,7 +1276,7 @@ const ProductForm = ({ res }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item lg={2} xs={12}>
+                    <Grid item lg={1.71} xs={12}>
                         <CustomInput
                             disabled={false}
                             type='text'
@@ -1257,7 +1289,7 @@ const ProductForm = ({ res }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item lg={2} xs={12}>
+                    <Grid item lg={1.71} xs={12}>
                         <CustomInput
                             disabled={false}
                             type='text'
@@ -1270,9 +1302,37 @@ const ProductForm = ({ res }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
+                    <Grid item lg={1.71} xs={12}>
+                        <CustomInput
+                            disabled={false}
+                            type='text'
+                            control={control}
+                            error={errors.commission}
+                            fieldName="commission"
+                            placeholder={''}
+                            fieldLabel={"Commission(%)"}
+                            view={false}
+                            defaultValue={''}
+                        />
+                    </Grid>
+
+                    <Grid item lg={1.71} xs={12}>
+                        <CustomInput
+                            disabled={false}
+                            type='number'
+                            control={control}
+                            error={errors.fixed_delivery_price}
+                            fieldName=" fixed_delivery_price"
+                            placeholder={``}
+                            fieldLabel={"Fixed Delivery Price"}
+                            view={false}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                   
 
 
-                    <Grid item lg={2} xs={12}>
+                    <Grid item lg={1.71} xs={12}>
                         <CustomDatePicker
                             values={getValues('offer_date_from')}
                             changeValue={onChangeOffer_date_from}
@@ -1283,7 +1343,7 @@ const ProductForm = ({ res }: props) => {
                         />
 
                     </Grid>
-                    <Grid item lg={2} xs={12}>
+                    <Grid item lg={1.71} xs={12}>
                         <CustomDatePicker
                             values={getValues('offer_date_to')}
                             changeValue={onChangeOffer_date_to}
@@ -1367,7 +1427,7 @@ const ProductForm = ({ res }: props) => {
                     {attributes?.some((res: any) => res.varient === true) && confirmbtn &&
                         <Box>
                             {varients?.map((res: any, i: any) => (
-                                <CustomProductVarient content={res} index={i} setState={setVarientsArray} state={varientsarray} />
+                                <CustomProductVarient deafultCommission={getValues('commission')} content={res} index={i} setState={setVarientsArray} state={varientsarray} />
                             ))}
                         </Box>
                     }
