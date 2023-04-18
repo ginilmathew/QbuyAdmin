@@ -32,8 +32,6 @@ export default function CustomAutoComplete({ fieldLabel, list, setValues, onChna
 
 
     const onChangeValue = (e: any) => {
-
-        console.log(e.target.value)
         let filter = list.map((res: any) => (
             res?.title
         ))
@@ -48,8 +46,6 @@ export default function CustomAutoComplete({ fieldLabel, list, setValues, onChna
     }
 
     const ChangedValue = (e: any, newValue: any) => {
-
-        console.log({newValue})
         setValues([...newValue.filter((option: any) => fixedOptions.indexOf(option) === -1),]);
         setValue([
             ...newValue.filter((option: any) => fixedOptions.indexOf(option) === -1),

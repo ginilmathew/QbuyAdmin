@@ -116,7 +116,8 @@ type props = {
 
 const ProductForm = ({ res }: props) => {
 
-    console.log({ res })
+
+   console.log({res})
 
     const [multipleImage, setMultipleImage] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
@@ -161,6 +162,8 @@ const ProductForm = ({ res }: props) => {
     ])
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
+
+    console.log({attributes})
 
     const MAX_FILE_SIZE = 102400; //100KB
 
@@ -244,31 +247,7 @@ const ProductForm = ({ res }: props) => {
     }
 
 
-    const containerStyle = {
-        height: '300',
-        width: '100%',
-    };
-
-    const center = {
-        lat: 40.7128,
-        lng: -74.006,
-    };
-
-    const polygonCoords = [
-        { lat: 40.7128, lng: -74.006 },
-        { lat: 40.7128, lng: -73.979 },
-        { lat: 40.731, lng: -73.979 },
-        { lat: 40.731, lng: -74.006 },
-    ];
-
-    const options = {
-        fillColor: '#000',
-        fillOpacity: 0.4,
-        strokeColor: '#000',
-        strokeOpacity: 1,
-        strokeWeight: 1,
-    };
-
+  
 
 
 
@@ -436,8 +415,10 @@ const ProductForm = ({ res }: props) => {
 
 
 
+    ///
+
     const onChangeName = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
-        console.log(e.target.value)
+    
         attributes[i].name = e.target.value;
 
 
@@ -537,24 +518,22 @@ const ProductForm = ({ res }: props) => {
             }
             setValue('video_link', res?.video_link)
             setValue('related_products', res?.related_products)
+            let attributesArray: { name: any; options: any; varient: boolean; }[] = []
             if (res?.attributes?.length > 0) {
+               res?.attributes.map((item:any)=>{
+                attributesArray.push({
+                    name:item?.name,
+                    options:item?.options,
+                    varient:false
+                
+                })
 
-                for (let i = 0; i < res?.attributes?.length; i++) {
-                    attributes.push({
-                        name: '',
-                        options: [],
-                        varient: false
-                    }
-
-                    )
-
-                    setAttributes([...attributes])
-                }
-                res?.attributes?.map((res: any, i: number) => (
-                    attributes[i].name = res?.name
-
-                ))
+                console.log({attributesArray})
+                setAttributes(attributesArray)
+               })
             }
+
+            console.log({attributes})
         }
 
     }, [res])
@@ -1297,7 +1276,7 @@ const ProductForm = ({ res }: props) => {
                                 placeholder={``}
                                 fieldLabel={"Name"}
                                 view={false}
-                                defaultValue={''}
+                                defaultValue={res.name}
                             />
                         </Grid>
                         <Grid item xs={12} lg={4}>
@@ -1496,7 +1475,7 @@ const ProductForm = ({ res }: props) => {
                     endIcon={false}
                     startIcon={false}
                     height={''}
-                    label={res ? 'Edit Product' : 'Add Product'}
+                    label={res ? 'Update' : 'Add Product'}
                     onClick={handleSubmit(onSubmit)} />
             </Box>
         </Box>

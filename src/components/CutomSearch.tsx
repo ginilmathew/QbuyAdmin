@@ -22,7 +22,7 @@ const CutomSearch = ({setState}:props) => {
         <>
             <TextField
                 onChange={onchangeValue}
-                placeholder='Serach...'
+                placeholder='Search...'
                 id="outlined-basic" variant="outlined"
                 InputProps={{
                     style: {
