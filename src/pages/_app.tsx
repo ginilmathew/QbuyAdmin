@@ -53,6 +53,13 @@ export default function App({ Component, pageProps }: AppProps) {
     {/* <LoadScript googleMapsApiKey="AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I" libraries={["drawing"]}> */}
     
     <ProtectedRoute>
+    <LoadScript
+			id="script-loader"
+			googleMapsApiKey={`${process.env.NEXT_PUBLIC_GOOGLEKEY}`}
+			language="en"
+			region="us"
+			libraries={["drawing"]}
+		>
       <HeaderProvider>
       <UserProvider>
           {showHeader && <Header />}
@@ -60,6 +67,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <ToastContainer />
           </UserProvider>
       </HeaderProvider>
+      </LoadScript>
     </ProtectedRoute>
    
     {/* </LoadScript> */}

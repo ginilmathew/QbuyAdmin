@@ -7,7 +7,7 @@ import Custombutton from '@/components/Custombutton';
 import CustomImageUploader from '@/components/CustomImageUploader';
 import Customselect from '@/components/Customselect';
 import { FormInputs } from '@/utilities/types';
-import { GoogleMap, Polygon, useJsApiLoader, LoadScript, Marker, DrawingManager } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, LoadScript, Marker, DrawingManager } from "@react-google-maps/api";
 import { fetchData } from '@/CustomAxios';
 import CustomTimepicker from '@/components/CustomTimepicker';
 import dayjs, { Dayjs } from 'dayjs';
@@ -18,6 +18,7 @@ import * as yup from 'yup';
 import moment from 'moment'
 import CustomMultiselect from '@/components/CustomMultiselect';
 import Maps from '@/components/maps/maps';
+import Polygon from '@/components/maps/Polygon';
 import { Router, useRouter } from 'next/router';
 
 
@@ -92,6 +93,7 @@ const Vendorform = ({ res }: props) => {
     const [multpleArray, setMultipleArray] = useState<any>([]);
     const [postArray, setPostArray] = React.useState<any>([]);
     const [imagePreview, setImagePreview] = useState<null | File>(null)
+    const [paths, setPaths] = useState<any>(null)
 
     console.log({ postArray })
 
@@ -328,6 +330,14 @@ const Vendorform = ({ res }: props) => {
             setValue('tax', res?.additional_details?.tax)
             setMultipleArray(array)
             setValue('coordinates', res?.delivery_location)
+
+            let paths = res?.delivery_location?.map((loc: any) => {
+                return {
+                    lat: loc[0],
+                    lng: loc[1]
+                }
+            })
+            setPaths(paths)
 
         }
     }, [res])
@@ -645,7 +655,7 @@ const Vendorform = ({ res }: props) => {
                     <Divider />
                     {/* {isLoaded && */}
                     <Box py={1}>
-                        <Maps onPolygonComplete={polygonComplete} />
+                        {res ? <Polygon onComplete={polygonComplete} path={paths} /> : <Maps onPolygonComplete={polygonComplete} />}
                         {(errors && errors?.coordinates) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates?.message}`}</span>}
                     </Box>
                 </Box>
@@ -814,7 +824,7 @@ const Vendorform = ({ res }: props) => {
                     endIcon={false}
                     startIcon={false}
                     height={''}
-                    label={res ? 'Edit Vendor' : 'Add Vendor'}
+                    label={res ? 'Update' : 'Add Vendor'}
                     disabled={loading}
                     onClick={handleSubmit(onSubmit)} />
             </Box>

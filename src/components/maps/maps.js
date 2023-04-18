@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { LoadScript, GoogleMap } from "@react-google-maps/api";
 import Drawing from "./Drawing";
+import Polygon from "./Polygon";
 
 const GMAPS_API_KEY = "AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I";
 
@@ -28,13 +29,6 @@ const Maps = ({onPolygonComplete}) => {
 
 	return (
 
-		<LoadScript
-			id="script-loader"
-			googleMapsApiKey={GMAPS_API_KEY}
-			language="en"
-			region="us"
-			libraries={LIBRARIES}
-		>
 			<div style={{ padding: 20, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 				<GoogleMap
 					mapContainerClassName="App-map"
@@ -47,7 +41,6 @@ const Maps = ({onPolygonComplete}) => {
 					<Drawing onComplete={onPolygonComplete} />
 				</GoogleMap>
 			</div>
-		</LoadScript>
 	);
 };
 

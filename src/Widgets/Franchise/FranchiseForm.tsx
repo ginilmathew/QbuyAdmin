@@ -12,6 +12,9 @@ import { postData } from '@/CustomAxios';
 import Maps from '@/components/maps/maps';
 import { Route } from '@mui/icons-material';
 import { useRouter } from 'next/router';
+import { isNull } from 'lodash';
+import Polygons from '@/components/maps/Polygon';
+
 
 type Inputs = {
     franchise_name: string,
@@ -19,7 +22,8 @@ type Inputs = {
     email: string,
     mobile: string,
     address: string,
-    coordinates: any
+    coordinates: any,
+    franchisee_commission: string
 }
 
 type IFormInput = {
@@ -28,7 +32,8 @@ type IFormInput = {
     email: string,
     mobile: string,
     address: string,
-    coordinates: any
+    coordinates: any,
+    franchisee_commission: string
 }
 type props = {
     res?: any
@@ -37,7 +42,9 @@ type props = {
 
 const FranchiseForm = ({ res }: props) => {
 
-   const router = useRouter()
+    const [ paths, setPaths] = useState(null)
+
+    const router = useRouter()
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -72,7 +79,8 @@ const FranchiseForm = ({ res }: props) => {
                 email: '',
                 mobile: '',
                 address: '',
-                coordinates: null
+                coordinates: null,
+                franchisee_commission: ''
             }
         });
 
@@ -115,9 +123,20 @@ const FranchiseForm = ({ res }: props) => {
             setValue('email', res?.email)
             setValue('mobile', res?.mobile)
             setValue('address', res?.address)
+            setValue('franchisee_commission', res?.commission)
             setValue('coordinates',res?.delivery_location)
+
+
+            let paths = res?.delivery_location?.map((loc: any) => {
+                return {
+                    lat: loc[0],
+                    lng: loc[1]
+                }
+            })
+            setPaths(paths)
         }
     }, [res])
+
 
     return (
         <Box>
@@ -188,12 +207,25 @@ const FranchiseForm = ({ res }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
+                    <Grid item xs={12} lg={3}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.franchisee_commission}
+                            fieldName="franchisee_commission"
+                            placeholder={``}
+                            fieldLabel={"Commission(%)"}
+                            disabled={false}
+                            view={false}
+                            defaultValue={''}
+                        />
+                    </Grid>
                 </Grid>
                 <Box mt={2}>
                     <Divider />
                 </Box>
-                <Maps onPolygonComplete={setDeliveryLocation} />
-                {errors && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates?.message}`}</span>}
+                {res ? <Polygons onComplete={setDeliveryLocation} path={paths} /> : <Maps onPolygonComplete={setDeliveryLocation} />}
+                {errors && <span style={{ color: 'red', fontSize: 12 }}>{`${ errors?.coordinates ? errors?.coordinates?.message : ''}`}</span>}
             </CustomBox>
             <Box py={3}>
                 <Custombutton
@@ -203,7 +235,7 @@ const FranchiseForm = ({ res }: props) => {
                     endIcon={false}
                     startIcon={false}
                     height={''}
-                    label={res ? 'Edit Franchise' : 'Add Franchise'}
+                    label={res ? 'Update' : 'Add Franchise'}
                     onClick={handleSubmit(onSubmit)}
                     disabled={loading}
                 />

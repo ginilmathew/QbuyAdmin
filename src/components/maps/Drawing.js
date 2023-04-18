@@ -4,7 +4,7 @@ import { DrawingManagerF } from "@react-google-maps/api";
 
 const Drawing = ({onComplete}) => {
   const onLoad = (drawingManager) => {
-    console.log("drawingManager", drawingManager);
+    console.log("drawing", drawingManager);
   };
 
   const [drawingControl, setDrawingControl] = useState(true)
