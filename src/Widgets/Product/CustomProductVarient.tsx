@@ -10,7 +10,8 @@ type props = {
     content: string,
     index: number,
     setState: any,
-    state: any
+    state: any,
+    deafultCommission:string
 }
 
 type Input = {
@@ -22,10 +23,12 @@ type Input = {
     offer_date_from: any,
     offer_date_to: any,
     stock_value: string,
+    commission: any,
+    fixed_delivery_price: any
 }
 
 
-const CustomProductVarient = memo(({ content, index, setState, state }: props) => {
+const CustomProductVarient = memo(({ content, index, setState, state ,deafultCommission}: props) => {
 
 
 
@@ -39,6 +42,7 @@ const CustomProductVarient = memo(({ content, index, setState, state }: props) =
 
 
     const onChangeSellingPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log({state})
         state[index].attributs = content.split(" ")
         state[index].regular_price = e.target.value;
     }
@@ -66,12 +70,19 @@ const CustomProductVarient = memo(({ content, index, setState, state }: props) =
         state[index].offer_date_to = moment(e, 'DD-MM-YYYY').format('YYYY-MM-DD');
 
     }
+    const onChangeCommision = (e: any) => {
+        state[index].commission = e.target.value;
+
+    }
+    const onChangefixed_delivery_price = (e: any) => {
+        state[index].fixed_delivery_price = e.target.value;
+    }
 
     return (
         <Box>
             <Typography py={2} sx={{ fontFamily: `'Poppins' sans-serif` }} fontSize={16} fontWeight={'bold'}>{index + 1}. {content}</Typography>
             <Grid container spacing={2}>
-                <Grid item lg={2} xs={12}>
+                <Grid item lg={1.5} xs={12}>
                     <CustomInput
                         disabled={false}
                         type='text'
@@ -85,7 +96,7 @@ const CustomProductVarient = memo(({ content, index, setState, state }: props) =
                         defaultValue={''}
                     />
                 </Grid>
-                <Grid item lg={2} xs={12}>
+                <Grid item lg={1.5} xs={12}>
                     <CustomInput
                         onChangeValue={onChangePurchasePrice}
                         disabled={false}
@@ -99,7 +110,7 @@ const CustomProductVarient = memo(({ content, index, setState, state }: props) =
                         defaultValue={''}
                     />
                 </Grid>
-                <Grid item lg={2} xs={12}>
+                <Grid item lg={1.5} xs={12}>
                     <CustomInput
                         onChangeValue={onChangeOfferPrice}
                         disabled={false}
@@ -113,9 +124,37 @@ const CustomProductVarient = memo(({ content, index, setState, state }: props) =
                         defaultValue={''}
                     />
                 </Grid>
-                
+                <Grid item lg={1.5} xs={12}>
+                    <CustomInput
+                        onChangeValue={onChangeCommision}
+                        disabled={false}
+                        type='text'
+                        control={control}
+                        error={errors.commission}
+                        fieldName="commission"
+                        placeholder={''}
+                        fieldLabel={"Commission(%)"}
+                        view={false}
+                        defaultValue={deafultCommission ? deafultCommission : 0}
+                    />
+                </Grid>
+                <Grid item lg={1.5} xs={12}>
+                    <CustomInput
+                        onChangeValue={onChangefixed_delivery_price}
+                        disabled={false}
+                        type='number'
+                        control={control}
+                        error={errors.fixed_delivery_price}
+                        fieldName=" fixed_delivery_price"
+                        placeholder={``}
+                        fieldLabel={"Fixed Delivery Price"}
+                        view={false}
+                        defaultValue={''}
+                    />
+                </Grid>
 
-                <Grid item lg={2} xs={12}>
+
+                <Grid item lg={1.5} xs={12}>
                     < CustomDatePicker
                         values={getValues('offer_date_from')}
                         changeValue={onChangeOffer_date_from}
@@ -125,7 +164,7 @@ const CustomProductVarient = memo(({ content, index, setState, state }: props) =
                         fieldLabel={'Offer From'}
                     />
                 </Grid>
-                <Grid item lg={2} xs={12}>
+                <Grid item lg={1.5} xs={12}>
                     <CustomDatePicker
                         values={getValues('offer_date_to')}
                         changeValue={onChangeOffer_date_to}
@@ -135,7 +174,7 @@ const CustomProductVarient = memo(({ content, index, setState, state }: props) =
                         fieldLabel={'Offer To'}
                     />
                 </Grid>
-                <Grid item lg={2} xs={12}>
+                <Grid item lg={1.5} xs={12}>
                     <CustomInput
                         onChangeValue={onChangeStock}
                         disabled={false}
