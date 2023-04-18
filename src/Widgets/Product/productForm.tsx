@@ -1,5 +1,5 @@
 import { Box, Divider, Grid, MenuItem, Typography } from '@mui/material'
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState ,useTransition} from 'react'
+import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import CustomBox from '../CustomBox'
 import CustomInput from '@/components/CustomInput'
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -21,6 +21,7 @@ import * as yup from 'yup';
 import moment from 'moment'
 import CustomDatePicker from '@/components/CustomDatePicker';
 import Maps from '../../components/maps/maps'
+import { type } from 'os';
 
 type Inputs = {
     name: string,
@@ -104,7 +105,14 @@ type IFormInput = {
     application_type: string
 }
 
-const ProductForm = () => {
+type props = {
+    res?: any
+}
+
+const ProductForm = ({ res }: props) => {
+
+    console.log({ res })
+
     const [multipleImage, setMultipleImage] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [stock, setStock] = useState<boolean>(false)
@@ -121,7 +129,7 @@ const ProductForm = () => {
     const [confirmbtn, setConfirmBtn] = useState(false)
     const [varients, setVarients] = useState<any>([])
     const [vendorList, setVendorList] = useState<any>([])
-    const [vendorSelect, setvendorSelect] = useState<any>(null);
+    const [vendorSelect, setvendorSelect] = useState<any>(res ? res?.store?.id : null);
     const [franchiseList, setFranchiseList] = useState<any>([]);
     const [franchiseSelect, setFranchiseSelect] = useState<any>(null);
     const [categorySelect, setCategorySelect] = useState<any>(null);
@@ -147,7 +155,7 @@ const ProductForm = () => {
     ])
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
-  
+
     const MAX_FILE_SIZE = 102400; //100KB
 
     const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
@@ -204,8 +212,8 @@ const ProductForm = () => {
                 seller_price: null,
                 minimum_qty: '',
                 delivery_locations: null,
-                product_availability_from:null,
-                product_availability_to:null
+                product_availability_from: null,
+                product_availability_to: null
 
             }
         });
@@ -462,6 +470,27 @@ const ProductForm = () => {
 
 
 
+
+
+    useEffect(() => {
+        if (res) {
+            const getvendorlist = async () => {
+                const response = await fetchData(`admin/vendor-list/${res?.franchisee?.id}`)
+                setVendorList(response?.data?.data)
+            }
+
+            getvendorlist()
+            setValue('name', res?.name)
+            setValue('franchisee', res?.franchisee)
+            setFranchiseSelect(res?.franchisee?.id)
+            setValue('store', res?.store)
+        }
+
+    }, [res])
+
+
+
+
     useEffect(() => {
         if (attributeTagValue?.length) {
             attributes[index].options = [...attributeTagValue]
@@ -510,7 +539,7 @@ const ProductForm = () => {
             let contentIndex;
             let vari = [];
 
-           
+
             for (let j = variantAttributes.length - 1; j >= 0; j--) {
                 contentIndex = remainder % variantAttributes[j].options?.length;
                 combination = variantAttributes[j].options[contentIndex].title + " " + combination;
@@ -538,18 +567,18 @@ const ProductForm = () => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
-       
+
         let find = attributes?.find((res: any) => res.varient === true)
 
-        if(!find){
-            if(!data?.seller_price  || !data?.regular_price){
+        if (!find) {
+            if (!data?.seller_price || !data?.regular_price) {
                 toast.warning("Please add product price to continue")
                 return false;
             }
         }
-        else{
+        else {
             let price = varientsarray?.find((va: any) => va.seller_price === "" || va.regular_price === "")
-            if(price){
+            if (price) {
                 toast.warning("Please add product price to continue")
                 return false;
             }
@@ -1107,7 +1136,7 @@ const ProductForm = () => {
                 </Grid>
             </CustomBox>
             <CustomBox title='Attributes'>
-            {!confirmbtn &&<Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
+                {!confirmbtn && <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
 
 
                 {attributes && attributes?.map((res: any, i: any) => (<>
@@ -1183,7 +1212,7 @@ const ProductForm = () => {
                             defaultValue={''}
                         />
                     </Grid>
-                    
+
 
                     <Grid item lg={2} xs={12}>
                         <CustomDatePicker
@@ -1286,7 +1315,16 @@ const ProductForm = () => {
                     }
                 </CustomBox>}
             <Box py={3}>
-                <Custombutton disabled={loading} btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Product'} onClick={handleSubmit(onSubmit)} />
+                <Custombutton
+                    disabled={loading}
+                    btncolor=''
+                    IconEnd={''}
+                    IconStart={''}
+                    endIcon={false}
+                    startIcon={false}
+                    height={''}
+                    label={res ? 'Edit Product' : 'Add Product'}
+                    onClick={handleSubmit(onSubmit)} />
             </Box>
         </Box>
     )

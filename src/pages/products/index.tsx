@@ -38,6 +38,10 @@ const AddProducts = () => {
     }
 
 
+    const editProductPage = (id:string) =>{
+        router.push(`/products/edit/${id}`)
+    }
+
 
 
     const columns: GridColDef[] = [
@@ -129,7 +133,7 @@ const AddProducts = () => {
                             cursor: 'pointer'
                         }} />
                     <BorderColorTwoToneIcon
-
+                       onClick={()=>editProductPage(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
