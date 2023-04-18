@@ -12,7 +12,6 @@ const ProductEdit = () => {
     const [productList, setProductList] = useState<any>(null);
 
 
-    console.log({productList})
 
     const getProduct = async () => {
         try {
