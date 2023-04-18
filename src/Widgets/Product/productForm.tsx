@@ -145,7 +145,8 @@ const ProductForm = ({ res }: props) => {
     const [subcategoryList, setSubCategoryList] = useState<any>([]);
     const [selectType, setSelectType] = useState<any>(null);
     const [pandaSuggesion, setPandaSuggesions] = useState<boolean>(false);
-    const [enableVariants, setEnableVariants] = useState<boolean>(false)
+    const [enableVariants, setEnableVariants] = useState<boolean>(false);
+    const [paths, setPaths] = useState<any>(null)
     const [pandType, setPandType] = useState<any>([
         {
             name: 'Qbuy Panda',
@@ -171,12 +172,12 @@ const ProductForm = ({ res }: props) => {
     const schema = yup
         .object()
         .shape({
-            // name: yup.string().required('Product Name Required'),
-            // display_order: yup.number().nullable().typeError("Must be Integer"),
-            // franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
-            // store: yup.array().typeError('Store is Required').required('Store is Required'),
-            // category: yup.array().typeError('Category is Required').required('Category is Required'),
-            // delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
+            name: yup.string().required('Product Name Required'),
+            display_order: yup.number().nullable().typeError("Must be Integer"),
+            franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
+            store: yup.array().typeError('Store is Required').required('Store is Required'),
+            category: yup.array().typeError('Category is Required').required('Category is Required'),
+            delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
             // product_image: yup
             //     .mixed()
             //     .required("Product Image is Required"),
