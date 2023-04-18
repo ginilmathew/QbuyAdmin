@@ -168,12 +168,12 @@ const ProductForm = ({ res }: props) => {
     const schema = yup
         .object()
         .shape({
-            name: yup.string().required('Product Name Required'),
-            display_order: yup.number().nullable().typeError("Must be Integer"),
-            franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
-            store: yup.array().typeError('Store is Required').required('Store is Required'),
-            category: yup.array().typeError('Category is Required').required('Category is Required'),
-            delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
+            // name: yup.string().required('Product Name Required'),
+            // display_order: yup.number().nullable().typeError("Must be Integer"),
+            // franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
+            // store: yup.array().typeError('Store is Required').required('Store is Required'),
+            // category: yup.array().typeError('Category is Required').required('Category is Required'),
+            // delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
             // product_image: yup
             //     .mixed()
             //     .required("Product Image is Required"),
@@ -295,22 +295,22 @@ const ProductForm = ({ res }: props) => {
     }
 
     // const submitImage = async () => {
-        // const formData = new FormData();
-        // multipleImage?.map((img: any, i: number) => {
-        //     formData.append(`image[${i}]`, img.file);
-        // })
-        // try {
-        //     setLoading(true)
-        //     const response = await postData('admin/product/multipleupload', formData)
-        //     setValue('image', response?.data?.data)
-        //     setError('image', { message: '' })
-        // } catch (err: any) {
-        //     toast.error(err?.message)
-        //     setLoading(false)
+    // const formData = new FormData();
+    // multipleImage?.map((img: any, i: number) => {
+    //     formData.append(`image[${i}]`, img.file);
+    // })
+    // try {
+    //     setLoading(true)
+    //     const response = await postData('admin/product/multipleupload', formData)
+    //     setValue('image', response?.data?.data)
+    //     setError('image', { message: '' })
+    // } catch (err: any) {
+    //     toast.error(err?.message)
+    //     setLoading(false)
 
-        // } finally {
-        //     setLoading(false)
-        // }
+    // } finally {
+    //     setLoading(false)
+    // }
 
     // }
 
@@ -574,70 +574,123 @@ const ProductForm = ({ res }: props) => {
     }
 
 
-    const AddVarientCheckbox = (e: any, i: number) => {
-        let find = attributes?.every((res: any) => res.varient === false)
-        setVarientsArray([])
-        if (find) {
-            setVarients([])
 
-            setConfirmBtn(false)
-        }
+
+
+    //varient add varients and attributes form.......................................................................
+
+    const AddVarientCheckbox = (e: any, i: number) => {
+        // setVarientsArray([])
+        // setVarients([])
+        attributes[i].varient = e;
+        // let find = attributes?.every((res: any) => res.varient === false)
+
+        // if (find) {
+        //     setVarients([])
+        //     setVarientsArray([])
+        //     setConfirmBtn(false)
+        // }
         setIndex(i)
         setAddVarient(e)
-        attributes[i].varient = e;
-        setValue('seller_price', '')
-        setValue('offer_price', '')
-        setValue('offer_date_from', '')
-        setValue('regular_price', '')
-        setValue('offer_date_to', '')
-        setValue('fixed_delivery_price','')
-    }
+        if (attributes?.some((res: any) => res.varient === true)) {
 
-    const ConfirmVarients = () => {
+            const output = [];
+            // setVarients([])
+            setVarientsArray([])
 
+            if (varientsarray?.length === 0) {
+                setValue('seller_price', '')
+                setValue('offer_price', '')
+                setValue('offer_date_from', '')
+                setValue('regular_price', '')
+                setValue('offer_date_to', '')
+                setValue('fixed_delivery_price', '')
+                // Filter attributes array to only include those with variant true
+                const variantAttributes = attributes.filter((attr: any) => attr.varient !== false)
+                // Calculate the number of iterations required based on the length of the variantAttributes array
+                const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
+                for (let i = 0; i < numIterations; i++) {
+                    let combination = "";
+                    let remainder = i;
+                    let contentIndex;
+                    let vari = [];
+                    for (let j = variantAttributes.length - 1; j >= 0; j--) {
+                        contentIndex = remainder % variantAttributes[j].options?.length;
+                        combination = variantAttributes[j].options[contentIndex].title + " " + combination;
+                        vari.push(variantAttributes[j].options[contentIndex].title)
+                        remainder = Math.floor(remainder / variantAttributes[j].options?.length);
+                    }
 
-        setConfirmBtn(true)
-        const output = [];
-        setVarients([])
-        setVarientsArray([])
+                    varientsarray.push({
+                        attributs: vari,
+                        seller_price: '',
+                        regular_price: '',
+                        offer_price: '',
+                        offer_date_from: '',
+                        offer_date_to: '',
+                        stock: true,
+                        stock_value: '',
+                        commission: 0,
+                        fixed_delivery_price: ''
+                    })
+                    setVarientsArray([...varientsarray])
 
-        // Filter attributes array to only include those with variant true
-        const variantAttributes = attributes.filter((attr: any) => attr.varient !== false)
-        // Calculate the number of iterations required based on the length of the variantAttributes array
-        const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
-        for (let i = 0; i < numIterations; i++) {
-            let combination = "";
-            let remainder = i;
-            let contentIndex;
-            let vari = [];
+                    output.push(combination.trim());
+                }
+                setVarients(output)
 
-
-            for (let j = variantAttributes.length - 1; j >= 0; j--) {
-                contentIndex = remainder % variantAttributes[j].options?.length;
-                combination = variantAttributes[j].options[contentIndex].title + " " + combination;
-                vari.push(variantAttributes[j].options[contentIndex].title)
-                remainder = Math.floor(remainder / variantAttributes[j].options?.length);
             }
 
-            varientsarray.push({
-                attributs: vari,
-                seller_price: '',
-                regular_price: '',
-                offer_price: '',
-                offer_date_from: '',
-                offer_date_to: '',
-                stock: true,
-                stock_value: '',
-                commission: 0,
-                fixed_delivery_price: ''
-            })
-            setVarientsArray([...varientsarray])
-
-            output.push(combination.trim());
         }
-        setVarients(output)
+
 
     }
+
+    // const ConfirmVarients = () => {
+
+
+    //     setConfirmBtn(true)
+    //     const output = [];
+    //     setVarients([])
+    //     setVarientsArray([])
+
+    //     // Filter attributes array to only include those with variant true
+    //     const variantAttributes = attributes.filter((attr: any) => attr.varient !== false)
+    //     // Calculate the number of iterations required based on the length of the variantAttributes array
+    //     const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
+    //     for (let i = 0; i < numIterations; i++) {
+    //         let combination = "";
+    //         let remainder = i;
+    //         let contentIndex;
+    //         let vari = [];
+
+
+    //         for (let j = variantAttributes.length - 1; j >= 0; j--) {
+    //             contentIndex = remainder % variantAttributes[j].options?.length;
+    //             combination = variantAttributes[j].options[contentIndex].title + " " + combination;
+    //             vari.push(variantAttributes[j].options[contentIndex].title)
+    //             remainder = Math.floor(remainder / variantAttributes[j].options?.length);
+    //         }
+
+    //         varientsarray.push({
+    //             attributs: vari,
+    //             seller_price: '',
+    //             regular_price: '',
+    //             offer_price: '',
+    //             offer_date_from: '',
+    //             offer_date_to: '',
+    //             stock: true,
+    //             stock_value: '',
+    //             commission: 0,
+    //             fixed_delivery_price: ''
+    //         })
+    //         setVarientsArray([...varientsarray])
+
+    //         output.push(combination.trim());
+    //     }
+    //     setVarients(output)
+
+    // }
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
@@ -662,21 +715,24 @@ const ProductForm = ({ res }: props) => {
         }
 
 
-        let find = attributes?.every((res: any) => res.varient === true)
-     
-        if (!find) {
-            if (!data?.seller_price || !data?.regular_price) {
-                toast.warning("Please add product price to continue")
-                return false;
-            }
-        }
-        else {
-            let price = varientsarray?.find((va: any) => va.seller_price === " " || va.regular_price === " ")
-            if (price) {
-                toast.warning("Please add product price to v continue")
-                return false;
-            }
-        }
+        console.log({ varientsarray })
+
+
+        // let find = attributes?.every((res: any) => res.varient === true)
+
+        // if (!find) {
+        //     if (!data?.seller_price || !data?.regular_price) {
+        //         toast.warning("Please add product price to continue")
+        //         return false;
+        //     }
+        // }
+        // else {
+        //     let price = varientsarray?.find((va: any) => va.seller_price === " " || va.regular_price === " ")
+        //     if (price) {
+        //         toast.warning("Please add product price to v continue")
+        //         return false;
+        //     }
+        // }
 
         const metatagsres = metaTagValue?.map((res: any) => (
             res.title
@@ -688,7 +744,6 @@ const ProductForm = ({ res }: props) => {
             "name": item.name,
             "options": item.options.map((option: any) => option.title)
         }));
-
 
         let value = {
             name: data?.name,
@@ -743,8 +798,7 @@ const ProductForm = ({ res }: props) => {
             variants: varientsarray?.length > 0 ? varientsarray : null,
             approval_status: "approved"
         }
-        //console.log({ value })
-
+     
         try {
             setLoading(true)
             await postData('admin/product/create', value)
@@ -761,6 +815,7 @@ const ProductForm = ({ res }: props) => {
             setMetaTag([])
             setattributeTag([])
             setAttributes([])
+            setRequireShipping(false)
             setMultipleImage([])
             toast.success('Created Successfully')
         } catch (err: any) {
@@ -1226,7 +1281,7 @@ const ProductForm = ({ res }: props) => {
                 </Grid>
             </CustomBox>
             <CustomBox title='Attributes'>
-                {!confirmbtn && <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
+                {!attributes?.some((res: any) => res.varient === true) && <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
 
 
                 {attributes && attributes?.map((res: any, i: any) => (<>
@@ -1256,12 +1311,12 @@ const ProductForm = ({ res }: props) => {
                     </Grid>
                 </>
                 ))}
-                {attributes?.length > 0 &&
+                {/* {attributes?.length > 0 &&
                     <Box display={'flex'} justifyContent={'flex-end'}>
                         {!confirmbtn && <Custombutton btncolor='' height={40} endIcon={false} startIcon={false} label={'confirm'} onClick={ConfirmVarients} IconEnd={''} IconStart={''} />}
-                    </Box>}
+                    </Box>} */}
             </CustomBox>
-            {(!confirmbtn || (confirmbtn && !attributes?.some((res: any) => res.varient === true))) && <CustomBox title='Price'>
+            {attributes?.every((res: any) => res.varient === false) && <CustomBox title='Price'>
                 <Grid container spacing={2}>
                     <Grid item lg={1.71} xs={12}>
                         <CustomInput
@@ -1329,7 +1384,7 @@ const ProductForm = ({ res }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                   
+
 
 
                     <Grid item lg={1.71} xs={12}>
@@ -1356,7 +1411,7 @@ const ProductForm = ({ res }: props) => {
                     </Grid>
                 </Grid>
             </CustomBox>}
-            {confirmbtn && attributes?.some((res: any) => res.varient === true) &&
+            {attributes?.some((res: any) => res.varient === true) &&
                 <CustomBox title='Add Variant & Price'>
                     {/* {attributes?.every((res: any) => res.varient === false) && confirmbtn &&
                         <Grid container spacing={2}>
@@ -1424,7 +1479,7 @@ const ProductForm = ({ res }: props) => {
                             </Grid>
 
                         </Grid>} */}
-                    {attributes?.some((res: any) => res.varient === true) && confirmbtn &&
+                    {attributes?.some((res: any) => res.varient === true) &&
                         <Box>
                             {varients?.map((res: any, i: any) => (
                                 <CustomProductVarient deafultCommission={getValues('commission')} content={res} index={i} setState={setVarientsArray} state={varientsarray} />
