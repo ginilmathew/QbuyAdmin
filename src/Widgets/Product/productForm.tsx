@@ -117,6 +117,7 @@ const ProductForm = ({ res }: props) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [stock, setStock] = useState<boolean>(false)
     const [addvarient, setAddVarient] = useState<boolean>(false)
+    const [imagePreview, setImagePreview] = useState<null | File>(null)
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [attributes, setAttributes] = useState<any>([])
     const [productTag, setProductTag] = useState<any>([])
@@ -175,6 +176,9 @@ const ProductForm = ({ res }: props) => {
 
         })
         .required();
+
+
+    console.log({ attributes })
 
     const { register,
         handleSubmit,
@@ -478,12 +482,66 @@ const ProductForm = ({ res }: props) => {
                 const response = await fetchData(`admin/vendor-list/${res?.franchisee?.id}`)
                 setVendorList(response?.data?.data)
             }
+            const getSubcategory = async () => {
+                try {
+                    const response = await fetchData(`admin/subcategory-list/${res?.category?.id}`)
+                    setSubCategoryList(response?.data?.data)
+                } catch (err) {
 
+                }
+
+            }
+            getSubcategory()
             getvendorlist()
             setValue('name', res?.name)
             setValue('franchisee', res?.franchisee)
             setFranchiseSelect(res?.franchisee?.id)
             setValue('store', res?.store)
+            setvendorSelect(res?.store?.id)
+            setValue('description', res?.description)
+            setValue('weight', res?.weight)
+            setValue('model', res?.model)
+            setValue('width', res?.dimensions?.width)
+            setValue('height', res?.dimensions?.height)
+            setValue('category', res?.category)
+            setCategorySelect(res?.category?.id)
+            setValue('display_order', res?.display_order)
+            setValue('panda_suggession', res?.panda_suggession)
+            setPandaSuggesions(res?.panda_suggession)
+            setValue('stock', res?.stock)
+            setStock(res?.stock)
+            setValue('stock_value', res?.stock_value)
+            setValue('minimum_qty', res?.minimum_qty)
+            setImagePreview(res?.product_image)
+            setValue('product_availability_from', moment(res?.product_availability_from, 'HH:mm'))
+            setValue('product_availability_to', moment(res?.product_availability_to, 'HH:mm'))
+            setValue('require_shipping', res?.require_shipping)
+            setRequireShipping(res?.require_shipping)
+            if (res?.meta_tags) {
+                setMetaTag(res?.meta_tags?.map((res: any) => ({
+                    title: res
+                })))
+            }
+            setValue('video_link', res?.video_link)
+            setValue('related_products', res?.related_products)
+            if (res?.attributes?.length > 0) {
+
+                for (let i = 0; i < res?.attributes?.length; i++) {
+                    attributes.push({
+                        name: '',
+                        options: [],
+                        varient: false
+                    }
+
+                    )
+
+                    setAttributes([...attributes])
+                }
+                res?.attributes?.map((res: any, i: number) => (
+                    attributes[i].name = res?.name
+
+                ))
+            }
         }
 
     }, [res])

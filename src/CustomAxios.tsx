@@ -6,7 +6,7 @@ const API_TIMEOUT_MS = 5000;
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: BASE_URL,
-  timeout: API_TIMEOUT_MS,
+  //timeout: API_TIMEOUT_MS,
 });
 
 
