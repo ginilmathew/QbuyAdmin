@@ -15,11 +15,6 @@ type props = {
 
 
 export default function CustomAutoComplete({ fieldLabel, list, setValues, onChnageValues ,res,vres}: props) {
-
-    console.log({vres})
-
-
- 
     const AutoCompleteStyled = styled(Autocomplete)`
   & .MuiInputBase-input {
     height: 1.5rem;
@@ -36,7 +31,7 @@ export default function CustomAutoComplete({ fieldLabel, list, setValues, onChna
     const [items, setItems] = React.useState('')
 
 
-    console.log({value},'IN AUTOCOMPLETE')
+ 
     useEffect(() => {
         if(res){
             setValue(res?.meta_tags?.map((res: any) => ({
@@ -56,8 +51,7 @@ export default function CustomAutoComplete({ fieldLabel, list, setValues, onChna
 
   
     
-    
-console.log({value},'VALUE IN STATE')
+
     const onChangeValue = (e: any) => {
 
         let filter = list.map((res: any) => (

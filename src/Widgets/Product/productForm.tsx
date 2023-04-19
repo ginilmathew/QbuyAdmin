@@ -158,8 +158,7 @@ const ProductForm = ({ res }: props) => {
 
 
 
-    console.log({ varientsarray })
-    console.log({ varients })
+
 
 
 
@@ -169,15 +168,17 @@ const ProductForm = ({ res }: props) => {
     const schema = yup
         .object()
         .shape({
-                name: yup.string().required('Product Name Required'),
-                display_order: yup.number().nullable().typeError("Must be Integer"),
-                franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
-                store: yup.array().typeError('Store is Required').required('Store is Required'),
-                category: yup.array().typeError('Category is Required').required('Category is Required'),
-                delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
-                product_image: yup
-                    .mixed()
-                    .required("Product Image is Required"),
+            name: yup.string().required('Product Name Required'),
+            display_order: yup.number().nullable().typeError("Must be Integer"),
+            franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
+            store: yup.array().typeError('Store is Required').required('Store is Required'),
+            category: yup.array().typeError('Category is Required').required('Category is Required'),
+            delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
+            product_image: yup
+                .mixed()
+                .required("Product Image is Required"),
+            seller_price: attributes.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
+
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
 
         })
@@ -271,25 +272,7 @@ const ProductForm = ({ res }: props) => {
         setError('image', { message: '' })
     }
 
-    // const submitImage = async () => {
-    // const formData = new FormData();
-    // multipleImage?.map((img: any, i: number) => {
-    //     formData.append(`image[${i}]`, img.file);
-    // })
-    // try {
-    //     setLoading(true)
-    //     const response = await postData('admin/product/multipleupload', formData)
-    //     setValue('image', response?.data?.data)
-    //     setError('image', { message: '' })
-    // } catch (err: any) {
-    //     toast.error(err?.message)
-    //     setLoading(false)
 
-    // } finally {
-    //     setLoading(false)
-    // }
-
-    // }
 
 
     const getFranchiseList = async () => {
@@ -729,9 +712,9 @@ const ProductForm = ({ res }: props) => {
         }
 
 
-   
 
-   
+
+
 
 
 
@@ -762,10 +745,9 @@ const ProductForm = ({ res }: props) => {
             "varient": item.varient
         }));
 
-        //to FILTER THE EMPTY OBJECTS FROM AN ARRAY...............
+        //to FILTER THE EMPTY OBJECTS FROM AN vARIENT ARRAY...............
         let varientarrayfilter = null
-
-        varientarrayfilter = varientsarray.length > 0 && varientsarray.filter((vari: any) => vari.seller_price !== '')
+        varientarrayfilter = varientsarray?.length > 0 && varientsarray?.filter((vari: any) => vari.seller_price !== '')
 
 
         const CREATE_URL = '/admin/product/create'

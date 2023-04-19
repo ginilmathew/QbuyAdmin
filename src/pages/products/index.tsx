@@ -80,7 +80,7 @@ const AddProducts = () => {
                     return `₹${min(price)} - ₹${max(price)} `
                 }
                 else{
-                    return `₹${params?.row?.seller_price}`
+                    return ` ₹${ params?.row?.seller_price ? params?.row?.seller_price : 0}`
                 }
             }
         },
@@ -90,6 +90,7 @@ const AddProducts = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params.row.minimum_qty ? params.row.minimum_qty : '-'
 
         },
         {
