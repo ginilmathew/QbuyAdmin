@@ -121,6 +121,7 @@ const ProductForm = ({ res }: props) => {
     console.log({ res })
 
     const [multipleImage, setMultipleImage] = useState<any>([])
+    const [deafult_multipleImage, setdefault_MultipleImage] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [stock, setStock] = useState<boolean>(false)
     const [addvarient, setAddVarient] = useState<boolean>(false)
@@ -153,7 +154,7 @@ const ProductForm = ({ res }: props) => {
     const [varientsarray, setVarientsArray] = useState<any>([])
 
 
-    console.log({multipleImage})
+    console.log({ multipleImage })
 
     const MAX_FILE_SIZE = 102400; //100KB
 
@@ -516,12 +517,10 @@ const ProductForm = ({ res }: props) => {
             }
             setValue('video_link', res?.video_link)
             setValue('related_products', res?.related_products)
-            // if(res?.image){
-            //     res?.image?.map((res:any)=>(
-            //        console.log({res}),"MULTIPLE IMAGEsssss"
-            //     ))
-
-            // }
+            if (res?.image) {
+                let result = res?.image?.map((res: any) => (IMAGE_URL+res))
+                setdefault_MultipleImage([...result])
+            }
             let attributesArray: { name: any; options: any; varient: boolean; }[] = []
             if (res?.attributes?.length > 0) {
                 res?.attributes.map((item: any) => {

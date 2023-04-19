@@ -31,10 +31,13 @@ export const CustomMultipleImageUploader = ({ fieldLabel ,onChangeImage,state}: 
         <>
             <ImageUploading
                 multiple
-                value={state}
+                value={[state]}
                 onChange={onChangeImage}
                 maxNumber={maxNumber}
                 dataURLKey="data_url"
+             
+                
+
             >
                 {({
                     imageList,
