@@ -215,17 +215,17 @@ const ProductForm = ({ res }: props) => {
                 video_link: '',
                 related_products: null,
                 image: null,
-                regular_price: null,
-                offer_price: null,
+                regular_price: 0,
+                offer_price: 0,
                 offer_date_from: null,
                 offer_date_to: null,
-                seller_price: null,
+                seller_price: 0,
                 minimum_qty: '',
                 delivery_locations: null,
                 product_availability_from: null,
                 product_availability_to: null,
-                fixed_delivery_price: null,
-                commission: null
+                fixed_delivery_price: 0,
+                commission: 0
 
             }
         });

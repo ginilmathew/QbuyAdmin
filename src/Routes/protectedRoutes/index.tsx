@@ -13,11 +13,19 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     const router = useRouter()
     const userContext = useContext(UserContext);
 
+
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+
+    console.log({ token }, 'IGOT TOKEN')
+    console.log({ loading }, 'IGOT TOKEN')
+
     useEffect(() => {
-        let token = localStorage.getItem("token")
-        if (!token) {
-            router.push('/login')     
+        if (!token && loading) {
+            router.push('/login')
+        } else {
+            setLoading(false)
         }
-    }, [])
+    }, [token])
+
     return <>{children}</>
 }
