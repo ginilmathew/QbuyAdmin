@@ -6,7 +6,7 @@ import { Poppins } from 'next/font/google';
 import { StandaloneSearchBox, LoadScript } from "@react-google-maps/api";
 import UserProvider from '@/helpers/user/UserContext';
 import ProtectedRoute from '@/Routes/protectedRoutes';
-import React,{useEffect} from 'react';
+import React, { useEffect } from 'react';
 import Router from 'next/router';
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
@@ -26,7 +26,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const [isLoading, setLoading] = React.useState(false);
 
-    useEffect(() => {
+  useEffect(() => {
     const handleStart = () => setLoading(true);
     const handleComplete = () => setLoading(false);
 

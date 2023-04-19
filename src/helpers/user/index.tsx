@@ -5,6 +5,8 @@ interface MyContextType {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     user: any;
     setUser: React.Dispatch<React.SetStateAction<any>>;
+    tokens: any;
+    setTokens: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const UserContext = createContext<MyContextType>({
@@ -12,6 +14,8 @@ const UserContext = createContext<MyContextType>({
     setLoading: () => { },
     user: '',
     setUser: () => { },
+    tokens:'',
+    setTokens:()=>{}
 
 });
 
