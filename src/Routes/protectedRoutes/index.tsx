@@ -16,23 +16,8 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     useEffect(() => {
         let token = localStorage.getItem("token")
         if (!token) {
-            router.push('/login')
-            setTimeout(() => {
-                setLoading(false)
-            }, 1000);
-        }
-        else{
-            setLoading(false)
+            router.push('/login')     
         }
     }, [])
-
-    if(loading){
-        return(
-            <Stack sx={{ width: '100%', color: 'grey.500' }} >
-                <LinearProgress color="success" />
-            </Stack>
-        )
-    }
-
     return <>{children}</>
 }

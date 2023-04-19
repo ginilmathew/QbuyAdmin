@@ -97,8 +97,8 @@ const SalesReport = () => {
     try {
       setLoading(true)
       const response = await fetchData('admin/customer-sales-report')
-      setReportList(response?.data?.data?.data)
-      setSearchList(response?.data?.data?.data)
+      setReportList(response?.data?.data)
+      setSearchList(response?.data?.data)
     } catch (err: any) {
       toast.error(err.message)
       setLoading(false)

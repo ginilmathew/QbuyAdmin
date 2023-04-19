@@ -12,6 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { fetchData, postData } from '@/CustomAxios';
 import { Message } from '@mui/icons-material';
+import { IMAGE_URL } from '@/Config';
 
 type Inputs = {
     name: string,
@@ -43,7 +44,7 @@ const CategoryForm = ({ resData }: props) => {
     console.log({ resData })
 
     const [imagefile, setImagefile] = useState<null | File>(null)
-    const [imagePreview, setImagePreview] = useState<null | File>(null)
+    const [imagePreview, setImagePreview] = useState<any>(null)
     const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -53,7 +54,7 @@ const CategoryForm = ({ resData }: props) => {
         .shape({
             name: yup.string().required('Category Name Required'),
             // type: yup.string().required('Type is Required'),
-
+            seo_description:yup.string().required('Description is Required'),
             order_number: yup.number().typeError('Order must be integer').required('Order Number is Required'),
             image: yup
                 .mixed()
@@ -105,8 +106,8 @@ const CategoryForm = ({ resData }: props) => {
             formData.append("image", data?.image);
         }
         formData.append("type", type);
-        formData.append("seo_title", data?.name);
-        formData.append("seo_description", data?.name + data?.type);
+        // formData.append("seo_title", data?.name);
+        formData.append("seo_description", data?.seo_description);
         try {
            await postData(resData ? URL_EDIT : URL_CREATE, formData)
             toast.success(resData ? 'Updated Successfully' : 'Created Successfully')
@@ -130,7 +131,7 @@ const CategoryForm = ({ resData }: props) => {
             setValue('seo_description', resData?.seo_description)
             setValue('seo_title', resData?.seo_title)
             setValue('image', resData?.image)
-            setImagePreview(resData?.image)
+            setImagePreview(`${IMAGE_URL}${resData?.image}`)
         }
     }, [resData])
 
@@ -160,6 +161,19 @@ const CategoryForm = ({ resData }: props) => {
                             fieldName="order_number"
                             placeholder={``}
                             fieldLabel={"Display Order"}
+                            disabled={false}
+                            view={false}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={2.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.seo_description}
+                            fieldName="seo_description"
+                            placeholder={``}
+                            fieldLabel={"Discription"}
                             disabled={false}
                             view={false}
                             defaultValue={''}

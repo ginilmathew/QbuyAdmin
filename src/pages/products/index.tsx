@@ -118,36 +118,36 @@ const AddProducts = () => {
                 </Stack>
             )
         },
-        {
-            field: 'Actions',
-            headerName: 'Actions',
-            width: 200,
-            headerAlign: 'center',
-            align: 'center',
-            renderCell: ({ row }) => (
-                <Stack alignItems={'center'} gap={1} direction={'row'}>
-                    <RemoveRedEyeIcon
+        // {
+        //     field: 'Actions',
+        //     headerName: 'Actions',
+        //     width: 200,
+        //     headerAlign: 'center',
+        //     align: 'center',
+        //     renderCell: ({ row }) => (
+        //         <Stack alignItems={'center'} gap={1} direction={'row'}>
+        //             <RemoveRedEyeIcon
 
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }} />
-                    <BorderColorTwoToneIcon
-                       onClick={()=>editProductPage(row?._id)}
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }}
-                    />
-                    <DeleteOutlineTwoToneIcon
-                        onClick={() => handleOpen()}
-                        sx={{
-                            color: '#58D36E',
-                            cursor: 'pointer',
-                        }} />
-                </Stack>
-            )
-        }
+        //                 style={{
+        //                     color: '#58D36E',
+        //                     cursor: 'pointer'
+        //                 }} />
+        //             <BorderColorTwoToneIcon
+        //                onClick={()=>editProductPage(row?._id)}
+        //                 style={{
+        //                     color: '#58D36E',
+        //                     cursor: 'pointer'
+        //                 }}
+        //             />
+        //             <DeleteOutlineTwoToneIcon
+        //                 onClick={() => handleOpen()}
+        //                 sx={{
+        //                     color: '#58D36E',
+        //                     cursor: 'pointer',
+        //                 }} />
+        //         </Stack>
+        //     )
+        // }
     ];
 
 
@@ -177,7 +177,7 @@ const AddProducts = () => {
         startTransition(() => {
             setProductList(competitiions)
         })
-    },[])
+    },[productList])
 
     useEffect(() => {
         fetchproduct()

@@ -87,21 +87,22 @@ const CustomProductVarient = memo(({ content, index, setState, state ,deafultCom
                         disabled={false}
                         type='text'
                         control={control}
-                        error={errors.regular_price}
-                        fieldName="regular_price"
+                        error={errors.seller_price}
+                        fieldName="seller_price"
                         placeholder={``}
                         fieldLabel={"Purchase Price"}
                         view={false}
                         defaultValue={''}
                     />
                 </Grid>
+                
                 <Grid item lg={1.5} xs={12}>
                     <CustomInput
                         disabled={false}
                         type='text'
                         control={control}
-                        error={errors.seller_price}
-                        fieldName="seller_price"
+                        error={errors.regular_price}
+                        fieldName="regular_price"
                         placeholder={``}
                         onChangeValue={onChangeSellingPrice}
                         fieldLabel={"Selling Price"}
