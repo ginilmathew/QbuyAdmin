@@ -20,7 +20,7 @@ import CustomMultiselect from '@/components/CustomMultiselect';
 import Maps from '@/components/maps/maps';
 import Polygon from '@/components/maps/Polygon';
 import { Router, useRouter } from 'next/router';
-
+import { IMAGE_URL } from '../../Config/index';
 
 
 
@@ -81,6 +81,10 @@ type props = {
 
 const Vendorform = ({ res }: props) => {
 
+    console.log({res})
+    
+    console.log({IMAGE_URL})
+
     const router = useRouter()
     console.log({ res }, 'VENDOR LIST')
 
@@ -92,10 +96,10 @@ const Vendorform = ({ res }: props) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [multpleArray, setMultipleArray] = useState<any>([]);
     const [postArray, setPostArray] = React.useState<any>([]);
-    const [imagePreview, setImagePreview] = useState<null | File>(null)
+    const [imagePreview, setImagePreview] = useState<any>(null)
     const [paths, setPaths] = useState<any>(null)
 
-    console.log({ postArray })
+    console.log({ imagePreview })
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
@@ -111,7 +115,10 @@ const Vendorform = ({ res }: props) => {
             category_id: yup.array().typeError('Category is Required').required('Category is Required'),
             // start_time: yup.string().required('Required'),
             // end_time: yup.string().required('Required'),
-            // store_logo: yup.string().required('Logo is Required'),
+            store_logo:yup
+            .mixed()
+            .typeError("Store Logo is Required")
+            .required("Store Logo is Required"),
             // // coordinates: any,
             // license_number: yup.string().required('License Number is Required'),
             // ffsai_number: yup.string().required('FFASI Number is Required'),
@@ -121,7 +128,8 @@ const Vendorform = ({ res }: props) => {
             // ifsc: yup.string().required('IFSC is Required'),
             // branch: yup.string().required('Branch is Required'),
             // recipient_name: yup.string().required('Recipient Name is Required'),
-            coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required")
+            coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required"),
+            commission:yup.string().required('Commission is Required')
 
         })
         .required();
@@ -314,7 +322,7 @@ const Vendorform = ({ res }: props) => {
             setValue('category_id', res?.category_id)
             setCategory(res?.category_id)
             setValue('store_logo', res?.store_logo)
-            setImagePreview(res?.store_logo)
+            setImagePreview(`${IMAGE_URL}${res?.store_logo}`)
             setValue('start_time', moment(res?.start_time, 'HH:mm A'))
             setValue('end_time', moment(res?.end_time, 'HH:mm A'))
             setValue('license_number', res?.kyc_details?.license_number)

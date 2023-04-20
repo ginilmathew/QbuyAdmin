@@ -17,7 +17,7 @@ const url = {
 }
 
 const IMG_URL = {
-    dev:'https://apibulletinly.diginestsolutions.in/public'
+    dev:'https://apiqbuypanda.diginestsolutions.in/public/'
 
 }
 

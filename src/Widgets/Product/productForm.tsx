@@ -1,4 +1,4 @@
-import { Box, Divider, Grid, MenuItem, Typography } from '@mui/material'
+import { Avatar, Box, Divider, Grid, MenuItem, Typography } from '@mui/material'
 import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import CustomBox from '../CustomBox'
 import CustomInput from '@/components/CustomInput'
@@ -9,7 +9,7 @@ import CustomCheckBox from '@/components/CustomCheckBox';
 import CustomImageUploader from '@/components/CustomImageUploader';
 import CustomAutoComplete from '@/components/CustomAutocompleteBox';
 import CustomTimepicker from '@/components/CustomTimepicker';
-import { GoogleMap, Polygon, useJsApiLoader, LoadScript, Marker, DrawingManager } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, LoadScript, Marker, DrawingManager } from "@react-google-maps/api";
 import { CustomMultipleImageUploader } from '@/components/CustomMultipleImageUploder';
 import Custombutton from '@/components/Custombutton';
 import AddIcon from '@mui/icons-material/Add';
@@ -23,7 +23,9 @@ import CustomDatePicker from '@/components/CustomDatePicker';
 import Maps from '../../components/maps/maps'
 import { type } from 'os';
 import { set } from 'lodash';
-
+import Polygon from '@/components/maps/Polygon';
+import { IMAGE_URL } from '../../Config/index';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 type Inputs = {
     name: string,
     description: string,
@@ -117,13 +119,17 @@ type props = {
 const ProductForm = ({ res }: props) => {
 
 
-   console.log({res})
+
+    console.log({ res }, 'response in single list')
+
 
     const [multipleImage, setMultipleImage] = useState<any>([])
+
+    const [defaultImage, setdefaultImage] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [stock, setStock] = useState<boolean>(false)
     const [addvarient, setAddVarient] = useState<boolean>(false)
-    const [imagePreview, setImagePreview] = useState<null | File>(null)
+    const [imagePreview, setImagePreview] = useState<any>(null)
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [attributes, setAttributes] = useState<any>([])
     const [productTag, setProductTag] = useState<any>([])
@@ -147,24 +153,14 @@ const ProductForm = ({ res }: props) => {
     const [pandaSuggesion, setPandaSuggesions] = useState<boolean>(false);
     const [enableVariants, setEnableVariants] = useState<boolean>(false);
     const [paths, setPaths] = useState<any>(null)
-    const [pandType, setPandType] = useState<any>([
-        {
-            name: 'Qbuy Panda',
-            value: 'panda'
-        },
-        {
-            name: 'Qbuy Green',
-            value: 'green'
-        },
-        {
-            name: 'Qbuy Fashion',
-            value: 'fashion'
-        },
-    ])
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
 
-    console.log({attributes})
+
+
+
+
+
 
     const MAX_FILE_SIZE = 102400; //100KB
 
@@ -178,16 +174,17 @@ const ProductForm = ({ res }: props) => {
             store: yup.array().typeError('Store is Required').required('Store is Required'),
             category: yup.array().typeError('Category is Required').required('Category is Required'),
             delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
-            // product_image: yup
-            //     .mixed()
-            //     .required("Product Image is Required"),
+            product_image: yup
+                .mixed()
+                .required("Product Image is Required"),
+            seller_price: attributes.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
+
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
 
         })
         .required();
 
 
-    console.log({ attributes })
 
     const { register,
         handleSubmit,
@@ -218,17 +215,17 @@ const ProductForm = ({ res }: props) => {
                 video_link: '',
                 related_products: null,
                 image: null,
-                regular_price: null,
-                offer_price: null,
+                regular_price: 0,
+                offer_price: 0,
                 offer_date_from: null,
                 offer_date_to: null,
-                seller_price: null,
+                seller_price: 0,
                 minimum_qty: '',
                 delivery_locations: null,
                 product_availability_from: null,
                 product_availability_to: null,
-                fixed_delivery_price: null,
-                commission: null
+                fixed_delivery_price: 0,
+                commission: 0
 
             }
         });
@@ -248,12 +245,13 @@ const ProductForm = ({ res }: props) => {
     }
 
 
-  
+
 
 
 
     const imageUploder = async (file: any) => {
         setImagefile(file)
+        setImagePreview(null)
         const formData = new FormData();
         formData.append("image", file);
         try {
@@ -274,25 +272,7 @@ const ProductForm = ({ res }: props) => {
         setError('image', { message: '' })
     }
 
-    // const submitImage = async () => {
-    // const formData = new FormData();
-    // multipleImage?.map((img: any, i: number) => {
-    //     formData.append(`image[${i}]`, img.file);
-    // })
-    // try {
-    //     setLoading(true)
-    //     const response = await postData('admin/product/multipleupload', formData)
-    //     setValue('image', response?.data?.data)
-    //     setError('image', { message: '' })
-    // } catch (err: any) {
-    //     toast.error(err?.message)
-    //     setLoading(false)
 
-    // } finally {
-    //     setLoading(false)
-    // }
-
-    // }
 
 
     const getFranchiseList = async () => {
@@ -373,10 +353,12 @@ const ProductForm = ({ res }: props) => {
 
     const onSelectCategory = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setCategorySelect(e.target.value)
+
         let result = categoryList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
             {
                 id: get?._id,
-                name: get?.name
+                name: get?.name,
+                image: get?.image
             }
         ))
         setValue('category', result)
@@ -419,7 +401,6 @@ const ProductForm = ({ res }: props) => {
     ///
 
     const onChangeName = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
-    
         attributes[i].name = e.target.value;
 
 
@@ -471,6 +452,9 @@ const ProductForm = ({ res }: props) => {
 
 
     //edit product details..................................................................
+
+
+
     useEffect(() => {
         if (res) {
             const getvendorlist = async () => {
@@ -489,7 +473,7 @@ const ProductForm = ({ res }: props) => {
             getSubcategory()
             getvendorlist()
             setValue('name', res?.name)
-            setValue('franchisee', res?.franchisee)
+            setValue('franchisee', res?.franchisee?.id)
             setFranchiseSelect(res?.franchisee?.id)
             setValue('store', res?.store)
             setvendorSelect(res?.store?.id)
@@ -500,6 +484,8 @@ const ProductForm = ({ res }: props) => {
             setValue('height', res?.dimensions?.height)
             setValue('category', res?.category)
             setCategorySelect(res?.category?.id)
+            setValue('sub_category', res?.sub_category)
+            setSubCategorySelect(res?.sub_category?.id)
             setValue('display_order', res?.display_order)
             setValue('panda_suggession', res?.panda_suggession)
             setPandaSuggesions(res?.panda_suggession)
@@ -507,7 +493,16 @@ const ProductForm = ({ res }: props) => {
             setStock(res?.stock)
             setValue('stock_value', res?.stock_value)
             setValue('minimum_qty', res?.minimum_qty)
-            setImagePreview(res?.product_image)
+            setImagePreview(`${IMAGE_URL}${res?.product_image}`)
+            setValue('delivery_locations', res?.delivery_location)
+            let paths = res?.delivery_locations?.map((loc: any) => {
+                return {
+                    lat: loc[0],
+                    lng: loc[1]
+                }
+            })
+            setPaths(paths)
+
             setValue('product_availability_from', moment(res?.product_availability_from, 'HH:mm'))
             setValue('product_availability_to', moment(res?.product_availability_to, 'HH:mm'))
             setValue('require_shipping', res?.require_shipping)
@@ -516,25 +511,40 @@ const ProductForm = ({ res }: props) => {
                 setMetaTag(res?.meta_tags?.map((res: any) => ({
                     title: res
                 })))
+                setmetaTagValue(res?.meta_tags?.map((res: any) => ({
+                    title: res
+                })))
             }
             setValue('video_link', res?.video_link)
             setValue('related_products', res?.related_products)
-            let attributesArray: { name: any; options: any; varient: boolean; }[] = []
-            if (res?.attributes?.length > 0) {
-               res?.attributes.map((item:any)=>{
-                attributesArray.push({
-                    name:item?.name,
-                    options:item?.options,
-                    varient:false
-                
-                })
+            if (res?.image) {
+                let imageslist = res?.image?.map((res: any) => (
+                    res
 
-                console.log({attributesArray})
-                setAttributes(attributesArray)
-               })
+                ))
+                setdefaultImage([...imageslist])
+
             }
 
-            console.log({attributes})
+
+            let attributesArray: { name: any; options: any; varient: boolean; }[] = []
+            if (res?.attributes?.length > 0) {
+                res?.attributes.map((item: any) => {
+                    attributesArray.push({
+                        name: item?.name,
+                        options: item?.options,
+                        varient: item?.varient
+
+                    })
+                    setAttributes(attributesArray)
+                })
+            }
+
+
+            setValue('commission', res?.commision)
+            setValue('regular_price', res?.regular_price)
+            setValue('offer_price', res?.offer_price)
+
         }
 
     }, [res])
@@ -559,121 +569,127 @@ const ProductForm = ({ res }: props) => {
 
     //varient add varients and attributes form.......................................................................
 
+    useEffect(() => {
+        addvarients()
+
+    }, [attributes, index])
+
+
     const AddVarientCheckbox = (e: any, i: number) => {
-        // setVarientsArray([])
-        // setVarients([])
-        attributes[i].varient = e;
-        // let find = attributes?.every((res: any) => res.varient === false)
-
-        // if (find) {
-        //     setVarients([])
-        //     setVarientsArray([])
-        //     setConfirmBtn(false)
-        // }
         setIndex(i)
+        attributes[i].varient = e;
         setAddVarient(e)
+        addvarients()
+    }
+
+    const addvarients = () => {
+
         if (attributes?.some((res: any) => res.varient === true)) {
-
             const output = [];
-            // setVarients([])
-            setVarientsArray([])
-
-            if (varientsarray?.length === 0) {
-                setValue('seller_price', '')
-                setValue('offer_price', '')
-                setValue('offer_date_from', '')
-                setValue('regular_price', '')
-                setValue('offer_date_to', '')
-                setValue('fixed_delivery_price', '')
-                // Filter attributes array to only include those with variant true
-                const variantAttributes = attributes.filter((attr: any) => attr.varient !== false)
-                // Calculate the number of iterations required based on the length of the variantAttributes array
-                const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
-                for (let i = 0; i < numIterations; i++) {
-                    let combination = "";
-                    let remainder = i;
-                    let contentIndex;
-                    let vari = [];
-                    for (let j = variantAttributes.length - 1; j >= 0; j--) {
-                        contentIndex = remainder % variantAttributes[j].options?.length;
-                        combination = variantAttributes[j].options[contentIndex].title + " " + combination;
-                        vari.push(variantAttributes[j].options[contentIndex].title)
-                        remainder = Math.floor(remainder / variantAttributes[j].options?.length);
-                    }
-
-                    varientsarray.push({
-                        attributs: vari,
-                        seller_price: '',
-                        regular_price: '',
-                        offer_price: '',
-                        offer_date_from: '',
-                        offer_date_to: '',
-                        stock: true,
-                        stock_value: '',
-                        commission: 0,
-                        fixed_delivery_price: ''
-                    })
-                    setVarientsArray([...varientsarray])
-
-                    output.push(combination.trim());
+            setValue('seller_price', '')
+            setValue('offer_price', '')
+            setValue('offer_date_from', '')
+            setValue('regular_price', '')
+            setValue('offer_date_to', '')
+            setValue('fixed_delivery_price', '')
+            // Filter attributes array to only include those with variant true
+            const variantAttributes = attributes.filter((attr: any) => attr.varient !== false)
+            // Calculate the number of iterations required based on the length of the variantAttributes array
+            const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
+            for (let i = 0; i < numIterations; i++) {
+                let combination = "";
+                let remainder = i;
+                let contentIndex;
+                let vari = [];
+                for (let j = variantAttributes.length - 1; j >= 0; j--) {
+                    contentIndex = remainder % variantAttributes[j].options?.length;
+                    combination = variantAttributes[j].options[contentIndex].title + " " + combination;
+                    vari.push(variantAttributes[j].options[contentIndex].title)
+                    remainder = Math.floor(remainder / variantAttributes[j].options?.length);
                 }
-                setVarients(output)
-
+                varientsarray.push({
+                    attributs: vari,
+                    seller_price: '',
+                    regular_price: '',
+                    offer_price: '',
+                    offer_date_from: '',
+                    offer_date_to: '',
+                    stock: true,
+                    stock_value: '',
+                    commission: 0,
+                    fixed_delivery_price: 0
+                })
+                setVarientsArray([...varientsarray])
+                output.push(combination.trim());
             }
+            setVarients(output)
 
+        } else {
+            setVarientsArray([])
+            setVarients([])
         }
+    }
 
+
+
+    const [path, setPath] = useState([
+        { lat: 52.52549080781086, lng: 13.398118538856465 },
+        { lat: 52.48578559055679, lng: 13.36653284549709 },
+        { lat: 52.48871246221608, lng: 13.44618372440334 }
+    ]);
+
+    // Define refs for Polygon instance and listeners
+    const polygonRef = useRef<google.maps.Polygon | null>(null);
+    const listenersRef = useRef<google.maps.MapsEventListener[]>([]);
+
+    // Call setPath with new edited path
+    const onEdit = useCallback(() => {
+        if (polygonRef.current) {
+            const nextPath = polygonRef.current
+                .getPath()
+                .getArray()
+                .map((latLng: google.maps.LatLng) => {
+                    return { lat: latLng.lat(), lng: latLng.lng() };
+                });
+            setPath(nextPath);
+        }
+    }, [setPath]);
+
+    // Bind refs to current Polygon and listeners
+    const onLoad = useCallback(
+        (polygon: google.maps.Polygon) => {
+            polygonRef.current = polygon;
+            const path = polygon.getPath();
+            listenersRef.current.push(
+                path.addListener("set_at", onEdit),
+                path.addListener("insert_at", onEdit),
+                path.addListener("remove_at", onEdit)
+            );
+        },
+        [onEdit]
+    );
+
+    // Clean up refs
+    const onUnmount = useCallback(() => {
+        listenersRef.current.forEach((lis: google.maps.MapsEventListener) => lis.remove());
+        polygonRef.current = null;
+    }, []);
+
+
+    //remove multiple image function only for edit.........................................................
+
+    const removeImage = (name: string) => {
+        const result = defaultImage?.filter((res: any) => res !== name)
+        setdefaultImage([...result])
 
     }
 
-    // const ConfirmVarients = () => {
-
-
-    //     setConfirmBtn(true)
-    //     const output = [];
-    //     setVarients([])
-    //     setVarientsArray([])
-
-    //     // Filter attributes array to only include those with variant true
-    //     const variantAttributes = attributes.filter((attr: any) => attr.varient !== false)
-    //     // Calculate the number of iterations required based on the length of the variantAttributes array
-    //     const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
-    //     for (let i = 0; i < numIterations; i++) {
-    //         let combination = "";
-    //         let remainder = i;
-    //         let contentIndex;
-    //         let vari = [];
-
-
-    //         for (let j = variantAttributes.length - 1; j >= 0; j--) {
-    //             contentIndex = remainder % variantAttributes[j].options?.length;
-    //             combination = variantAttributes[j].options[contentIndex].title + " " + combination;
-    //             vari.push(variantAttributes[j].options[contentIndex].title)
-    //             remainder = Math.floor(remainder / variantAttributes[j].options?.length);
-    //         }
-
-    //         varientsarray.push({
-    //             attributs: vari,
-    //             seller_price: '',
-    //             regular_price: '',
-    //             offer_price: '',
-    //             offer_date_from: '',
-    //             offer_date_to: '',
-    //             stock: true,
-    //             stock_value: '',
-    //             commission: 0,
-    //             fixed_delivery_price: ''
-    //         })
-    //         setVarientsArray([...varientsarray])
-
-    //         output.push(combination.trim());
-    //     }
-    //     setVarients(output)
-
-    // }
+    //posting products ...................................................................................................
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
+
+        let imagearray: any = []
         if (multipleImage?.length > 0) {
             const formData = new FormData();
             multipleImage?.map((img: any, i: number) => {
@@ -683,6 +699,7 @@ const ProductForm = ({ res }: props) => {
                 setLoading(true)
                 const response = await postData('admin/product/multipleupload', formData)
                 setValue('image', response?.data?.data)
+                imagearray = response?.data?.data
                 setError('image', { message: '' })
             } catch (err: any) {
                 toast.error(err?.message)
@@ -695,10 +712,11 @@ const ProductForm = ({ res }: props) => {
         }
 
 
-        console.log({ varientsarray })
 
 
-        // let find = attributes?.every((res: any) => res.varient === true)
+
+
+
 
         // if (!find) {
         //     if (!data?.seller_price || !data?.regular_price) {
@@ -720,22 +738,32 @@ const ProductForm = ({ res }: props) => {
         setValue('meta_tags', metatagsres)
 
 
+
         let newData = attributes.map((item: any) => ({
             "name": item.name,
-            "options": item.options.map((option: any) => option.title)
+            "options": item.options.map((option: any) => option.title),
+            "varient": item.varient
         }));
 
-        let value = {
+        //to FILTER THE EMPTY OBJECTS FROM AN vARIENT ARRAY...............
+        let varientarrayfilter = null
+        varientarrayfilter = varientsarray?.length > 0 && varientsarray?.filter((vari: any) => vari.seller_price !== '')
+
+
+        const CREATE_URL = '/admin/product/create'
+        const EDIT_URL = 'admin/product/update'
+
+
+        let value: any = {
             name: data?.name,
             franchisee: {
-                id: data?.franchisee?.[0]?.id,
+                _id: data?.franchisee?.[0]?.id,
                 name: data?.franchisee?.[0]?.name
             },
             description: data?.description,
             store: {
-                id: data?.store?.[0]?.id,
+                _id: data?.store?.[0]?.id,
                 name: data?.store?.[0]?.name
-
             },
             weight: data?.weight,
             dimensions: {
@@ -745,14 +773,15 @@ const ProductForm = ({ res }: props) => {
             model: data?.model,
             type: process.env.NEXT_PUBLIC_TYPE,
             product_Type: null,
-            image: data?.image,
+            image: res ? data?.image : imagearray,
             product_image: data?.product_image,
             category: {
-                id: data?.category?.[0]?.id,
-                name: data?.category?.[0]?.name
+                _id: data?.category?.[0]?.id,
+                name: data?.category?.[0]?.name,
+                image: data?.category?.[0]?.image
             },
             sub_category: data?.sub_category ? {
-                id: data?.sub_category?.[0]?.id,
+                _id: data?.sub_category?.[0]?.id,
                 name: data?.sub_category?.[0]?.name
             } : null,
             display_order: data?.display_order,
@@ -765,23 +794,27 @@ const ProductForm = ({ res }: props) => {
             require_shipping: data?.require_shipping,
             delivery_locations: data?.delivery_locations,
             coupon_details: null,
-            meta_tags: data?.meta_tags,
+            meta_tags: metatagsres,
             video_link: data?.video_link,
             related_products: data?.related_products,
             attributess: newData,
-            regular_price: data?.regular_price,
-            seller_price: data?.seller_price,
+            regular_price: data?.seller_price,
+            seller_price: data?.regular_price,
             offer_price: data?.offer_price,
+            commission: data?.regular_price ? 0 : data?.commission,
+            fixed_delivery_price: data?.fixed_delivery_price,
             offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             variant: varientsarray?.length > 0 ? true : false,
-            variants: varientsarray?.length > 0 ? varientsarray : null,
+            variants: varientsarray?.length > 0 ? varientarrayfilter : null,
             approval_status: "approved"
         }
-     
+        if (res) {
+            value["id"] = res?._id;
+        }
         try {
             setLoading(true)
-            await postData('admin/product/create', value)
+            await postData(res ? EDIT_URL : CREATE_URL, value)
             reset()
             setFranchiseSelect(null)
             setCategorySelect(null)
@@ -797,7 +830,7 @@ const ProductForm = ({ res }: props) => {
             setAttributes([])
             setRequireShipping(false)
             setMultipleImage([])
-            toast.success('Created Successfully')
+            toast.success(res ? 'Updated Successfully' : 'Created Successfully')
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)
@@ -1027,11 +1060,11 @@ const ProductForm = ({ res }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={3}>
+                    <Grid item xs={12} lg={1.5}>
                         <Typography mb={3}></Typography>
                         <CustomCheckBox isChecked={pandaSuggesion} label='' onChange={onCheckPandasuggestion} title='Panda Suggestion' />
                     </Grid>
-                    <Grid item xs={12} lg={3}>
+                    <Grid item xs={12} lg={1.5}>
                         <Typography mb={3}></Typography>
                         <CustomCheckBox isChecked={stock} label='' onChange={StockCheck} title='Enable Stock' />
                     </Grid>
@@ -1068,6 +1101,7 @@ const ProductForm = ({ res }: props) => {
                     <Grid item xs={12} lg={3}>
                         <CustomImageUploader
                             ICON={""}
+                            viewImage={imagePreview}
                             error={errors.product_image}
                             fieldName="image"
                             placeholder={``}
@@ -1113,7 +1147,8 @@ const ProductForm = ({ res }: props) => {
                 </Grid>
                 <Box py={2}>
                     <Divider />
-                    <Maps onPolygonComplete={onPolygonComplete} />
+                    {res ? <Polygon onComplete={onPolygonComplete} path={paths} /> :
+                        <Maps onPolygonComplete={onPolygonComplete} />}
                     {(errors && errors?.delivery_locations) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.delivery_locations?.message}`}</span>}
                 </Box>
             </CustomBox>
@@ -1213,7 +1248,7 @@ const ProductForm = ({ res }: props) => {
             <CustomBox title='Additional Options'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={6}>
-                        <CustomAutoComplete fieldLabel='Meta Tag' list={metaTag} setValues={setmetaTagValue} onChnageValues={() => null} />
+                        <CustomAutoComplete res={res} fieldLabel='Meta Tag' list={metaTag} setValues={setmetaTagValue} onChnageValues={() => null} />
                     </Grid>
 
                     {/* <Grid item xs={12} lg={3}>
@@ -1243,6 +1278,24 @@ const ProductForm = ({ res }: props) => {
                         />
                     </Grid>
                     <Grid item xs={12} lg={6}>
+
+                        {/* this only in edit image code ************************************** */}
+
+                        {defaultImage.length > 0 &&
+                            <>
+                                <Box display={'flex'} gap={2} >
+                                    {defaultImage && defaultImage?.map((res: any, i: number) => (
+                                        <Box position={'relative'}>
+                                            <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 100, height: 100, }} />
+                                            <Box position={'absolute'} top={0} right={0}><HighlightOffIcon sx={{ color: 'red', cursor: 'pointer' }} onClick={() => removeImage(res)} /></Box>
+                                        </Box>
+
+                                    ))}
+                                </Box>
+                            </>
+                        }
+
+                        {/* this only in edit image code ************************************** */}
                         <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />
                     </Grid>
                     <Grid item xs={12} lg={6}>
@@ -1281,7 +1334,7 @@ const ProductForm = ({ res }: props) => {
                             />
                         </Grid>
                         <Grid item xs={12} lg={4}>
-                            <CustomAutoComplete fieldLabel='Attribute Options' list={attributeTag} setValues={setattributeTagValue} onChnageValues={(e: any) => onChangeOptions(e, i)} />
+                            <CustomAutoComplete fieldLabel='Attribute Options' vres={res?.options} list={attributeTag} setValues={setattributeTagValue} onChnageValues={(e: any) => onChangeOptions(e, i)} />
 
                         </Grid>
                         <Grid item xs={12} lg={2}>
@@ -1303,6 +1356,20 @@ const ProductForm = ({ res }: props) => {
                             disabled={false}
                             type='text'
                             control={control}
+                            error={errors.seller_price}
+                            fieldName=" seller_price"
+                            placeholder={``}
+                            fieldLabel={"Purchase Price"}
+                            view={false}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item lg={1.71} xs={12}>
+
+                        <CustomInput
+                            disabled={false}
+                            type='text'
+                            control={control}
                             error={errors.regular_price}
                             fieldName="regular_price"
                             placeholder={``}
@@ -1316,10 +1383,23 @@ const ProductForm = ({ res }: props) => {
                             disabled={false}
                             type='text'
                             control={control}
-                            error={errors.seller_price}
-                            fieldName=" seller_price"
+                            error={errors.commission}
+                            fieldName="commission"
+                            placeholder={''}
+                            fieldLabel={"Commission(%)"}
+                            view={getValues('regular_price') ? true : false}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item lg={1.71} xs={12}>
+                        <CustomInput
+                            disabled={false}
+                            type='number'
+                            control={control}
+                            error={errors.fixed_delivery_price}
+                            fieldName=" fixed_delivery_price"
                             placeholder={``}
-                            fieldLabel={"Purchase Price"}
+                            fieldLabel={"Fixed Delivery Price"}
                             view={false}
                             defaultValue={''}
                         />
@@ -1337,36 +1417,6 @@ const ProductForm = ({ res }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item lg={1.71} xs={12}>
-                        <CustomInput
-                            disabled={false}
-                            type='text'
-                            control={control}
-                            error={errors.commission}
-                            fieldName="commission"
-                            placeholder={''}
-                            fieldLabel={"Commission(%)"}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-
-                    <Grid item lg={1.71} xs={12}>
-                        <CustomInput
-                            disabled={false}
-                            type='number'
-                            control={control}
-                            error={errors.fixed_delivery_price}
-                            fieldName=" fixed_delivery_price"
-                            placeholder={``}
-                            fieldLabel={"Fixed Delivery Price"}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-
-
-
                     <Grid item lg={1.71} xs={12}>
                         <CustomDatePicker
                             values={getValues('offer_date_from')}

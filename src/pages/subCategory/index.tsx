@@ -20,8 +20,11 @@ const SubCategory = () => {
     const [open, setOpen] = useState<boolean>(false);
     const [_id, set_id] = useState<string>('');
     const [subCategoryList, setSubCategoryList] = useState<any>([])
+    const [serachList, setSearchList] = useState<any>([])
+    const [pending, startTransition] = useTransition();
 
 
+    console.log({ subCategoryList })
 
 
     const addSubCategory = () => {
@@ -47,6 +50,7 @@ const SubCategory = () => {
             setLoading(true)
             const response = await fetchData('admin/subcategory/list')
             setSubCategoryList(response?.data?.data)
+            setSearchList(response?.data?.data)
         } catch (err: any) {
             toast.error(err.message)
             setLoading(false)
@@ -73,20 +77,29 @@ const SubCategory = () => {
             valueGetter: (params) => moment(params.row.created_at).format("DD/MM/YYYY"),
         },
         {
+            field: 'category',
+            headerName: 'Category',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => params?.row?.category?.name,
+
+        },
+        {
             field: 'name',
-            headerName: 'SubCategory Name',
+            headerName: 'SubCategory',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
 
         },
-        {
-            field: 'order_number',
-            headerName: 'Order',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-        },
+        // {
+        //     field: 'order_number',
+        //     headerName: 'Order',
+        //     flex: 1,
+        //     headerAlign: 'center',
+        //     align: 'center',
+        // },
         {
             field: 'Action',
             headerName: 'Action',
@@ -120,10 +133,18 @@ const SubCategory = () => {
     ];
 
 
+    const searchProducts = useCallback((value: any) => {
+        let Results = serachList?.filter((com: any) => com?.name.toString().toLowerCase().includes(value.toLowerCase())
+        )
+        startTransition(() => {
+            setSubCategoryList(Results)
+        })
+    }, [subCategoryList])
+
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
-                <CustomTableHeader setState={''} imprtBtn={false} Headerlabel='SubCategory' onClick={addSubCategory} addbtn={true} />
+                <CustomTableHeader setState={searchProducts} imprtBtn={false} Headerlabel='SubCategory' onClick={addSubCategory} addbtn={true} />
                 <Box py={3}>
                     <CustomTable dashboard={false} columns={columns} rows={subCategoryList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
