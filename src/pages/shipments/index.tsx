@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router'
+import { Router, useRouter } from 'next/router'
 import React, { useState, useTransition, useEffect, useCallback } from 'react'
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
@@ -14,7 +14,7 @@ import { fetchData } from '@/CustomAxios';
 import moment from 'moment';
 
 const Shipments = () => {
-
+    const router = useRouter()
 
 
     const [loading, setLoading] = useState<boolean>(false);
@@ -94,7 +94,7 @@ const Shipments = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-           
+
         },
         {
             field: 'Actions',
@@ -129,13 +129,13 @@ const Shipments = () => {
     ];
 
 
-    const searchProducts = useCallback((value:any) => {
-        let competitiions = serachList?.filter((com:any) => com?.order_id.toString().toLowerCase().includes(value.toLowerCase())
+    const searchProducts = useCallback((value: any) => {
+        let competitiions = serachList?.filter((com: any) => com?.order_id.toString().toLowerCase().includes(value.toLowerCase())
         )
         startTransition(() => {
             setShippingList(competitiions)
         })
-    },[shippingList])
+    }, [shippingList])
 
     const ShippingOrders = async () => {
 
@@ -157,12 +157,16 @@ const Shipments = () => {
         ShippingOrders()
     }, [])
 
+    const addOrderShipmets = () => {
+        router.push('/shipments/addOrder')  
+    }
+
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={true} Headerlabel='Orders' onClick={() => null} addbtn={true} />
+                <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={true} Headerlabel='Orders' onClick={addOrderShipmets} addbtn={true} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={shippingList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>

@@ -32,13 +32,13 @@ export default function CustomAutoComplete({ fieldLabel, list, setValues, onChna
 
 
  
-    useEffect(() => {
-        if(res){
-            setValue(res?.meta_tags?.map((res: any) => ({
-                title: res
-            })))
-        }
-    }, [res])
+    // useEffect(() => {
+    //     if(res){
+    //         setValue(res?.meta_tags?.map((res: any) => ({
+    //             title: res
+    //         })))
+    //     }
+    // }, [res])
 
     // useEffect(() => {
     //     if(vres){

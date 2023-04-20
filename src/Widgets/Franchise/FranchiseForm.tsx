@@ -23,7 +23,7 @@ type Inputs = {
     mobile: string,
     address: string,
     coordinates: any,
-    franchisee_commission: string
+    franchisee_commission: any
 }
 
 type IFormInput = {
@@ -33,16 +33,19 @@ type IFormInput = {
     mobile: string,
     address: string,
     coordinates: any,
-    franchisee_commission: string
+    franchisee_commission: any
 }
 type props = {
-    res?: any
+    res?: any,
+    view?: any
 }
 
 
-const FranchiseForm = ({ res }: props) => {
+const FranchiseForm = ({ res, view }: props) => {
 
-    const [ paths, setPaths] = useState(null)
+    console.log({ view })
+
+    const [paths, setPaths] = useState(null)
 
     const router = useRouter()
 
@@ -62,8 +65,8 @@ const FranchiseForm = ({ res }: props) => {
                 .required('A Mobile number is required'),
             //address: yup.string().required('Address is Required'),
             coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required"),
-            franchisee_commission:yup.string().required('Commission is Required')
-            
+            franchisee_commission: yup.string().required('Commission is Required')
+
         })
         .required();
 
@@ -82,7 +85,7 @@ const FranchiseForm = ({ res }: props) => {
                 mobile: '',
                 address: '',
                 coordinates: null,
-                franchisee_commission: ''
+                franchisee_commission: 0
             }
         });
 
@@ -92,17 +95,17 @@ const FranchiseForm = ({ res }: props) => {
 
         const url_Create = '/admin/franchise/create'
         const url_Edit = 'admin/franchise/update'
-        
+
         const create_data = data
         const edit_Data = {
             ...data,
-            id : res?._id
+            id: res?._id
         }
 
         try {
             await postData(res ? url_Edit : url_Create, res ? edit_Data : create_data)
             toast.success(res ? 'Edited Successfully' : 'Created Successfully')
-            if(res){
+            if (res) {
                 router.push(`/franchise`)
             }
             reset()
@@ -119,17 +122,16 @@ const FranchiseForm = ({ res }: props) => {
     }
 
     useEffect(() => {
-        if (res) {
-            setValue('franchise_name', res?.franchise_name)
-            setValue('owner_name', res?.owner_name)
-            setValue('email', res?.email)
-            setValue('mobile', res?.mobile)
-            setValue('address', res?.address)
-            setValue('franchisee_commission', res?.commission)
-            setValue('coordinates',res?.delivery_location)
-
-
-            let paths = res?.delivery_location?.map((loc: any) => {
+        if (res || view) {
+            let data = res ? res : view
+            setValue('franchise_name', data?.franchise_name)
+            setValue('owner_name', data?.owner_name)
+            setValue('email', data?.email)
+            setValue('mobile', data?.mobile)
+            setValue('address', data?.address)
+            setValue('franchisee_commission', data?.franchisee_commission)
+            setValue('coordinates', data?.delivery_location)
+            let paths = data?.delivery_location?.map((loc: any) => {
                 return {
                     lat: loc[0],
                     lng: loc[1]
@@ -137,7 +139,7 @@ const FranchiseForm = ({ res }: props) => {
             })
             setPaths(paths)
         }
-    }, [res])
+    }, [res, view])
 
 
     return (
@@ -153,7 +155,7 @@ const FranchiseForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Franchise Name"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -166,7 +168,7 @@ const FranchiseForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Owner Name"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -179,7 +181,7 @@ const FranchiseForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Email Address"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -192,7 +194,7 @@ const FranchiseForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Mobile Number"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -205,7 +207,7 @@ const FranchiseForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Address"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -218,7 +220,7 @@ const FranchiseForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Commission(%)"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -227,21 +229,22 @@ const FranchiseForm = ({ res }: props) => {
                     <Divider />
                 </Box>
                 {res ? <Polygons onComplete={setDeliveryLocation} path={paths} /> : <Maps onPolygonComplete={setDeliveryLocation} />}
-                {errors && <span style={{ color: 'red', fontSize: 12 }}>{`${ errors?.coordinates ? errors?.coordinates?.message : ''}`}</span>}
+                {errors && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates ? errors?.coordinates?.message : ''}`}</span>}
             </CustomBox>
-            <Box py={3}>
-                <Custombutton
-                    btncolor=''
-                    IconEnd={''}
-                    IconStart={''}
-                    endIcon={false}
-                    startIcon={false}
-                    height={''}
-                    label={res ? 'Update' : 'Add Franchise'}
-                    onClick={handleSubmit(onSubmit)}
-                    disabled={loading}
-                />
-            </Box>
+            {!view &&
+                <Box py={3}>
+                    <Custombutton
+                        btncolor=''
+                        IconEnd={''}
+                        IconStart={''}
+                        endIcon={false}
+                        startIcon={false}
+                        height={''}
+                        label={res ? 'Update' : 'Add Franchise'}
+                        onClick={handleSubmit(onSubmit)}
+                        disabled={loading}
+                    />
+                </Box>}
         </Box>
     )
 }

@@ -121,8 +121,8 @@ const ProductForm = ({ res }: props) => {
 
 
     console.log({ res }, 'response in single list')
-
-
+  
+    
     const [multipleImage, setMultipleImage] = useState<any>([])
 
     const [defaultImage, setdefaultImage] = useState<any>([])
@@ -142,7 +142,7 @@ const ProductForm = ({ res }: props) => {
     const [confirmbtn, setConfirmBtn] = useState(false)
     const [varients, setVarients] = useState<any>([])
     const [vendorList, setVendorList] = useState<any>([])
-    const [vendorSelect, setvendorSelect] = useState<any>(res ? res?.store?.id : null);
+    const [vendorSelect, setvendorSelect] = useState<any>(null);
     const [franchiseList, setFranchiseList] = useState<any>([]);
     const [franchiseSelect, setFranchiseSelect] = useState<any>(null);
     const [categorySelect, setCategorySelect] = useState<any>(null);
@@ -156,10 +156,10 @@ const ProductForm = ({ res }: props) => {
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
 
+ 
 
 
-
-
+console.log({varientsarray})
 
 
     const MAX_FILE_SIZE = 102400; //100KB
@@ -323,14 +323,9 @@ const ProductForm = ({ res }: props) => {
                 name: get?.store_name
             }
         ))
-
-
         setValue('commission', result[0]?.commision)
         setValue('store', result)
         setError('store', { message: '' })
-
-
-
     }
 
 
@@ -458,34 +453,39 @@ const ProductForm = ({ res }: props) => {
     useEffect(() => {
         if (res) {
             const getvendorlist = async () => {
-                const response = await fetchData(`admin/vendor-list/${res?.franchisee?.id}`)
-                setVendorList(response?.data?.data)
+                try {
+                    const response = await fetchData(`admin/vendor-list/${res?.franchisee?._id}`)
+                     setVendorList(response?.data?.data)
+                } catch (err: any) {
+                    toast.error(err?.message)
+
+                }
             }
             const getSubcategory = async () => {
                 try {
-                    const response = await fetchData(`admin/subcategory-list/${res?.category?.id}`)
+                    const response = await fetchData(`admin/subcategory-list/${res?.category?._id}`)
                     setSubCategoryList(response?.data?.data)
-                } catch (err) {
-
+                } catch (err: any) {
+                    toast.error(err?.message)
                 }
 
             }
             getSubcategory()
             getvendorlist()
             setValue('name', res?.name)
-            setValue('franchisee', res?.franchisee?.id)
-            setFranchiseSelect(res?.franchisee?.id)
+            setValue('franchisee', res?.franchisee?._id)
+            setFranchiseSelect(res?.franchisee?._id)
             setValue('store', res?.store)
-            setvendorSelect(res?.store?.id)
+            setvendorSelect(res?.store?._id)
             setValue('description', res?.description)
             setValue('weight', res?.weight)
             setValue('model', res?.model)
             setValue('width', res?.dimensions?.width)
             setValue('height', res?.dimensions?.height)
             setValue('category', res?.category)
-            setCategorySelect(res?.category?.id)
+            setCategorySelect(res?.category?._id)
             setValue('sub_category', res?.sub_category)
-            setSubCategorySelect(res?.sub_category?.id)
+            setSubCategorySelect(res?.sub_category?._id)
             setValue('display_order', res?.display_order)
             setValue('panda_suggession', res?.panda_suggession)
             setPandaSuggesions(res?.panda_suggession)
@@ -526,21 +526,44 @@ const ProductForm = ({ res }: props) => {
 
             }
 
-
+  
             let attributesArray: { name: any; options: any; varient: boolean; }[] = []
             if (res?.attributes?.length > 0) {
                 res?.attributes.map((item: any) => {
                     attributesArray.push({
                         name: item?.name,
                         options: item?.options,
-                        varient: item?.varient
+                        varient: item?.variant
 
                     })
+                  
                     setAttributes(attributesArray)
                 })
             }
 
+            if(res?.variants?.length > 0){
+                res?.variants?.map((item:any)=>{
 
+                    varientsarray.push({
+                        attributs:item?.attributs.toString(),
+                        seller_price:item?.commission,
+                        regular_price:item?.regular_price,
+                        offer_price: '',
+                        offer_date_from: '',
+                        offer_date_to: '',
+                        stock: true,
+                        stock_value: '',
+                        commission: 0,
+                        fixed_delivery_price: 0
+
+                    })
+                   
+                    // setVarientsArray(varientsarray)
+                })
+            }
+
+  
+            console.log({varientsarray})
             setValue('commission', res?.commision)
             setValue('regular_price', res?.regular_price)
             setValue('offer_price', res?.offer_price)
@@ -608,7 +631,7 @@ const ProductForm = ({ res }: props) => {
                     remainder = Math.floor(remainder / variantAttributes[j].options?.length);
                 }
                 varientsarray.push({
-                    attributs: vari,
+                    attributs: '',
                     seller_price: '',
                     regular_price: '',
                     offer_price: '',
@@ -623,6 +646,8 @@ const ProductForm = ({ res }: props) => {
                 output.push(combination.trim());
             }
             setVarients(output)
+
+            console.log({output})
 
         } else {
             setVarientsArray([])
@@ -711,13 +736,6 @@ const ProductForm = ({ res }: props) => {
 
         }
 
-
-
-
-
-
-
-
         // if (!find) {
         //     if (!data?.seller_price || !data?.regular_price) {
         //         toast.warning("Please add product price to continue")
@@ -742,7 +760,7 @@ const ProductForm = ({ res }: props) => {
         let newData = attributes.map((item: any) => ({
             "name": item.name,
             "options": item.options.map((option: any) => option.title),
-            "varient": item.varient
+            "variant": item.varient
         }));
 
         //to FILTER THE EMPTY OBJECTS FROM AN vARIENT ARRAY...............

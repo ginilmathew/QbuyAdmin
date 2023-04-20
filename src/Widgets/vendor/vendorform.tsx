@@ -1,16 +1,14 @@
 import CustomInput from '@/components/CustomInput'
 import { Box, Divider, Grid, Typography, MenuItem } from '@mui/material'
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import CustomBox from '../CustomBox'
 import { useForm, SubmitHandler, set } from "react-hook-form";
 import Custombutton from '@/components/Custombutton';
 import CustomImageUploader from '@/components/CustomImageUploader';
 import Customselect from '@/components/Customselect';
-import { FormInputs } from '@/utilities/types';
-import { GoogleMap, useJsApiLoader, LoadScript, Marker, DrawingManager } from "@react-google-maps/api";
+import { useJsApiLoader } from "@react-google-maps/api";
 import { fetchData } from '@/CustomAxios';
 import CustomTimepicker from '@/components/CustomTimepicker';
-import dayjs, { Dayjs } from 'dayjs';
 import { postData } from '@/CustomAxios';
 import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -19,7 +17,7 @@ import moment from 'moment'
 import CustomMultiselect from '@/components/CustomMultiselect';
 import Maps from '@/components/maps/maps';
 import Polygon from '@/components/maps/Polygon';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { IMAGE_URL } from '../../Config/index';
 
 
@@ -81,12 +79,10 @@ type props = {
 
 const Vendorform = ({ res }: props) => {
 
-    console.log({res})
-    
-    console.log({IMAGE_URL})
+ 
 
     const router = useRouter()
-    console.log({ res }, 'VENDOR LIST')
+
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [category, setCategory] = useState<string>('')
@@ -99,7 +95,7 @@ const Vendorform = ({ res }: props) => {
     const [imagePreview, setImagePreview] = useState<any>(null)
     const [paths, setPaths] = useState<any>(null)
 
-    console.log({ imagePreview })
+  
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
@@ -115,10 +111,10 @@ const Vendorform = ({ res }: props) => {
             category_id: yup.array().typeError('Category is Required').required('Category is Required'),
             // start_time: yup.string().required('Required'),
             // end_time: yup.string().required('Required'),
-            store_logo:yup
-            .mixed()
-            .typeError("Store Logo is Required")
-            .required("Store Logo is Required"),
+            store_logo: yup
+                .mixed()
+                .typeError("Store Logo is Required")
+                .required("Store Logo is Required"),
             // // coordinates: any,
             // license_number: yup.string().required('License Number is Required'),
             // ffsai_number: yup.string().required('FFASI Number is Required'),
@@ -129,7 +125,7 @@ const Vendorform = ({ res }: props) => {
             // branch: yup.string().required('Branch is Required'),
             // recipient_name: yup.string().required('Recipient Name is Required'),
             coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required"),
-            commission:yup.string().required('Commission is Required')
+            commission: yup.string().required('Commission is Required')
 
         })
         .required();
