@@ -1,4 +1,4 @@
-import { Box, Grid, MenuItem } from '@mui/material'
+import { Avatar, Box, Grid, MenuItem } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import CustomBox from '../CustomBox'
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -35,11 +35,12 @@ type IFormInput = {
 
 
 type props = {
-    resData?: any
+    resData?: any,
+    view?: any
 }
 
 
-const CategoryForm = ({ resData }: props) => {
+const CategoryForm = ({ resData, view }: props) => {
 
     console.log({ resData })
 
@@ -52,9 +53,9 @@ const CategoryForm = ({ resData }: props) => {
     const schema = yup
         .object()
         .shape({
-            name: yup.string().required('Category Name Required'),
+            name: yup.string().max(30, 'Maximum Character Exceeds').required('Category Name Required'),
             // type: yup.string().required('Type is Required'),
-            seo_description:yup.string().required('Description is Required'),
+            seo_description: yup.string().max(100, 'Maximum Character Exceeds').required('Description is Required'),
             order_number: yup.number().typeError('Order must be integer').required('Order Number is Required'),
             image: yup
                 .mixed()
@@ -109,7 +110,7 @@ const CategoryForm = ({ resData }: props) => {
         // formData.append("seo_title", data?.name);
         formData.append("seo_description", data?.seo_description);
         try {
-           await postData(resData ? URL_EDIT : URL_CREATE, formData)
+            await postData(resData ? URL_EDIT : URL_CREATE, formData)
             toast.success(resData ? 'Updated Successfully' : 'Created Successfully')
 
         } catch (err: any) {
@@ -125,15 +126,16 @@ const CategoryForm = ({ resData }: props) => {
 
 
     useEffect(() => {
-        if (resData) {
-            setValue('name', resData?.name)
-            setValue('order_number', resData?.order_number)
-            setValue('seo_description', resData?.seo_description)
-            setValue('seo_title', resData?.seo_title)
-            setValue('image', resData?.image)
-            setImagePreview(`${IMAGE_URL}${resData?.image}`)
+        if (resData || view) {
+            let data = resData ? resData : view;
+            setValue('name', data?.name)
+            setValue('order_number', data?.order_number)
+            setValue('seo_description', data?.seo_description)
+            setValue('seo_title', data?.seo_title)
+            setValue('image', data?.image)
+            setImagePreview(`${IMAGE_URL}${data?.image}`)
         }
-    }, [resData])
+    }, [resData || view])
 
 
     return (
@@ -149,7 +151,7 @@ const CategoryForm = ({ resData }: props) => {
                             placeholder={``}
                             fieldLabel={"Category Name"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -162,7 +164,7 @@ const CategoryForm = ({ resData }: props) => {
                             placeholder={``}
                             fieldLabel={"Display Order"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -175,7 +177,7 @@ const CategoryForm = ({ resData }: props) => {
                             placeholder={``}
                             fieldLabel={"Discription"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -204,42 +206,48 @@ const CategoryForm = ({ resData }: props) => {
                             <MenuItem value={'green'}>Qbuy Green</MenuItem>
                         </Customselect>
                     </Grid> */}
-                    <Grid item xs={12} lg={2.5}>
-                        <CustomImageUploader
-                            ICON={""}
-                            error={errors.image}
-                            fieldName="image"
-                            placeholder={``}
-                            fieldLabel={"Image"}
-                            control={control}
-                            height={130}
-                            max={5}
-                            onChangeValue={imageUploder}
-                            viewImage={imagePreview}
-                            preview={imagefile}
-                            previewEditimage={""}
-                            type={"file"}
-                            background="#e7f5f7"
-                            myid="contained-button-file"
-                            width={"100%"}
-                        />
-                    </Grid>
+                    {!view &&
+                        <Grid item xs={12} lg={2.5}>
+                            <CustomImageUploader
+                                ICON={""}
+                                error={errors.image}
+                                fieldName="image"
+                                placeholder={``}
+                                fieldLabel={"Image"}
+                                control={control}
+                                height={130}
+                                max={5}
+                                onChangeValue={imageUploder}
+                                viewImage={imagePreview}
+                                preview={imagefile}
+                                previewEditimage={""}
+                                type={"file"}
+                                background="#e7f5f7"
+                                myid="contained-button-file"
+                                width={"100%"}
+                            />
+                        </Grid>}
+                    {view &&
+                        <Grid item xs={12} lg={2.5}>
+                            <Avatar variant='square' src={`${IMAGE_URL}${view?.image}`} sx={{ width: '100%', height: 130 }} />
+                        </Grid>}
+
                 </Grid>
             </CustomBox>
+            {!view &&
+                <Box py={3}>
+                    <Custombutton
+                        disabled={loading}
+                        btncolor=''
+                        IconEnd={''}
+                        IconStart={''}
+                        endIcon={false} startIcon={false}
+                        height={''}
+                        label={resData ? 'update' : ' Add Category'}
+                        onClick={handleSubmit(onSubmit)} />
+                </Box>}
 
-            <Box py={3}>
-                <Custombutton
-                    disabled={loading}
-                    btncolor=''
-                    IconEnd={''}
-                    IconStart={''}
-                    endIcon={false} startIcon={false}
-                    height={''}
-                    label={resData ? 'update' : ' Add Category'}
-                    onClick={handleSubmit(onSubmit)} />
-            </Box>
 
-          
 
 
         </Box>

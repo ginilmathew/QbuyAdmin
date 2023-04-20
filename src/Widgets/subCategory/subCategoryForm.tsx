@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import CustomBox from '../CustomBox'
-import { Box, Grid, MenuItem } from '@mui/material'
+import { Avatar, Box, Grid, MenuItem } from '@mui/material'
 import CustomInput from '@/components/CustomInput';
 import Customselect from '@/components/Customselect';
 import CustomImageUploader from '@/components/CustomImageUploader';
@@ -36,14 +36,18 @@ type IFormInput = {
 }
 type props = {
     res?: any,
+    view?: any
 
 }
 
-const SubCategoryForm = ({ res }: props) => {
+const SubCategoryForm = ({ res, view }: props) => {
 
-  const router = useRouter()
+    const resData = res ? res : view;
 
-    console.log({ res })
+
+    const router = useRouter()
+
+
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
@@ -58,7 +62,7 @@ const SubCategoryForm = ({ res }: props) => {
         .shape({
             category_id: yup.string().required('Category is Required'),
             name: yup.string().required('Name is Required'),
-       
+
             image: yup
                 .mixed()
                 .required('Image is Required')
@@ -117,15 +121,15 @@ const SubCategoryForm = ({ res }: props) => {
 
 
     useEffect(() => {
-        if (res) {
-            setValue('category_id', res?.category_id)
-            setCategoryID(res?.category_id)
-            setValue('order_number', res?.order_number)
-            setValue('name', res?.name)
-            setImagePreview(`${IMAGE_URL}${res?.image}`)
-            setValue('image', res?.image)
+        if (resData) {
+            setValue('category_id', resData?.category_id)
+            setCategoryID(resData?.category_id)
+            setValue('order_number', resData?.order_number)
+            setValue('name', resData?.name)
+            setImagePreview(`${IMAGE_URL}${resData?.image}`)
+            setValue('image', resData?.image)
         }
-    }, [res])
+    }, [resData])
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         const URL_CREATE = '/admin/subcategory/create'
@@ -151,7 +155,7 @@ const SubCategoryForm = ({ res }: props) => {
             setImagePreview(null)
             setCategoryID('')
             reset()
-            if(res){
+            if (res) {
                 router.push('/subCategory')
             }
             toast.success(res ? 'Updated Successfully' : 'Created Successfully')
@@ -171,10 +175,11 @@ const SubCategoryForm = ({ res }: props) => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
                         <Customselect
+                            disabled={view ? true : false}
                             type='text'
                             control={control}
                             error={errors.category_id}
-                            fieldName="franchise_id"
+                            fieldName="category_id"
                             placeholder={``}
                             fieldLabel={"Category"}
                             selectvalue={""}
@@ -203,7 +208,7 @@ const SubCategoryForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"SubCategory Name"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -220,42 +225,51 @@ const SubCategoryForm = ({ res }: props) => {
                             defaultValue={''}
                         />
                     </Grid> */}
-                    <Grid item xs={12} lg={2.5}>
-                        <CustomImageUploader
-                            ICON={""}
-                            viewImage={imagePreview}
-                            error={errors.image}
-                            fieldName="Subcategory"
-                            placeholder={``}
-                            fieldLabel={"Image"}
-                            control={control}
-                            height={130}
-                            max={5}
-                            onChangeValue={imageUploder}
-                            preview={imagefile}
-                            previewEditimage={""}
-                            type={"file"}
-                            background="#e7f5f7"
-                            myid="contained-button-file"
-                            width={"100%"}
-                        />
 
-                    </Grid>
+                    {!view &&
+                        <Grid item xs={12} lg={2.5}>
+                            <CustomImageUploader
+                                ICON={""}
+                                viewImage={imagePreview}
+                                error={errors.image}
+                                fieldName="Subcategory"
+                                placeholder={``}
+                                fieldLabel={"Image"}
+                                control={control}
+                                height={130}
+                                max={5}
+                                onChangeValue={imageUploder}
+                                preview={imagefile}
+                                previewEditimage={""}
+                                type={"file"}
+                                background="#e7f5f7"
+                                myid="contained-button-file"
+                                width={"100%"}
+                            />
+
+                        </Grid>}
+
+                    {view &&
+                        <Grid item xs={12} lg={2.5}>
+                            <Avatar variant='square' src={`${IMAGE_URL}${view?.image}`} sx={{ width: '100%', height: 130 }} />
+                        </Grid>}
                 </Grid>
             </CustomBox>
-            <Box py={3}>
-                <Custombutton
-                    btncolor=''
-                    IconEnd={''}
-                    IconStart={''}
-                    endIcon={false}
-                    startIcon={false}
-                    height={''}
-                    label={res ? 'Update' : 'Add SubCategory'}
-                    onClick={handleSubmit(onSubmit)}
-                    disabled={loading}
-                />
-            </Box>
+
+            {!view &&
+                <Box py={3}>
+                    <Custombutton
+                        btncolor=''
+                        IconEnd={''}
+                        IconStart={''}
+                        endIcon={false}
+                        startIcon={false}
+                        height={''}
+                        label={res ? 'Update' : 'Add SubCategory'}
+                        onClick={handleSubmit(onSubmit)}
+                        disabled={loading}
+                    />
+                </Box>}
         </>
     )
 }
