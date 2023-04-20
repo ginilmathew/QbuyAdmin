@@ -24,7 +24,6 @@ const SubCategory = () => {
     const [pending, startTransition] = useTransition();
 
 
-    console.log({ subCategoryList })
 
 
     const addSubCategory = () => {

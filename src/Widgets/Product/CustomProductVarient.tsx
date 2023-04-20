@@ -30,8 +30,6 @@ type Input = {
 
 const CustomProductVarient = memo(({ content, index, setState, state ,deafultCommission}: props) => {
 
-
-
     const { register,
         handleSubmit,
         control,

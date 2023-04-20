@@ -33,9 +33,14 @@ const Franchise = () => {
     }
 
 
-    const EditFranchise = (id: any) =>{
-        console.log({id})
+    const EditFranchise = (id: any) => {
+
         router.push(`/franchise/edit/${id}`)
+
+    }
+
+    const viewFranchise = (id: any) => {
+        router.push(`/franchise/view/${id}`)
 
     }
 
@@ -105,7 +110,7 @@ const Franchise = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-
+                        onClick={() => viewFranchise(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -133,7 +138,7 @@ const Franchise = () => {
     }
 
 
- 
+
 
     const getFranchiseList = async () => {
         try {
@@ -150,9 +155,9 @@ const Franchise = () => {
     }
 
 
-    
-    const searchfranchise = (value:any) => {
-        let Results = serachList?.filter((com:any) => com?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.franchise_id.toString().toLowerCase().includes(value.toLowerCase)
+
+    const searchfranchise = (value: any) => {
+        let Results = serachList?.filter((com: any) => com?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.franchise_id.toString().toLowerCase().includes(value.toLowerCase)
         )
         startTransition(() => {
             setFranchiseList(Results)
