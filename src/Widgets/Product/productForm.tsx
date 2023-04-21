@@ -299,7 +299,7 @@ console.log({varientsarray})
         setFranchiseSelect(e.target.value)
         try {
             setLoading(true)
-            const response = await fetchData(`admin/vendor-list/${e.target.value}`)
+            const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
             setVendorList(response?.data?.data)
         } catch (err: any) {
             toast.error(err.message)
@@ -384,7 +384,7 @@ console.log({varientsarray})
 
     const addAtributes = () => {
         // if(attributes?.length  < 2){
-        setAttributes([...attributes, { name: '', options: [], varient: false }])
+        setAttributes([...attributes, { name: '', options: [], variant: false }])
         // }
     }
 
@@ -400,6 +400,9 @@ console.log({varientsarray})
 
     const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
         attributes[i][key] = e;
+        // if(key === "options"){
+
+        // }
     }
 
     const onChangeOptions = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
@@ -609,7 +612,7 @@ console.log({varientsarray})
     const enableVariant = (e: any, i: number) => {
         console.log({e})
         setIndex(i)
-        attributes[i].varient = e;
+        attributes[i].variant = e;
         setAttributes([...attributes])
         //setAddVarient(e)
         addvarients()
@@ -627,7 +630,7 @@ console.log({varientsarray})
 
     const addvarients = () => {
 
-        if (attributes?.some((res: any) => res.varient === true)) {
+        if (attributes?.some((res: any) => res.variant === true)) {
             const output = [];
             setValue('seller_price', '')
             setValue('offer_price', '')
@@ -636,7 +639,7 @@ console.log({varientsarray})
             setValue('offer_date_to', '')
             setValue('fixed_delivery_price', '')
             // Filter attributes array to only include those with variant true
-            const variantAttributes = attributes.filter((attr: any) => attr.varient !== false)
+            const variantAttributes = attributes.filter((attr: any) => attr.variant !== false)
 
             let attributesArray = variantAttributes?.map((vari: any) =>  vari?.options)
 
@@ -861,7 +864,7 @@ console.log({varientsarray})
             meta_tags: metatagsres,
             video_link: data?.video_link,
             related_products: data?.related_products,
-            attributess: newData,
+            attributess: attributes,
             regular_price: data?.seller_price,
             seller_price: data?.regular_price,
             offer_price: data?.offer_price,
@@ -870,7 +873,7 @@ console.log({varientsarray})
             offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             variant: varientsarray?.length > 0 ? true : false,
-            variants: varientsarray?.length > 0 ? varientarrayfilter : null,
+            variants: varientsarray,
             approval_status: "approved"
         }
         if (res) {
@@ -882,11 +885,11 @@ console.log({varientsarray})
             reset()
             setFranchiseSelect(null)
             setCategorySelect(null)
-            setSelectType(null)
+            //setSelectType(null)
             setImagefile(null)
             setSubCategorySelect(null)
             setvendorSelect(null)
-            setConfirmBtn(false)
+            //setConfirmBtn(false)
             setVarientsArray([])
             setmetaTagValue([])
             setMetaTag([])

@@ -76,10 +76,12 @@ const deleteData = async (url: string): Promise<AxiosResponse> => {
 };
 
 
-function errorHandler(error: any) {
-  // if(error.status === 403){
-  //   localStorage.clear()
-  // }
+async function errorHandler(error: any) {
+  console.log({error : error.response.status})
+  if(error.response.status === 403){
+    localStorage.clear()
+    //await userContext.setUser(response.data.user)
+  }
   throw new Error(error.response.data.message);
 }
 
