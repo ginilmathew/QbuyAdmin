@@ -42,7 +42,7 @@ const CustomTableHeader = ({ Headerlabel, onClick ,setState,imprtBtn,addbtn,impr
                 <CutomSearch  setState={setState}/>
                 {imprtBtn &&
                 <Custombutton btncolor={'#5889D3'} height={40} endIcon={false} startIcon={true} label={imprtlabel ? imprtlabel :'import Product'} onClick={() => null} IconEnd={KeyboardArrowDownIcon} IconStart={FilterAltIcon} /> }
-                <Custombutton btncolor='' height={40} endIcon={true} startIcon={true} label={'Filter'} onClick={() => null} IconEnd={KeyboardArrowDownIcon} IconStart={FilterAltIcon} />
+                {/* <Custombutton btncolor='' height={40} endIcon={true} startIcon={true} label={'Filter'} onClick={() => null} IconEnd={KeyboardArrowDownIcon} IconStart={FilterAltIcon} /> */}
                 {addbtn &&
                 <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={onClick} IconEnd={''} IconStart={AddIcon} />
                    }

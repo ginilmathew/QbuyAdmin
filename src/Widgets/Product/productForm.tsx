@@ -121,8 +121,8 @@ const ProductForm = ({ res }: props) => {
 
 
     console.log({ res }, 'response in single list')
-  
-    
+
+
     const [multipleImage, setMultipleImage] = useState<any>([])
 
     const [defaultImage, setdefaultImage] = useState<any>([])
@@ -156,10 +156,10 @@ const ProductForm = ({ res }: props) => {
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
 
- 
 
 
-console.log({varientsarray})
+
+    console.log({ varientsarray })
 
 
     const MAX_FILE_SIZE = 102400; //100KB
@@ -302,7 +302,7 @@ console.log({varientsarray})
         setFranchiseSelect(e.target.value)
         try {
             setLoading(true)
-            const response = await fetchData(`admin/vendor-list/${e.target.value}`)
+            const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
             setVendorList(response?.data?.data)
         } catch (err: any) {
             toast.error(err.message)
@@ -455,7 +455,7 @@ console.log({varientsarray})
             const getvendorlist = async () => {
                 try {
                     const response = await fetchData(`admin/vendor-list/${res?.franchisee?._id}`)
-                     setVendorList(response?.data?.data)
+                    setVendorList(response?.data?.data)
                 } catch (err: any) {
                     toast.error(err?.message)
 
@@ -526,7 +526,7 @@ console.log({varientsarray})
 
             }
 
-  
+
             let attributesArray: { name: any; options: any; varient: boolean; }[] = []
             if (res?.attributes?.length > 0) {
                 res?.attributes.map((item: any) => {
@@ -536,18 +536,18 @@ console.log({varientsarray})
                         varient: item?.variant
 
                     })
-                  
+
                     setAttributes(attributesArray)
                 })
             }
 
-            if(res?.variants?.length > 0){
-                res?.variants?.map((item:any)=>{
+            if (res?.variants?.length > 0) {
+                res?.variants?.map((item: any) => {
 
                     varientsarray.push({
-                        attributs:item?.attributs.toString(),
-                        seller_price:item?.commission,
-                        regular_price:item?.regular_price,
+                        attributs: item?.attributs.toString(),
+                        seller_price: item?.commission,
+                        regular_price: item?.regular_price,
                         offer_price: '',
                         offer_date_from: '',
                         offer_date_to: '',
@@ -557,13 +557,13 @@ console.log({varientsarray})
                         fixed_delivery_price: 0
 
                     })
-                   
+
                     // setVarientsArray(varientsarray)
                 })
             }
 
-  
-            console.log({varientsarray})
+
+            console.log({ varientsarray })
             setValue('commission', res?.commision)
             setValue('regular_price', res?.regular_price)
             setValue('offer_price', res?.offer_price)
@@ -647,7 +647,7 @@ console.log({varientsarray})
             }
             setVarients(output)
 
-            console.log({output})
+            console.log({ output })
 
         } else {
             setVarientsArray([])
