@@ -77,9 +77,9 @@ const deleteData = async (url: string): Promise<AxiosResponse> => {
 
 
 function errorHandler(error: any) {
-  if(error.status === 403){
-    localStorage.clear()
-  }
+  // if(error.status === 403){
+  //   localStorage.clear()
+  // }
   throw new Error(error.response.data.message);
 }
 

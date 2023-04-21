@@ -15,6 +15,7 @@ type props = {
     fieldLabel: string,
     error: any,
     changeValue: (value: any) => void,
+    disabled?:any
 
 }
 
@@ -24,6 +25,7 @@ const CustomTimepicker = ({
     control,
     fieldLabel,
     error,
+    disabled,
     changeValue,
 }: props) => {
     return (
@@ -47,6 +49,7 @@ const CustomTimepicker = ({
                     render={({ field: { value, onChange, onBlur } }) => (
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                             <TimePicker
+                            disabled={disabled}
                                 sx={{
                                     "& .MuiInputBase-input": {
                                         height: "10px" // Set your height here.

@@ -36,6 +36,11 @@ const VendorSignup = () => {
         router.push(`/vendor/edit/${id}`)
     }
 
+    const viewVendor = (id: string) => {
+        router.push(`/vendor/view/${id}`)
+    }
+
+
 
     const columns: GridColDef[] = [
         {
@@ -105,7 +110,7 @@ const VendorSignup = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-
+                        onClick={() => viewVendor(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
