@@ -50,7 +50,7 @@ const FranchiseForm = ({ res, view }: props) => {
     const router = useRouter()
 
     const [loading, setLoading] = useState<boolean>(false)
-
+    const commissionvalidation = /^(0|[1-9]\d*)$/
     const schema = yup
         .object()
         .shape({
@@ -65,7 +65,7 @@ const FranchiseForm = ({ res, view }: props) => {
                 .required('A Mobile number is required'),
             //address: yup.string().required('Address is Required'),
             coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required"),
-            franchisee_commission: yup.string().required('Commission is Required')
+            franchisee_commission: yup.string().matches(commissionvalidation, 'Accept Number Only').required('Commission is Required')
 
         })
         .required();
@@ -85,7 +85,7 @@ const FranchiseForm = ({ res, view }: props) => {
                 mobile: '',
                 address: '',
                 coordinates: null,
-                franchisee_commission: 0
+                franchisee_commission: '',
             }
         });
 
