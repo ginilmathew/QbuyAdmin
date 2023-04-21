@@ -44,7 +44,7 @@ const Drawing = ({onComplete}) => {
           position: google.maps.ControlPosition.TOP_CENTER,
           drawingModes: [drawingMode]
         },
-        polygonOptions: { editable: true }
+        polygonOptions: { editable: true, draggable: true }
       }}
     />
   );
