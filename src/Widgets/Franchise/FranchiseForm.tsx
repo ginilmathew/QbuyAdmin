@@ -61,7 +61,9 @@ const FranchiseForm = ({ res }: props) => {
                 .min(10)
                 .required('A Mobile number is required'),
             //address: yup.string().required('Address is Required'),
-            coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required")
+            coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required"),
+            franchisee_commission:yup.string().required('Commission is Required')
+            
         })
         .required();
 

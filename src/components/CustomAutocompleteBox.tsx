@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React,{useEffect} from 'react';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -8,13 +8,13 @@ type props = {
     fieldLabel: string
     list: any,
     setValues: any
-    onChnageValues: any
+    onChnageValues: any,
+    res?:any,
+    vres?:any
 }
 
 
-export default function CustomAutoComplete({ fieldLabel, list, setValues, onChnageValues }: props) {
-
-
+export default function CustomAutoComplete({ fieldLabel, list, setValues, onChnageValues ,res,vres}: props) {
     const AutoCompleteStyled = styled(Autocomplete)`
   & .MuiInputBase-input {
     height: 1.5rem;
@@ -24,21 +24,43 @@ export default function CustomAutoComplete({ fieldLabel, list, setValues, onChna
 
     // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
 
+
+
     const fixedOptions = [list];
     const [value, setValue] = React.useState([list]);
-
-
     const [items, setItems] = React.useState('')
 
 
+ 
+    useEffect(() => {
+        if(res){
+            setValue(res?.meta_tags?.map((res: any) => ({
+                title: res
+            })))
+        }
+    }, [res])
+
+    // useEffect(() => {
+    //     if(vres){
+    //         setValue(vres?.map((res: any) => ({
+    //             title: res
+    //         })))
+    //     }
+    // }, [vres])
+
+
+  
+    
+
     const onChangeValue = (e: any) => {
+
         let filter = list.map((res: any) => (
             res?.title
         ))
         let data = e.target.value.trim().split(',')
         const find = filter.includes(data[0])
         if (find) {
-            return;
+            return false;
         } else {
             let value = { title: data[0] }
             list.push(value)
@@ -51,6 +73,8 @@ export default function CustomAutoComplete({ fieldLabel, list, setValues, onChna
             ...newValue.filter((option: any) => fixedOptions.indexOf(option) === -1),
         ]);
     }
+
+ 
 
     return (
 
@@ -85,6 +109,7 @@ export default function CustomAutoComplete({ fieldLabel, list, setValues, onChna
                     ChangedValue(event, newValue)
 
                 }}
+                defaultValue={list.title}
                 options={list}
                 getOptionLabel={(option) => option.title}
                 renderTags={(tagValue, getTagProps) =>

@@ -11,6 +11,7 @@ import * as yup from 'yup';
 import { fetchData, postData } from '@/CustomAxios';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from 'next/router';
+import { IMAGE_URL } from '@/Config';
 
 
 type Inputs = {
@@ -50,14 +51,14 @@ const SubCategoryForm = ({ res }: props) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [categoryList, setCategoryList] = useState<any>([])
     const [categoryID, setCategoryID] = useState<string>('')
-    const [imagePreview, setImagePreview] = useState<null | File>(null)
+    const [imagePreview, setImagePreview] = useState<any>(null)
 
     const schema = yup
         .object()
         .shape({
             category_id: yup.string().required('Category is Required'),
             name: yup.string().required('Name is Required'),
-            order_number: yup.string().required('Order Number is Required'),
+       
             image: yup
                 .mixed()
                 .required('Image is Required')
@@ -121,7 +122,7 @@ const SubCategoryForm = ({ res }: props) => {
             setCategoryID(res?.category_id)
             setValue('order_number', res?.order_number)
             setValue('name', res?.name)
-            setImagePreview(res?.image)
+            setImagePreview(`${IMAGE_URL}${res?.image}`)
             setValue('image', res?.image)
         }
     }, [res])
@@ -206,7 +207,7 @@ const SubCategoryForm = ({ res }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
+                    {/* <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -218,7 +219,7 @@ const SubCategoryForm = ({ res }: props) => {
                             view={false}
                             defaultValue={''}
                         />
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} lg={2.5}>
                         <CustomImageUploader
                             ICON={""}

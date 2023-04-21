@@ -1,4 +1,4 @@
-import { Box, Divider, Grid, MenuItem, Typography } from '@mui/material'
+import { Avatar, Box, Divider, Grid, MenuItem, Typography } from '@mui/material'
 import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import CustomBox from '../CustomBox'
 import CustomInput from '@/components/CustomInput'
@@ -25,6 +25,7 @@ import { type } from 'os';
 import { set } from 'lodash';
 import Polygon from '@/components/maps/Polygon';
 import { IMAGE_URL } from '../../Config/index';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 type Inputs = {
     name: string,
     description: string,
@@ -118,10 +119,13 @@ type props = {
 const ProductForm = ({ res }: props) => {
 
 
-    console.log({ res })
+
+    console.log({ res }, 'response in single list')
+
 
     const [multipleImage, setMultipleImage] = useState<any>([])
-    const [deafult_multipleImage, setdefault_MultipleImage] = useState<any>([])
+
+    const [defaultImage, setdefaultImage] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [stock, setStock] = useState<boolean>(false)
     const [addvarient, setAddVarient] = useState<boolean>(false)
@@ -149,12 +153,14 @@ const ProductForm = ({ res }: props) => {
     const [pandaSuggesion, setPandaSuggesions] = useState<boolean>(false);
     const [enableVariants, setEnableVariants] = useState<boolean>(false);
     const [paths, setPaths] = useState<any>(null)
-
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
 
 
-    console.log({ multipleImage })
+
+
+
+
 
     const MAX_FILE_SIZE = 102400; //100KB
 
@@ -168,9 +174,11 @@ const ProductForm = ({ res }: props) => {
             store: yup.array().typeError('Store is Required').required('Store is Required'),
             category: yup.array().typeError('Category is Required').required('Category is Required'),
             delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
-            // product_image: yup
-            //     .mixed()
-            //     .required("Product Image is Required"),
+            product_image: yup
+                .mixed()
+                .required("Product Image is Required"),
+            seller_price: attributes.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
+
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
 
         })
@@ -207,17 +215,17 @@ const ProductForm = ({ res }: props) => {
                 video_link: '',
                 related_products: null,
                 image: null,
-                regular_price: null,
-                offer_price: null,
+                regular_price: 0,
+                offer_price: 0,
                 offer_date_from: null,
                 offer_date_to: null,
-                seller_price: null,
+                seller_price: 0,
                 minimum_qty: '',
                 delivery_locations: null,
                 product_availability_from: null,
                 product_availability_to: null,
-                fixed_delivery_price: null,
-                commission: null
+                fixed_delivery_price: 0,
+                commission: 0
 
             }
         });
@@ -264,25 +272,7 @@ const ProductForm = ({ res }: props) => {
         setError('image', { message: '' })
     }
 
-    // const submitImage = async () => {
-    // const formData = new FormData();
-    // multipleImage?.map((img: any, i: number) => {
-    //     formData.append(`image[${i}]`, img.file);
-    // })
-    // try {
-    //     setLoading(true)
-    //     const response = await postData('admin/product/multipleupload', formData)
-    //     setValue('image', response?.data?.data)
-    //     setError('image', { message: '' })
-    // } catch (err: any) {
-    //     toast.error(err?.message)
-    //     setLoading(false)
 
-    // } finally {
-    //     setLoading(false)
-    // }
-
-    // }
 
 
     const getFranchiseList = async () => {
@@ -363,10 +353,12 @@ const ProductForm = ({ res }: props) => {
 
     const onSelectCategory = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setCategorySelect(e.target.value)
+
         let result = categoryList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
             {
                 id: get?._id,
-                name: get?.name
+                name: get?.name,
+                image: get?.image
             }
         ))
         setValue('category', result)
@@ -460,6 +452,9 @@ const ProductForm = ({ res }: props) => {
 
 
     //edit product details..................................................................
+
+
+
     useEffect(() => {
         if (res) {
             const getvendorlist = async () => {
@@ -478,7 +473,7 @@ const ProductForm = ({ res }: props) => {
             getSubcategory()
             getvendorlist()
             setValue('name', res?.name)
-            setValue('franchisee', res?.franchisee)
+            setValue('franchisee', res?.franchisee?.id)
             setFranchiseSelect(res?.franchisee?.id)
             setValue('store', res?.store)
             setvendorSelect(res?.store?.id)
@@ -489,6 +484,8 @@ const ProductForm = ({ res }: props) => {
             setValue('height', res?.dimensions?.height)
             setValue('category', res?.category)
             setCategorySelect(res?.category?.id)
+            setValue('sub_category', res?.sub_category)
+            setSubCategorySelect(res?.sub_category?.id)
             setValue('display_order', res?.display_order)
             setValue('panda_suggession', res?.panda_suggession)
             setPandaSuggesions(res?.panda_suggession)
@@ -514,25 +511,36 @@ const ProductForm = ({ res }: props) => {
                 setMetaTag(res?.meta_tags?.map((res: any) => ({
                     title: res
                 })))
+                setmetaTagValue(res?.meta_tags?.map((res: any) => ({
+                    title: res
+                })))
             }
             setValue('video_link', res?.video_link)
             setValue('related_products', res?.related_products)
             if (res?.image) {
-                let result = res?.image?.map((res: any) => (IMAGE_URL+res))
-                setdefault_MultipleImage([...result])
+                let imageslist = res?.image?.map((res: any) => (
+                    res
+
+                ))
+                setdefaultImage([...imageslist])
+
             }
+
+
             let attributesArray: { name: any; options: any; varient: boolean; }[] = []
             if (res?.attributes?.length > 0) {
                 res?.attributes.map((item: any) => {
                     attributesArray.push({
                         name: item?.name,
                         options: item?.options,
-                        varient: false
+                        varient: item?.varient
 
                     })
                     setAttributes(attributesArray)
                 })
             }
+
+
             setValue('commission', res?.commision)
             setValue('regular_price', res?.regular_price)
             setValue('offer_price', res?.offer_price)
@@ -561,118 +569,67 @@ const ProductForm = ({ res }: props) => {
 
     //varient add varients and attributes form.......................................................................
 
+    useEffect(() => {
+        addvarients()
+
+    }, [attributes, index])
+
+
     const AddVarientCheckbox = (e: any, i: number) => {
-        // setVarientsArray([])
-        // setVarients([])
-        attributes[i].varient = e;
-        // let find = attributes?.every((res: any) => res.varient === false)
-
-        // if (find) {
-        //     setVarients([])
-        //     setVarientsArray([])
-        //     setConfirmBtn(false)
-        // }
         setIndex(i)
+        attributes[i].varient = e;
         setAddVarient(e)
-        if (attributes?.some((res: any) => res.varient === true)) {
-
-            const output = [];
-            // setVarients([])
-            setVarientsArray([])
-
-            if (varientsarray?.length === 0) {
-                setValue('seller_price', '')
-                setValue('offer_price', '')
-                setValue('offer_date_from', '')
-                setValue('regular_price', '')
-                setValue('offer_date_to', '')
-                setValue('fixed_delivery_price', '')
-                // Filter attributes array to only include those with variant true
-                const variantAttributes = attributes.filter((attr: any) => attr.varient !== false)
-                // Calculate the number of iterations required based on the length of the variantAttributes array
-                const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
-                for (let i = 0; i < numIterations; i++) {
-                    let combination = "";
-                    let remainder = i;
-                    let contentIndex;
-                    let vari = [];
-                    for (let j = variantAttributes.length - 1; j >= 0; j--) {
-                        contentIndex = remainder % variantAttributes[j].options?.length;
-                        combination = variantAttributes[j].options[contentIndex].title + " " + combination;
-                        vari.push(variantAttributes[j].options[contentIndex].title)
-                        remainder = Math.floor(remainder / variantAttributes[j].options?.length);
-                    }
-
-                    varientsarray.push({
-                        attributs: vari,
-                        seller_price: '',
-                        regular_price: '',
-                        offer_price: '',
-                        offer_date_from: '',
-                        offer_date_to: '',
-                        stock: true,
-                        stock_value: '',
-                        commission: 0,
-                        fixed_delivery_price: ''
-                    })
-                    setVarientsArray([...varientsarray])
-
-                    output.push(combination.trim());
-                }
-                setVarients(output)
-
-            }
-
-        }
-
-
+        addvarients()
     }
 
-    // const ConfirmVarients = () => {
+    const addvarients = () => {
 
+        if (attributes?.some((res: any) => res.varient === true)) {
+            const output = [];
+            setValue('seller_price', '')
+            setValue('offer_price', '')
+            setValue('offer_date_from', '')
+            setValue('regular_price', '')
+            setValue('offer_date_to', '')
+            setValue('fixed_delivery_price', '')
+            // Filter attributes array to only include those with variant true
+            const variantAttributes = attributes.filter((attr: any) => attr.varient !== false)
+            // Calculate the number of iterations required based on the length of the variantAttributes array
+            const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
+            for (let i = 0; i < numIterations; i++) {
+                let combination = "";
+                let remainder = i;
+                let contentIndex;
+                let vari = [];
+                for (let j = variantAttributes.length - 1; j >= 0; j--) {
+                    contentIndex = remainder % variantAttributes[j].options?.length;
+                    combination = variantAttributes[j].options[contentIndex].title + " " + combination;
+                    vari.push(variantAttributes[j].options[contentIndex].title)
+                    remainder = Math.floor(remainder / variantAttributes[j].options?.length);
+                }
+                varientsarray.push({
+                    attributs: vari,
+                    seller_price: '',
+                    regular_price: '',
+                    offer_price: '',
+                    offer_date_from: '',
+                    offer_date_to: '',
+                    stock: true,
+                    stock_value: '',
+                    commission: 0,
+                    fixed_delivery_price: 0
+                })
+                setVarientsArray([...varientsarray])
+                output.push(combination.trim());
+            }
+            setVarients(output)
 
-    //     setConfirmBtn(true)
-    //     const output = [];
-    //     setVarients([])
-    //     setVarientsArray([])
+        } else {
+            setVarientsArray([])
+            setVarients([])
+        }
+    }
 
-    //     // Filter attributes array to only include those with variant true
-    //     const variantAttributes = attributes.filter((attr: any) => attr.varient !== false)
-    //     // Calculate the number of iterations required based on the length of the variantAttributes array
-    //     const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
-    //     for (let i = 0; i < numIterations; i++) {
-    //         let combination = "";
-    //         let remainder = i;
-    //         let contentIndex;
-    //         let vari = [];
-
-
-    //         for (let j = variantAttributes.length - 1; j >= 0; j--) {
-    //             contentIndex = remainder % variantAttributes[j].options?.length;
-    //             combination = variantAttributes[j].options[contentIndex].title + " " + combination;
-    //             vari.push(variantAttributes[j].options[contentIndex].title)
-    //             remainder = Math.floor(remainder / variantAttributes[j].options?.length);
-    //         }
-
-    //         varientsarray.push({
-    //             attributs: vari,
-    //             seller_price: '',
-    //             regular_price: '',
-    //             offer_price: '',
-    //             offer_date_from: '',
-    //             offer_date_to: '',
-    //             stock: true,
-    //             stock_value: '',
-    //             commission: 0,
-    //             fixed_delivery_price: ''
-    //         })
-    //         setVarientsArray([...varientsarray])
-
-    //         output.push(combination.trim());
-    //     }
-    //     setVarients(output)
-
-    // }
 
 
     const [path, setPath] = useState([
@@ -719,13 +676,20 @@ const ProductForm = ({ res }: props) => {
     }, []);
 
 
+    //remove multiple image function only for edit.........................................................
 
+    const removeImage = (name: string) => {
+        const result = defaultImage?.filter((res: any) => res !== name)
+        setdefaultImage([...result])
 
+    }
 
     //posting products ...................................................................................................
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
+
+        let imagearray: any = []
         if (multipleImage?.length > 0) {
             const formData = new FormData();
             multipleImage?.map((img: any, i: number) => {
@@ -735,6 +699,7 @@ const ProductForm = ({ res }: props) => {
                 setLoading(true)
                 const response = await postData('admin/product/multipleupload', formData)
                 setValue('image', response?.data?.data)
+                imagearray = response?.data?.data
                 setError('image', { message: '' })
             } catch (err: any) {
                 toast.error(err?.message)
@@ -747,10 +712,11 @@ const ProductForm = ({ res }: props) => {
         }
 
 
-        console.log({ varientsarray })
 
 
-        // let find = attributes?.every((res: any) => res.varient === true)
+
+
+
 
         // if (!find) {
         //     if (!data?.seller_price || !data?.regular_price) {
@@ -772,27 +738,32 @@ const ProductForm = ({ res }: props) => {
         setValue('meta_tags', metatagsres)
 
 
+
         let newData = attributes.map((item: any) => ({
             "name": item.name,
-            "options": item.options.map((option: any) => option.title)
+            "options": item.options.map((option: any) => option.title),
+            "varient": item.varient
         }));
+
+        //to FILTER THE EMPTY OBJECTS FROM AN vARIENT ARRAY...............
+        let varientarrayfilter = null
+        varientarrayfilter = varientsarray?.length > 0 && varientsarray?.filter((vari: any) => vari.seller_price !== '')
+
 
         const CREATE_URL = '/admin/product/create'
         const EDIT_URL = 'admin/product/update'
 
 
         let value: any = {
-
             name: data?.name,
             franchisee: {
-                id: data?.franchisee?.[0]?.id,
+                _id: data?.franchisee?.[0]?.id,
                 name: data?.franchisee?.[0]?.name
             },
             description: data?.description,
             store: {
-                id: data?.store?.[0]?.id,
+                _id: data?.store?.[0]?.id,
                 name: data?.store?.[0]?.name
-
             },
             weight: data?.weight,
             dimensions: {
@@ -802,14 +773,15 @@ const ProductForm = ({ res }: props) => {
             model: data?.model,
             type: process.env.NEXT_PUBLIC_TYPE,
             product_Type: null,
-            image: data?.image,
+            image: res ? data?.image : imagearray,
             product_image: data?.product_image,
             category: {
-                id: data?.category?.[0]?.id,
-                name: data?.category?.[0]?.name
+                _id: data?.category?.[0]?.id,
+                name: data?.category?.[0]?.name,
+                image: data?.category?.[0]?.image
             },
             sub_category: data?.sub_category ? {
-                id: data?.sub_category?.[0]?.id,
+                _id: data?.sub_category?.[0]?.id,
                 name: data?.sub_category?.[0]?.name
             } : null,
             display_order: data?.display_order,
@@ -822,19 +794,19 @@ const ProductForm = ({ res }: props) => {
             require_shipping: data?.require_shipping,
             delivery_locations: data?.delivery_locations,
             coupon_details: null,
-            meta_tags: data?.meta_tags,
+            meta_tags: metatagsres,
             video_link: data?.video_link,
             related_products: data?.related_products,
             attributess: newData,
-            regular_price: data?.regular_price,
-            seller_price: data?.seller_price,
+            regular_price: data?.seller_price,
+            seller_price: data?.regular_price,
             offer_price: data?.offer_price,
             commission: data?.regular_price ? 0 : data?.commission,
             fixed_delivery_price: data?.fixed_delivery_price,
             offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             variant: varientsarray?.length > 0 ? true : false,
-            variants: varientsarray?.length > 0 ? varientsarray : null,
+            variants: varientsarray?.length > 0 ? varientarrayfilter : null,
             approval_status: "approved"
         }
         if (res) {
@@ -1276,7 +1248,7 @@ const ProductForm = ({ res }: props) => {
             <CustomBox title='Additional Options'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={6}>
-                        <CustomAutoComplete fieldLabel='Meta Tag' list={metaTag} setValues={setmetaTagValue} onChnageValues={() => null} />
+                        <CustomAutoComplete res={res} fieldLabel='Meta Tag' list={metaTag} setValues={setmetaTagValue} onChnageValues={() => null} />
                     </Grid>
 
                     {/* <Grid item xs={12} lg={3}>
@@ -1306,6 +1278,24 @@ const ProductForm = ({ res }: props) => {
                         />
                     </Grid>
                     <Grid item xs={12} lg={6}>
+
+                        {/* this only in edit image code ************************************** */}
+
+                        {defaultImage.length > 0 &&
+                            <>
+                                <Box display={'flex'} gap={2} >
+                                    {defaultImage && defaultImage?.map((res: any, i: number) => (
+                                        <Box position={'relative'}>
+                                            <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 100, height: 100, }} />
+                                            <Box position={'absolute'} top={0} right={0}><HighlightOffIcon sx={{ color: 'red', cursor: 'pointer' }} onClick={() => removeImage(res)} /></Box>
+                                        </Box>
+
+                                    ))}
+                                </Box>
+                            </>
+                        }
+
+                        {/* this only in edit image code ************************************** */}
                         <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />
                     </Grid>
                     <Grid item xs={12} lg={6}>
@@ -1344,7 +1334,7 @@ const ProductForm = ({ res }: props) => {
                             />
                         </Grid>
                         <Grid item xs={12} lg={4}>
-                            <CustomAutoComplete fieldLabel='Attribute Options' list={attributeTag} setValues={setattributeTagValue} onChnageValues={(e: any) => onChangeOptions(e, i)} />
+                            <CustomAutoComplete fieldLabel='Attribute Options' vres={res?.options} list={attributeTag} setValues={setattributeTagValue} onChnageValues={(e: any) => onChangeOptions(e, i)} />
 
                         </Grid>
                         <Grid item xs={12} lg={2}>

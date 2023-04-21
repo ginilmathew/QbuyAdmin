@@ -6,7 +6,7 @@ import { Poppins } from 'next/font/google';
 import { StandaloneSearchBox, LoadScript } from "@react-google-maps/api";
 import UserProvider from '@/helpers/user/UserContext';
 import ProtectedRoute from '@/Routes/protectedRoutes';
-import React from 'react';
+import React,{useEffect} from 'react';
 import Router from 'next/router';
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
@@ -26,7 +26,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const [isLoading, setLoading] = React.useState(false);
 
-  React.useEffect(() => {
+    useEffect(() => {
     const handleStart = () => setLoading(true);
     const handleComplete = () => setLoading(false);
 
@@ -50,26 +50,24 @@ export default function App({ Component, pageProps }: AppProps) {
         <LinearProgress color="success" />
       </Stack>
     )}
-    {/* <LoadScript googleMapsApiKey="AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I" libraries={["drawing"]}> */}
-    
+
+
     <ProtectedRoute>
-    <LoadScript
-			id="script-loader"
-			googleMapsApiKey={`${process.env.NEXT_PUBLIC_GOOGLEKEY}`}
-			language="en"
-			region="us"
-			libraries={["drawing"]}
-		>
-      <HeaderProvider>
-      <UserProvider>
+      <LoadScript
+        id="script-loader"
+        googleMapsApiKey={`${process.env.NEXT_PUBLIC_GOOGLEKEY}`}
+        language="en"
+        region="us"
+        libraries={["drawing"]}
+      >
+        <UserProvider>
           {showHeader && <Header />}
           <Component {...pageProps} />
           <ToastContainer />
-          </UserProvider>
-      </HeaderProvider>
+        </UserProvider>
       </LoadScript>
     </ProtectedRoute>
-   
+
     {/* </LoadScript> */}
   </main>
 

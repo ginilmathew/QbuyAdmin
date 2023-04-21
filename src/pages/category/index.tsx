@@ -118,13 +118,12 @@ const CategoryManagement = () => {
 
 
     const searchProducts = useCallback((value: any) => {
-        let Results = serachList?.filter((com: any) => com?.name.toString().toLowerCase().includes(value.toLowerCase()) ||
-            com?.order_number.toString().toLowerCase().includes(value.toLowerCase())
+        let Results = serachList?.filter((com: any) => com?.name.toString().toLowerCase().includes(value.toLowerCase())
         )
         startTransition(() => {
             setCategoryList(Results)
         })
-    }, [])
+    }, [categoryList])
 
 
     useEffect(() => {

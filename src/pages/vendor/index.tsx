@@ -32,16 +32,16 @@ const VendorSignup = () => {
 
     }
 
-    const EditVendor = (id:string)=>{
-      router.push(`/vendor/edit/${id}`)
+    const EditVendor = (id: string) => {
+        router.push(`/vendor/edit/${id}`)
     }
 
 
     const columns: GridColDef[] = [
         {
             field: 'vendor_id',
-             headerName: 'Vendor ID',
-              flex: 1,
+            headerName: 'Vendor ID',
+            flex: 1,
             headerAlign: 'center',
             align: 'center',
         },
@@ -67,7 +67,7 @@ const VendorSignup = () => {
             align: 'center',
 
         },
-    
+
         {
             field: 'delivery_location',
             headerName: 'Location',
@@ -82,7 +82,7 @@ const VendorSignup = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-           
+
         },
         {
             field: 'status',
@@ -111,7 +111,7 @@ const VendorSignup = () => {
                             cursor: 'pointer'
                         }} />
                     <BorderColorTwoToneIcon
-                      onClick={()=>EditVendor(row?._id)}
+                        onClick={() => EditVendor(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -149,11 +149,11 @@ const VendorSignup = () => {
 
     const searchVendor = useCallback((value: any) => {
         console.log({ value })
-        let Result = serachList?.filter((com: any) => com?.store_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase()))
+        let Result = serachList?.filter((com: any) => com?.store_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase))
         startTransition(() => {
             setVendorList(Result)
         })
-    }, [])
+    }, [vendorList])
 
 
     useEffect(() => {
@@ -172,7 +172,7 @@ const VendorSignup = () => {
     }
 
 
- 
+
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
