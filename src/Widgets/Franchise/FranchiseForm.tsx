@@ -42,7 +42,7 @@ type props = {
 
 
 const FranchiseForm = ({ res, view }: props) => {
-
+    let dataRes = res ? res : view
     console.log({ view })
 
     const [paths, setPaths] = useState(null)
@@ -54,9 +54,9 @@ const FranchiseForm = ({ res, view }: props) => {
     const schema = yup
         .object()
         .shape({
-            franchise_name: yup.string().required('Franchise Name is Required'),
-            owner_name: yup.string().required('Owner Name is Required'),
-            email: yup.string().email('Email is valid').required('Email is Required'),
+            franchise_name: yup.string().max(30, 'Maximum Character Exceeds').required('Franchise Name is Required'),
+            owner_name: yup.string().max(30, 'Maximum Character Exceeds').required('Owner Name is Required'),
+            email: yup.string().max(30, 'Maximum Character Exceeds').email('Email is valid').required('Email is Required'),
             mobile: yup.number()
                 .typeError("That doesn't look like a mobile number")
                 .positive("A mobile number can't start with a minus")
@@ -118,7 +118,10 @@ const FranchiseForm = ({ res, view }: props) => {
     }
 
     const setDeliveryLocation = (value: any) => {
-        setValue("coordinates", value)
+        if(!view){
+            setValue("coordinates", value)
+        }
+      
     }
 
     useEffect(() => {
@@ -228,7 +231,7 @@ const FranchiseForm = ({ res, view }: props) => {
                 <Box mt={2}>
                     <Divider />
                 </Box>
-                {res ? <Polygons onComplete={setDeliveryLocation} path={paths} /> : <Maps onPolygonComplete={setDeliveryLocation} />}
+                {dataRes ? <Polygons onComplete={setDeliveryLocation} path={paths} /> : <Maps onPolygonComplete={setDeliveryLocation} />}
                 {errors && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates ? errors?.coordinates?.message : ''}`}</span>}
             </CustomBox>
             {!view &&

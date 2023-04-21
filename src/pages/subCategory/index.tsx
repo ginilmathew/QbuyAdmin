@@ -34,6 +34,10 @@ const SubCategory = () => {
         router.push(`/subCategory/edit/${id}`)
     }
 
+    const viewSubCategory = (id: string) => {
+        router.push(`/subCategory/view/${id}`)
+    }
+
     const handleClose = () => {
         setOpen(false)
     }
@@ -108,7 +112,7 @@ const SubCategory = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-
+                        onClick={() => viewSubCategory(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'

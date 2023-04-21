@@ -41,6 +41,11 @@ const CategoryManagement = () => {
         router.push(`/category/edit/${id}`)
     }
 
+    const viewCategory = (id: any) => {
+        router.push(`/category/view/${id}`)
+    }
+
+
     const columns: GridColDef[] = [
         {
             field: 'Dated Added',
@@ -74,7 +79,7 @@ const CategoryManagement = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-
+                        onClick={() => viewCategory(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
