@@ -408,7 +408,7 @@ const ProductForm = ({ res }: props) => {
         //     }
 
         // }
-        console.log({ attributes }, 'Onchange Attributes attributes')
+        // console.log({ attributes }, 'Onchange Attributes attributes')
 
     }
 
@@ -680,6 +680,9 @@ const ProductForm = ({ res }: props) => {
     })
    
     console.log({result},'while changing')
+    setVarientsArray([...varientsarray,...result])
+    console.log({varientsarray})
+
         // setVarientsArray(attri)
 
         //console.log()
