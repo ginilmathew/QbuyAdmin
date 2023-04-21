@@ -155,7 +155,6 @@ const Vendorform = ({ res, view }: props) => {
                 category_id: resData ? resData?.category_id : '',
                 start_time: resData ? resData?.start_time : '',
                 end_time: resData ? resData?.end_time : '',
-                store_logo: resData ? resData.store_logo : '',
                 license_number: resData ? resData?.kyc_details?.license_number : '',
                 ffsai_number: resData ? resData?.kyc_details?.ifsc : '',
                 pan_card_number: resData ? resData?.kyc_details?.pan_card_number : '',
@@ -245,9 +244,16 @@ const Vendorform = ({ res, view }: props) => {
 
 
     const imageUploder = (file: any) => {
-        setImagefile(file)
-        setValue('store_logo', file)
-        setError('store_logo', { message: '' })
+        if (file.size <= 1000000) {
+            setImagefile(file)
+            setImagePreview(null)
+            setValue('store_logo', file)
+            setError('store_logo', { message: '' })
+        } else {
+            setImagefile(null)
+            setImagePreview(null)
+            toast.warning('Image should be less than or equal 1MB')
+        }
 
     }
 
@@ -385,7 +391,7 @@ const Vendorform = ({ res, view }: props) => {
 
         }))
 
-        console.log({ values })
+
         if (data) {
             setValue('category_id', data)
             setError('category_id', { message: '' })
