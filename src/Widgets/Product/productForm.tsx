@@ -26,6 +26,9 @@ import { set } from 'lodash';
 import Polygon from '@/components/maps/Polygon';
 import { IMAGE_URL } from '../../Config/index';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import TagInput from '@/components/TagInput'
+import Attributes from './Attributes'
+
 type Inputs = {
     name: string,
     description: string,
@@ -128,18 +131,14 @@ const ProductForm = ({ res }: props) => {
     const [defaultImage, setdefaultImage] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [stock, setStock] = useState<boolean>(false)
-    const [addvarient, setAddVarient] = useState<boolean>(false)
     const [imagePreview, setImagePreview] = useState<any>(null)
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [attributes, setAttributes] = useState<any>([])
-    const [productTag, setProductTag] = useState<any>([])
-    const [productTagValue, setProductTagValue] = useState<any>([])
     const [metaTagValue, setmetaTagValue] = useState<any>([])
     const [metaTag, setMetaTag] = useState<any>([])
     const [attributeTag, setattributeTag] = useState<any>([])
     const [attributeTagValue, setattributeTagValue] = useState<any | null>(null)
     const [index, setIndex] = useState<number>(0)
-    const [confirmbtn, setConfirmBtn] = useState(false)
     const [varients, setVarients] = useState<any>([])
     const [vendorList, setVendorList] = useState<any>([])
     const [vendorSelect, setvendorSelect] = useState<any>(null);
@@ -149,9 +148,7 @@ const ProductForm = ({ res }: props) => {
     const [subcategorySelect, setSubCategorySelect] = useState<any>(null);
     const [categoryList, setCategoryList] = useState<any>([]);
     const [subcategoryList, setSubCategoryList] = useState<any>([]);
-    const [selectType, setSelectType] = useState<any>(null);
     const [pandaSuggesion, setPandaSuggesions] = useState<boolean>(false);
-    const [enableVariants, setEnableVariants] = useState<boolean>(false);
     const [paths, setPaths] = useState<any>(null)
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
@@ -401,6 +398,10 @@ console.log({varientsarray})
 
     }
 
+    const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
+        attributes[i][key] = e;
+    }
+
     const onChangeOptions = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
         setIndex(i)
     }
@@ -601,8 +602,27 @@ console.log({varientsarray})
     const AddVarientCheckbox = (e: any, i: number) => {
         setIndex(i)
         attributes[i].varient = e;
-        setAddVarient(e)
+        //setAddVarient(e)
         addvarients()
+    }
+
+    const enableVariant = (e: any, i: number) => {
+        console.log({e})
+        setIndex(i)
+        attributes[i].varient = e;
+        setAttributes([...attributes])
+        //setAddVarient(e)
+        addvarients()
+    }
+
+    const combine = ([head, ...[headTail, ...tailTail]]) => {
+        if (!headTail) return head
+      
+        const combined = headTail.reduce((acc, x) => {
+          return acc.concat(head.map((h: any) => `${h} ${x}`))
+        }, [])
+      
+        return combine([combined, ...tailTail])
     }
 
     const addvarients = () => {
@@ -617,21 +637,15 @@ console.log({varientsarray})
             setValue('fixed_delivery_price', '')
             // Filter attributes array to only include those with variant true
             const variantAttributes = attributes.filter((attr: any) => attr.varient !== false)
-            // Calculate the number of iterations required based on the length of the variantAttributes array
-            const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
-            for (let i = 0; i < numIterations; i++) {
-                let combination = "";
-                let remainder = i;
-                let contentIndex;
-                let vari = [];
-                for (let j = variantAttributes.length - 1; j >= 0; j--) {
-                    contentIndex = remainder % variantAttributes[j].options?.length;
-                    combination = variantAttributes[j].options[contentIndex].title + " " + combination;
-                    vari.push(variantAttributes[j].options[contentIndex].title)
-                    remainder = Math.floor(remainder / variantAttributes[j].options?.length);
-                }
-                varientsarray.push({
-                    attributs: '',
+
+            let attributesArray = variantAttributes?.map((vari: any) =>  vari?.options)
+
+            let combines = combine(attributesArray);
+
+            let attri = combines.map((val: any) => {
+                return {
+                    title: val,
+                    attributs: val.split(' '),
                     seller_price: '',
                     regular_price: '',
                     offer_price: '',
@@ -641,13 +655,45 @@ console.log({varientsarray})
                     stock_value: '',
                     commission: 0,
                     fixed_delivery_price: 0
-                })
-                setVarientsArray([...varientsarray])
-                output.push(combination.trim());
-            }
-            setVarients(output)
+                }
+            })
 
-            console.log({output})
+            console.log({attri})
+
+            setVarientsArray(attri)
+
+            //console.log()
+            // Calculate the number of iterations required based on the length of the variantAttributes array
+            // const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
+            // for (let i = 0; i < numIterations; i++) {
+            //     let combination = "";
+            //     let remainder = i;
+            //     let contentIndex;
+            //     let vari = [];
+            //     for (let j = variantAttributes.length - 1; j >= 0; j--) {
+            //         contentIndex = remainder % variantAttributes[j].options?.length;
+            //         combination = variantAttributes[j].options[contentIndex].title + " " + combination;
+            //         vari.push(variantAttributes[j].options[contentIndex].title)
+            //         remainder = Math.floor(remainder / variantAttributes[j].options?.length);
+            //     }
+            //     varientsarray.push({
+            //         attributs: '',
+            //         seller_price: '',
+            //         regular_price: '',
+            //         offer_price: '',
+            //         offer_date_from: '',
+            //         offer_date_to: '',
+            //         stock: true,
+            //         stock_value: '',
+            //         commission: 0,
+            //         fixed_delivery_price: 0
+            //     })
+            //     setVarientsArray([...varientsarray])
+            //     output.push(combination.trim());
+            // }
+            // setVarients(output)
+
+            // console.log({output})
 
         } else {
             setVarientsArray([])
@@ -856,6 +902,16 @@ console.log({varientsarray})
         } finally {
             setLoading(false)
         }
+    }
+
+
+    const saveAttributs = (values: any) => {
+        console.log({values})
+    }
+
+    const changeAttributeValues = (i: number, key: string, values: any) => {
+        varientsarray[i][key] = values
+        setVarientsArray([...varientsarray])
     }
 
     return (
@@ -1332,7 +1388,12 @@ console.log({varientsarray})
                 </Grid>
             </CustomBox>
             <CustomBox title='Attributes'>
-                {!attributes?.some((res: any) => res.varient === true) && <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
+                <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />
+                {attributes && attributes?.map((res: any, i: any) => 
+                    <Attributes item={res} index={i} onChange={onChangeAttributes}  enableVariant={enableVariant} />
+                )}
+
+                {/* {!attributes?.some((res: any) => res.varient === true) && <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
 
 
                 {attributes && attributes?.map((res: any, i: any) => (<>
@@ -1352,6 +1413,7 @@ console.log({varientsarray})
                             />
                         </Grid>
                         <Grid item xs={12} lg={4}>
+                            
                             <CustomAutoComplete fieldLabel='Attribute Options' vres={res?.options} list={attributeTag} setValues={setattributeTagValue} onChnageValues={(e: any) => onChangeOptions(e, i)} />
 
                         </Grid>
@@ -1361,7 +1423,7 @@ console.log({varientsarray})
                         </Grid>
                     </Grid>
                 </>
-                ))}
+                ))} */}
                 {/* {attributes?.length > 0 &&
                     <Box display={'flex'} justifyContent={'flex-end'}>
                         {!confirmbtn && <Custombutton btncolor='' height={40} endIcon={false} startIcon={false} label={'confirm'} onClick={ConfirmVarients} IconEnd={''} IconStart={''} />}
@@ -1459,7 +1521,11 @@ console.log({varientsarray})
                     </Grid>
                 </Grid>
             </CustomBox>}
-            {attributes?.some((res: any) => res.varient === true) &&
+            {varientsarray && <CustomBox title='Add Variant & Price'>
+            {varientsarray?.map((varian: any, i: number) => <CustomProductVarient deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} />)}
+            </CustomBox>}
+            
+            {/* {attributes?.some((res: any) => res.varient === true) &&
                 <CustomBox title='Add Variant & Price'>
                     {attributes?.some((res: any) => res.varient === true) &&
                         <Box>
@@ -1468,7 +1534,7 @@ console.log({varientsarray})
                             ))}
                         </Box>
                     }
-                </CustomBox>}
+                </CustomBox>} */}
             <Box py={3}>
                 <Custombutton
                     disabled={loading}
