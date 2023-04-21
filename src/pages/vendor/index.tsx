@@ -73,14 +73,14 @@ const VendorSignup = () => {
 
         },
 
-        {
-            field: 'delivery_location',
-            headerName: 'Location',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
+        // {
+        //     field: 'delivery_location',
+        //     headerName: 'Location',
+        //     flex: 1,
+        //     headerAlign: 'center',
+        //     align: 'center',
 
-        },
+        // },
         {
             field: 'Approval Status',
             headerName: 'Approval Status',
