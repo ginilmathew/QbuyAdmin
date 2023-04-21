@@ -156,10 +156,12 @@ const AddProducts = () => {
             product_id: id,
             status: e.target.checked === true ? "active" : "inactive"
         }
+        // let result = productList?.filter((item:any)=>item?._id !== id)
+        //    setProductList([...result])
         try {
             setLoding(true)
-            await postData('admin/product/status-update', value)
-            fetchproduct()
+           await postData('admin/product/status-update', value)
+          fetchproduct()
         }
         catch (err: any) {
             toast.warning(err?.message)
