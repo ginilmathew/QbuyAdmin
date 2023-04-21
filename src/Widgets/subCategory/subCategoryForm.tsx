@@ -86,9 +86,17 @@ const SubCategoryForm = ({ res, view }: props) => {
         });
 
     const imageUploder = (file: any) => {
-        setImagePreview(null)
-        setImagefile(file)
-        setValue('image', file)
+        if (file.size <= 1000000) {
+            setImagePreview(null)
+            setImagefile(file)
+            setValue('image', file)
+            setError('image', { message: '' })
+        } else {
+            setImagefile(null)
+            setImagePreview(null)
+            toast.warning('Image should be less than or equal 1MB')
+        }
+
     }
 
 

@@ -245,9 +245,16 @@ const Vendorform = ({ res, view }: props) => {
 
 
     const imageUploder = (file: any) => {
-        setImagefile(file)
-        setValue('store_logo', file)
-        setError('store_logo', { message: '' })
+        if (file.size <= 1000000) {
+            setImagefile(file)
+            setImagePreview(null)
+            setValue('store_logo', file)
+            setError('store_logo', { message: '' })
+        } else {
+            setImagefile(null)
+            setImagePreview(null)
+            toast.warning('Image should be less than or equal 1MB')
+        }
 
     }
 
@@ -385,7 +392,7 @@ const Vendorform = ({ res, view }: props) => {
 
         }))
 
-        console.log({ values })
+
         if (data) {
             setValue('category_id', data)
             setError('category_id', { message: '' })
