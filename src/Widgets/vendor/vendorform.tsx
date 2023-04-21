@@ -155,7 +155,6 @@ const Vendorform = ({ res, view }: props) => {
                 category_id: resData ? resData?.category_id : '',
                 start_time: resData ? resData?.start_time : '',
                 end_time: resData ? resData?.end_time : '',
-                store_logo: resData ? resData.store_logo : '',
                 license_number: resData ? resData?.kyc_details?.license_number : '',
                 ffsai_number: resData ? resData?.kyc_details?.ifsc : '',
                 pan_card_number: resData ? resData?.kyc_details?.pan_card_number : '',
