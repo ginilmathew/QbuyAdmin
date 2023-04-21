@@ -168,8 +168,8 @@ const Vendorform = ({ res, view }: props) => {
                 offer_description: resData ? resData?.additional_details?.offer_description : '',
                 tax: resData ? resData?.additional_details?.tax : '',
                 coordinates: resData ? resData?.delivery_location : null,
-                display_order:resData ? resData?.display_order : '',
-                type:process.env.NEXT_PUBLIC_TYPE,
+                display_order: resData ? resData?.display_order : '',
+                type: process.env.NEXT_PUBLIC_TYPE,
             }
         });
 
@@ -436,6 +436,7 @@ const Vendorform = ({ res, view }: props) => {
         formData.append("end_time", moment(data?.end_time, 'hh:mm A').format('hh:mm'));
         formData.append("store_logo", data?.store_logo);
         formData.append("display_order", data?.display_order);
+        formData.append("type", data?.type);
         if (res) {
             formData.append("id", res?._id);
         }
@@ -855,7 +856,7 @@ const Vendorform = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                   
+
                 </Grid>
             </CustomBox>
             {!view &&

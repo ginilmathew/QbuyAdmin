@@ -137,7 +137,7 @@ const VendorSignup = () => {
     const fetchVendorList = useCallback(async () => {
         try {
             setLoading(true)
-            const response = await fetchData('/admin/vendor/list')
+            const response = await fetchData(`/admin/vendor/list/${process.env.NEXT_PUBLIC_TYPE}`)
             setVendorList(response?.data?.data)
             setSearchList(response?.data?.data)
         }
