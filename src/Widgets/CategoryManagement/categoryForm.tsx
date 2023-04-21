@@ -55,8 +55,8 @@ const CategoryForm = ({ resData, view }: props) => {
         .shape({
             name: yup.string().max(30, 'Maximum Character Exceeds').required('Category Name Required'),
             // type: yup.string().required('Type is Required'),
-            seo_description: yup.string().max(100, 'Maximum Character Exceeds').required('Description is Required'),
-            order_number: yup.number().typeError('Order must be integer').required('Order Number is Required'),
+            seo_description: yup.string().max(100, 'Maximum Character Exceeds'),
+            order_number: yup.string(),
             image: yup
                 .mixed()
                 .required('Image is Required')
@@ -72,6 +72,11 @@ const CategoryForm = ({ resData, view }: props) => {
         reset,
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
+            defaultValues: {
+                name: '',
+                seo_description: '',
+                order_number: ''
+            }
         });
 
 
@@ -83,10 +88,21 @@ const CategoryForm = ({ resData, view }: props) => {
     }
 
     const imageUploder = (file: any) => {
-        setImagefile(file)
-        setImagePreview(null)
-        setValue('image', file)
-        setError('image', { message: '' })
+    
+        if (file.size <= 1000000) {
+            setImagefile(file)
+            setImagePreview(null)
+            setValue('image', file)
+            setError('image', { message: '' })
+
+        } else {
+            setImagePreview(null)
+            setImagefile(null)
+            toast.warning('Image should be less than or equal 1MB')
+        }
+
+     
+
     }
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
@@ -111,6 +127,9 @@ const CategoryForm = ({ resData, view }: props) => {
         formData.append("seo_description", data?.seo_description);
         try {
             await postData(resData ? URL_EDIT : URL_CREATE, formData)
+            reset();
+            setImagefile(null)
+            setImagePreview(null)
             toast.success(resData ? 'Updated Successfully' : 'Created Successfully')
 
         } catch (err: any) {

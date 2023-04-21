@@ -156,19 +156,19 @@ const Vendorform = ({ res, view }: props) => {
                 start_time: resData ? resData?.start_time : '',
                 end_time: resData ? resData?.end_time : '',
                 store_logo: resData ? resData.store_logo : '',
-                license_number:resData ? resData?.kyc_details?.license_number : '',
-                ffsai_number: '',
-                pan_card_number: '',
-                aadhar_card_number: '',
-                account_number: '',
-                ifsc: '',
-                branch: '',
-                recipient_name: '',
-                commission: '',
-                offer_description: '',
-                tax: '',
-                coordinates: null,
-                display_order: '',
+                license_number: resData ? resData?.kyc_details?.license_number : '',
+                ffsai_number: resData ? resData?.kyc_details?.ifsc : '',
+                pan_card_number: resData ? resData?.kyc_details?.pan_card_number : '',
+                aadhar_card_number: resData ? resData?.kyc_details?.aadhar_card_number : '',
+                account_number: resData ? resData?.kyc_details?.account_number : '',
+                ifsc: resData ? resData?.kyc_details?.ifsc : '',
+                branch: resData ? resData?.kyc_details?.branch : '',
+                recipient_name: resData ? resData?.kyc_details?.recipient_name : '',
+                commission: resData ? resData?.additional_details?.commission : '',
+                offer_description: resData ? resData?.additional_details?.offer_description : '',
+                tax: resData ? resData?.additional_details?.tax : '',
+                coordinates: resData ? resData?.delivery_location : null,
+                display_order: resData ? resData?.display_order : '',
                 type: process.env.NEXT_PUBLIC_TYPE,
             }
         });
@@ -436,6 +436,7 @@ const Vendorform = ({ res, view }: props) => {
         formData.append("end_time", moment(data?.end_time, 'hh:mm A').format('hh:mm'));
         formData.append("store_logo", data?.store_logo);
         formData.append("display_order", data?.display_order);
+        formData.append("type", data?.type);
         if (res) {
             formData.append("id", res?._id);
         }
@@ -463,6 +464,8 @@ const Vendorform = ({ res, view }: props) => {
             setFranchise('')
             setCategory('')
             setMultipleArray([])
+            setImagefile(null)
+            setImagePreview(null)
             setLoading(false)
 
         } catch (err: any) {
@@ -834,7 +837,7 @@ const Vendorform = ({ res, view }: props) => {
                             error={errors.offer_description}
                             fieldName="offer_description"
                             placeholder={``}
-                            fieldLabel={"offer Description"}
+                            fieldLabel={"Offer Description"}
                             disabled={false}
                             view={view ? true : false}
                             defaultValue={''}
@@ -853,19 +856,7 @@ const Vendorform = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.tax}
-                            fieldName="tax"
-                            placeholder={``}
-                            fieldLabel={"Tax"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={''}
-                        />
-                    </Grid>
+
                 </Grid>
             </CustomBox>
             {!view &&
