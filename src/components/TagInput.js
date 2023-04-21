@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 
-const TagInput = ({ tagValues }) => {
+const TagInput = ({ tagValues , values}) => {
 
-    const [tags, setTags] = useState([])
+
+    const [tags, setTags] = useState( values ? [...values] : [])
     const [value, setValue] = useState('')
+  
+    console.log({tags})
 
     const submitvalues = (e) => {
         if (e.key === 'Enter') {

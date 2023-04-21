@@ -42,7 +42,7 @@ type props = {
 
 const CategoryForm = ({ resData, view }: props) => {
 
-    console.log({ resData })
+
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [imagePreview, setImagePreview] = useState<any>(null)

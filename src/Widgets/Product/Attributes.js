@@ -7,6 +7,8 @@ import CustomCheckBox from '@/components/CustomCheckBox';
 
 const Attributes = ({item, index, onChange, enableVariant}) => {
 
+    console.log({item},'ITEM IN ')
+
     const saveTagValues = (value) => {
         onChange(value, index, 'options')
     }
@@ -25,11 +27,11 @@ const Attributes = ({item, index, onChange, enableVariant}) => {
         </Grid>
         <Grid item xs={12} lg={4}>
             
-            <TagInput tagValues={(saveTagValues)} />
+            <TagInput tagValues={(saveTagValues)} values={item?.options} />
 
         </Grid>
         <Grid item xs={12} lg={2}>
-            <CustomCheckBox isChecked={item.varient} label='' onChange={(e) => enableVariant(e, index)} title='Add Variant' />
+            <CustomCheckBox isChecked={item.variant} label='' onChange={(e) => enableVariant(e, index)} title='Add Variant' />
         </Grid>
     </Grid>
   )

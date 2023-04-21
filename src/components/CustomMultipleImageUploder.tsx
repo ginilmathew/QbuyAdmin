@@ -6,6 +6,7 @@ import Custombutton from './Custombutton';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import { AnyARecord } from 'dns';
+import { error } from 'console';
 
 
 const MAX_IMAGES = 5;
@@ -13,11 +14,11 @@ const MAX_IMAGE_SIZE = 5242880; // 5 MB in bytes
 
 type props = {
     fieldLabel: string
-    onChangeImage?:any,
-    state:any,
+    onChangeImage?: any,
+    state: any,
 }
 
-export const CustomMultipleImageUploader = ({ fieldLabel ,onChangeImage,state}: props) => {
+export const CustomMultipleImageUploader = ({ fieldLabel, onChangeImage, state }: props) => {
     // const [images, setImages] = React.useState([]);
     const maxNumber = 10;
 
@@ -27,11 +28,13 @@ export const CustomMultipleImageUploader = ({ fieldLabel ,onChangeImage,state}: 
     //     console.log(imageList, addUpdateIndex);
     //     setImages(imageList);
     // };
+    const MAX_FILE_SIZE = 1024000;
     return (
         <>
             <ImageUploading
                 multiple
                 value={state}
+                maxFileSize={MAX_FILE_SIZE}
                 onChange={onChangeImage}
                 maxNumber={maxNumber}
                 dataURLKey="data_url"
@@ -44,6 +47,7 @@ export const CustomMultipleImageUploader = ({ fieldLabel ,onChangeImage,state}: 
                     onImageRemove,
                     isDragging,
                     dragProps,
+                    errors
                 }) => (
                     <Box >
                         <Box py={1} display={'flex'} justifyContent={'space-between'}>
@@ -87,7 +91,12 @@ export const CustomMultipleImageUploader = ({ fieldLabel ,onChangeImage,state}: 
                             </Box>
                         </Box>
                     </Box>
+                     
+                    
                 )}
+             
+              
+              
             </ImageUploading>
         </>
     );
