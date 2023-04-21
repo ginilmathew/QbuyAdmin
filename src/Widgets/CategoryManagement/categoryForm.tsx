@@ -101,7 +101,7 @@ const CategoryForm = ({ resData, view }: props) => {
             toast.warning('Image should be less than or equal 1MB')
         }
 
-        console.log(file, "file........")
+     
 
     }
 

@@ -19,7 +19,7 @@ const Drawing = ({onComplete}) => {
 
     let coords = polygon.getPath().getArray();
     coords.map(latlng => {
-      latlongs.push([latlng.lat(), latlng.lng()])
+      latlongs.push([latlng.lat().toFixed(6), latlng.lng().toFixed(6)])
     })
     
     //polygon.setMap(null);
