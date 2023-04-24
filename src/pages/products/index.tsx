@@ -9,7 +9,7 @@ import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
 import CustomSwitch from '@/components/CustomSwitch';
 import CustomDelete from '@/Widgets/CustomDelete';
-import { fetchData } from '@/CustomAxios';
+import { fetchData, postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import { max, min } from 'lodash'
 const AddProducts = () => {
@@ -21,8 +21,8 @@ const AddProducts = () => {
     const [productList, setProductList] = useState<any>([])
     const [setSerachList, setSearchList] = useState<any>([])
     const [pending, startTransition] = useTransition();
+
  
- console.log({productList})
 
     const handleClose = () => {
         setOpen(false)
@@ -38,7 +38,7 @@ const AddProducts = () => {
     }
 
 
-    const editProductPage = (id:string) =>{
+    const editProductPage = (id: string) => {
         router.push(`/products/edit/${id}`)
     }
 
@@ -73,14 +73,14 @@ const AddProducts = () => {
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => {
-                if(params?.row?.variants?.length > 0){
+                if (params?.row?.variants?.length > 0) {
                     let price = params?.row?.variants?.map((vari: any) => {
-                        return parseFloat(vari.seller_price) 
+                        return parseFloat(vari.seller_price)
                     })
                     return `₹${min(price)} - ₹${max(price)} `
                 }
-                else{
-                    return ` ₹${ params?.row?.seller_price ? params?.row?.seller_price : 0}`
+                else {
+                    return ` ₹${params?.row?.seller_price ? params?.row?.seller_price : 0}`
                 }
             }
         },
@@ -110,46 +110,69 @@ const AddProducts = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <CustomSwitch
-                        changeRole={''}
-                        checked={row.status}
-                        defaultChecked={false}
-                        onClick={() => null}
+                        changeRole={(e: any) => OnchangeCheck(e, row?._id)}
+                        checked={row?.status === 'active' ? true : false}
+  
                     />
 
                 </Stack>
             )
         },
-        // {
-        //     field: 'Actions',
-        //     headerName: 'Actions',
-        //     width: 200,
-        //     headerAlign: 'center',
-        //     align: 'center',
-        //     renderCell: ({ row }) => (
-        //         <Stack alignItems={'center'} gap={1} direction={'row'}>
-        //             <RemoveRedEyeIcon
+        {
+            field: 'Actions',
+            headerName: 'Actions',
+            width: 200,
+            headerAlign: 'center',
+            align: 'center',
+            renderCell: ({ row }) => (
+                <Stack alignItems={'center'} gap={1} direction={'row'}>
+                    <RemoveRedEyeIcon
 
-        //                 style={{
-        //                     color: '#58D36E',
-        //                     cursor: 'pointer'
-        //                 }} />
-        //             <BorderColorTwoToneIcon
-        //                onClick={()=>editProductPage(row?._id)}
-        //                 style={{
-        //                     color: '#58D36E',
-        //                     cursor: 'pointer'
-        //                 }}
-        //             />
-        //             <DeleteOutlineTwoToneIcon
-        //                 onClick={() => handleOpen()}
-        //                 sx={{
-        //                     color: '#58D36E',
-        //                     cursor: 'pointer',
-        //                 }} />
-        //         </Stack>
-        //     )
-        // }
+                        style={{
+                            color: '#58D36E',
+                            cursor: 'pointer'
+                        }} />
+                    <BorderColorTwoToneIcon
+                        onClick={() => editProductPage(row?._id)}
+                        style={{
+                            color: '#58D36E',
+                            cursor: 'pointer'
+                        }}
+                    />
+                    <DeleteOutlineTwoToneIcon
+                        onClick={() => handleOpen()}
+                        sx={{
+                            color: '#58D36E',
+                            cursor: 'pointer',
+                        }} />
+                </Stack>
+            )
+        }
     ];
+
+    const OnchangeCheck = async (e: any, id: string) => {
+
+        let value = {
+            product_id: id,
+            status: e.target.checked === true ? "active" : "inactive"
+        }
+       
+        try {
+            setLoding(true)
+            let result = productList?.filter((item:any)=>item?._id !== id)
+            setProductList([...result])
+           const response =  await postData('admin/product/status-update', value)
+           setProductList((prev:any)=>([response?.data?.data,...prev]))
+        //   fetchproduct()
+        }
+        catch (err: any) {
+            toast.warning(err?.message)
+        } finally {
+            setLoding(false)
+
+        }
+
+    }
 
 
 
@@ -171,14 +194,14 @@ const AddProducts = () => {
     }
 
 
-    const searchProducts = useCallback((value:any) => {
-        let competitiions = setSerachList?.filter((com:any) => com?.name.toString().toLowerCase().includes(value.toLowerCase()) ||
+    const searchProducts = useCallback((value: any) => {
+        let competitiions = setSerachList?.filter((com: any) => com?.name.toString().toLowerCase().includes(value.toLowerCase()) ||
             com?.product_id.toString().toLowerCase().includes(value.toLowerCase())
         )
         startTransition(() => {
             setProductList(competitiions)
         })
-    },[productList])
+    }, [productList])
 
     useEffect(() => {
         fetchproduct()

@@ -6,18 +6,12 @@ import { Box, Typography } from '@mui/material'
 import FranchiseForm from '@/Widgets/Franchise/FranchiseForm'
 import CustomHeaderBack from '@/Widgets/CustomHeaderBack'
 
-type props = {
-    id: string
-}
-
-const FranchiseEdit = () => {
+const FranchiseView = () => {
     const router = useRouter()
     const { id } = router.query
 
     const [loading, setLoading] = useState<boolean>(false)
-    const [franchiseList,setFranchiseList]=useState<any>(null)
-
- 
+    const [franchiseList, setFranchiseList] = useState<any>(null)
 
     const getFranchise = async () => {
         try {
@@ -36,17 +30,17 @@ const FranchiseEdit = () => {
         getFranchise()
     }, [])
 
+    if (loading) {
+        return <Box><Typography sx={{ fontSize: 16 }}>Loading...</Typography></Box>
+    }
 
-
-if(loading){
-    return <Box><Typography sx={{fontSize:16}}>Loading...</Typography></Box>
-}
     return (
         <Box px={5} py={2} pt={10} mt={0}>
-             <CustomHeaderBack backlabel='Edit Franchise' />
-             <FranchiseForm res={franchiseList}/>
+            <CustomHeaderBack backlabel='View Franchise' />
+            <FranchiseForm view={franchiseList} />
+
         </Box>
     )
 }
 
-export default FranchiseEdit
+export default FranchiseView

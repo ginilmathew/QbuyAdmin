@@ -21,7 +21,7 @@ type props = {
     value: any,
     size: number,
     label: string,
-    disabled?:boolean
+    disabled?: boolean
 }
 
 
@@ -49,7 +49,10 @@ const Customselect = ({
     };
 
     const handleOpen = () => {
+
         setOpen(true);
+
+
     };
 
 
@@ -63,7 +66,7 @@ const Customselect = ({
                         sm: 12,
                         xs: 11,
                     },
-  fontFamily: `'Poppins' sans-serif`,
+                    fontFamily: `'Poppins' sans-serif`,
 
                 }}
             >{fieldLabel}
@@ -84,23 +87,25 @@ const Customselect = ({
                         value={value}
                         label={label}
                         IconComponent={() => (
+                            <>
+                                {!disabled &&
+                                    <Box
+                                        borderRadius={5}
+                                        mx={1}
+                                        sx={{
+                                            cursor: 'pointer'
+                                        }}
+                                        onClick={handleOpen}
+                                        display="flex"
+                                        justifyContent={"center"}
+                                        alignItems="center"
+                                        bgcolor="#58d36e"
+                                        color={"#fff"}
 
-                            <Box
-                                borderRadius={5}
-                                mx={1}
-                                sx={{
-                                    cursor: 'pointer'
-                                }}
-                                onClick={handleOpen}
-                                display="flex"
-                                justifyContent={"center"}
-                                alignItems="center"
-                                bgcolor="#58d36e"
-                                color={"#fff"}
-
-                            >
-                                <KeyboardArrowDownIcon style={{ fontSize: 20, fontWeight: 'bold' }} />
-                            </Box>
+                                    >
+                                        <KeyboardArrowDownIcon style={{ fontSize: 20, fontWeight: 'bold' }} />
+                                    </Box>}
+                            </>
                         )}
                         style={{
                             background: background,

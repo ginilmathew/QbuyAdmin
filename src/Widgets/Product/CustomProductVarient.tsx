@@ -3,15 +3,16 @@ import { Box, Divider, Grid, MenuItem, Typography } from '@mui/material'
 import { Content } from 'next/font/google'
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FormInputs } from '@/utilities/types';
-import CustomInput from '@/components/CustomInput';
-import CustomDatePicker from '@/components/CustomDatePicker';
+import CustomInputNormal from '@/components/CustomInputNormal';
+import DatePickers from '@/components/DatePickers';
 import moment from 'moment'
 type props = {
-    content: string,
+    content: any,
     index: number,
     setState: any,
     state: any,
-    deafultCommission:string
+    deafultCommission:string,
+    onChange: any
 }
 
 type Input = {
@@ -28,9 +29,7 @@ type Input = {
 }
 
 
-const CustomProductVarient = memo(({ content, index, setState, state ,deafultCommission}: props) => {
-
-
+const CustomProductVarient = memo(({ content, index, deafultCommission, onChange}: props) => {
 
     const { register,
         handleSubmit,
@@ -38,55 +37,56 @@ const CustomProductVarient = memo(({ content, index, setState, state ,deafultCom
         getValues,
         formState: { errors },
         reset,
-        setValue, } = useForm<Input>();
+        setValue, } = useForm<Input>({
+            defaultValues: content
+        });
 
 
-    const onChangeSellingPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
-        state[index].attributs = content.split(" ")
-        state[index].regular_price = e.target.value;
-    }
+    // const onChangeSellingPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     state[index].attributs = content.split(" ")
+    //     state[index].regular_price = e.target.value;
+    // }
 
-    const onChangeOfferPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
-        state[index].offer_price = e.target.value;
+    // const onChangeOfferPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     state[index].offer_price = e.target.value;
 
-    }
+    // }
 
-    const onChangePurchasePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
-        state[index].seller_price = e.target.value;
-    }
+    // const onChangePurchasePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     state[index].seller_price = e.target.value;
+    // }
 
-    const onChangeStock = (e: React.ChangeEvent<HTMLInputElement>) => {
-        state[index].stock_value = e.target.value;
-    }
+    // const onChangeStock = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     state[index].stock_value = e.target.value;
+    // }
 
-    const onChangeOffer_date_from = (e: any) => {
-        setValue('offer_date_from', e)
-        state[index].offer_date_from = moment(e, 'DD-MM-YYYY').format('YYYY-MM-DD');
-    }
+    // const onChangeOffer_date_from = (e: any) => {
+    //     setValue('offer_date_from', e)
+    //     state[index].offer_date_from = moment(e, 'DD-MM-YYYY').format('YYYY-MM-DD');
+    // }
 
-    const onChangeOffer_date_to = (e: any) => {
-        setValue('offer_date_to', e)
-        state[index].offer_date_to = moment(e, 'DD-MM-YYYY').format('YYYY-MM-DD');
+    // const onChangeOffer_date_to = (e: any) => {
+    //     setValue('offer_date_to', e)
+    //     state[index].offer_date_to = moment(e, 'DD-MM-YYYY').format('YYYY-MM-DD');
 
-    }
-    const onChangeCommision = (e: any) => {
-        state[index].commission = e.target.value;
+    // }
+    // const onChangeCommision = (e: any) => {
+    //     state[index].commission = e.target.value;
 
-    }
-    const onChangefixed_delivery_price = (e: any) => {
-        state[index].fixed_delivery_price = e.target.value;
-    }
+    // }
+    // const onChangefixed_delivery_price = (e: any) => {
+    //     state[index].fixed_delivery_price = e.target.value;
+    // }
 
     return (
         <Box>
-            <Typography py={2} sx={{ fontFamily: `'Poppins' sans-serif` }} fontSize={16} fontWeight={'bold'}>{index + 1}. {content}</Typography>
+            <Typography py={2} sx={{ fontFamily: `'Poppins' sans-serif` }} fontSize={16} fontWeight={'bold'}>{index + 1}. {content?.title}</Typography>
             <Grid container spacing={2}>
             <Grid item lg={1.5} xs={12}>
-                    <CustomInput
-                        onChangeValue={onChangePurchasePrice}
+                    <CustomInputNormal
+                        onChangeValue={(e: any) => onChange(e.target.value, 'seller_price')}
                         disabled={false}
                         type='text'
-                        control={control}
                         error={errors.seller_price}
                         fieldName="seller_price"
                         placeholder={``}
@@ -97,14 +97,13 @@ const CustomProductVarient = memo(({ content, index, setState, state ,deafultCom
                 </Grid>
                 
                 <Grid item lg={1.5} xs={12}>
-                    <CustomInput
+                    <CustomInputNormal
                         disabled={false}
                         type='text'
-                        control={control}
                         error={errors.regular_price}
                         fieldName="regular_price"
                         placeholder={``}
-                        onChangeValue={onChangeSellingPrice}
+                        onChangeValue={(e: any) => onChange(e.target.value, 'regular_price')}
                         fieldLabel={"Selling Price"}
                         view={false}
                         defaultValue={''}
@@ -113,11 +112,10 @@ const CustomProductVarient = memo(({ content, index, setState, state ,deafultCom
                 
                
                 <Grid item lg={1.5} xs={12}>
-                    <CustomInput
-                        onChangeValue={onChangeCommision}
+                    <CustomInputNormal
+                        onChangeValue={(e: any) => onChange(e.target.value, 'commission')}
                         disabled={false}
                         type='text'
-                        control={control}
                         error={errors.commission}
                         fieldName="commission"
                         placeholder={''}
@@ -127,11 +125,10 @@ const CustomProductVarient = memo(({ content, index, setState, state ,deafultCom
                     />
                 </Grid>
                 <Grid item lg={1.5} xs={12}>
-                    <CustomInput
-                        onChangeValue={onChangefixed_delivery_price}
+                    <CustomInputNormal
+                        onChangeValue={(e: any) => onChange(e.target.value, 'fixed_delivery_price')}
                         disabled={false}
                         type='number'
-                        control={control}
                         error={errors.fixed_delivery_price}
                         fieldName=" fixed_delivery_price"
                         placeholder={``}
@@ -141,11 +138,10 @@ const CustomProductVarient = memo(({ content, index, setState, state ,deafultCom
                     />
                 </Grid>
                 <Grid item lg={1.5} xs={12}>
-                    <CustomInput
-                        onChangeValue={onChangeOfferPrice}
+                    <CustomInputNormal
+                        onChangeValue={(e: any) => onChange(e.target.value, 'offer_price')}
                         disabled={false}
                         type='text'
-                        control={control}
                         error={errors.offer_price}
                         fieldName="offer_price"
                         placeholder={``}
@@ -156,31 +152,28 @@ const CustomProductVarient = memo(({ content, index, setState, state ,deafultCom
                 </Grid>
 
                 <Grid item lg={1.5} xs={12}>
-                    < CustomDatePicker
+                    < DatePickers
                         values={getValues('offer_date_from')}
-                        changeValue={onChangeOffer_date_from}
+                        changeValue={(e: any) => onChange(e, 'offer_date_from')}
                         fieldName='offer_date_from'
-                        control={control}
                         error={errors.offer_date_from}
                         fieldLabel={'Offer From'}
                     />
                 </Grid>
                 <Grid item lg={1.5} xs={12}>
-                    <CustomDatePicker
+                    <DatePickers
                         values={getValues('offer_date_to')}
-                        changeValue={onChangeOffer_date_to}
+                        changeValue={(e: any) => onChange(e, 'offer_date_to')}
                         fieldName='offer_date_to'
-                        control={control}
                         error={errors.offer_date_to}
                         fieldLabel={'Offer To'}
                     />
                 </Grid>
                 <Grid item lg={1.5} xs={12}>
-                    <CustomInput
-                        onChangeValue={onChangeStock}
+                    <CustomInputNormal
+                        onChangeValue={(e: any) => onChange(e.target.value, 'stock_value')}
                         disabled={false}
                         type='text'
-                        control={control}
                         error={errors.stock_value}
                         fieldName="stock_value"
                         placeholder={``}

@@ -22,6 +22,7 @@ const Franchise = () => {
     const [pending, startTransition] = useTransition();
 
 
+     console.log({franchiseList})
 
     const handleClose = () => {
         setOpen(false)
@@ -33,9 +34,14 @@ const Franchise = () => {
     }
 
 
-    const EditFranchise = (id: any) =>{
-        console.log({id})
+    const EditFranchise = (id: any) => {
+
         router.push(`/franchise/edit/${id}`)
+
+    }
+
+    const viewFranchise = (id: any) => {
+        router.push(`/franchise/view/${id}`)
 
     }
 
@@ -105,7 +111,7 @@ const Franchise = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-
+                        onClick={() => viewFranchise(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -132,9 +138,6 @@ const Franchise = () => {
         router.push('/franchise/addFranchise')
     }
 
-
- 
-
     const getFranchiseList = async () => {
         try {
             setLoading(true)
@@ -150,9 +153,9 @@ const Franchise = () => {
     }
 
 
-    
-    const searchfranchise = (value:any) => {
-        let Results = serachList?.filter((com:any) => com?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.franchise_id.toString().toLowerCase().includes(value.toLowerCase)
+
+    const searchfranchise = (value: any) => {
+        let Results = serachList?.filter((com: any) => com?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.franchise_id.toString().toLowerCase().includes(value.toLowerCase())
         )
         startTransition(() => {
             setFranchiseList(Results)

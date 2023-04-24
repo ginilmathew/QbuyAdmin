@@ -19,7 +19,7 @@ const Drawing = ({onComplete}) => {
 
     let coords = polygon.getPath().getArray();
     coords.map(latlng => {
-      latlongs.push([latlng.lat(), latlng.lng()])
+      latlongs.push([parseFloat(latlng.lat().toFixed(6)), parseFloat(latlng.lng().toFixed(6))])
     })
     
     //polygon.setMap(null);
@@ -44,7 +44,7 @@ const Drawing = ({onComplete}) => {
           position: google.maps.ControlPosition.TOP_CENTER,
           drawingModes: [drawingMode]
         },
-        polygonOptions: { editable: true }
+        polygonOptions: { editable: true, draggable: true }
       }}
     />
   );

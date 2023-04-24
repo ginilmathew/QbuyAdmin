@@ -1,16 +1,14 @@
 import CustomInput from '@/components/CustomInput'
-import { Box, Divider, Grid, Typography, MenuItem } from '@mui/material'
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
+import { Box, Divider, Grid, Typography, MenuItem, Avatar } from '@mui/material'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import CustomBox from '../CustomBox'
 import { useForm, SubmitHandler, set } from "react-hook-form";
 import Custombutton from '@/components/Custombutton';
 import CustomImageUploader from '@/components/CustomImageUploader';
 import Customselect from '@/components/Customselect';
-import { FormInputs } from '@/utilities/types';
-import { GoogleMap, useJsApiLoader, LoadScript, Marker, DrawingManager } from "@react-google-maps/api";
+import { useJsApiLoader } from "@react-google-maps/api";
 import { fetchData } from '@/CustomAxios';
 import CustomTimepicker from '@/components/CustomTimepicker';
-import dayjs, { Dayjs } from 'dayjs';
 import { postData } from '@/CustomAxios';
 import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -19,7 +17,7 @@ import moment from 'moment'
 import CustomMultiselect from '@/components/CustomMultiselect';
 import Maps from '@/components/maps/maps';
 import Polygon from '@/components/maps/Polygon';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { IMAGE_URL } from '../../Config/index';
 
 
@@ -47,6 +45,8 @@ type Inputs = {
     commission: string,
     offer_description: string,
     tax: string,
+    type: string,
+    display_order: string
 };
 
 
@@ -72,21 +72,23 @@ type IFormInput = {
     commission: string,
     offer_description: string,
     tax: string,
-    coordinates: any
+    coordinates: any,
+    type: string,
+    display_order: string
 };
 
 type props = {
     res?: any
+    view?: any
 }
 
-const Vendorform = ({ res }: props) => {
+const Vendorform = ({ res, view }: props) => {
 
-    console.log({res})
-    
-    console.log({IMAGE_URL})
+    let resData = res ? res : view;
 
-    const router = useRouter()
-    console.log({ res }, 'VENDOR LIST')
+    const router = useRouter();
+
+    console.log({ resData })
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [category, setCategory] = useState<string>('')
@@ -99,26 +101,26 @@ const Vendorform = ({ res }: props) => {
     const [imagePreview, setImagePreview] = useState<any>(null)
     const [paths, setPaths] = useState<any>(null)
 
-    console.log({ imagePreview })
+
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-
+    const commissionvalidation = /^(0|[1-9]\d*)$/
     const schema = yup
         .object()
         .shape({
-            vendor_name: yup.string().required('Vendor Name is Required'),
-            vendor_email: yup.string().email("Email must be a valid email").required('Email is Required'),
+            vendor_name: yup.string().max(30, 'Maximum Character Exceeds').required('Vendor Name is Required'),
+            vendor_email: yup.string().max(30, 'Maximum Character Exceeds').email("Email must be a valid email").required('Email is Required'),
             vendor_mobile: yup.string().min(10, 'Phone number is not valid').matches(phoneRegExp, 'Phone number is not valid').required('Mobile Number is  Required'),
-            store_name: yup.string().required('Store Name is Required'),
+            store_name: yup.string().max(30, 'Maximum Character Exceeds').required('Store Name is Required'),
             // store_address: yup.string().required('Store Address is Required'),
             franchise_id: yup.string().required('Franchise is  Required'),
             category_id: yup.array().typeError('Category is Required').required('Category is Required'),
             // start_time: yup.string().required('Required'),
             // end_time: yup.string().required('Required'),
-            store_logo:yup
-            .mixed()
-            .typeError("Store Logo is Required")
-            .required("Store Logo is Required"),
+            store_logo: yup
+                .mixed()
+                .typeError("Store Logo is Required")
+                .required("Store Logo is Required"),
             // // coordinates: any,
             // license_number: yup.string().required('License Number is Required'),
             // ffsai_number: yup.string().required('FFASI Number is Required'),
@@ -129,7 +131,7 @@ const Vendorform = ({ res }: props) => {
             // branch: yup.string().required('Branch is Required'),
             // recipient_name: yup.string().required('Recipient Name is Required'),
             coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required"),
-            commission:yup.string().required('Commission is Required')
+            commission: yup.string().max(2, 'Maximum Character Exceeds').matches(commissionvalidation, 'Accept Number Only').required('Commission is Required')
 
         })
         .required();
@@ -144,28 +146,29 @@ const Vendorform = ({ res }: props) => {
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
             defaultValues: {
-                vendor_name: '',
-                vendor_email: '',
-                vendor_mobile: '',
-                store_name: '',
-                store_address: '',
-                franchise_id: '',
-                category_id: '',
-                start_time: '',
-                end_time: '',
-                store_logo: '',
-                license_number: '',
-                ffsai_number: '',
-                pan_card_number: '',
-                aadhar_card_number: '',
-                account_number: '',
-                ifsc: '',
-                branch: '',
-                recipient_name: '',
-                commission: '',
-                offer_description: '',
-                tax: '',
-                coordinates: null
+                vendor_name: resData ? resData?.vendor_name : '',
+                vendor_email: resData ? resData?.vendor_email : '',
+                vendor_mobile: resData ? resData?.vendor_mobile : '',
+                store_name: resData ? resData?.store_name : '',
+                store_address: resData ? resData?.store_address : '',
+                franchise_id: resData ? resData?.franchise_id : '',
+                category_id: resData ? resData?.category_id : '',
+                start_time: resData ? resData?.start_time : '',
+                end_time: resData ? resData?.end_time : '',
+                license_number: resData ? resData?.kyc_details?.license_number : '',
+                ffsai_number: resData ? resData?.kyc_details?.ifsc : '',
+                pan_card_number: resData ? resData?.kyc_details?.pan_card_number : '',
+                aadhar_card_number: resData ? resData?.kyc_details?.aadhar_card_number : '',
+                account_number: resData ? resData?.kyc_details?.account_number : '',
+                ifsc: resData ? resData?.kyc_details?.ifsc : '',
+                branch: resData ? resData?.kyc_details?.branch : '',
+                recipient_name: resData ? resData?.kyc_details?.recipient_name : '',
+                commission: resData ? resData?.additional_details?.commission : '',
+                offer_description: resData ? resData?.additional_details?.offer_description : '',
+                tax: resData ? resData?.additional_details?.tax : '',
+                coordinates: resData ? resData?.delivery_location : null,
+                display_order: resData ? resData?.display_order : '',
+                type: process.env.NEXT_PUBLIC_TYPE,
             }
         });
 
@@ -241,9 +244,16 @@ const Vendorform = ({ res }: props) => {
 
 
     const imageUploder = (file: any) => {
-        setImagefile(file)
-        setValue('store_logo', file)
-        setError('store_logo', { message: '' })
+        if (file.size <= 1000000) {
+            setImagefile(file)
+            setImagePreview(null)
+            setValue('store_logo', file)
+            setError('store_logo', { message: '' })
+        } else {
+            setImagefile(null)
+            setImagePreview(null)
+            toast.warning('Image should be less than or equal 1MB')
+        }
 
     }
 
@@ -310,36 +320,37 @@ const Vendorform = ({ res }: props) => {
     }, [])
 
     useEffect(() => {
-        let array = res?.category_id?.map((res: any) => res?.id)
-        if (res && array) {
-            setValue('vendor_name', res?.vendor_name)
-            setValue('vendor_mobile', res?.vendor_mobile)
-            setValue('vendor_email', res?.vendor_email)
-            setValue('store_name', res?.store_name)
-            setValue('store_address', res?.store_address)
-            setValue('franchise_id', res?.franchise_id)
-            setFranchise(res?.franchise_id)
-            setValue('category_id', res?.category_id)
-            setCategory(res?.category_id)
-            setValue('store_logo', res?.store_logo)
-            setImagePreview(`${IMAGE_URL}${res?.store_logo}`)
-            setValue('start_time', moment(res?.start_time, 'HH:mm A'))
-            setValue('end_time', moment(res?.end_time, 'HH:mm A'))
-            setValue('license_number', res?.kyc_details?.license_number)
-            setValue('ffsai_number', res?.kyc_details?.ffsai_number)
-            setValue('pan_card_number', res?.kyc_details?.pan_card_number)
-            setValue('aadhar_card_number', res?.kyc_details?.aadhar_card_number)
-            setValue('account_number', res?.kyc_details?.account_number)
-            setValue('ifsc', res?.kyc_details?.ifsc)
-            setValue('branch', res?.kyc_details?.branch)
-            setValue('recipient_name', res?.kyc_details?.recipient_name)
-            setValue('commission', res?.additional_details?.commission)
-            setValue('offer_description', res?.additional_details?.offer_description)
-            setValue('tax', res?.additional_details?.tax)
+        let array = resData?.category_id?.map((res: any) => res?.id)
+        if (resData && array) {
+            setValue('vendor_name', resData?.vendor_name)
+            setValue('vendor_mobile', resData?.vendor_mobile)
+            setValue('vendor_email', resData?.vendor_email)
+            setValue('store_name', resData?.store_name)
+            setValue('store_address', resData?.store_address)
+            setValue('franchise_id', resData?.franchise_id)
+            setFranchise(resData?.franchise_id)
+            setValue('category_id', resData?.category_id)
+            setCategory(resData?.category_id)
+            setValue('store_logo', resData?.store_logo)
+            setImagePreview(`${IMAGE_URL}${resData?.store_logo}`)
+            setValue('start_time', moment(resData?.start_time, 'HH:mm A'))
+            setValue('end_time', moment(resData?.end_time, 'HH:mm A'))
+            setValue('license_number', resData?.kyc_details?.license_number)
+            setValue('ffsai_number', resData?.kyc_details?.ffsai_number)
+            setValue('pan_card_number', resData?.kyc_details?.pan_card_number)
+            setValue('aadhar_card_number', resData?.kyc_details?.aadhar_card_number)
+            setValue('account_number', resData?.kyc_details?.account_number)
+            setValue('ifsc', resData?.kyc_details?.ifsc)
+            setValue('branch', resData?.kyc_details?.branch)
+            setValue('recipient_name', resData?.kyc_details?.recipient_name)
+            setValue('commission', resData?.additional_details?.commission)
+            setValue('offer_description', resData?.additional_details?.offer_description)
+            setValue('tax', resData?.additional_details?.tax)
             setMultipleArray(array)
-            setValue('coordinates', res?.delivery_location)
+            setValue('coordinates', resData?.delivery_location)
+            setValue('display_order', resData?.display_order)
 
-            let paths = res?.delivery_location?.map((loc: any) => {
+            let paths = resData?.delivery_location?.map((loc: any) => {
                 return {
                     lat: loc[0],
                     lng: loc[1]
@@ -348,7 +359,7 @@ const Vendorform = ({ res }: props) => {
             setPaths(paths)
 
         }
-    }, [res])
+    }, [resData])
 
 
 
@@ -380,7 +391,7 @@ const Vendorform = ({ res }: props) => {
 
         }))
 
-        console.log({ values })
+
         if (data) {
             setValue('category_id', data)
             setError('category_id', { message: '' })
@@ -430,6 +441,8 @@ const Vendorform = ({ res }: props) => {
         formData.append("start_time", moment(data?.start_time, 'hh:mm A').format('hh:mm'));
         formData.append("end_time", moment(data?.end_time, 'hh:mm A').format('hh:mm'));
         formData.append("store_logo", data?.store_logo);
+        formData.append("display_order", data?.display_order);
+        formData.append("type", data?.type);
         if (res) {
             formData.append("id", res?._id);
         }
@@ -457,6 +470,8 @@ const Vendorform = ({ res }: props) => {
             setFranchise('')
             setCategory('')
             setMultipleArray([])
+            setImagefile(null)
+            setImagePreview(null)
             setLoading(false)
 
         } catch (err: any) {
@@ -489,7 +504,7 @@ const Vendorform = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Vendor Name"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -502,7 +517,7 @@ const Vendorform = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Email Address"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
 
@@ -516,7 +531,20 @@ const Vendorform = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Mobile Number"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={2.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.display_order}
+                            fieldName="display_order"
+                            placeholder={``}
+                            fieldLabel={"Display Order"}
+                            disabled={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -534,7 +562,7 @@ const Vendorform = ({ res }: props) => {
                                 placeholder={``}
                                 fieldLabel={"Store Name"}
                                 disabled={false}
-                                view={false}
+                                view={view ? true : false}
                                 defaultValue={''}
                             />
                         </Grid>
@@ -547,12 +575,13 @@ const Vendorform = ({ res }: props) => {
                                 placeholder={``}
                                 fieldLabel={"Address"}
                                 disabled={false}
-                                view={false}
+                                view={view ? true : false}
                                 defaultValue={''}
                             />
                         </Grid>
                         <Grid item xs={12} lg={3.5}>
                             <Customselect
+                                disabled={view ? true : false}
                                 type='text'
                                 control={control}
                                 error={errors.franchise_id}
@@ -578,13 +607,14 @@ const Vendorform = ({ res }: props) => {
                         </Grid>
                         <Grid item xs={12} lg={3}>
                             <CustomMultiselect
+
                                 multiple={true}
                                 control={control}
                                 error={errors.category_id}
                                 fieldName="category_id"
                                 placeholder={``}
                                 fieldLabel={"Category"}
-                                readOnly={false}
+                                readOnly={view ? true : false}
                                 value={multpleArray}
                                 onChangeValue={onChangeMultiple}
                                 type=''
@@ -622,6 +652,7 @@ const Vendorform = ({ res }: props) => {
                         </Grid>
                         <Grid item xs={12} lg={2.1}>
                             <CustomTimepicker
+                                disabled={view ? true : false}
                                 changeValue={onChangeStartTime}
                                 fieldName='start_time'
                                 control={control}
@@ -631,6 +662,7 @@ const Vendorform = ({ res }: props) => {
                         <Grid item xs={12} lg={2.1}>
                             <Typography mb={3}></Typography>
                             <CustomTimepicker
+                                disabled={view ? true : false}
                                 changeValue={onChangeEndTime}
                                 fieldName='end_time'
                                 control={control}
@@ -638,26 +670,34 @@ const Vendorform = ({ res }: props) => {
                                 fieldLabel={''} />
                         </Grid>
                     </Grid>
-                    <Box flex={.3} sx={{}}>
-                        <CustomImageUploader
-                            ICON={""}
-                            viewImage={imagePreview}
-                            error={errors.store_logo}
-                            fieldName="store_logo"
-                            placeholder={``}
-                            fieldLabel={"Store Logo/Image"}
-                            control={control}
-                            height={150}
-                            max={5}
-                            onChangeValue={imageUploder}
-                            preview={imagefile}
-                            previewEditimage={""}
-                            type={"file"}
-                            background="#e7f5f7"
-                            myid="contained-button-file"
-                            width={"80%"}
-                        />
-                    </Box>
+                    {!view &&
+                        <Box flex={.3} sx={{}}>
+                            <CustomImageUploader
+                                ICON={""}
+                                viewImage={imagePreview}
+                                error={errors.store_logo}
+                                fieldName="store_logo"
+                                placeholder={``}
+                                fieldLabel={"Store Logo/Image"}
+                                control={control}
+                                height={150}
+                                max={5}
+                                onChangeValue={imageUploder}
+                                preview={imagefile}
+                                previewEditimage={""}
+                                type={"file"}
+                                background="#e7f5f7"
+                                myid="contained-button-file"
+                                width={"80%"}
+                            />
+                        </Box>}
+
+                    {view &&
+                        <Box flex={.2} sx={{}}>
+                            <Typography>Store Logo/Image</Typography>
+                            <Avatar variant='square' src={`${IMAGE_URL}${view?.store_logo}`} sx={{ width: '100%', height: 130 }} />
+                        </Box>}
+
                 </Box>
                 <Box py={2}>
                     <Divider />
@@ -679,7 +719,7 @@ const Vendorform = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"License Number"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -692,7 +732,7 @@ const Vendorform = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"FFSAI Number"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -705,7 +745,7 @@ const Vendorform = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"PAN Card Number"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -718,7 +758,7 @@ const Vendorform = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"AADHAR Number"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -734,7 +774,7 @@ const Vendorform = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Account Number"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -747,7 +787,7 @@ const Vendorform = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"IFSC"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -760,7 +800,7 @@ const Vendorform = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Branch"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -773,7 +813,7 @@ const Vendorform = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Recipient Name"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -792,7 +832,7 @@ const Vendorform = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Commission (%)"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -803,9 +843,9 @@ const Vendorform = ({ res }: props) => {
                             error={errors.offer_description}
                             fieldName="offer_description"
                             placeholder={``}
-                            fieldLabel={"offer Description"}
+                            fieldLabel={"Offer Description"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -818,24 +858,26 @@ const Vendorform = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Tax"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
+
                 </Grid>
             </CustomBox>
-            <Box py={3}>
-                <Custombutton
-                    btncolor=''
-                    IconEnd={''}
-                    IconStart={''}
-                    endIcon={false}
-                    startIcon={false}
-                    height={''}
-                    label={res ? 'Update' : 'Add Vendor'}
-                    disabled={loading}
-                    onClick={handleSubmit(onSubmit)} />
-            </Box>
+            {!view &&
+                <Box py={3}>
+                    <Custombutton
+                        btncolor=''
+                        IconEnd={''}
+                        IconStart={''}
+                        endIcon={false}
+                        startIcon={false}
+                        height={''}
+                        label={res ? 'Update' : 'Add Vendor'}
+                        disabled={loading}
+                        onClick={handleSubmit(onSubmit)} />
+                </Box>}
         </Box>
     )
 }

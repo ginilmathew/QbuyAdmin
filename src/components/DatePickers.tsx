@@ -1,37 +1,35 @@
 import React, { useState } from 'react'
-
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { Controller } from "react-hook-form";
 import { Avatar, Box, FormGroup, styled, Typography } from "@mui/material";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-
 type props = {
     fieldName: string,
-    control: any,
     fieldLabel: string,
     error: any,
     changeValue: (value: any) => void,
-    disabled?:any
+    values:any
 
 }
 
 
-const CustomTimepicker = ({
+const DatePickers = ({
     fieldName,
-    control,
     fieldLabel,
     error,
-    disabled,
+    values,
     changeValue,
 }: props) => {
+
+
+    const [value, setValue] = useState(null)
+
     return (
         <>
             <FormGroup>
-                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                <Typography letterSpacing={.5} px={'3px'} mb={'1px'}
                     sx={{
                         fontSize: {
                             lg: 16,
@@ -43,25 +41,24 @@ const CustomTimepicker = ({
                     }}
                 >{fieldLabel}
                 </Typography>
-                <Controller
-                    name={fieldName}
-                    control={control}
-                    render={({ field: { value, onChange, onBlur } }) => (
-                        <LocalizationProvider dateAdapter={AdapterMoment}>
-                            <TimePicker
-                            disabled={disabled}
-                                sx={{
-                                    "& .MuiInputBase-input": {
-                                        height: "10px" // Set your height here.
-                                    }
-                                }}
+                <LocalizationProvider dateAdapter={AdapterMoment}>
+                       
+                        <DatePicker 
+                            sx={{
+                            "& .MuiInputBase-input": {
+                                height: "8px" // Set your height here.
+                            }
+                        }}
 
-                                value={value}
-                                onChange={changeValue ? (e: any) => changeValue(e) : onChange}
-                            />
-                        </LocalizationProvider>
-                    )}
-                />
+                        value={value? value: null}
+                        onChange={(e: any) => {
+                            setValue(e)
+                            changeValue(e)
+                        }}
+                    />
+                
+
+                </LocalizationProvider>
                 {error && (
                     <p
                         role="alert"
@@ -83,4 +80,4 @@ const CustomTimepicker = ({
     )
 }
 
-export default CustomTimepicker
+export default DatePickers

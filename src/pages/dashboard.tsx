@@ -1,29 +1,30 @@
 import CustomTable from '@/components/CustomTable'
 import UserContext from '@/helpers/user';
+import ProtectedRoute from '@/Routes/protectedRoutes';
 import CustomerCard from '@/Widgets/CustomerCard'
 import Profitchart from '@/Widgets/Profitchart'
 import { Grid, LinearProgress, Stack } from '@mui/material'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useRouter } from 'next/router';
-import React,{useContext, useState, useEffect} from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 
 const Dashboard = () => {
     const userContext = useContext(UserContext);
     const [loading, setLoading] = useState(true)
     const router = useRouter();
 
-    useEffect(() => {
-        if(userContext.user){
-            console.log(userContext.user,"get user")
-            setLoading(false)
-        }
-        else{
-            router.push('/login')
-        }
-    }, [])
-    
+    // useEffect(() => {
+    //     if(userContext.user){
+    //         console.log(userContext.user,"get user")
+    //         setLoading(false)
+    //     }
+    //     else{
+    //         router.push('/login')
+    //     }
+    // }, [])
 
-    
+
+
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', flex: 1, },
         {
@@ -68,51 +69,53 @@ const Dashboard = () => {
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
     ];
 
-    if(loading){
-        <Stack sx={{ width: '100%', color: 'grey.500' }} >
-            <LinearProgress color="success" />
-        </Stack>
-    }
+    // if(loading){
+    //     <Stack sx={{ width: '100%', color: 'grey.500' }} >
+    //         <LinearProgress color="success" />
+    //     </Stack>
+    // }
 
     return (
-        <Grid container px={5} py={2} spacing={2} bgcolor={'#f5f5f5'} pt={10} mt={0}>
-            <Grid item xs={12} md={4} minHeight={1 / 3}>
-                <CustomTable dashboard={true} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label={'Shipments'} />
+   
+            <Grid container px={5} py={2} spacing={2} bgcolor={'#f5f5f5'} pt={10} mt={0}>
+                <Grid item xs={12} md={4} minHeight={1 / 3}>
+                    <CustomTable dashboard={true} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label={'Shipments'} />
+                </Grid>
+                <Grid item xs={12} md={2} minHeight={1 / 3}>
+                    <CustomerCard numbercount={false} type={"customer"} count='4500' heading='Total Customers' text='loreun ipsum loreum' />
+                </Grid>
+                <Grid item xs={12} md={2} minHeight={1 / 3}>
+                    <CustomerCard numbercount={false} type={"customer"} count='4500' heading='Total Customers' text='loreun ipsum loreum' />
+                </Grid>
+                <Grid item xs={12} md={2} minHeight={1 / 3}>
+                    <CustomerCard numbercount={false} type={"customer"} count='4500' heading='Total Customer Online' text='loreun ipsum loreum' />
+                </Grid>
+                <Grid item xs={12} md={2} minHeight={1 / 3}>
+                    <CustomerCard numbercount={true} type={"customer"} count='4500' heading='Total Customer Complaints' text='loreun ipsum loreum' />
+                </Grid>
+                <Grid item xs={12} md={4} minHeight={1 / 3}>
+                    <Profitchart heading='Profit(Gross & Net)' />
+                </Grid>
+                <Grid item xs={12} md={8} minHeight={1 / 3}>
+                    <CustomTable dashboard={true} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                </Grid>
+                <Grid item xs={12} md={2} minHeight={1 / 3}>
+                    <CustomerCard numbercount={false} type={"order"} count='4500' heading='Total Customer Online' text='loreun ipsum loreum' />
+                </Grid>
+                <Grid item xs={12} md={2} minHeight={1 / 3}>
+                    <CustomerCard numbercount={false} type={"sales"} count='4500' heading='Total Orders' text='loreun ipsum loreum' />
+                </Grid>
+                <Grid item xs={12} md={3} minHeight={1 / 3}>
+                    <CustomerCard numbercount={false} type={"customer"} count='4500' heading='Total Sales' text='loreun ipsum loreum' />
+                </Grid>
+                <Grid item xs={12} md={3} minHeight={1 / 3}>
+                    <CustomTable dashboard={true} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Latest customer Reviews' />
+                </Grid>
+                <Grid item xs={12} md={2} minHeight={1 / 3}>
+                    <CustomerCard numbercount={true} type={"tickets"} count='4500' heading='Rider Tickets' text='loreun ipsum loreum' />
+                </Grid>
             </Grid>
-            <Grid item xs={12} md={2} minHeight={1 / 3}>
-                <CustomerCard numbercount={false} type={"customer"} count='4500' heading='Total Customers' text='loreun ipsum loreum' />
-            </Grid>
-            <Grid item xs={12} md={2} minHeight={1 / 3}>
-                <CustomerCard numbercount={false} type={"customer"} count='4500' heading='Total Customers' text='loreun ipsum loreum' />
-            </Grid>
-            <Grid item xs={12} md={2} minHeight={1 / 3}>
-                <CustomerCard numbercount={false} type={"customer"} count='4500' heading='Total Customer Online' text='loreun ipsum loreum' />
-            </Grid>
-            <Grid item xs={12} md={2} minHeight={1 / 3}>
-                <CustomerCard numbercount={true} type={"customer"} count='4500' heading='Total Customer Complaints' text='loreun ipsum loreum' />
-            </Grid>
-            <Grid item xs={12} md={4} minHeight={1 / 3}>
-                <Profitchart heading='Profit(Gross & Net)' />
-            </Grid>
-            <Grid item xs={12} md={8} minHeight={1 / 3}>
-                <CustomTable dashboard={true} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
-            </Grid>
-            <Grid item xs={12} md={2} minHeight={1 / 3}>
-                <CustomerCard numbercount={false} type={"order"} count='4500' heading='Total Customer Online' text='loreun ipsum loreum' />
-            </Grid>
-            <Grid item xs={12} md={2} minHeight={1 / 3}>
-                <CustomerCard numbercount={false} type={"sales"} count='4500' heading='Total Orders' text='loreun ipsum loreum' />
-            </Grid>
-            <Grid item xs={12} md={3} minHeight={1 / 3}>
-                <CustomerCard numbercount={false} type={"customer"} count='4500' heading='Total Sales' text='loreun ipsum loreum' />
-            </Grid>
-            <Grid item xs={12} md={3} minHeight={1 / 3}>
-                <CustomTable dashboard={true} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Latest customer Reviews' />
-            </Grid>
-            <Grid item xs={12} md={2} minHeight={1 / 3}>
-                <CustomerCard numbercount={true} type={"tickets"} count='4500' heading='Rider Tickets' text='loreun ipsum loreum' />
-            </Grid>
-        </Grid>
+
     )
 }
 
