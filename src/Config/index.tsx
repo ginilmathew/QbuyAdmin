@@ -8,17 +8,19 @@ export const env = "dev"
 
 const URLS = {
     live: "https://api.qbuygreen.com/public/api/",
+    testing: "https://qbuygreenapi.diginestsolutions.in/public/api/",
     dev: "https://apiqbuypanda.diginestsolutions.in/public/api/"
 }
 const url = {
     dev: "https://apibulletinly.diginestsolutions.in/public/api",
     live: "https://paladmin.dnsappdemo.com/public/api"
-    
+
 }
 
 const IMG_URL = {
-    dev:'https://apiqbuypanda.diginestsolutions.in/public/'
-
+    live: "https://api.qbuygreen.com/public/",
+    testing: "https://qbuygreenapi.diginestsolutions.in/public/",
+    dev: "https://apiqbuypanda.diginestsolutions.in/public/"
 }
 
 const key = {
@@ -30,7 +32,7 @@ const key = {
 //Dev mode= http://apidev.myfutton.com/api/v1/student //Live Mode=http://api.myfutton.com/api/v1/student';
 
 export const BASE_URL = URLS[env]
-export const IMAGE_URL =IMG_URL[env]
+export const IMAGE_URL = IMG_URL[env]
 
 
 export const API_URL = `${url[env]}`

@@ -22,6 +22,7 @@ const Franchise = () => {
     const [pending, startTransition] = useTransition();
 
 
+     console.log({franchiseList})
 
     const handleClose = () => {
         setOpen(false)

@@ -122,10 +122,6 @@ type props = {
 const ProductForm = ({ res }: props) => {
 
 
-
-    console.log({ res }, 'response in single list')
-  
-    
     const [multipleImage, setMultipleImage] = useState<any>([])
 
     const [defaultImage, setdefaultImage] = useState<any>([])
@@ -153,24 +149,23 @@ const ProductForm = ({ res }: props) => {
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
 
- 
 
 
-console.log({varientsarray})
+  console.log({varientsarray})
 
 
-    const MAX_FILE_SIZE = 102400; //100KB
+   //100KB
 
     const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
     const schema = yup
         .object()
         .shape({
             name: yup.string().required('Product Name Required'),
-            display_order: yup.number().nullable().typeError("Must be Integer"),
+            // display_order: yup.number().nullable().typeError("Must be Integer"),
             franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
             store: yup.array().typeError('Store is Required').required('Store is Required'),
             category: yup.array().typeError('Category is Required').required('Category is Required'),
-            delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
+            // delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
             product_image: yup
                 .mixed()
                 .required("Product Image is Required"),
@@ -227,12 +222,12 @@ console.log({varientsarray})
             }
         });
 
-    const onChangeSelectType = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectType(e.target.value)
-        setValue('type', e.target.value)
-        setError('type', { message: '' })
+    // const onChangeSelectType = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     setSelectType(e.target.value)
+    //     setValue('type', e.target.value)
+    //     setError('type', { message: '' })
 
-    }
+    // }
 
 
     const StockCheck = (e: any) => {
@@ -242,26 +237,32 @@ console.log({varientsarray})
     }
 
 
-
-
-
-
     const imageUploder = async (file: any) => {
-        setImagefile(file)
-        setImagePreview(null)
-        const formData = new FormData();
-        formData.append("image", file);
-        try {
-            setLoading(true)
-            const response = await postData('admin/product/uploadimage', formData)
-            setValue('product_image', response?.data?.data)
-            setError('product_image', { message: '' })
-        } catch (err: any) {
-            toast.error(err?.message)
-            setLoading(false)
-        } finally {
-            setLoading(false)
+        if (file.size <= 1000000) {
+            setImagefile(file)
+            setImagePreview(null)
+            setValue('image', file)
+            setError('image', { message: '' })
+            const formData = new FormData();
+            formData.append("image", file);
+            try {
+                setLoading(true)
+                const response = await postData('admin/product/uploadimage', formData)
+                setValue('product_image', response?.data?.data)
+                setError('product_image', { message: '' })
+            } catch (err: any) {
+                toast.error(err?.message)
+                setLoading(false)
+            } finally {
+                setLoading(false)
+            }
+        } else {
+            setImagePreview(null)
+            setImagefile(null)
+            toast.warning('Image should be less than or equal 1MB')
         }
+
+
     }
 
     const multipleImageUploder = async (image: any) => {
@@ -390,24 +391,32 @@ console.log({varientsarray})
 
 
 
-    ///
 
-    const onChangeName = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
-        attributes[i].name = e.target.value;
+    // const onChangeName = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
+    //     attributes[i].name = e.target.value;
 
 
-    }
+    // }
 
     const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
         attributes[i][key] = e;
-        // if(key === "options"){
 
-        // }
+        if (key === "options") {
+            let result = attributes[i].variant === true;
+            if (result) {
+                onOptionsChangeaddvarients()
+            } else {
+                return false;
+            }
+
+        }
+
+
     }
 
-    const onChangeOptions = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
-        setIndex(i)
-    }
+    // const onChangeOptions = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
+    //     setIndex(i)
+    // }
 
     const onCheckShipping = (e: boolean) => {
         setValue('require_shipping', e)
@@ -456,13 +465,15 @@ console.log({varientsarray})
 
     useEffect(() => {
         if (res) {
+
+            console.log({ res }, "in edit")
+
             const getvendorlist = async () => {
                 try {
-                    const response = await fetchData(`admin/vendor-list/${res?.franchisee?._id}`)
-                     setVendorList(response?.data?.data)
+                    const response = await fetchData(`admin/vendor-list/${res?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
+                    setVendorList(response?.data?.data)
                 } catch (err: any) {
                     toast.error(err?.message)
-
                 }
             }
             const getSubcategory = async () => {
@@ -526,48 +537,49 @@ console.log({varientsarray})
                     res
 
                 ))
-                setdefaultImage([...imageslist])
-
+                setdefaultImage([...imageslist])    
             }
 
-  
-            let attributesArray: { name: any; options: any; varient: boolean; }[] = []
+
+            let attributesArray: { name: any; options: any; variant: boolean; }[] = []
             if (res?.attributes?.length > 0) {
                 res?.attributes.map((item: any) => {
                     attributesArray.push({
                         name: item?.name,
                         options: item?.options,
-                        varient: item?.variant
+                        variant: item?.variant
 
                     })
-                  
-                    setAttributes(attributesArray)
+
+                    setAttributes([...attributesArray])
                 })
             }
 
-            if(res?.variants?.length > 0){
-                res?.variants?.map((item:any)=>{
+            let myvaarientArray: { title: any; attributs: any; seller_price: any; regular_price: string; offer_price: string; offer_date_from: string; offer_date_to: string; stock: boolean; stock_value: string; commission: number; fixed_delivery_price: number; }[] = []
+            if (res?.variants?.length > 0) {
+                res?.variants?.map((item: any) => {
 
-                    varientsarray.push({
-                        attributs:item?.attributs.toString(),
-                        seller_price:item?.commission,
-                        regular_price:item?.regular_price,
-                        offer_price: '',
+                    myvaarientArray.push({
+                        title: item?.attributs,
+                        attributs: item?.attributs,
+                        seller_price: item?.seller_price,
+                        regular_price: item?.regular_price,
+                        offer_price: item?.offer_price,
                         offer_date_from: '',
                         offer_date_to: '',
-                        stock: true,
-                        stock_value: '',
+                        stock: item?.stock,
+                        stock_value: item?.stock_value,
                         commission: 0,
                         fixed_delivery_price: 0
 
                     })
-                   
-                    // setVarientsArray(varientsarray)
+
+                    setVarientsArray(myvaarientArray)
                 })
             }
 
-  
-            console.log({varientsarray})
+
+            console.log({ varientsarray })
             setValue('commission', res?.commision)
             setValue('regular_price', res?.regular_price)
             setValue('offer_price', res?.offer_price)
@@ -596,21 +608,23 @@ console.log({varientsarray})
 
     //varient add varients and attributes form.......................................................................
 
-    useEffect(() => {
-        addvarients()
+    // useEffect(() => {
 
-    }, [attributes, index])
+    //     addvarients()
+
+    // }, [attributes, index])
 
 
-    const AddVarientCheckbox = (e: any, i: number) => {
-        setIndex(i)
-        attributes[i].varient = e;
-        //setAddVarient(e)
-        addvarients()
-    }
+    // const AddVarientCheckbox = (e: any, i: number) => {
+    //     setIndex(i)
+    //     attributes[i].varient = e;
+    //     //setAddVarient(e)
+    //     addvarients()
+    // }
 
     const enableVariant = (e: any, i: number) => {
-        console.log({e})
+        setVarientsArray([])
+        //setVarients
         setIndex(i)
         attributes[i].variant = e;
         setAttributes([...attributes])
@@ -618,19 +632,18 @@ console.log({varientsarray})
         addvarients()
     }
 
-    const combine = ([head, ...[headTail, ...tailTail]]) => {
+    const combine: any = ([head, ...[headTail, ...tailTail]]: any) => {
         if (!headTail) return head
-      
-        const combined = headTail.reduce((acc, x) => {
-          return acc.concat(head.map((h: any) => `${h} ${x}`))
+
+        const combined = headTail.reduce((acc: any, x: any) => {
+            return acc.concat(head.map((h: any) => `${h} ${x}`))
         }, [])
-      
+
         return combine([combined, ...tailTail])
     }
 
-    const addvarients = () => {
-
-        if (attributes?.some((res: any) => res.variant === true)) {
+    const onOptionsChangeaddvarients = () => {
+        if (attributes?.some((res: any) => res?.variant === true)) {
             const output = [];
             setValue('seller_price', '')
             setValue('offer_price', '')
@@ -641,7 +654,9 @@ console.log({varientsarray})
             // Filter attributes array to only include those with variant true
             const variantAttributes = attributes.filter((attr: any) => attr.variant !== false)
 
-            let attributesArray = variantAttributes?.map((vari: any) =>  vari?.options)
+            let attributesArray = variantAttributes?.map((vari: any) => vari?.options)
+
+
 
             let combines = combine(attributesArray);
 
@@ -661,9 +676,65 @@ console.log({varientsarray})
                 }
             })
 
-            console.log({attri})
 
-            setVarientsArray(attri)
+            const result = attri.filter((obj: any) => {
+                return !varientsarray.some((obj1: any) => obj.title === obj1.title)
+            })
+
+            setVarientsArray([...varientsarray, ...result])
+            console.log({ varientsarray })
+            console.log({ attributesArray })
+        } else {
+            setVarientsArray([])
+            setVarients([])
+        }
+    }
+
+
+
+
+
+    const addvarients = () => {
+
+        if (attributes?.some((res: any) => res?.variant === true)) {
+            const output = [];
+            setValue('seller_price', '')
+            setValue('offer_price', '')
+            setValue('offer_date_from', '')
+            setValue('regular_price', '')
+            setValue('offer_date_to', '')
+            setValue('fixed_delivery_price', '')
+            // Filter attributes array to only include those with variant true
+            const variantAttributes = attributes.filter((attr: any) => attr.variant !== false)
+
+            let attributesArray = variantAttributes?.map((vari: any) => vari?.options)
+
+
+
+            let combines = combine(attributesArray);
+
+            let attri = combines.map((val: any) => {
+                return {
+                    title: val,
+                    attributs: val.split(' '),
+                    seller_price: '',
+                    regular_price: '',
+                    offer_price: '',
+                    offer_date_from: '',
+                    offer_date_to: '',
+                    stock: true,
+                    stock_value: '',
+                    commission: 0,
+                    fixed_delivery_price: 0
+                }
+            })
+
+
+
+
+
+
+            setVarientsArray([...attri])
 
             //console.log()
             // Calculate the number of iterations required based on the length of the variantAttributes array
@@ -704,6 +775,14 @@ console.log({varientsarray})
         }
     }
 
+
+
+    useEffect(() => {
+
+        addvarients()
+
+
+    }, [index])
 
 
     const [path, setPath] = useState([
@@ -785,20 +864,6 @@ console.log({varientsarray})
 
         }
 
-        // if (!find) {
-        //     if (!data?.seller_price || !data?.regular_price) {
-        //         toast.warning("Please add product price to continue")
-        //         return false;
-        //     }
-        // }
-        // else {
-        //     let price = varientsarray?.find((va: any) => va.seller_price === " " || va.regular_price === " ")
-        //     if (price) {
-        //         toast.warning("Please add product price to v continue")
-        //         return false;
-        //     }
-        // }
-
         const metatagsres = metaTagValue?.map((res: any) => (
             res.title
         ))
@@ -819,6 +884,7 @@ console.log({varientsarray})
 
         const CREATE_URL = '/admin/product/create'
         const EDIT_URL = 'admin/product/update'
+
 
 
         let value: any = {
@@ -859,7 +925,7 @@ console.log({varientsarray})
             product_availability_from: data?.product_availability_from ? moment(data?.product_availability_from, 'hh:mm A').format('hh:mm') : null,
             product_availability_to: data?.product_availability_to ? moment(data?.product_availability_to, 'hh:mm A').format('hh:mm') : null,
             require_shipping: data?.require_shipping,
-            delivery_locations: data?.delivery_locations,
+            delivery_locations: data?.delivery_locations ? data?.delivery_locations : vendorList?.[0]?.delivery_location,
             coupon_details: null,
             meta_tags: metatagsres,
             video_link: data?.video_link,
@@ -879,6 +945,7 @@ console.log({varientsarray})
         if (res) {
             value["id"] = res?._id;
         }
+
         try {
             setLoading(true)
             await postData(res ? EDIT_URL : CREATE_URL, value)
@@ -908,9 +975,7 @@ console.log({varientsarray})
     }
 
 
-    const saveAttributs = (values: any) => {
-        console.log({values})
-    }
+
 
     const changeAttributeValues = (i: number, key: string, values: any) => {
         varientsarray[i][key] = values
@@ -935,7 +1000,6 @@ console.log({varientsarray})
                         />
                     </Grid>
                     <Grid item xs={12} lg={3}>
-
                         <Customselect
                             type='text'
                             control={control}
@@ -987,30 +1051,7 @@ console.log({varientsarray})
                             ))}
                         </Customselect>
                     </Grid>
-                    {/* <Grid item xs={12} lg={3}>
-                        <Customselect
-                            type='text'
-                            control={control}
-                            error={errors.type}
-                            fieldName="type"
-                            placeholder={``}
-                            fieldLabel={"Type"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={selectType}
-                            options={''}
-                            onChangeValue={onChangeSelectType}
-                            background={'#fff'}
-                        >
-                            {pandType && pandType?.map((res: any) => (
-                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
-                            ))}
 
-
-                        </Customselect>
-                    </Grid> */}
                     <Grid item xs={12} lg={3}>
                         <CustomInput
                             type='text'
@@ -1392,8 +1433,8 @@ console.log({varientsarray})
             </CustomBox>
             <CustomBox title='Attributes'>
                 <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />
-                {attributes && attributes?.map((res: any, i: any) => 
-                    <Attributes item={res} index={i} onChange={onChangeAttributes}  enableVariant={enableVariant} />
+                {attributes && attributes?.map((res: any, i: any) =>
+                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} />
                 )}
 
                 {/* {!attributes?.some((res: any) => res.varient === true) && <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
@@ -1525,9 +1566,9 @@ console.log({varientsarray})
                 </Grid>
             </CustomBox>}
             {varientsarray && <CustomBox title='Add Variant & Price'>
-            {varientsarray?.map((varian: any, i: number) => <CustomProductVarient deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} />)}
+                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={undefined} />)}
             </CustomBox>}
-            
+
             {/* {attributes?.some((res: any) => res.varient === true) &&
                 <CustomBox title='Add Variant & Price'>
                     {attributes?.some((res: any) => res.varient === true) &&
