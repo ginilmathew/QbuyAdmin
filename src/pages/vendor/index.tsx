@@ -36,6 +36,11 @@ const VendorSignup = () => {
         router.push(`/vendor/edit/${id}`)
     }
 
+    const viewVendor = (id: string) => {
+        router.push(`/vendor/view/${id}`)
+    }
+
+
 
     const columns: GridColDef[] = [
         {
@@ -68,14 +73,14 @@ const VendorSignup = () => {
 
         },
 
-        {
-            field: 'delivery_location',
-            headerName: 'Location',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
+        // {
+        //     field: 'delivery_location',
+        //     headerName: 'Location',
+        //     flex: 1,
+        //     headerAlign: 'center',
+        //     align: 'center',
 
-        },
+        // },
         {
             field: 'Approval Status',
             headerName: 'Approval Status',
@@ -105,7 +110,7 @@ const VendorSignup = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-
+                        onClick={() => viewVendor(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -132,7 +137,7 @@ const VendorSignup = () => {
     const fetchVendorList = useCallback(async () => {
         try {
             setLoading(true)
-            const response = await fetchData('/admin/vendor/list')
+            const response = await fetchData(`/admin/vendor/list/${process.env.NEXT_PUBLIC_TYPE}`)
             setVendorList(response?.data?.data)
             setSearchList(response?.data?.data)
         }

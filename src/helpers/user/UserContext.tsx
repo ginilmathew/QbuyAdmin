@@ -4,8 +4,8 @@ import Context from "./index";
 
 const UserProvider = (props: any) => {
     const [loading, setLoading] = useState(false);
-    const [user, setUser] = useState('');
-    const [tokens,setTokens]=useState('')
+    const [user, setUser] = useState<any>('');
+    const [tokens,setTokens]=useState<any>('')
 
     return (
         <Context.Provider

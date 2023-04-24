@@ -24,13 +24,6 @@ const CategoryManagement = () => {
     const [pending, startTransition] = useTransition();
     const [serachList, setSearchList] = useState<any>([])
 
-
-
-
-
-
-
-
     const addvaendor = () => {
         router.push('/category/addCategory')
 
@@ -40,6 +33,11 @@ const CategoryManagement = () => {
     const editCategory = (id: any) => {
         router.push(`/category/edit/${id}`)
     }
+
+    const viewCategory = (id: any) => {
+        router.push(`/category/view/${id}`)
+    }
+
 
     const columns: GridColDef[] = [
         {
@@ -74,7 +72,7 @@ const CategoryManagement = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-
+                        onClick={() => viewCategory(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -143,7 +141,6 @@ const CategoryManagement = () => {
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
-
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchProducts} imprtBtn={false} Headerlabel='Category Management' onClick={addvaendor} addbtn={true} />
                 <Box py={3}>

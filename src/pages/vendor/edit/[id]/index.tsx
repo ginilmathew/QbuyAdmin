@@ -37,8 +37,6 @@ const VandorEdit = () => {
         <Box px={5} py={2} pt={10} mt={0}>
             <CustomHeaderBack backlabel='Edit Vendor' />
             <Vendorform res={vendorList} />
-
-
         </Box>
     )
 }

@@ -5,25 +5,25 @@ import Switch from "@mui/material/Switch";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CheckBox } from "@mui/icons-material";
 
-type props ={
-    defaultChecked:boolean,
-    onClick:any,
-    checked:boolean,
-    changeRole:any
+type props = {
+  defaultChecked?: boolean,
+  onClick?: any,
+  checked?: boolean,
+  changeRole: any
 }
 
 
 
 
 
-export default function CustomSwitch({defaultChecked,onClick, checked, changeRole}:props) {
+export default function CustomSwitch({ defaultChecked, onClick, checked, changeRole }: props) {
   const [state, setState] = React.useState({
     checkedA: true
   });
 
   const checkboxControl = <CheckBox />;
 
-  const handleChange = (event:any) => {
+  const handleChange = (event: any) => {
     setState({ ...state, [event.target.name]: event.target.checked });
   };
 
@@ -63,11 +63,11 @@ export default function CustomSwitch({defaultChecked,onClick, checked, changeRol
           label={''}
           control={
             <Switch
-            onClick={onClick}
-            checked={checked}
-            defaultChecked={defaultChecked}
-            onChange={(e) => changeRole(e)}
-              name="checkedA"
+              onClick={onClick}
+              checked={checked}
+              defaultChecked={defaultChecked}
+              onChange={(e) => changeRole(e)}
+          
 
             />
           }

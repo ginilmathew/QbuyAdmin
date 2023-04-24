@@ -51,22 +51,21 @@ export default function App({ Component, pageProps }: AppProps) {
       </Stack>
     )}
 
-
-    <ProtectedRoute>
-      <LoadScript
-        id="script-loader"
-        googleMapsApiKey={`${process.env.NEXT_PUBLIC_GOOGLEKEY}`}
-        language="en"
-        region="us"
-        libraries={["drawing"]}
-      >
-        <UserProvider>
+    <UserProvider>
+      <ProtectedRoute>
+        <LoadScript
+          id="script-loader"
+          googleMapsApiKey={`${process.env.NEXT_PUBLIC_GOOGLEKEY}`}
+          language="en"
+          region="us"
+          libraries={["drawing"]}
+        >
           {showHeader && <Header />}
           <Component {...pageProps} />
           <ToastContainer />
-        </UserProvider>
-      </LoadScript>
-    </ProtectedRoute>
+        </LoadScript>
+      </ProtectedRoute>
+    </UserProvider>
 
     {/* </LoadScript> */}
   </main>

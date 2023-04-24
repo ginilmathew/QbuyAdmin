@@ -54,20 +54,20 @@ const VendorProfile = () => {
       align: 'center',
 
     },
-    {
-      field: 'Category',
-      headerName: 'Category',
-      flex: 1,
-      headerAlign: 'center',
-     
-      renderCell: ({ row }) => (
-        <>
-          {row?.category_id?.map((res: any) => (
-            <Typography>{res?.name},</Typography>
-          ))}
-        </>
-      )
-    },
+    // {
+    //   field: 'Category',
+    //   headerName: 'Category',
+    //   flex: 1,
+    //   headerAlign: 'center',
+
+    //   renderCell: ({ row }) => (
+    //     <>
+    //       {row?.category_id?.map((res: any) => (
+    //         <Typography>{res?.name},</Typography>
+    //       ))}
+    //     </>
+    //   )
+    // },
     {
       field: 'Actions',
       headerName: 'Actions',
@@ -77,7 +77,7 @@ const VendorProfile = () => {
       renderCell: ({ row }) => (
         <Stack alignItems={'center'} gap={1} direction={'row'}>
           <RemoveRedEyeIcon
-
+            onClick={() => viewvendorDetails(row?._id)}
             style={{
               color: '#58D36E',
               cursor: 'pointer'
@@ -89,6 +89,11 @@ const VendorProfile = () => {
   ];
 
 
+
+  const viewvendorDetails = (id: any) => {
+    router.push(`/vendor/view/${id}`)
+
+  }
   console.log({ vendorList })
 
   const rows = [
@@ -109,13 +114,13 @@ const VendorProfile = () => {
   const fetchVendorList = useCallback(async () => {
     try {
       setLoading(true)
-      const response = await fetchData('/admin/vendor/list')
+      const response = await fetchData(`/admin/vendor/list/${process.env.NEXT_PUBLIC_TYPE}`)
       setVendorList(response?.data?.data)
       setSearchList(response?.data?.data)
     }
     catch (err: any) {
       setLoading(false)
-      toast.error(err)
+      toast.error(err?.message)
     }
     finally {
       setLoading(false)

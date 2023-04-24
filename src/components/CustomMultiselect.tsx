@@ -63,6 +63,7 @@ const CustomMultiselect = ({ fieldLabel, control, error, fieldName, readOnly, mu
                 <Controller
                     name={fieldName}
                     control={control}
+                    
                     render={({ field: { onBlur, onChange } }) => (
                         <Select
                             open={open}
