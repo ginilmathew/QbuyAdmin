@@ -154,7 +154,6 @@ const ProductForm = ({ res }: props) => {
     const [varientsarray, setVarientsArray] = useState<any>([])
     const [vendorlistDirection, setVendorListDirection] = useState<any>([])
 
-    console.log({ vendorlistDirection })
 
 
 
