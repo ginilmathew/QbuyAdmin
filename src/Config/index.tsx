@@ -4,7 +4,7 @@
 
 // 1- corporate, 2-ta, 3-customer, 4 -supplier
 
-export const env = "testing"
+export const env = "dev"
 
 const URLS = {
     live: "https://api.qbuygreen.com/public/api/",
