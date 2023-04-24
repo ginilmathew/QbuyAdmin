@@ -352,8 +352,8 @@ const Vendorform = ({ res, view }: props) => {
 
             let paths = resData?.delivery_location?.map((loc: any) => {
                 return {
-                    lat: loc[0],
-                    lng: loc[1]
+                    lat: parseFloat(loc[0]),
+                    lng: parseFloat(loc[1])
                 }
             })
             setPaths(paths)
