@@ -505,8 +505,8 @@ const ProductForm = ({ res }: props) => {
             setValue('delivery_locations', res?.delivery_location)
             let paths = res?.delivery_locations?.map((loc: any) => {
                 return {
-                    lat: loc[0],
-                    lng: loc[1]
+                    lat: parseFloat(loc[0]),
+                    lng: parseFloat(loc[1])
                 }
             })
             setPaths(paths)
@@ -909,7 +909,7 @@ const ProductForm = ({ res }: props) => {
 
         }
 
-        console.log({ varientsarray }, 'varient array.......')
+      
 
         const metatagsres = metaTagValue?.map((res: any) => (
             res.title
