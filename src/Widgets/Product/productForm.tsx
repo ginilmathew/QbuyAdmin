@@ -502,7 +502,7 @@ const ProductForm = ({ res }: props) => {
             setValue('stock_value', res?.stock_value)
             setValue('minimum_qty', res?.minimum_qty)
             setImagePreview(`${IMAGE_URL}${res?.product_image}`)
-            setValue('delivery_locations', res?.delivery_location)
+    
             let paths = res?.delivery_locations?.map((loc: any) => {
                 return {
                     lat: parseFloat(loc[0]),
@@ -510,6 +510,7 @@ const ProductForm = ({ res }: props) => {
                 }
             })
             setPaths(paths)
+            setValue('delivery_locations', paths)
             setValue('product_availability_from', moment(res?.product_availability_from, 'HH:mm'))
             setValue('product_availability_to', moment(res?.product_availability_to, 'HH:mm'))
             setValue('require_shipping', res?.require_shipping)
