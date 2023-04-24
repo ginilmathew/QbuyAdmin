@@ -7,9 +7,10 @@ import { useRouter } from 'next/router';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
-import { fetchData } from '@/CustomAxios';
+import { fetchData, postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import CustomDelete from '@/Widgets/CustomDelete';
+import CustomSwitch from '@/components/CustomSwitch';
 
 const Franchise = () => {
 
@@ -21,8 +22,6 @@ const Franchise = () => {
     const [serachList, setSearchList] = useState<any>([])
     const [pending, startTransition] = useTransition();
 
-
-     console.log({franchiseList})
 
     const handleClose = () => {
         setOpen(false)
@@ -95,12 +94,21 @@ const Franchise = () => {
 
         },
         {
-            field: 'status',
+            field: 'Status',
             headerName: 'Status',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            renderCell: ({ row }) => (
+                <Stack alignItems={'center'} gap={1} direction={'row'}>
+                    <CustomSwitch
+                        changeRole={(e: any) => OnchangeCheck(e, row?._id)}
+                        checked={row?.status === 'active' ? true : false}
 
+                    />
+
+                </Stack>
+            )
         },
         {
             field: 'Action',
@@ -110,29 +118,76 @@ const Franchise = () => {
             align: 'center',
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
-                    <RemoveRedEyeIcon
-                        onClick={() => viewFranchise(row?._id)}
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }} />
-                    <BorderColorTwoToneIcon
-                        onClick={() => EditFranchise(row?._id)}
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }}
-                    />
-                    <DeleteOutlineTwoToneIcon
-                        onClick={() => handleOpen(row?._id)}
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }} />
+                    {row?.status === "active" ?
+                        <>
+                            <RemoveRedEyeIcon
+                                onClick={() => viewFranchise(row?._id)}
+                                style={{
+                                    color: '#58D36E',
+                                    cursor: 'pointer'
+                                }} />
+                            <BorderColorTwoToneIcon
+                                onClick={() => EditFranchise(row?._id)}
+                                style={{
+                                    color: '#58D36E',
+                                    cursor: 'pointer'
+                                }}
+                            />
+                            <DeleteOutlineTwoToneIcon
+                                onClick={() => handleOpen(row?._id)}
+                                style={{
+                                    color: '#58D36E',
+                                    cursor: 'pointer'
+                                }} /></> :
+                        <>
+                            <RemoveRedEyeIcon
+                           
+                                style={{
+                                    color: 'grey',
+                           
+                                }} />
+                            <BorderColorTwoToneIcon
+                            
+                                style={{
+                                    color: 'grey',
+                           
+                                }}
+                            />
+                            <DeleteOutlineTwoToneIcon
+                           
+                                style={{
+                                    color: 'grey',
+                           
+                                }} />
+                        </>
+                    }
                 </Stack>
             )
         }
     ];
+
+
+
+
+    const OnchangeCheck = async (e: any, id: string) => {
+
+        let value = {
+            id: id,
+            status: e.target.checked === true ? "active" : "inactive"
+        }
+        try {
+            setLoading(true)
+            await postData('admin/franchise/status', value)
+            getFranchiseList()
+        }
+        catch (err: any) {
+            toast.warning(err?.message)
+        } finally {
+            setLoading(false)
+
+        }
+
+    }
 
     const addvaendor = () => {
         router.push('/franchise/addFranchise')
@@ -181,7 +236,7 @@ const Franchise = () => {
                 _id={_id}
                 setData={setFranchiseList}
                 data={franchiseList}
-                url={`/admin/category/delete/${_id}`}
+                url={`admin/franchise/delete/${_id}`}
                 onClose={handleClose}
                 open={open} />}
         </Box>
