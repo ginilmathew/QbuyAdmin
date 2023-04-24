@@ -16,6 +16,7 @@ const VendorSignup = () => {
 
     const router = useRouter();
 
+
     const [vendorList, setVendorList] = useState([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(false);
@@ -150,6 +151,9 @@ const VendorSignup = () => {
         }
 
     }, [vendorList])
+
+
+
 
 
     const searchVendor = useCallback((value: any) => {
