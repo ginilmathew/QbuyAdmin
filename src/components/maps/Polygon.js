@@ -42,7 +42,7 @@ const Polygons = ({ onComplete, path }) => {
         let latlongs = []
         let coords = polygon.getPath().getArray()
         coords.map(latlng => {
-            latlongs.push([latlng.lat().toFixed(6), latlng.lng().toFixed(6)])
+            latlongs.push([parseFloat(latlng.lat().toFixed(6)), parseFloat(latlng.lng().toFixed(6))])
         })
         onComplete(latlongs)
 
