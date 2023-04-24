@@ -152,12 +152,14 @@ const ProductForm = ({ res }: props) => {
     const [paths, setPaths] = useState<any>(null)
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
+    const [vendorlistDirection, setVendorListDirection] = useState<any>([])
+
+    console.log({ vendorlistDirection })
 
 
 
 
-
-    console.log({ varientsarray },'HEADING')
+ 
 
     const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
     const schema = yup
@@ -319,7 +321,12 @@ const ProductForm = ({ res }: props) => {
                 id: get?._id,
                 name: get?.store_name
             }
+
         ))
+
+        let findresult = vendorList?.filter((res: any) => res?._id === e.target.value)
+        setVendorListDirection(findresult)
+     
         setValue('commission', result[0]?.commision)
         setValue('store', e.target.value)
         setError('store', { message: '' })
@@ -568,10 +575,10 @@ const ProductForm = ({ res }: props) => {
 
             setValue('commission', res?.commision)
             setValue('regular_price', res?.seller_price)
-            setValue('seller_price',res?.regular_price)
+            setValue('seller_price', res?.regular_price)
             setValue('offer_price', res?.offer_price)
-            setValue('offer_date_from', moment(res?.offer_date_from,'YYYY-MM-DD'))
-            setValue('offer_date_to',moment(res?.offer_date_from,'YYYY-MM-DD'))
+            setValue('offer_date_from', moment(res?.offer_date_from, 'YYYY-MM-DD'))
+            setValue('offer_date_to', moment(res?.offer_date_from, 'YYYY-MM-DD'))
 
         }
 
@@ -903,7 +910,7 @@ const ProductForm = ({ res }: props) => {
 
         }
 
-        console.log({ varientsarray },'varient array.......')
+        console.log({ varientsarray }, 'varient array.......')
 
         const metatagsres = metaTagValue?.map((res: any) => (
             res.title
@@ -966,7 +973,7 @@ const ProductForm = ({ res }: props) => {
             product_availability_from: data?.product_availability_from ? moment(data?.product_availability_from, 'hh:mm A').format('hh:mm') : null,
             product_availability_to: data?.product_availability_to ? moment(data?.product_availability_to, 'hh:mm A').format('hh:mm') : null,
             require_shipping: data?.require_shipping,
-            delivery_locations: data?.delivery_locations ? data?.delivery_locations : vendorList?.[0]?.delivery_location,
+            delivery_locations: data?.delivery_locations ? data?.delivery_locations : vendorlistDirection?.[0]?.delivery_location,
             coupon_details: null,
             meta_tags: metatagsres,
             video_link: data?.video_link,
@@ -1013,7 +1020,7 @@ const ProductForm = ({ res }: props) => {
             setLoading(false)
 
         } finally {
-          
+
             setLoading(false)
         }
     }
