@@ -157,7 +157,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                 <Grid item lg={1.5} xs={12}>
                     < DatePickers
                         values={getValues('offer_date_from')}
-                        changeValue={(e: any) => onChange(e, 'offer_date_from')}
+                        changeValue={(e: any) => onChange(moment(e,'YYYY-MM-DD').format('YYYY-MM_DD'), 'offer_date_from')}
                         fieldName='offer_date_from'
                         error={errors.offer_date_from}
                         fieldLabel={'Offer From'}
@@ -167,7 +167,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                 <Grid item lg={1.5} xs={12}>
                     <DatePickers
                         values={getValues('offer_date_to')}
-                        changeValue={(e: any) => onChange(e, 'offer_date_to')}
+                        changeValue={(e: any) => onChange(moment(e,'YYYY-MM-DD').format('YYYY-MM-DD'), 'offer_date_to')}
                         fieldName='offer_date_to'
                         error={errors.offer_date_to}
                         fieldLabel={'Offer To'}

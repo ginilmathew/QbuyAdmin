@@ -43,7 +43,7 @@ type props = {
 
 const FranchiseForm = ({ res, view }: props) => {
     let dataRes = res ? res : view
-    console.log({ view })
+    console.log({ dataRes })
 
     const [paths, setPaths] = useState(null)
 
@@ -133,15 +133,14 @@ const FranchiseForm = ({ res, view }: props) => {
             setValue('mobile', data?.mobile)
             setValue('address', data?.address)
             setValue('franchisee_commission', data?.franchisee_commission)
-        
-            let paths = data?.delivery_location?.map((loc: any) => {
-                return {
-                    lat: parseFloat(loc[0]),
-                    lng: parseFloat(loc[1])
-                }
-            })
-            setPaths(paths)
-            setValue('coordinates', paths)
+                let paths = data?.delivery_location?.map((loc: any) => {
+                    return {
+                        lat: parseFloat(loc[0]),
+                        lng: parseFloat(loc[1])
+                    }
+                })
+                setPaths(paths)
+            setValue('coordinates', data?.delivery_location)
         }
     }, [res, view])
 

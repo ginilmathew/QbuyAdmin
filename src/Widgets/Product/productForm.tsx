@@ -118,11 +118,13 @@ type IFormInput = {
 
 type props = {
     res?: any
+    view?: any
 }
 
 const ProductForm = ({ res }: props) => {
 
-    console.log({ res }, 'PRODUCT RESPONSE')
+    console.log({ res })
+
     const router = useRouter()
 
 
@@ -158,7 +160,6 @@ const ProductForm = ({ res }: props) => {
 
 
 
- 
 
     const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
     const schema = yup
@@ -325,7 +326,7 @@ const ProductForm = ({ res }: props) => {
 
         let findresult = vendorList?.filter((res: any) => res?._id === e.target.value)
         setVendorListDirection(findresult)
-     
+
         setValue('commission', result[0]?.commision)
         setValue('store', e.target.value)
         setError('store', { message: '' })
@@ -502,7 +503,7 @@ const ProductForm = ({ res }: props) => {
             setValue('stock_value', res?.stock_value)
             setValue('minimum_qty', res?.minimum_qty)
             setImagePreview(`${IMAGE_URL}${res?.product_image}`)
-    
+
             let paths = res?.delivery_locations?.map((loc: any) => {
                 return {
                     lat: parseFloat(loc[0]),
@@ -510,7 +511,7 @@ const ProductForm = ({ res }: props) => {
                 }
             })
             setPaths(paths)
-            setValue('delivery_locations', paths)
+            setValue('delivery_locations', res?.delivery_locations)
             setValue('product_availability_from', moment(res?.product_availability_from, 'HH:mm'))
             setValue('product_availability_to', moment(res?.product_availability_to, 'HH:mm'))
             setValue('require_shipping', res?.require_shipping)
@@ -549,7 +550,7 @@ const ProductForm = ({ res }: props) => {
                 })
             }
 
-            let myvaarientArray: { title: any; variant_id: string; attributs: any; seller_price: any; regular_price: string; offer_price: string; offer_date_from: string; offer_date_to: string; stock: boolean; stock_value: string; commission: number; fixed_delivery_price: number; }[] = []
+            let myvaarientArray: { title: any; variant_id: string; attributs: any; seller_price: any; regular_price: string; offer_price: string; offer_date_from: any; offer_date_to: any; stock: boolean; stock_value: string; commission: number; fixed_delivery_price: number; }[] = []
             if (res?.variants?.length > 0) {
                 res?.variants?.map((item: any) => {
                     myvaarientArray.push({
@@ -559,12 +560,12 @@ const ProductForm = ({ res }: props) => {
                         seller_price: item?.regular_price,
                         regular_price: item?.seller_price,
                         offer_price: item?.offer_price,
-                        offer_date_from: '',
-                        offer_date_to: '',
+                        offer_date_from: moment(item?.offer_date_from, 'YYYY-MM-DD').format('YYYY-MM-DD'),
+                        offer_date_to: moment(res?.offer_date_to,'YYYY-MM-DD').format('YYYY-MM-DD'),
                         stock: item?.stock,
                         stock_value: item?.stock_value,
-                        commission: 0,
-                        fixed_delivery_price: 0
+                        commission: item?.commission,
+                        fixed_delivery_price: item?.fixed_delivery_price
 
                     })
                     setVarientsArray(myvaarientArray)
@@ -578,7 +579,7 @@ const ProductForm = ({ res }: props) => {
             setValue('seller_price', res?.regular_price)
             setValue('offer_price', res?.offer_price)
             setValue('offer_date_from', moment(res?.offer_date_from, 'YYYY-MM-DD'))
-            setValue('offer_date_to', moment(res?.offer_date_from, 'YYYY-MM-DD'))
+            setValue('offer_date_to', moment(res?.offer_date_to, 'YYYY-MM-DD'))
 
         }
 
@@ -781,10 +782,7 @@ const ProductForm = ({ res }: props) => {
 
 
     useEffect(() => {
-
         addvarients()
-
-
     }, [index])
 
 
@@ -843,6 +841,7 @@ const ProductForm = ({ res }: props) => {
     //posting products ...................................................................................................
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+
 
 
         let franchiseData = franchiseList?.filter((res: any) => res?._id === franchiseSelect).map((get: any) => (
@@ -910,7 +909,7 @@ const ProductForm = ({ res }: props) => {
 
         }
 
-      
+
 
         const metatagsres = metaTagValue?.map((res: any) => (
             res.title
@@ -984,7 +983,7 @@ const ProductForm = ({ res }: props) => {
             offer_price: data?.offer_price,
             commission: data?.regular_price ? 0 : data?.commission,
             fixed_delivery_price: data?.fixed_delivery_price,
-            offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
+            offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from,'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             variant: varientsarray?.length > 0 ? true : false,
             variants: varientsarray,
@@ -993,36 +992,36 @@ const ProductForm = ({ res }: props) => {
         if (res) {
             value["id"] = res?._id;
         }
-        try {
-            setLoading(true)
-            await postData(res ? EDIT_URL : CREATE_URL, value)
-            reset()
-            setFranchiseSelect(null)
-            setCategorySelect(null)
-            //setSelectType(null)
-            setImagefile(null)
-            setSubCategorySelect(null)
-            setvendorSelect(null)
-            //setConfirmBtn(false)
-            setVarientsArray([])
-            setmetaTagValue([])
-            setMetaTag([])
-            setattributeTag([])
-            setAttributes([])
-            setRequireShipping(false)
-            setMultipleImage([])
-            toast.success(res ? 'Updated Successfully' : 'Created Successfully')
-            if (res) {
-                router?.push('/products')
+            try {
+                setLoading(true)
+                await postData(res ? EDIT_URL : CREATE_URL, value)
+                reset()
+                setFranchiseSelect(null)
+                setCategorySelect(null)
+                //setSelectType(null)
+                setImagefile(null)
+                setSubCategorySelect(null)
+                setvendorSelect(null)
+                //setConfirmBtn(false)
+                setVarientsArray([])
+                setmetaTagValue([])
+                setMetaTag([])
+                setattributeTag([])
+                setAttributes([])
+                setRequireShipping(false)
+                setMultipleImage([])
+                toast.success(res ? 'Updated Successfully' : 'Created Successfully')
+                if (res) {
+                    router?.push('/products')
+                }
+            } catch (err: any) {
+                toast.error(err?.message)
+                setLoading(false)
+
+            } finally {
+
+                setLoading(false)
             }
-        } catch (err: any) {
-            toast.error(err?.message)
-            setLoading(false)
-
-        } finally {
-
-            setLoading(false)
-        }
     }
 
 
@@ -1031,6 +1030,7 @@ const ProductForm = ({ res }: props) => {
     const changeAttributeValues = (i: number, key: string, values: any) => {
         varientsarray[i][key] = values
         setVarientsArray([...varientsarray])
+
     }
 
     return (

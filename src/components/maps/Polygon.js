@@ -65,6 +65,7 @@ const Polygons = ({ onComplete, path }) => {
 
 
     const onLoad = (polygon) => {
+        console.log({polygon})
         setPolygonRef(polygon)
     };
 
