@@ -72,7 +72,7 @@ const CustomDelete = ({ open, onClose, url, setData, data, _id }: SimpleDialogPr
                     <Custombutton
                         disabled={loading}
                         btncolor=''
-                        height={40}
+                        height={'100%'}
                         IconEnd={""}
                         IconStart={''}
                         startIcon={false}

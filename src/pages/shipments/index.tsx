@@ -96,36 +96,36 @@ const Shipments = () => {
             align: 'center',
 
         },
-        {
-            field: 'Actions',
-            headerName: 'Actions',
-            width: 200,
-            headerAlign: 'center',
-            align: 'center',
-            renderCell: ({ row }) => (
-                <Stack alignItems={'center'} gap={1} direction={'row'}>
-                    <RemoveRedEyeIcon
+        // {
+        //     field: 'Actions',
+        //     headerName: 'Actions',
+        //     width: 200,
+        //     headerAlign: 'center',
+        //     align: 'center',
+        //     renderCell: ({ row }) => (
+        //         <Stack alignItems={'center'} gap={1} direction={'row'}>
+        //             <RemoveRedEyeIcon
 
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }} />
-                    <BorderColorTwoToneIcon
+        //                 style={{
+        //                     color: '#58D36E',
+        //                     cursor: 'pointer'
+        //                 }} />
+        //             <BorderColorTwoToneIcon
 
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }}
-                    />
-                    <DeleteOutlineTwoToneIcon
+        //                 style={{
+        //                     color: '#58D36E',
+        //                     cursor: 'pointer'
+        //                 }}
+        //             />
+        //             <DeleteOutlineTwoToneIcon
 
-                        sx={{
-                            color: '#58D36E',
-                            cursor: 'pointer',
-                        }} />
-                </Stack>
-            )
-        }
+        //                 sx={{
+        //                     color: '#58D36E',
+        //                     cursor: 'pointer',
+        //                 }} />
+        //         </Stack>
+        //     )
+        // }
     ];
 
 

@@ -88,7 +88,7 @@ const CategoryForm = ({ resData, view }: props) => {
     }
 
     const imageUploder = (file: any) => {
-    
+
         if (file.size <= 1000000) {
             setImagefile(file)
             setImagePreview(null)
@@ -101,7 +101,7 @@ const CategoryForm = ({ resData, view }: props) => {
             toast.warning('Image should be less than or equal 1MB')
         }
 
-     
+
 
     }
 
@@ -265,10 +265,6 @@ const CategoryForm = ({ resData, view }: props) => {
                         label={resData ? 'update' : ' Add Category'}
                         onClick={handleSubmit(onSubmit)} />
                 </Box>}
-
-
-
-
         </Box>
     )
 }
