@@ -31,7 +31,7 @@ import Attributes from './Attributes'
 import { useRouter } from 'next/router';
 import CustomTagInputValue from '@/components/CustomTagInputValue';
 import CustomAutoCompleteSearch from '@/components/CustomAutoCompleteSearch';
-
+import ClearIcon from '@mui/icons-material/Clear';
 type Inputs = {
     name: string,
     description: string,
@@ -125,7 +125,7 @@ type props = {
 
 const ProductForm = ({ res, view }: props) => {
     let resDate = res ? res : view;
-    console.log({ res })
+    console.log({ resDate })
 
     const router = useRouter()
 
@@ -156,7 +156,9 @@ const ProductForm = ({ res, view }: props) => {
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
     const [vendorlistDirection, setVendorListDirection] = useState<any>([])
-    const [multpleArray, setMultipleArray] = useState<any>([]);
+    const [recomendedProductList, setRecomendedProductList] = useState<any>([]);
+    const [recomendedProductArray, setRecomendedProductArray] = useState<any>([]);
+    const [recomendedProductEditList, setRecomendedProductEditList] = useState<any>([]);
 
     const schema = yup
         .object()
@@ -173,7 +175,6 @@ const ProductForm = ({ res, view }: props) => {
             // seller_price: attributes.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
 
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
-
         })
         .required();
 
@@ -304,7 +305,15 @@ const ProductForm = ({ res, view }: props) => {
         try {
             setLoading(true)
             const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
+            const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${e.target.value}`)
             setVendorList(response?.data?.data)
+            let result = recomendedProduct?.data?.data.map((res: any) => ({
+                _id: res?._id,
+                title: `${res?.name}-${res?.product_id}`,
+                product_id: res?.product_id,
+                store: res?.store?.name
+            }))
+            setRecomendedProductList(result)
         } catch (err: any) {
             toast.error(err.message)
             setLoading(false)
@@ -312,6 +321,7 @@ const ProductForm = ({ res, view }: props) => {
             setLoading(false)
 
         }
+
 
     }
 
@@ -332,7 +342,6 @@ const ProductForm = ({ res, view }: props) => {
 
         let findresult = vendorList?.filter((res: any) => res?._id === e.target.value)
         setVendorListDirection(findresult)
-
         setValue('commission', result[0]?.commision)
         setValue('store', e.target.value)
         setError('store', { message: '' })
@@ -358,6 +367,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const onSelectCategory = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setCategorySelect(e.target.value)
+
         setValue('category', e.target.value)
         setError('category', { message: '' })
         setSubCategoryList([])
@@ -451,31 +461,25 @@ const ProductForm = ({ res, view }: props) => {
     //Related products...................................................................... `
 
 
-    const onChangeMultiple = (event: any) => {
-        const {
-            target: { value },
-        } = event;
-
-        setMultipleArray(
-            values
-        );
-
-    }
-
     //edit product details..................................................................
 
 
 
     useEffect(() => {
         if (resDate) {
-
-
-
             const getvendorlist = async () => {
                 try {
                     const response = await fetchData(`admin/vendor-list/${resDate?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
-
+                    const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${resDate?.franchisee?._id}`)
+                    let result = recomendedProduct?.data?.data.map((res: any) => ({
+                        _id: res?._id,
+                        title: `${res?.name}-${res?.product_id}`,
+                        product_id: res?.product_id,
+                        store: res?.store?.name
+                    }))
+                    setRecomendedProductList(result)
                     setVendorList(response?.data?.data)
+                    setCategoryList(response?.data?.data?.[0]?.category_id)
                     setValue('franchisee', resDate?.franchisee?._id)
                 } catch (err: any) {
                     toast.error(err?.message)
@@ -492,6 +496,7 @@ const ProductForm = ({ res, view }: props) => {
             }
             getSubcategory()
             getvendorlist()
+            setRecomendedProductEditList(res?.related_products)
             setValue('name', resDate?.name)
             setValue('franchisee', resDate?.franchisee?._id)
             setFranchiseSelect(resDate?.franchisee?._id)
@@ -523,7 +528,7 @@ const ProductForm = ({ res, view }: props) => {
             })
             setPaths(paths)
             setValue('delivery_locations', resDate?.delivery_locations)
-            setValue('product_availability_from', moment(resDate?.product_availability_from, 'HH:mm'))
+            setValue('product_availability_from', moment(resDate?.product_availability_from, ))
             setValue('product_availability_to', moment(resDate?.product_availability_to, 'HH:mm'))
             setValue('require_shipping', resDate?.require_shipping)
             setRequireShipping(resDate?.require_shipping)
@@ -566,8 +571,8 @@ const ProductForm = ({ res, view }: props) => {
                         seller_price: item?.regular_price,
                         regular_price: item?.seller_price,
                         offer_price: item?.offer_price,
-                        offer_date_from: moment(item?.offer_date_from, 'YYYY-MM-DD').format('YYYY-MM-DD'),
-                        offer_date_to: moment(res?.offer_date_to, 'YYYY-MM-DD').format('YYYY-MM-DD'),
+                        offer_date_from: moment(item?.offer_date_from, 'YYYY-MM-DD'),
+                        offer_date_to: moment(res?.offer_date_to, 'YYYY-MM-DD'),
                         stock: item?.stock,
                         stock_value: item?.stock_value,
                         commission: item?.commission,
@@ -577,9 +582,6 @@ const ProductForm = ({ res, view }: props) => {
                     setVarientsArray(myvaarientArray)
                 })
             }
-
-
-
             setValue('commission', resDate?.commision)
             setValue('regular_price', resDate?.seller_price)
             setValue('seller_price', resDate?.regular_price)
@@ -594,7 +596,7 @@ const ProductForm = ({ res, view }: props) => {
 
     useEffect(() => {
         getFranchiseList()
-        fetchCategoryList()
+        // fetchCategoryList()
     }, [])
 
 
@@ -856,9 +858,31 @@ const ProductForm = ({ res, view }: props) => {
         setValue('meta_tags', res)
     }
 
+
+    const onChangeRelatedproduct = (value: any) => {
+        let result = value && value?.map((res: any) => ({
+            _id: res?._id,
+            name: res?.title
+         }
+        ))
+       
+        setRecomendedProductArray(result)
+    }
+
+
+    const deleteRelatedProduct =(id:any)=>{
+        let result = recomendedProductEditList?.filter((res:any)=>res?._id !== id)
+        setRecomendedProductEditList(result)
+
+    }
+
     //posting products ...................................................................................................
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+
+
+        console.log({ recomendedProductArray })
+
 
 
 
@@ -871,9 +895,9 @@ const ProductForm = ({ res, view }: props) => {
 
 
 
-        let categoryData = categoryList?.filter((res: any) => res?._id === categorySelect).map((get: any) => (
+        let categoryData = categoryList?.filter((res: any) => res?.id === categorySelect).map((get: any) => (
             {
-                id: get?._id,
+                id: get?.id,
                 name: get?.name,
                 image: get?.image
             }
@@ -926,18 +950,6 @@ const ProductForm = ({ res, view }: props) => {
             }
 
         }
-
-
-
-
-
-
-        let newData = attributes.map((item: any) => ({
-            "name": item.name,
-            "options": item.options.map((option: any) => option.title),
-            "variant": item.varient
-        }));
-
         //to FILTER THE EMPTY OBJECTS FROM AN vARIENT ARRAY...............
         let varientarrayfilter = null
         varientarrayfilter = varientsarray?.length > 0 && varientsarray?.filter((vari: any) => vari.seller_price !== '')
@@ -966,7 +978,7 @@ const ProductForm = ({ res, view }: props) => {
             },
             model: data?.model,
             type: process.env.NEXT_PUBLIC_TYPE,
-            product_Type: null,
+            product_type: null,
             image: imagearray?.length > 0 ? imagearray : defaultImage,
             product_image: data?.product_image,
             category: {
@@ -976,7 +988,7 @@ const ProductForm = ({ res, view }: props) => {
             },
             sub_category: data?.sub_category ? {
                 _id: subCategoryData?.[0]?.id,
-                name: subCategoryData?.[0]?.name
+                name: subCategoryData?.[0]?.names
             } : null,
             display_order: parseInt(data?.display_order),
             panda_suggession: data?.panda_suggession,
@@ -990,7 +1002,7 @@ const ProductForm = ({ res, view }: props) => {
             coupon_details: null,
             meta_tags: metaTag,
             video_link: data?.video_link,
-            related_products: data?.related_products,
+            related_products: recomendedProductArray,
             attributess: attributes,
             regular_price: data?.seller_price,
             seller_price: data?.regular_price,
@@ -1199,8 +1211,9 @@ const ProductForm = ({ res, view }: props) => {
                                 background={'#fff'}
                                 disabled={view ? true : false}
                             >
+                                <MenuItem value=""></MenuItem>
                                 {categoryList && categoryList?.map((res: any) => (
-                                    <MenuItem value={res?._id}>{res?.name}</MenuItem>
+                                    <MenuItem value={res?.id}>{res?.name}</MenuItem>
                                 ))}
 
                             </Customselect>
@@ -1532,7 +1545,7 @@ const ProductForm = ({ res, view }: props) => {
                                         <Box>
                                             <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 130, height: 130, }} />
                                         </Box>
-                                    ))}  view={view ? true : false}
+                                    ))}
                                 </Box>
                             </>
                         }
@@ -1540,8 +1553,12 @@ const ProductForm = ({ res, view }: props) => {
                         {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />}
                     </Grid>
                     <Grid item xs={12} lg={6}>
-
-                        <CustomAutoCompleteSearch fieldLabel={"Related Products"} />
+                        {res && 
+                        <Box display={'flex'} sx={{gap:1}} flexWrap={'wrap'} >
+                            {recomendedProductEditList?.map((res:any)=>(
+                              <Typography p={1} sx={{background:'#f5f5f5',display:'flex',alignItems:'center',gap:1}}>{res?.name}<ClearIcon onClick={()=>deleteRelatedProduct(res?._id)} sx={{fontSize:'18px',color:'red',cursor:'pointer'}}/></Typography>))}
+                        </Box> }
+                        <CustomAutoCompleteSearch onChange={onChangeRelatedproduct} list={recomendedProductList} fieldLabel={"Related Products"} />
                         {/* <CustomInput
                             disabled={false}
                             type='text'

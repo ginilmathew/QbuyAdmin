@@ -88,7 +88,7 @@ const Vendorform = ({ res, view }: props) => {
 
     const router = useRouter();
 
-    console.log({ resData })
+
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [category, setCategory] = useState<string>('')
@@ -153,8 +153,8 @@ const Vendorform = ({ res, view }: props) => {
                 store_address: resData ? resData?.store_address : '',
                 franchise_id: resData ? resData?.franchise_id : '',
                 category_id: resData ? resData?.category_id : '',
-                start_time: resData ? resData?.start_time : '',
-                end_time: resData ? resData?.end_time : '',
+                start_time: resData ? moment(resData?.start_time,'HH:mm') : '',
+                end_time: resData ? moment(resData?.end_time,'HH:mm')  : '',
                 license_number: resData ? resData?.kyc_details?.license_number : '',
                 ffsai_number: resData ? resData?.kyc_details?.ifsc : '',
                 pan_card_number: resData ? resData?.kyc_details?.pan_card_number : '',
@@ -333,8 +333,8 @@ const Vendorform = ({ res, view }: props) => {
             setCategory(resData?.category_id)
             setValue('store_logo', resData?.store_logo)
             setImagePreview(`${IMAGE_URL}${resData?.store_logo}`)
-            setValue('start_time', moment(resData?.start_time, 'HH:mm A'))
-            setValue('end_time', moment(resData?.end_time, 'HH:mm A'))
+            setValue('start_time', moment(resData?.start_time,'HH:mm'))
+            setValue('end_time', moment(resData?.end_time, 'HH:mm'))
             setValue('license_number', resData?.kyc_details?.license_number)
             setValue('ffsai_number', resData?.kyc_details?.ffsai_number)
             setValue('pan_card_number', resData?.kyc_details?.pan_card_number)
@@ -361,7 +361,7 @@ const Vendorform = ({ res, view }: props) => {
             setValue('coordinates', res?.delivery_location)
 
         }
-    }, [resData])
+    }, [resData, res])
 
 
 
@@ -389,10 +389,10 @@ const Vendorform = ({ res, view }: props) => {
         let find = getcategory?.filter((res: any, I: number) => event.target.value.includes(res._id))
         let data = find?.map((res: any) => ({
             id: res?._id,
-            name: res?.name
+            name: res?.name,
+            image: res?.image
 
         }))
-
 
         if (data) {
             setValue('category_id', data)
