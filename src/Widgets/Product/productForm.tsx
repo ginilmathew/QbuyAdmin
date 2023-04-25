@@ -509,7 +509,9 @@ const ProductForm = ({ res }: props) => {
                     lng: parseFloat(loc[1])
                 }
             })
-            setPaths(paths)
+            setPaths(res?.delivery_locations?.map((loc: any) => {
+                return [parseFloat(loc[0]), parseFloat(loc[1])]
+            }))
             setValue('delivery_locations', paths)
             setValue('product_availability_from', moment(res?.product_availability_from, 'HH:mm'))
             setValue('product_availability_to', moment(res?.product_availability_to, 'HH:mm'))
