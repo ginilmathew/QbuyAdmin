@@ -735,7 +735,7 @@ const ProductForm = ({ res, view }: props) => {
                     offer_date_to: '',
                     stock: true,
                     stock_value: '',
-                    commission: 0,
+                    commission: getValues('commission'),
                     fixed_delivery_price: 0
                 }
             })
