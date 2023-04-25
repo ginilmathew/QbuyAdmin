@@ -132,12 +132,12 @@ const AddProducts = () => {
             align: 'center',
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
-                    {/* <RemoveRedEyeIcon
+                    <RemoveRedEyeIcon
                         onClick={() => viewProductPage(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
-                        }} /> */}
+                        }} />
                     <BorderColorTwoToneIcon
                         onClick={() => editProductPage(row?._id)}
                         style={{

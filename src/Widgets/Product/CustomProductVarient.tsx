@@ -12,7 +12,8 @@ type props = {
     setState: any,
     state: any,
     deafultCommission:string,
-    onChange: any
+    onChange: any,
+    view?:any
 }
 
 type Input = {
@@ -29,7 +30,7 @@ type Input = {
 }
 
 
-const CustomProductVarient = memo(({ content, index, deafultCommission, onChange,state}: props) => {
+const CustomProductVarient = memo(({ content, index, deafultCommission, onChange,state,view}: props) => {
 
     console.log({state})
 
@@ -94,7 +95,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                         fieldName="seller_price"
                         placeholder={``}
                         fieldLabel={"Purchase Price"}
-                        view={false}
+                        view={view ? true : false}
                         defaultValue={state[index]?.regular_price}  
                     />
                 </Grid>
@@ -108,7 +109,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                         placeholder={``}
                         onChangeValue={(e: any) => onChange(e.target.value, 'regular_price')}
                         fieldLabel={"Selling Price"}
-                        view={false}
+                        view={view ? true : false}
                         defaultValue={state[index]?.seller_price}
                     />
                 </Grid>
@@ -123,7 +124,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                         fieldName="commission"
                         placeholder={''}
                         fieldLabel={"Commission(%)"}
-                        view={false}
+                        view={view ? true : false}
                         defaultValue={deafultCommission ? deafultCommission : 0}
                     />
                 </Grid>
@@ -136,7 +137,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                         fieldName=" fixed_delivery_price"
                         placeholder={``}
                         fieldLabel={"Fixed Delivery Price"}
-                        view={false}
+                        view={view ? true : false}
                         defaultValue={state[index]?.fixed_delivery_price}
                     />
                 </Grid>
@@ -149,7 +150,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                         fieldName="offer_price"
                         placeholder={``}
                         fieldLabel={"Offer Price"}
-                        view={false}
+                        view={view ? true : false}
                         defaultValue={state[index]?.offer_price}
                     />
                 </Grid>
@@ -162,6 +163,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                         error={errors.offer_date_from}
                         fieldLabel={'Offer From'}
                         // defaultvalue={state[index]?.}
+                    
                     />
                 </Grid>
                 <Grid item lg={1.5} xs={12}>
@@ -182,7 +184,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                         fieldName="stock_value"
                         placeholder={``}
                         fieldLabel={"Stock"}
-                        view={false}
+                        view={view ? true : false}
                         defaultValue={state[index]?.stock_value}
                     />
                 </Grid>
