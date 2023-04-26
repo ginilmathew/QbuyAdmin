@@ -18,8 +18,8 @@ interface SimpleDialogProps {
     setData: any,
     data: any,
     _id: string,
-    heading:string,
-    paragraph:string
+    heading?:string,
+    paragraph?:string
 
 }
 
