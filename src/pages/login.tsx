@@ -74,7 +74,7 @@ const Login = () => {
             router.push('/dashboard')
             toast.success(`Login Successfull`);
         } catch (error: any) {
-            toast.error(error);
+            toast.error(error?.message);
             setLoading(false)
         } finally {
             setLoading(false)

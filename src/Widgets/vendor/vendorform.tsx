@@ -23,58 +23,58 @@ import { IMAGE_URL } from '../../Config/index';
 
 
 type Inputs = {
-    vendor_name: string,
-    vendor_email: string,
-    vendor_mobile: string,
-    store_name: string,
-    store_address: string,
-    franchise_id: string,
+    vendor_name: any,
+    vendor_email: any,
+    vendor_mobile: any,
+    store_name: any,
+    store_address: any,
+    franchise_id: any,
     category_id: any,
     start_time: any,
     end_time: any,
     store_logo: any,
     coordinates: any,
-    license_number: string,
-    ffsai_number: string,
-    pan_card_number: string,
-    aadhar_card_number: string,
-    account_number: string,
-    ifsc: string,
-    branch: string,
-    recipient_name: string,
-    commission: string,
-    offer_description: string,
-    tax: string,
-    type: string,
-    display_order: string
+    license_number: any,
+    ffsai_number: any,
+    pan_card_number: any,
+    aadhar_card_number: any,
+    account_number: any,
+    ifsc: any,
+    branch: any,
+    recipient_name: any,
+    commission: any,
+    offer_description: any,
+    tax: any,
+    type: any,
+    display_order: any
 };
 
 
 type IFormInput = {
-    vendor_name: string,
-    vendor_email: string,
-    vendor_mobile: string,
-    store_name: string,
-    store_address: string,
-    franchise_id: string,
+    vendor_name: any,
+    vendor_email: any,
+    vendor_mobile: any,
+    store_name: any,
+    store_address: any,
+    franchise_id: any,
     category_id: any,
     start_time: any,
     end_time: any,
     store_logo: any,
-    license_number: string,
-    ffsai_number: string,
-    pan_card_number: string,
-    aadhar_card_number: string,
-    account_number: string,
-    ifsc: string,
-    branch: string,
-    recipient_name: string,
-    commission: string,
-    offer_description: string,
-    tax: string,
+    license_number: any,
+    ffsai_number: any,
+    pan_card_number: any,
+    aadhar_card_number: any,
+    account_number: any,
+    ifsc: any,
+    branch: any,
+    recipient_name: any,
+    commission: any,
+    offer_description: any,
+    tax: any,
     coordinates: any,
     type: string,
-    display_order: string
+    display_order: any
 };
 
 type props = {
@@ -83,11 +83,9 @@ type props = {
 }
 
 const Vendorform = ({ res, view }: props) => {
+    const resData = res ? res : view;
 
-    let resData = res ? res : view;
-
-    console.log({ resData })
-
+    console.log({resData})
     const router = useRouter();
 
 
@@ -105,7 +103,6 @@ const Vendorform = ({ res, view }: props) => {
 
 
 
-    console.log({ franchise })
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const commissionvalidation = /^(0|[1-9]\d*)$/
@@ -150,30 +147,29 @@ const Vendorform = ({ res, view }: props) => {
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
             defaultValues: {
-                vendor_name: resData ? resData?.vendor_name : '',
-                vendor_email: resData ? resData?.vendor_email : '',
-                vendor_mobile: resData ? resData?.vendor_mobile : '',
-                store_name: resData ? resData?.store_name : '',
-                store_address: resData ? resData?.store_address : '',
-                store_logo: resData ? resData?.store_logo : '',
-                franchise_id: resData ? resData?.franchise_id : '',
-                category_id: resData ? resData?.category_id : '',
-                start_time: resData ? moment(resData?.start_time, 'HH:mm') : '',
-                end_time: resData ? moment(resData?.end_time, 'HH:mm') : '',
-                license_number: resData ? resData?.kyc_details?.license_number : '',
-                ffsai_number: resData ? resData?.kyc_details?.ifsc : '',
-                pan_card_number: resData ? resData?.kyc_details?.pan_card_number : '',
-                aadhar_card_number: resData ? resData?.kyc_details?.aadhar_card_number : '',
-                account_number: resData ? resData?.kyc_details?.account_number : '',
-                ifsc: resData ? resData?.kyc_details?.ifsc : '',
-                branch: resData ? resData?.kyc_details?.branch : '',
-                recipient_name: resData ? resData?.kyc_details?.recipient_name : '',
-                commission: resData ? resData?.additional_details?.commission : '',
-                offer_description: resData ? resData?.additional_details?.offer_description : '',
-                tax: resData ? resData?.additional_details?.tax : '',
-                coordinates: resData ? resData?.delivery_location : null,
-                display_order: resData ? resData?.display_order : null,
-                type: process.env.NEXT_PUBLIC_TYPE,
+                vendor_name:null,
+                vendor_email: null,
+                vendor_mobile: null,
+                store_name: null,
+                store_address: null,
+                store_logo: null,
+                franchise_id: null,
+                category_id: null,
+                start_time: null,
+                end_time: null,
+                license_number: null,
+                ffsai_number: null,
+                pan_card_number: null,
+                aadhar_card_number: null,
+                account_number: null,
+                ifsc: null,
+                branch: null,
+                recipient_name: null,
+                commission: null,
+                offer_description: null,
+                tax: null,
+                coordinates: null,
+                display_order: null,
             }
         });
 
@@ -320,6 +316,7 @@ const Vendorform = ({ res, view }: props) => {
 
 
     useEffect(() => {
+
         let array = resData?.category_id?.map((res: any) => res?.id)
         if (resData && array) {
             setValue('vendor_name', resData?.vendor_name)
@@ -359,7 +356,7 @@ const Vendorform = ({ res, view }: props) => {
             setValue('coordinates', res?.delivery_location)
 
         }
-    }, [resData])
+    }, [res, view])
 
 
 
@@ -429,6 +426,7 @@ const Vendorform = ({ res, view }: props) => {
 
         setLoading(true)
         const formData = new FormData();
+        const type: any = process.env.NEXT_PUBLIC_TYPE;
         formData.append("vendor_name", data?.vendor_name);
         formData.append("vendor_email", data?.vendor_email);
         formData.append("vendor_mobile", data?.vendor_mobile);
@@ -440,7 +438,7 @@ const Vendorform = ({ res, view }: props) => {
         formData.append("end_time", moment(data?.end_time, 'hh:mm A').format('hh:mm'));
         formData.append("store_logo", data?.store_logo);
         formData.append("display_order", data?.display_order);
-        formData.append("type", data?.type);
+        formData.append("type", type);
         if (res) {
             formData.append("id", res?._id);
         }
@@ -508,7 +506,8 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Vendor Name"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                            defaultValue={resData?.vendor_name}
+                          
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -521,7 +520,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Email Address"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                          
                         />
 
                     </Grid>
@@ -535,7 +534,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Mobile Number"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                          
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -548,7 +547,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Display Order"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                           
                         />
                     </Grid>
                 </Grid>
@@ -566,7 +565,7 @@ const Vendorform = ({ res, view }: props) => {
                                 fieldLabel={"Store Name"}
                                 disabled={false}
                                 view={view ? true : false}
-                                defaultValue={''}
+                                
                             />
                         </Grid>
                         <Grid item xs={12} lg={7.2}>
@@ -579,7 +578,7 @@ const Vendorform = ({ res, view }: props) => {
                                 fieldLabel={"Address"}
                                 disabled={false}
                                 view={view ? true : false}
-                                defaultValue={''}
+                           
                             />
                         </Grid>
                         <Grid item xs={12} lg={3.5}>
@@ -723,7 +722,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"License Number"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                         
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -736,7 +735,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"FFSAI Number"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                         
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -749,7 +748,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"PAN Card Number"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                         
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -762,7 +761,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"AADHAR Number"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                         
                         />
                     </Grid>
                 </Grid>
@@ -778,7 +777,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Account Number"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                         
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -791,7 +790,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"IFSC"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                         
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -804,7 +803,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Branch"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                         
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -817,7 +816,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Recipient Name"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                         
                         />
                     </Grid>
 
@@ -836,7 +835,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Commission (%)"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                         
                         />
                     </Grid>
                     <Grid item xs={12} lg={7.5}>
@@ -849,7 +848,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Offer Description"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                         
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -862,7 +861,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Tax"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={''}
+                         
                         />
                     </Grid>
 

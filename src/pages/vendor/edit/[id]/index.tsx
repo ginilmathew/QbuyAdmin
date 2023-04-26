@@ -13,6 +13,11 @@ const VandorEdit = () => {
     const [vendorList, setVendorList] = useState<any>([])
 
 
+    useEffect(() => {
+        getVendorlist()
+    }, [])
+
+
 
     const getVendorlist = async () => {
         try {
@@ -26,17 +31,11 @@ const VandorEdit = () => {
             setLoading(false)
         }
     }
-
-
-    useEffect(() => {
-        getVendorlist()
-    }, [])
-
-
+   
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <CustomHeaderBack backlabel='Edit Vendor' />
-            <Vendorform res={vendorList} />
+             <Vendorform res={vendorList} /> 
         </Box>
     )
 }

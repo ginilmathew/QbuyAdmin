@@ -62,7 +62,7 @@ const Franchise = () => {
         },
         {
             field: 'owner_name',
-            headerName: 'Owner.',
+            headerName: 'Owner',
             flex: 1,
             headerAlign: 'center',
             align: 'center',

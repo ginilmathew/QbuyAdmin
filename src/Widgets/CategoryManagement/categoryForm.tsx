@@ -194,7 +194,7 @@ const CategoryForm = ({ resData, view }: props) => {
                             error={errors.seo_description}
                             fieldName="seo_description"
                             placeholder={``}
-                            fieldLabel={"Discription"}
+                            fieldLabel={"Description"}
                             disabled={false}
                             view={view ? true : false}
                             defaultValue={''}
