@@ -52,7 +52,7 @@ const VendorProfile = () => {
       flex: 1,
       headerAlign: 'center',
       align: 'center',
-
+      valueGetter:(params) => params?.row?.franchise?.franchise_name
     },
     // {
     //   field: 'Category',
@@ -94,7 +94,7 @@ const VendorProfile = () => {
     router.push(`/vendor/view/${id}`)
 
   }
-  console.log({ vendorList })
+
 
   const rows = [
     { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },

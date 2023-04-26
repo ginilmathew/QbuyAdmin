@@ -86,6 +86,8 @@ const Vendorform = ({ res, view }: props) => {
 
     let resData = res ? res : view;
 
+    console.log({resData})
+
     const router = useRouter();
 
 
@@ -102,6 +104,8 @@ const Vendorform = ({ res, view }: props) => {
     const [paths, setPaths] = useState<any>(null)
 
 
+
+    console.log({franchise})
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const commissionvalidation = /^(0|[1-9]\d*)$/
@@ -151,6 +155,7 @@ const Vendorform = ({ res, view }: props) => {
                 vendor_mobile: resData ? resData?.vendor_mobile : '',
                 store_name: resData ? resData?.store_name : '',
                 store_address: resData ? resData?.store_address : '',
+                store_logo:resData ? resData?.store_logo : '',
                 franchise_id: resData ? resData?.franchise_id : '',
                 category_id: resData ? resData?.category_id : '',
                 start_time: resData ? moment(resData?.start_time,'HH:mm') : '',
@@ -315,11 +320,6 @@ const Vendorform = ({ res, view }: props) => {
 
 
     useEffect(() => {
-        getFranchiseList();
-        getCategoryList();
-    }, [])
-
-    useEffect(() => {
         let array = resData?.category_id?.map((res: any) => res?.id)
         if (resData && array) {
             setValue('vendor_name', resData?.vendor_name)
@@ -359,7 +359,7 @@ const Vendorform = ({ res, view }: props) => {
             setValue('coordinates', res?.delivery_location)
 
         }
-    }, [resData, res])
+    }, [resData])
 
 
 
@@ -410,8 +410,6 @@ const Vendorform = ({ res, view }: props) => {
 
         const URL_CREATE = '/admin/vendor/create'
         const URL_EDIT = '/admin/vendor/update'
-
-
         let kyc_details = {
             license_number: data?.license_number ? data?.license_number : null,
             ffsai_number: data?.ffsai_number ? data?.ffsai_number : null,
@@ -489,6 +487,13 @@ const Vendorform = ({ res, view }: props) => {
     const polygonComplete = (value: any) => {
         setValue("coordinates", value)
     }
+
+
+
+    useEffect(() => {
+        getFranchiseList();
+        getCategoryList();
+    }, [])
 
 
     return (

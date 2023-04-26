@@ -132,7 +132,7 @@ const CategoryForm = ({ resData, view }: props) => {
             setImagefile(null)
             setImagePreview(null)
             toast.success(resData ? 'Updated Successfully' : 'Created Successfully')
-            router.push('/vendor')
+            router.push('/category')
         } catch (err: any) {
             toast.error(err?.message)
 

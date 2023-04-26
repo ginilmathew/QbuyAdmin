@@ -33,9 +33,6 @@ const VandorEdit = () => {
     }, [])
 
 
-    if(loading){
-        return <div>Loading...</div>
-    }
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <CustomHeaderBack backlabel='Edit Vendor' />
