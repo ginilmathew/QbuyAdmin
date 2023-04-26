@@ -464,6 +464,8 @@ const ProductForm = ({ res, view }: props) => {
 
     useEffect(() => {
         if (resDate) {
+
+            console.log({resDate})
             const getvendorlist = async () => {
                 try {
                     const response = await fetchData(`admin/vendor-list/${resDate?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
@@ -584,6 +586,7 @@ const ProductForm = ({ res, view }: props) => {
             setValue('offer_price', resDate?.offer_price)
             setValue('offer_date_from', moment(resDate?.offer_date_from, 'YYYY-MM-DD'))
             setValue('offer_date_to', moment(resDate?.offer_date_to, 'YYYY-MM-DD'))
+            setValue('fixed_delivery_price', resDate?.fixed_delivery_price)
 
         }
 
@@ -875,6 +878,8 @@ const ProductForm = ({ res, view }: props) => {
     //posting products ...................................................................................................
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+
+        console.log({data})
 
         let franchiseData = franchiseList?.filter((res: any) => res?._id === franchiseSelect).map((get: any) => (
             {
@@ -1653,10 +1658,10 @@ const ProductForm = ({ res, view }: props) => {
                             type='text'
                             control={control}
                             error={errors.seller_price}
-                            fieldName=" seller_price"
+                            fieldName="seller_price"
                             placeholder={``}
                             fieldLabel={"Purchase Price"}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -1670,7 +1675,7 @@ const ProductForm = ({ res, view }: props) => {
                             fieldName="regular_price"
                             placeholder={``}
                             fieldLabel={"Selling Price"}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -1690,13 +1695,13 @@ const ProductForm = ({ res, view }: props) => {
                     <Grid item lg={1.71} xs={12}>
                         <CustomInput
                             disabled={false}
-                            type='number'
+                            type='text'
                             control={control}
                             error={errors.fixed_delivery_price}
-                            fieldName=" fixed_delivery_price"
+                            fieldName="fixed_delivery_price"
                             placeholder={``}
                             fieldLabel={"Fixed Delivery Price"}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -1709,7 +1714,7 @@ const ProductForm = ({ res, view }: props) => {
                             fieldName="offer_price"
                             placeholder={``}
                             fieldLabel={"Offer Price"}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
