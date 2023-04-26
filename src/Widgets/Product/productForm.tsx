@@ -125,7 +125,7 @@ type props = {
 
 const ProductForm = ({ res, view }: props) => {
     let resDate = res ? res : view;
-    console.log({ resDate })
+
 
     const router = useRouter()
 
@@ -159,6 +159,7 @@ const ProductForm = ({ res, view }: props) => {
     const [recomendedProductList, setRecomendedProductList] = useState<any>([]);
     const [recomendedProductArray, setRecomendedProductArray] = useState<any>([]);
     const [recomendedProductEditList, setRecomendedProductEditList] = useState<any>([]);
+
 
     const schema = yup
         .object()
@@ -492,7 +493,7 @@ const ProductForm = ({ res, view }: props) => {
             }
             getSubcategory()
             getvendorlist()
-            setRecomendedProductEditList(res?.related_products)
+            setRecomendedProductEditList(resDate?.related_products)
             setValue('name', resDate?.name)
             setValue('franchisee', resDate?.franchisee?._id)
             setFranchiseSelect(resDate?.franchisee?._id)
@@ -1575,10 +1576,14 @@ const ProductForm = ({ res, view }: props) => {
 
 
                         {res &&
-                            <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} >
-                                {recomendedProductEditList?.map((res: any) => (
-                                    <Typography p={1} sx={{ background: '#f5f5f5', display: 'flex', alignItems: 'center', gap: 1 }}>{res?.name}<ClearIcon onClick={() => deleteRelatedProduct(res?._id)} sx={{ fontSize: '18px', color: 'red', cursor: 'pointer' }} /></Typography>))}
-                            </Box>}
+                            <>
+                                <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} py={1} >
+                                    {recomendedProductEditList?.map((res: any) => (
+                                        <Typography p={.5} sx={{ background: '#f5f5f5', display: 'flex', alignItems: 'center', gap: 1 }}>{res?.name}<ClearIcon onClick={() => deleteRelatedProduct(res?._id)} sx={{ fontSize: '18px', color: 'red', cursor: 'pointer' }} /></Typography>))}
+                                </Box>
+
+                            </>
+                        }
 
 
                         {!view && <CustomAutoCompleteSearch onChange={onChangeRelatedproduct} list={recomendedProductList} fieldLabel={"Related Products"} />}

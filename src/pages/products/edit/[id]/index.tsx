@@ -34,11 +34,11 @@ const ProductEdit = () => {
     }, [])
 
     
-    if(loading){
-        return <Box>
-            <Typography>Loading....</Typography>
-        </Box>
-    }
+    // if(loading){
+    //     return <Box>
+    //         <Typography>Loading....</Typography>
+    //     </Box>
+    // }
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <CustomHeaderBack backlabel='Edit Product' />
