@@ -11,7 +11,8 @@ type props = {
     fieldLabel: string,
     error: any,
     changeValue: (value: any) => void,
-    values:any
+    values:any,
+    disabled?:boolean
 
 }
 
@@ -22,6 +23,7 @@ const CustomDatePicker = ({
     fieldLabel,
     error,
     values,
+    disabled,
     changeValue,
 }: props) => {
     return (
@@ -46,6 +48,7 @@ const CustomDatePicker = ({
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                        
                                 <DatePicker 
+                                disabled={disabled}
                                   sx={{
                                     "& .MuiInputBase-input": {
                                         height: "8px" // Set your height here.

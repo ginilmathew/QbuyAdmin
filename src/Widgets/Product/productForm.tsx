@@ -465,7 +465,7 @@ const ProductForm = ({ res, view }: props) => {
     useEffect(() => {
         if (resDate) {
 
-            console.log({resDate})
+            console.log({ resDate })
             const getvendorlist = async () => {
                 try {
                     const response = await fetchData(`admin/vendor-list/${resDate?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
@@ -879,7 +879,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
-        console.log({data})
+        console.log({ data })
 
         let franchiseData = franchiseList?.filter((res: any) => res?._id === franchiseSelect).map((get: any) => (
             {
@@ -1720,6 +1720,7 @@ const ProductForm = ({ res, view }: props) => {
                     </Grid>
                     <Grid item lg={1.71} xs={12}>
                         <CustomDatePicker
+                            disabled={view ? true : false}
                             values={getValues('offer_date_from')}
                             changeValue={onChangeOffer_date_from}
                             fieldName='offer_date_from'
@@ -1731,6 +1732,7 @@ const ProductForm = ({ res, view }: props) => {
                     </Grid>
                     <Grid item lg={1.71} xs={12}>
                         <CustomDatePicker
+                            disabled={view ? true : false}
                             values={getValues('offer_date_to')}
                             changeValue={onChangeOffer_date_to}
                             fieldName='offer_date_to'

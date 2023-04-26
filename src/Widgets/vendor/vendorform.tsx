@@ -86,7 +86,7 @@ const Vendorform = ({ res, view }: props) => {
 
     let resData = res ? res : view;
 
-    console.log({resData})
+    console.log({ resData })
 
     const router = useRouter();
 
@@ -105,7 +105,7 @@ const Vendorform = ({ res, view }: props) => {
 
 
 
-    console.log({franchise})
+    console.log({ franchise })
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const commissionvalidation = /^(0|[1-9]\d*)$/
@@ -155,11 +155,11 @@ const Vendorform = ({ res, view }: props) => {
                 vendor_mobile: resData ? resData?.vendor_mobile : '',
                 store_name: resData ? resData?.store_name : '',
                 store_address: resData ? resData?.store_address : '',
-                store_logo:resData ? resData?.store_logo : '',
+                store_logo: resData ? resData?.store_logo : '',
                 franchise_id: resData ? resData?.franchise_id : '',
                 category_id: resData ? resData?.category_id : '',
-                start_time: resData ? moment(resData?.start_time,'HH:mm') : '',
-                end_time: resData ? moment(resData?.end_time,'HH:mm')  : '',
+                start_time: resData ? moment(resData?.start_time, 'HH:mm') : '',
+                end_time: resData ? moment(resData?.end_time, 'HH:mm') : '',
                 license_number: resData ? resData?.kyc_details?.license_number : '',
                 ffsai_number: resData ? resData?.kyc_details?.ifsc : '',
                 pan_card_number: resData ? resData?.kyc_details?.pan_card_number : '',
@@ -331,9 +331,9 @@ const Vendorform = ({ res, view }: props) => {
             setFranchise(resData?.franchise_id)
             setValue('category_id', resData?.category_id)
             setCategory(resData?.category_id)
-            setValue('store_logo', resData?.store_logo) 
+            setValue('store_logo', resData?.store_logo)
             setImagePreview(`${IMAGE_URL}${resData?.store_logo}`)
-            setValue('start_time', moment(resData?.start_time,'HH:mm'))
+            setValue('start_time', moment(resData?.start_time, 'HH:mm'))
             setValue('end_time', moment(resData?.end_time, 'HH:mm'))
             setValue('license_number', resData?.kyc_details?.license_number)
             setValue('ffsai_number', resData?.kyc_details?.ffsai_number)
@@ -461,9 +461,7 @@ const Vendorform = ({ res, view }: props) => {
         try {
             await postData(res ? URL_EDIT : URL_CREATE, formData)
             toast.success(res ? 'Updated Successfully' : 'Created Successfully')
-            if (res) {
-                router.push('/vendor')
-            }
+            router.push('/vendor')
             reset()
             setFranchise('')
             setCategory('')
