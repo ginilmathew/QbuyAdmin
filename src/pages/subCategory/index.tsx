@@ -153,6 +153,8 @@ const SubCategory = () => {
                 </Box>
             </Box>
             {open && <CustomDelete
+                heading='SubCategory'
+                paragraph='subCategory'
                 _id={_id}
                 setData={setSubCategoryList}
                 data={subCategoryList}

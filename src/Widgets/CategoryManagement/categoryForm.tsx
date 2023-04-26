@@ -13,11 +13,12 @@ import * as yup from 'yup';
 import { fetchData, postData } from '@/CustomAxios';
 import { Message } from '@mui/icons-material';
 import { IMAGE_URL } from '@/Config';
+import { useRouter } from 'next/router';
 
 type Inputs = {
     name: string,
     type: string,
-    order_number: string,
+    order_number: any,
     image: any,
     seo_title: string,
     seo_description: string
@@ -26,7 +27,7 @@ type Inputs = {
 type IFormInput = {
     name: string,
     type: string,
-    order_number: string,
+    order_number: any,
     image: any,
     seo_title: string,
     seo_description: string
@@ -41,7 +42,7 @@ type props = {
 
 
 const CategoryForm = ({ resData, view }: props) => {
-
+  const router = useRouter()
 
 
     const [imagefile, setImagefile] = useState<null | File>(null)
@@ -56,7 +57,7 @@ const CategoryForm = ({ resData, view }: props) => {
             name: yup.string().max(30, 'Maximum Character Exceeds').required('Category Name Required'),
             // type: yup.string().required('Type is Required'),
             seo_description: yup.string().max(100, 'Maximum Character Exceeds'),
-            order_number: yup.string(),
+       
             image: yup
                 .mixed()
                 .required('Image is Required')
@@ -75,7 +76,7 @@ const CategoryForm = ({ resData, view }: props) => {
             defaultValues: {
                 name: '',
                 seo_description: '',
-                order_number: ''
+                order_number: null
             }
         });
 
@@ -118,7 +119,7 @@ const CategoryForm = ({ resData, view }: props) => {
             formData.append("id", resData?._id);
         }
         formData.append("name", data?.name);
-        formData.append("order_number", data?.order_number);
+        formData.append("order_number", data?.order_number ? data?.order_number : null);
         if (imagefile) {
             formData.append("image", data?.image);
         }
@@ -131,7 +132,7 @@ const CategoryForm = ({ resData, view }: props) => {
             setImagefile(null)
             setImagePreview(null)
             toast.success(resData ? 'Updated Successfully' : 'Created Successfully')
-
+            router.push('/vendor')
         } catch (err: any) {
             toast.error(err?.message)
 
@@ -141,7 +142,6 @@ const CategoryForm = ({ resData, view }: props) => {
 
 
     }
-
 
 
     useEffect(() => {

@@ -167,7 +167,7 @@ const Vendorform = ({ res, view }: props) => {
                 offer_description: resData ? resData?.additional_details?.offer_description : '',
                 tax: resData ? resData?.additional_details?.tax : '',
                 coordinates: resData ? resData?.delivery_location : null,
-                display_order: resData ? resData?.display_order : '',
+                display_order: resData ? resData?.display_order : null,
                 type: process.env.NEXT_PUBLIC_TYPE,
             }
         });
@@ -331,7 +331,7 @@ const Vendorform = ({ res, view }: props) => {
             setFranchise(resData?.franchise_id)
             setValue('category_id', resData?.category_id)
             setCategory(resData?.category_id)
-            setValue('store_logo', resData?.store_logo)
+            setValue('store_logo', resData?.store_logo) 
             setImagePreview(`${IMAGE_URL}${resData?.store_logo}`)
             setValue('start_time', moment(resData?.start_time,'HH:mm'))
             setValue('end_time', moment(resData?.end_time, 'HH:mm'))
@@ -347,9 +347,7 @@ const Vendorform = ({ res, view }: props) => {
             setValue('offer_description', resData?.additional_details?.offer_description)
             setValue('tax', resData?.additional_details?.tax)
             setMultipleArray(array)
-
             setValue('display_order', resData?.display_order)
-
             let paths = resData?.delivery_location?.map((loc: any) => {
                 return {
                     lat: parseFloat(loc[0]),

@@ -17,11 +17,13 @@ interface SimpleDialogProps {
     url: string;
     setData: any,
     data: any,
-    _id: string
+    _id: string,
+    heading:string,
+    paragraph:string
 
 }
 
-const CustomDelete = ({ open, onClose, url, setData, data, _id }: SimpleDialogProps) => {
+const CustomDelete = ({ open, onClose, url, setData, data, _id ,heading,paragraph}: SimpleDialogProps) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     const handleDelete = async () => {
@@ -61,11 +63,10 @@ const CustomDelete = ({ open, onClose, url, setData, data, _id }: SimpleDialogPr
                 </Box>
                 <DialogContentText id="alert-dialog-description">
                     <Box py={1} display={'flex'} justifyContent={'center'}>
-                        <Typography variant="body1" color="#000" fontFamily={`'Poppins' sans-serif`} fontSize={24} fontWeight={'bold'}>Delete Order</Typography>
+                        <Typography variant="body1" color="#000" fontFamily={`'Poppins' sans-serif`} fontSize={24} fontWeight={'bold'}>Delete {heading}</Typography>
                     </Box>
                     <Box display={'flex'} justifyContent={'center'}>
-                        <Typography width={'70%'} textAlign={'center'} fontFamily={`'Poppins' sans-serif`} fontSize={18} fontWeight={'bold'}>Are you sure you want to delete this order?</Typography>
-
+                            <Typography width={'70%'} textAlign={'center'} fontFamily={`'Poppins' sans-serif`} fontSize={18} fontWeight={'bold'}>Are you sure you want to delete this {paragraph}?</Typography>`
                     </Box>
                 </DialogContentText>
                 <Box display={'flex'} justifyContent={'center'} py={1} >

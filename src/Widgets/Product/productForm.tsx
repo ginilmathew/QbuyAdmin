@@ -458,10 +458,6 @@ const ProductForm = ({ res, view }: props) => {
     }
 
 
-    //Related products...................................................................... `
-
-
-    //edit product details..................................................................
 
 
 
@@ -519,7 +515,6 @@ const ProductForm = ({ res, view }: props) => {
             setValue('stock_value', resDate?.stock_value)
             setValue('minimum_qty', resDate?.minimum_qty)
             setImagePreview(`${IMAGE_URL}${resDate?.product_image}`)
-
             let paths = resDate?.delivery_locations?.map((loc: any) => {
                 return {
                     lat: parseFloat(loc[0]),
@@ -528,7 +523,7 @@ const ProductForm = ({ res, view }: props) => {
             })
             setPaths(paths)
             setValue('delivery_locations', resDate?.delivery_locations)
-            setValue('product_availability_from', moment(resDate?.product_availability_from, ))
+            setValue('product_availability_from', moment(resDate?.product_availability_from,))
             setValue('product_availability_to', moment(resDate?.product_availability_to, 'HH:mm'))
             setValue('require_shipping', resDate?.require_shipping)
             setRequireShipping(resDate?.require_shipping)
@@ -863,15 +858,15 @@ const ProductForm = ({ res, view }: props) => {
         let result = value && value?.map((res: any) => ({
             _id: res?._id,
             name: res?.title
-         }
+        }
         ))
-       
+
         setRecomendedProductArray(result)
     }
 
 
-    const deleteRelatedProduct =(id:any)=>{
-        let result = recomendedProductEditList?.filter((res:any)=>res?._id !== id)
+    const deleteRelatedProduct = (id: any) => {
+        let result = recomendedProductEditList?.filter((res: any) => res?._id !== id)
         setRecomendedProductEditList(result)
 
     }
@@ -879,12 +874,6 @@ const ProductForm = ({ res, view }: props) => {
     //posting products ...................................................................................................
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-
-
-        console.log({ recomendedProductArray })
-
-
-
 
         let franchiseData = franchiseList?.filter((res: any) => res?._id === franchiseSelect).map((get: any) => (
             {
@@ -923,9 +912,19 @@ const ProductForm = ({ res, view }: props) => {
 
 
 
+        //below code help to remove duplicates from array.............................
+
+        let recomendedProductList: any = []
+
+        const recomendedProduct = recomendedProductArray.filter((obj: any) => {
+            return !recomendedProductEditList.some((obj1: any) => obj._id === obj1._id)
+        })
+
+        recomendedProductList.push(...recomendedProduct)
+        recomendedProductList.push(...recomendedProductEditList)
+
+
         let imagearray: any = []
-
-
         if (multipleImage?.length > 0) {
             const formData = new FormData();
             multipleImage?.map((img: any, i: number) => {
@@ -990,7 +989,7 @@ const ProductForm = ({ res, view }: props) => {
                 _id: subCategoryData?.[0]?.id,
                 name: subCategoryData?.[0]?.names
             } : null,
-            display_order: parseInt(data?.display_order),
+            display_order: (data?.display_order && data?.display_order > 0) ? parseInt(data?.display_order) : null,
             panda_suggession: data?.panda_suggession,
             stock: data?.stock,
             stock_value: data?.stock_value,
@@ -1002,7 +1001,7 @@ const ProductForm = ({ res, view }: props) => {
             coupon_details: null,
             meta_tags: metaTag,
             video_link: data?.video_link,
-            related_products: recomendedProductArray,
+            related_products: recomendedProductList,
             attributess: attributes,
             regular_price: data?.seller_price,
             seller_price: data?.regular_price,
@@ -1035,10 +1034,7 @@ const ProductForm = ({ res, view }: props) => {
             setAttributes([])
             setRequireShipping(false)
             setMultipleImage([])
-            toast.success(res ? 'Updated Successfully' : 'Created Successfully')
-            if (res) {
-                router?.push('/products')
-            }
+            router?.push('/products')
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)
@@ -1553,12 +1549,39 @@ const ProductForm = ({ res, view }: props) => {
                         {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />}
                     </Grid>
                     <Grid item xs={12} lg={6}>
-                        {res && 
-                        <Box display={'flex'} sx={{gap:1}} flexWrap={'wrap'} >
-                            {recomendedProductEditList?.map((res:any)=>(
-                              <Typography p={1} sx={{background:'#f5f5f5',display:'flex',alignItems:'center',gap:1}}>{res?.name}<ClearIcon onClick={()=>deleteRelatedProduct(res?._id)} sx={{fontSize:'18px',color:'red',cursor:'pointer'}}/></Typography>))}
-                        </Box> }
-                        <CustomAutoCompleteSearch onChange={onChangeRelatedproduct} list={recomendedProductList} fieldLabel={"Related Products"} />
+                        {view &&
+                            <>
+                                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                                    sx={{
+                                        fontSize: {
+                                            lg: 16,
+                                            md: 14,
+                                            sm: 12,
+                                            xs: 11,
+                                        },
+                                        fontFamily: `'Poppins' sans-serif`,
+
+                                    }}
+                                >{"Related Products"}
+
+                                </Typography>
+
+                                <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} >
+                                    {recomendedProductEditList?.map((res: any) => (
+                                        <Typography p={1} sx={{ background: '#f5f5f5', display: 'flex', alignItems: 'center', gap: 1 }}>{res?.name}</Typography>))}
+                                </Box>
+                            </>
+                        }
+
+
+                        {res &&
+                            <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} >
+                                {recomendedProductEditList?.map((res: any) => (
+                                    <Typography p={1} sx={{ background: '#f5f5f5', display: 'flex', alignItems: 'center', gap: 1 }}>{res?.name}<ClearIcon onClick={() => deleteRelatedProduct(res?._id)} sx={{ fontSize: '18px', color: 'red', cursor: 'pointer' }} /></Typography>))}
+                            </Box>}
+
+
+                        {!view && <CustomAutoCompleteSearch onChange={onChangeRelatedproduct} list={recomendedProductList} fieldLabel={"Related Products"} />}
                         {/* <CustomInput
                             disabled={false}
                             type='text'

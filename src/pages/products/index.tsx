@@ -227,6 +227,8 @@ const AddProducts = () => {
                 </Box>
             </Box>
             {open && <CustomDelete
+                 heading='Product'
+                 paragraph='product'
                 _id={_id}
                 setData={setProductList}
                 data={productList}

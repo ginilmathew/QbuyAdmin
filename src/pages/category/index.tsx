@@ -148,6 +148,8 @@ const CategoryManagement = () => {
                 </Box>
             </Box>
             {open && <CustomDelete
+                heading='Category'
+                paragraph='category'
                 _id={_id}
                 setData={setCategoryList}
                 data={categoryList}
