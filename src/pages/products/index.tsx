@@ -22,7 +22,7 @@ const AddProducts = () => {
     const [setSerachList, setSearchList] = useState<any>([])
     const [pending, startTransition] = useTransition();
     const [_id, set_id] = useState<string>('');
- 
+
 
     const handleClose = () => {
         setOpen(false)
@@ -42,6 +42,10 @@ const AddProducts = () => {
 
     const editProductPage = (id: string) => {
         router.push(`/products/edit/${id}`)
+    }
+
+    const viewProductPage = (id: string) => {
+        router.push(`/products/view/${id}`)
     }
 
 
@@ -114,7 +118,7 @@ const AddProducts = () => {
                     <CustomSwitch
                         changeRole={(e: any) => OnchangeCheck(e, row?._id)}
                         checked={row?.status === 'active' ? true : false}
-  
+
                     />
 
                 </Stack>
@@ -128,12 +132,12 @@ const AddProducts = () => {
             align: 'center',
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
-                    {/* <RemoveRedEyeIcon
-
+                    <RemoveRedEyeIcon
+                        onClick={() => viewProductPage(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
-                        }} /> */}
+                        }} />
                     <BorderColorTwoToneIcon
                         onClick={() => editProductPage(row?._id)}
                         style={{
@@ -162,10 +166,10 @@ const AddProducts = () => {
         //    setProductList([...result])
         try {
             setLoding(true)
-          const response =  await postData('admin/product/status-update', value)
+            const response = await postData('admin/product/status-update', value)
 
-          setProductList((prev:any)=>([response?.data?.data,...prev?.filter((res:any)=>res?._id !== response?.data?.data?._id)]))
-        //   fetchproduct()
+            setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
+            //   fetchproduct()
 
 
         }
@@ -216,13 +220,15 @@ const AddProducts = () => {
     return (
         <Box px={5} py={2} pt={10} mt={0}>
 
-            <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
+            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchProducts} imprtBtn={true} Headerlabel='Products' onClick={addproductItems} addbtn={true} />
                 <Box py={3}>
                     <CustomTable dashboard={false} columns={columns} rows={productList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
             {open && <CustomDelete
+                 heading='Product'
+                 paragraph='product'
                 _id={_id}
                 setData={setProductList}
                 data={productList}
@@ -236,6 +242,6 @@ const AddProducts = () => {
 
 
 
-  
+
 
 export default AddProducts

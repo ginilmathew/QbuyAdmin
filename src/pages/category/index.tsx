@@ -42,7 +42,7 @@ const CategoryManagement = () => {
     const columns: GridColDef[] = [
         {
             field: 'Dated Added',
-            headerName: 'Dated Added',
+            headerName: 'Date Added',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
@@ -148,6 +148,8 @@ const CategoryManagement = () => {
                 </Box>
             </Box>
             {open && <CustomDelete
+                heading='Category'
+                paragraph='category'
                 _id={_id}
                 setData={setCategoryList}
                 data={categoryList}

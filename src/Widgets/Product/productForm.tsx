@@ -22,14 +22,16 @@ import moment from 'moment'
 import CustomDatePicker from '@/components/CustomDatePicker';
 import Maps from '../../components/maps/maps'
 import { type } from 'os';
-import { set } from 'lodash';
+import { set, values } from 'lodash';
 import Polygon from '@/components/maps/Polygon';
 import { IMAGE_URL } from '../../Config/index';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import TagInput from '@/components/TagInput'
 import Attributes from './Attributes'
 import { useRouter } from 'next/router';
-
+import CustomTagInputValue from '@/components/CustomTagInputValue';
+import CustomAutoCompleteSearch from '@/components/CustomAutoCompleteSearch';
+import ClearIcon from '@mui/icons-material/Clear';
 type Inputs = {
     name: string,
     description: string,
@@ -118,11 +120,13 @@ type IFormInput = {
 
 type props = {
     res?: any
+    view?: any
 }
 
-const ProductForm = ({ res }: props) => {
+const ProductForm = ({ res, view }: props) => {
+    let resDate = res ? res : view;
 
-    console.log({ res }, 'PRODUCT RESPONSE')
+
     const router = useRouter()
 
 
@@ -134,7 +138,6 @@ const ProductForm = ({ res }: props) => {
     const [imagePreview, setImagePreview] = useState<any>(null)
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [attributes, setAttributes] = useState<any>([])
-    const [metaTagValue, setmetaTagValue] = useState<any>([])
     const [metaTag, setMetaTag] = useState<any>([])
     const [attributeTag, setattributeTag] = useState<any>([])
     const [attributeTagValue, setattributeTagValue] = useState<any | null>(null)
@@ -152,14 +155,12 @@ const ProductForm = ({ res }: props) => {
     const [paths, setPaths] = useState<any>(null)
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
+    const [vendorlistDirection, setVendorListDirection] = useState<any>([])
+    const [recomendedProductList, setRecomendedProductList] = useState<any>([]);
+    const [recomendedProductArray, setRecomendedProductArray] = useState<any>([]);
+    const [recomendedProductEditList, setRecomendedProductEditList] = useState<any>([]);
 
 
-
-
-
-    console.log({ varientsarray },'HEADING')
-
-    const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
     const schema = yup
         .object()
         .shape({
@@ -175,7 +176,6 @@ const ProductForm = ({ res }: props) => {
             // seller_price: attributes.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
 
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
-
         })
         .required();
 
@@ -201,7 +201,7 @@ const ProductForm = ({ res }: props) => {
                 panda_suggession: false,
                 stock: false,
                 stock_value: '',
-                franchisee: res ? res?.franchisee : '',
+                franchisee: resDate ? resDate?.franchisee : '',
                 category: '',
                 sub_category: null,
                 store: '',
@@ -225,6 +225,9 @@ const ProductForm = ({ res }: props) => {
             }
         });
 
+
+
+
     // const onChangeSelectType = (e: React.ChangeEvent<HTMLInputElement>) => {
     //     setSelectType(e.target.value)
     //     setValue('type', e.target.value)
@@ -234,9 +237,12 @@ const ProductForm = ({ res }: props) => {
 
 
     const StockCheck = (e: any) => {
-        setValue('stock', e)
-        setStock(e)
-        setValue('stock_value', '')
+        if (!view) {
+            setValue('stock', e)
+            setStock(e)
+            setValue('stock_value', '')
+        }
+
     }
 
 
@@ -300,7 +306,15 @@ const ProductForm = ({ res }: props) => {
         try {
             setLoading(true)
             const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
+            const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${e.target.value}`)
             setVendorList(response?.data?.data)
+            let result = recomendedProduct?.data?.data.map((res: any) => ({
+                _id: res?._id,
+                title: `${res?.name}-${res?.product_id}`,
+                product_id: res?.product_id,
+                store: res?.store?.name
+            }))
+            setRecomendedProductList(result)
         } catch (err: any) {
             toast.error(err.message)
             setLoading(false)
@@ -308,6 +322,7 @@ const ProductForm = ({ res }: props) => {
             setLoading(false)
 
         }
+
 
     }
 
@@ -317,9 +332,17 @@ const ProductForm = ({ res }: props) => {
             {
                 commision: get?.additional_details ? get?.additional_details.commission : 0,
                 id: get?._id,
-                name: get?.store_name
+                name: get?.store_name,
+                category: get?.category_id
             }
+
         ))
+
+        setCategoryList(result?.[0]?.category)
+
+
+        let findresult = vendorList?.filter((res: any) => res?._id === e.target.value)
+        setVendorListDirection(findresult)
         setValue('commission', result[0]?.commision)
         setValue('store', e.target.value)
         setError('store', { message: '' })
@@ -363,7 +386,6 @@ const ProductForm = ({ res }: props) => {
 
     const onSelectSubCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSubCategorySelect(e.target.value)
-
         setValue('sub_category', e.target.value)
         setError('sub_category', { message: '' })
     }
@@ -379,14 +401,9 @@ const ProductForm = ({ res }: props) => {
 
 
 
-    // const onChangeName = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
-    //     attributes[i].name = e.target.value;
-
-
-    // }
 
     const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
-        if (!res) {
+        if (!res && !view) {
             attributes[i][key] = e;
 
             if (key === "options") {
@@ -403,13 +420,12 @@ const ProductForm = ({ res }: props) => {
 
     }
 
-    // const onChangeOptions = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
-    //     setIndex(i)
-    // }
 
     const onCheckShipping = (e: boolean) => {
-        setValue('require_shipping', e)
-        setRequireShipping(e)
+        if (!view) {
+            setValue('require_shipping', e)
+            setRequireShipping(e)
+        }
 
     }
 
@@ -426,8 +442,11 @@ const ProductForm = ({ res }: props) => {
 
 
     const onCheckPandasuggestion = (e: any) => {
-        setPandaSuggesions(e)
-        setValue('panda_suggession', e)
+        if (!view) {
+            setPandaSuggesions(e)
+            setValue('panda_suggession', e)
+        }
+
     }
 
     const onChangeOffer_date_from = (e: any) => {
@@ -443,29 +462,31 @@ const ProductForm = ({ res }: props) => {
 
 
 
-
-    //edit product details..................................................................
-
-
-
     useEffect(() => {
-        if (res) {
+        if (resDate) {
 
-            console.log({ res }, "in edit")
-
+            console.log({ resDate })
             const getvendorlist = async () => {
                 try {
-                    const response = await fetchData(`admin/vendor-list/${res?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
-
+                    const response = await fetchData(`admin/vendor-list/${resDate?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
+                    const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${resDate?.franchisee?._id}`)
+                    let result = recomendedProduct?.data?.data.map((res: any) => ({
+                        _id: res?._id,
+                        title: `${res?.name}-${res?.product_id}`,
+                        product_id: res?.product_id,
+                        store: res?.store?.name
+                    }))
+                    setRecomendedProductList(result)
                     setVendorList(response?.data?.data)
-                    setValue('franchisee', res?.franchisee?._id)
+                    setCategoryList(response?.data?.data?.[0]?.category_id)
+                    setValue('franchisee', resDate?.franchisee?._id)
                 } catch (err: any) {
                     toast.error(err?.message)
                 }
             }
             const getSubcategory = async () => {
                 try {
-                    const response = await fetchData(`admin/subcategory-list/${res?.category?._id}`)
+                    const response = await fetchData(`admin/subcategory-list/${resDate?.category?._id}`)
                     setSubCategoryList(response?.data?.data)
                 } catch (err: any) {
                     toast.error(err?.message)
@@ -474,53 +495,49 @@ const ProductForm = ({ res }: props) => {
             }
             getSubcategory()
             getvendorlist()
-            setValue('name', res?.name)
-            setValue('franchisee', res?.franchisee?._id)
-            setFranchiseSelect(res?.franchisee?._id)
-            setValue('store', res?.store?._id)
-            setvendorSelect(res?.store?._id)
-            setValue('description', res?.description)
-            setValue('weight', res?.weight)
-            setValue('model', res?.model)
-            setValue('width', res?.dimensions?.width)
-            setValue('height', res?.dimensions?.height)
-            setValue('category', res?.category?._id)
-            setCategorySelect(res?.category?._id)
-            setValue('sub_category', res?.sub_category?._id)
-            setSubCategorySelect(res?.sub_category?._id)
-            setValue('display_order', res?.display_order)
-            setValue('panda_suggession', res?.panda_suggession)
-            setPandaSuggesions(res?.panda_suggession)
-            setValue('stock', res?.stock)
-            setStock(res?.stock)
-            setValue('stock_value', res?.stock_value)
-            setValue('minimum_qty', res?.minimum_qty)
-            setImagePreview(`${IMAGE_URL}${res?.product_image}`)
-            setValue('delivery_locations', res?.delivery_location)
-            let paths = res?.delivery_locations?.map((loc: any) => {
+            setRecomendedProductEditList(resDate?.related_products)
+            setValue('name', resDate?.name)
+            setValue('franchisee', resDate?.franchisee?._id)
+            setFranchiseSelect(resDate?.franchisee?._id)
+            setValue('store', resDate?.store?._id)
+            setvendorSelect(resDate?.store?._id)
+            setValue('description', resDate?.description)
+            setValue('weight', resDate?.weight)
+            setValue('model', resDate?.model)
+            setValue('width', resDate?.dimensions?.width)
+            setValue('height', resDate?.dimensions?.height)
+            setValue('category', resDate?.category?._id)
+            setCategorySelect(resDate?.category?._id)
+            setValue('sub_category', resDate?.sub_category?._id)
+            setSubCategorySelect(resDate?.sub_category?._id)
+            setValue('display_order', resDate?.display_order)
+            setValue('panda_suggession', resDate?.panda_suggession)
+            setPandaSuggesions(resDate?.panda_suggession)
+            setValue('stock', resDate?.stock)
+            setStock(resDate?.stock)
+            setValue('stock_value', resDate?.stock_value)
+            setValue('minimum_qty', resDate?.minimum_qty)
+            setImagePreview(`${IMAGE_URL}${resDate?.product_image}`)
+            let paths = resDate?.delivery_locations?.map((loc: any) => {
                 return {
-                    lat: loc[0],
-                    lng: loc[1]
+                    lat: parseFloat(loc[0]),
+                    lng: parseFloat(loc[1])
                 }
             })
             setPaths(paths)
-            setValue('product_availability_from', moment(res?.product_availability_from, 'HH:mm'))
-            setValue('product_availability_to', moment(res?.product_availability_to, 'HH:mm'))
-            setValue('require_shipping', res?.require_shipping)
-            setRequireShipping(res?.require_shipping)
-            if (res?.meta_tags) {
-                setMetaTag(res?.meta_tags?.map((res: any) => ({
-                    title: res
-                })))
-                setmetaTagValue(res?.meta_tags?.map((res: any) => ({
-                    title: res
-                })))
+            setValue('delivery_locations', resDate?.delivery_locations)
+            setValue('product_availability_from', moment(resDate?.product_availability_from,))
+            setValue('product_availability_to', moment(resDate?.product_availability_to, 'HH:mm'))
+            setValue('require_shipping', resDate?.require_shipping)
+            setRequireShipping(resDate?.require_shipping)
+            if (resDate?.meta_tags) {
+                setMetaTag(resDate?.meta_tags)
             }
-            setValue('video_link', res?.video_link)
-            setValue('related_products', res?.related_products)
-            setValue('product_image', res?.product_image)
-            if (res?.image) {
-                let imageslist = res?.image?.map((res: any) => (
+            setValue('video_link', resDate?.video_link)
+            setValue('related_products', resDate?.related_products)
+            setValue('product_image', resDate?.product_image)
+            if (resDate?.image) {
+                let imageslist = resDate?.image?.map((res: any) => (
                     res
 
                 ))
@@ -529,8 +546,8 @@ const ProductForm = ({ res }: props) => {
 
 
             let attributesArray: { name: any; options: any; variant: boolean; }[] = []
-            if (res?.attributes?.length > 0) {
-                res?.attributes.map((item: any) => {
+            if (resDate?.attributes?.length > 0) {
+                resDate?.attributes.map((item: any) => {
                     attributesArray.push({
                         name: item?.name,
                         options: item?.options,
@@ -542,9 +559,9 @@ const ProductForm = ({ res }: props) => {
                 })
             }
 
-            let myvaarientArray: { title: any; variant_id: string; attributs: any; seller_price: any; regular_price: string; offer_price: string; offer_date_from: string; offer_date_to: string; stock: boolean; stock_value: string; commission: number; fixed_delivery_price: number; }[] = []
-            if (res?.variants?.length > 0) {
-                res?.variants?.map((item: any) => {
+            let myvaarientArray: { title: any; variant_id: string; attributs: any; seller_price: any; regular_price: string; offer_price: string; offer_date_from: any; offer_date_to: any; stock: boolean; stock_value: string; commission: number; fixed_delivery_price: number; }[] = []
+            if (resDate?.variants?.length > 0) {
+                resDate?.variants?.map((item: any) => {
                     myvaarientArray.push({
                         variant_id: item._id,
                         title: item?.attributs,
@@ -552,35 +569,33 @@ const ProductForm = ({ res }: props) => {
                         seller_price: item?.regular_price,
                         regular_price: item?.seller_price,
                         offer_price: item?.offer_price,
-                        offer_date_from: '',
-                        offer_date_to: '',
+                        offer_date_from: moment(item?.offer_date_from, 'YYYY-MM-DD'),
+                        offer_date_to: moment(res?.offer_date_to, 'YYYY-MM-DD'),
                         stock: item?.stock,
                         stock_value: item?.stock_value,
-                        commission: 0,
-                        fixed_delivery_price: 0
+                        commission: item?.commission,
+                        fixed_delivery_price: item?.fixed_delivery_price
 
                     })
                     setVarientsArray(myvaarientArray)
                 })
             }
-
-
-
-            setValue('commission', res?.commision)
-            setValue('regular_price', res?.seller_price)
-            setValue('seller_price',res?.regular_price)
-            setValue('offer_price', res?.offer_price)
-            setValue('offer_date_from', moment(res?.offer_date_from,'YYYY-MM-DD'))
-            setValue('offer_date_to',moment(res?.offer_date_from,'YYYY-MM-DD'))
+            setValue('commission', resDate?.commision)
+            setValue('regular_price', resDate?.seller_price)
+            setValue('seller_price', resDate?.regular_price)
+            setValue('offer_price', resDate?.offer_price)
+            setValue('offer_date_from', moment(resDate?.offer_date_from, 'YYYY-MM-DD'))
+            setValue('offer_date_to', moment(resDate?.offer_date_to, 'YYYY-MM-DD'))
+            setValue('fixed_delivery_price', resDate?.fixed_delivery_price)
 
         }
 
-    }, [res])
+    }, [resDate])
 
 
     useEffect(() => {
         getFranchiseList()
-        fetchCategoryList()
+        // fetchCategoryList()
     }, [])
 
 
@@ -616,7 +631,7 @@ const ProductForm = ({ res }: props) => {
     // }
 
     const enableVariant = (e: any, i: number) => {
-        if (!res) {
+        if (!res && !view) {
             setVarientsArray([])
             //setVarients
             setIndex(i)
@@ -678,8 +693,7 @@ const ProductForm = ({ res }: props) => {
             })
 
             setVarientsArray([...varientsarray, ...result])
-            console.log({ varientsarray })
-            console.log({ attributesArray })
+
         } else {
             setVarientsArray([])
             setVarients([])
@@ -720,7 +734,7 @@ const ProductForm = ({ res }: props) => {
                     offer_date_to: '',
                     stock: true,
                     stock_value: '',
-                    commission: 0,
+                    commission: getValues('commission'),
                     fixed_delivery_price: 0
                 }
             })
@@ -774,10 +788,7 @@ const ProductForm = ({ res }: props) => {
 
 
     useEffect(() => {
-
         addvarients()
-
-
     }, [index])
 
 
@@ -833,10 +844,42 @@ const ProductForm = ({ res }: props) => {
 
     }
 
+    const changeAttributeValues = (i: number, key: string, values: any) => {
+        varientsarray[i][key] = values
+        setVarientsArray([...varientsarray])
+
+    }
+
+    //metatag value..........................................................................................
+
+    const metaTagvalues = (res: any) => {
+        setMetaTag(res)
+        setValue('meta_tags', res)
+    }
+
+
+    const onChangeRelatedproduct = (value: any) => {
+        let result = value && value?.map((res: any) => ({
+            _id: res?._id,
+            name: res?.title
+        }
+        ))
+
+        setRecomendedProductArray(result)
+    }
+
+
+    const deleteRelatedProduct = (id: any) => {
+        let result = recomendedProductEditList?.filter((res: any) => res?._id !== id)
+        setRecomendedProductEditList(result)
+
+    }
+
     //posting products ...................................................................................................
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
+        console.log({ data })
 
         let franchiseData = franchiseList?.filter((res: any) => res?._id === franchiseSelect).map((get: any) => (
             {
@@ -847,9 +890,9 @@ const ProductForm = ({ res }: props) => {
 
 
 
-        let categoryData = categoryList?.filter((res: any) => res?._id === categorySelect).map((get: any) => (
+        let categoryData = categoryList?.filter((res: any) => res?.id === categorySelect).map((get: any) => (
             {
-                id: get?._id,
+                id: get?.id,
                 name: get?.name,
                 image: get?.image
             }
@@ -875,9 +918,19 @@ const ProductForm = ({ res }: props) => {
 
 
 
+        //below code help to remove duplicates from array.............................
+
+        let recomendedProductList: any = []
+
+        const recomendedProduct = recomendedProductArray.filter((obj: any) => {
+            return !recomendedProductEditList.some((obj1: any) => obj._id === obj1._id)
+        })
+
+        recomendedProductList.push(...recomendedProduct)
+        recomendedProductList.push(...recomendedProductEditList)
+
+
         let imagearray: any = []
-
-
         if (multipleImage?.length > 0) {
             const formData = new FormData();
             multipleImage?.map((img: any, i: number) => {
@@ -902,22 +955,6 @@ const ProductForm = ({ res }: props) => {
             }
 
         }
-
-        console.log({ varientsarray },'varient array.......')
-
-        const metatagsres = metaTagValue?.map((res: any) => (
-            res.title
-        ))
-        setValue('meta_tags', metatagsres)
-
-
-
-        let newData = attributes.map((item: any) => ({
-            "name": item.name,
-            "options": item.options.map((option: any) => option.title),
-            "variant": item.varient
-        }));
-
         //to FILTER THE EMPTY OBJECTS FROM AN vARIENT ARRAY...............
         let varientarrayfilter = null
         varientarrayfilter = varientsarray?.length > 0 && varientsarray?.filter((vari: any) => vari.seller_price !== '')
@@ -946,7 +983,7 @@ const ProductForm = ({ res }: props) => {
             },
             model: data?.model,
             type: process.env.NEXT_PUBLIC_TYPE,
-            product_Type: null,
+            product_type: null,
             image: imagearray?.length > 0 ? imagearray : defaultImage,
             product_image: data?.product_image,
             category: {
@@ -956,9 +993,9 @@ const ProductForm = ({ res }: props) => {
             },
             sub_category: data?.sub_category ? {
                 _id: subCategoryData?.[0]?.id,
-                name: subCategoryData?.[0]?.name
+                name: subCategoryData?.[0]?.names
             } : null,
-            display_order: data?.display_order,
+            display_order: (data?.display_order && data?.display_order > 0) ? parseInt(data?.display_order) : null,
             panda_suggession: data?.panda_suggession,
             stock: data?.stock,
             stock_value: data?.stock_value,
@@ -966,11 +1003,11 @@ const ProductForm = ({ res }: props) => {
             product_availability_from: data?.product_availability_from ? moment(data?.product_availability_from, 'hh:mm A').format('hh:mm') : null,
             product_availability_to: data?.product_availability_to ? moment(data?.product_availability_to, 'hh:mm A').format('hh:mm') : null,
             require_shipping: data?.require_shipping,
-            delivery_locations: data?.delivery_locations ? data?.delivery_locations : vendorList?.[0]?.delivery_location,
+            delivery_locations: data?.delivery_locations ? data?.delivery_locations : vendorlistDirection?.[0]?.delivery_location,
             coupon_details: null,
-            meta_tags: metatagsres,
+            meta_tags: metaTag,
             video_link: data?.video_link,
-            related_products: data?.related_products,
+            related_products: recomendedProductList,
             attributess: attributes,
             regular_price: data?.seller_price,
             seller_price: data?.regular_price,
@@ -998,22 +1035,18 @@ const ProductForm = ({ res }: props) => {
             setvendorSelect(null)
             //setConfirmBtn(false)
             setVarientsArray([])
-            setmetaTagValue([])
             setMetaTag([])
             setattributeTag([])
             setAttributes([])
             setRequireShipping(false)
             setMultipleImage([])
-            toast.success(res ? 'Updated Successfully' : 'Created Successfully')
-            if (res) {
-                router?.push('/products')
-            }
+            router?.push('/products')
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)
 
         } finally {
-          
+
             setLoading(false)
         }
     }
@@ -1021,10 +1054,7 @@ const ProductForm = ({ res }: props) => {
 
 
 
-    const changeAttributeValues = (i: number, key: string, values: any) => {
-        varientsarray[i][key] = values
-        setVarientsArray([...varientsarray])
-    }
+
 
     return (
         <Box>
@@ -1039,12 +1069,13 @@ const ProductForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Product Name"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
                     <Grid item xs={12} lg={3}>
                         <Customselect
+                            disabled={view ? true : false}
                             type='text'
                             control={control}
                             error={errors.franchisee}
@@ -1071,7 +1102,7 @@ const ProductForm = ({ res }: props) => {
 
                     <Grid item xs={12} lg={3}>
                         <Customselect
-                            disabled={getValues('franchisee') ? false : true}
+                            disabled={view ? true : false ? getValues('franchisee') ? false : true : false}
                             type='text'
                             control={control}
                             error={errors.store}
@@ -1105,7 +1136,7 @@ const ProductForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Product Description"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -1119,7 +1150,7 @@ const ProductForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Weight(kg)"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -1132,7 +1163,7 @@ const ProductForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Model"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -1145,7 +1176,7 @@ const ProductForm = ({ res }: props) => {
                             placeholder={`width`}
                             fieldLabel={"Dimensions"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -1158,37 +1189,41 @@ const ProductForm = ({ res }: props) => {
                             placeholder={`Height`}
                             fieldLabel={"*"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={3}>
-                        <Customselect
-                            type='text'
-                            control={control}
-                            error={errors.category}
-                            fieldName="category"
-                            placeholder={``}
-                            fieldLabel={"Category"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={categorySelect}
-                            options={''}
-                            onChangeValue={onSelectCategory}
-                            background={'#fff'}
-                        >
-                            {categoryList && categoryList?.map((res: any) => (
-                                <MenuItem value={res?._id}>{res?.name}</MenuItem>
-                            ))}
 
-                        </Customselect>
-                    </Grid>
+                    {vendorSelect &&
+                        <Grid item xs={12} lg={3}>
+                            <Customselect
+                                type='text'
+                                control={control}
+                                error={errors.category}
+                                fieldName="category"
+                                placeholder={``}
+                                fieldLabel={"Category"}
+                                selectvalue={""}
+                                height={40}
+                                label={''}
+                                size={16}
+                                value={categorySelect}
+                                options={''}
+                                onChangeValue={onSelectCategory}
+                                background={'#fff'}
+                                disabled={view ? true : false}
+                            >
+                                <MenuItem value=""></MenuItem>
+                                {categoryList && categoryList?.map((res: any) => (
+                                    <MenuItem value={res?.id}>{res?.name}</MenuItem>
+                                ))}
+
+                            </Customselect>
+                        </Grid>}
 
                     {subcategoryList?.length > 0 && <Grid item xs={12} lg={3}>
                         <Customselect
-                            disabled={getValues('category') ? false : true}
+                            disabled={view ? true : false ? getValues('category') ? false : true : false}
                             type='text'
                             control={control}
                             error={errors.sub_category}
@@ -1198,6 +1233,7 @@ const ProductForm = ({ res }: props) => {
                             selectvalue={""}
                             height={40}
                             label={''}
+
                             size={16}
                             value={subcategorySelect}
                             options={''}
@@ -1218,7 +1254,7 @@ const ProductForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Display Order(Homepage)"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -1240,7 +1276,7 @@ const ProductForm = ({ res }: props) => {
                                 placeholder={``}
                                 fieldLabel={"Stock"}
                                 disabled={false}
-                                view={false}
+                                view={view ? true : false}
                                 defaultValue={''}
                             />
                         </Grid>}
@@ -1253,59 +1289,67 @@ const ProductForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Minimum Quantity (Optional)"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
-                    {/* <Grid item xs={12} lg={3}>
-                        <CustomAutoComplete fieldLabel='Product Tag' list={productTag} setValues={setProductTagValue} onChnageValues={() => null} />
-                    </Grid> */}
-                    <Grid item xs={12} lg={3}>
-                        <CustomImageUploader
-                            ICON={""}
-                            viewImage={imagePreview}
-                            error={errors.product_image}
-                            fieldName="image"
-                            placeholder={``}
-                            fieldLabel={"Product Image"}
-                            control={control}
-                            height={130}
-                            max={5}
-                            onChangeValue={imageUploder}
-                            preview={imagefile}
-                            previewEditimage={""}
-                            type={"file"}
-                            background="#e7f5f7"
-                            myid="contained-button-file"
-                            width={"100%"}
-                        />
 
-                    </Grid>
+                    {view &&
+                        <Grid item xs={12} lg={3}>
+                            <Avatar variant='square' src={`${IMAGE_URL}${view?.product_image}`} sx={{ width: '100%', height: 130 }} />
+                        </Grid>}
+                    {!view &&
+                        <Grid item xs={12} lg={3}>
+                            <CustomImageUploader
+                                ICON={""}
+                                viewImage={imagePreview}
+                                error={errors.product_image}
+                                fieldName="image"
+                                placeholder={``}
+                                fieldLabel={"Product Image"}
+                                control={control}
+                                height={130}
+                                max={5}
+                                onChangeValue={imageUploder}
+                                preview={imagefile}
+                                previewEditimage={""}
+                                type={"file"}
+                                background="#e7f5f7"
+                                myid="contained-button-file"
+                                width={"100%"}
+                            />
+
+                        </Grid>}
                 </Grid>
             </CustomBox>
             <CustomBox title='Delivery Details'>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} lg={1.8}>
-                        <CustomTimepicker
-                            changeValue={onChangeProductFrom}
-                            fieldName='product_availability_from'
-                            control={control}
-                            error={errors.product_availability_from}
-                            fieldLabel={'Product Availibility'} />
-                    </Grid>
-                    <Grid item xs={12} lg={1.8}>
-                        <Typography mb={3}></Typography>
-                        <CustomTimepicker
-                            changeValue={onChangeProductTo}
-                            fieldName='product_availability_to'
-                            control={control}
-                            error={errors.product_availability_to}
-                            fieldLabel={''} />
-                    </Grid>
-                    <Grid item xs={12} lg={3}>
+                    <Grid item xs={12} lg={1.5}>
                         <Typography mb={3}></Typography>
                         <CustomCheckBox isChecked={requireShipping} label='' onChange={onCheckShipping} title='Requires Shipping' />
                     </Grid>
+                    {!getValues('require_shipping') &&
+                        <Grid item xs={12} lg={2}>
+                            <CustomTimepicker
+                                disabled={view ? true : false}
+                                changeValue={onChangeProductFrom}
+                                fieldName='product_availability_from'
+                                control={control}
+                                error={errors.product_availability_from}
+                                fieldLabel={'Product Availibility'} />
+                        </Grid>}
+                    {!getValues('require_shipping') &&
+                        <Grid item xs={12} lg={2}>
+                            <Typography mb={3}></Typography>
+                            <CustomTimepicker
+                                disabled={view ? true : false}
+                                changeValue={onChangeProductTo}
+                                fieldName='product_availability_to'
+                                control={control}
+                                error={errors.product_availability_to}
+                                fieldLabel={''} />
+                        </Grid>}
+
                 </Grid>
                 <Box py={2}>
                     <Divider />
@@ -1409,9 +1453,33 @@ const ProductForm = ({ res }: props) => {
             </CustomBox> */}
             <CustomBox title='Additional Options'>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} lg={6}>
-                        <CustomAutoComplete res={res} fieldLabel='Meta Tag' list={metaTag} setValues={setmetaTagValue} onChnageValues={() => null} />
-                    </Grid>
+                    {view && <Grid item xs={12} lg={6}>
+                        <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                            sx={{
+                                fontSize: {
+                                    lg: 16,
+                                    md: 14,
+                                    sm: 12,
+                                    xs: 11,
+                                },
+                                fontFamily: `'Poppins' sans-serif`,
+
+                            }}
+                        >{'Meta Tags'}
+
+                        </Typography>
+                        <Box style={{ border: '0.5px solid black', minHeight: 25, display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }} p={.5}>
+                            {metaTag?.map((tag: any, index: number) => <Box key={index} style={{ backgroundColor: '#ebf0f7', padding: 5, margin: 2, display: 'flex', flexDirection: 'row', height: 25, fontSize: 12, alignItems: 'center' }}>
+                                <span>{tag}</span>
+
+                            </Box>)}
+                        </Box>
+                    </Grid>}
+                    {!view &&
+                        <Grid item xs={12} lg={6}>
+                            <CustomTagInputValue fieldLabel='Meta Tags' tagValues={(metaTagvalues)} values={metaTag} setState={setMetaTag} />
+                            {/* <CustomAutoComplete res={res} fieldLabel='Meta Tag' list={metaTag} setValues={setmetaTagValue} onChnageValues={() => null} /> */}
+                        </Grid>}
 
                     {/* <Grid item xs={12} lg={3}>
                         <CustomInput
@@ -1435,7 +1503,7 @@ const ProductForm = ({ res }: props) => {
                             placeholder={``}
                             fieldLabel={"Product Video Link"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -1443,7 +1511,7 @@ const ProductForm = ({ res }: props) => {
 
                         {/* this only in edit image code ************************************** */}
 
-                        {defaultImage.length > 0 &&
+                        {defaultImage.length > 0 && !view &&
                             <>
                                 <Box display={'flex'} gap={2} >
                                     {defaultImage && defaultImage?.map((res: any, i: number) => (
@@ -1457,11 +1525,74 @@ const ProductForm = ({ res }: props) => {
                             </>
                         }
 
-                        {/* this only in edit image code ************************************** */}
-                        <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />
+                        {view &&
+                            <>
+                                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                                    sx={{
+                                        fontSize: {
+                                            lg: 16,
+                                            md: 14,
+                                            sm: 12,
+                                            xs: 11,
+                                        },
+                                        fontFamily: `'Poppins' sans-serif`,
+
+                                    }}
+                                >{'Additional Images'}
+
+                                </Typography>
+                                <Box display={'flex'} gap={2} >
+
+                                    {defaultImage && defaultImage?.map((res: any, i: number) => (
+                                        <Box>
+                                            <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 130, height: 130, }} />
+                                        </Box>
+                                    ))}
+                                </Box>
+                            </>
+                        }
+
+                        {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />}
                     </Grid>
                     <Grid item xs={12} lg={6}>
-                        <CustomInput
+                        {view &&
+                            <>
+                                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                                    sx={{
+                                        fontSize: {
+                                            lg: 16,
+                                            md: 14,
+                                            sm: 12,
+                                            xs: 11,
+                                        },
+                                        fontFamily: `'Poppins' sans-serif`,
+
+                                    }}
+                                >{"Related Products"}
+
+                                </Typography>
+
+                                <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} >
+                                    {recomendedProductEditList?.map((res: any) => (
+                                        <Typography p={1} sx={{ background: '#f5f5f5', display: 'flex', alignItems: 'center', gap: 1 }}>{res?.name}</Typography>))}
+                                </Box>
+                            </>
+                        }
+
+
+                        {res &&
+                            <>
+                                <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} py={1} >
+                                    {recomendedProductEditList?.map((res: any) => (
+                                        <Typography p={.5} sx={{ background: '#f5f5f5', display: 'flex', alignItems: 'center', gap: 1 }}>{res?.name}<ClearIcon onClick={() => deleteRelatedProduct(res?._id)} sx={{ fontSize: '18px', color: 'red', cursor: 'pointer' }} /></Typography>))}
+                                </Box>
+
+                            </>
+                        }
+
+
+                        {!view && <CustomAutoCompleteSearch onChange={onChangeRelatedproduct} list={recomendedProductList} fieldLabel={"Related Products"} />}
+                        {/* <CustomInput
                             disabled={false}
                             type='text'
                             control={control}
@@ -1469,15 +1600,15 @@ const ProductForm = ({ res }: props) => {
                             fieldName="related_products"
                             placeholder={``}
                             fieldLabel={"Related Products"}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
-                        />
+                        /> */}
                     </Grid>
                 </Grid>
             </CustomBox>
             <CustomBox title='Attributes'>
 
-                {!res &&
+                {!res && !view &&
                     <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
                     <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} />
@@ -1527,10 +1658,10 @@ const ProductForm = ({ res }: props) => {
                             type='text'
                             control={control}
                             error={errors.seller_price}
-                            fieldName=" seller_price"
+                            fieldName="seller_price"
                             placeholder={``}
                             fieldLabel={"Purchase Price"}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -1544,7 +1675,7 @@ const ProductForm = ({ res }: props) => {
                             fieldName="regular_price"
                             placeholder={``}
                             fieldLabel={"Selling Price"}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -1564,13 +1695,13 @@ const ProductForm = ({ res }: props) => {
                     <Grid item lg={1.71} xs={12}>
                         <CustomInput
                             disabled={false}
-                            type='number'
+                            type='text'
                             control={control}
                             error={errors.fixed_delivery_price}
-                            fieldName=" fixed_delivery_price"
+                            fieldName="fixed_delivery_price"
                             placeholder={``}
                             fieldLabel={"Fixed Delivery Price"}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -1583,12 +1714,13 @@ const ProductForm = ({ res }: props) => {
                             fieldName="offer_price"
                             placeholder={``}
                             fieldLabel={"Offer Price"}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
                     <Grid item lg={1.71} xs={12}>
                         <CustomDatePicker
+                            disabled={view ? true : false}
                             values={getValues('offer_date_from')}
                             changeValue={onChangeOffer_date_from}
                             fieldName='offer_date_from'
@@ -1600,6 +1732,7 @@ const ProductForm = ({ res }: props) => {
                     </Grid>
                     <Grid item lg={1.71} xs={12}>
                         <CustomDatePicker
+                            disabled={view ? true : false}
                             values={getValues('offer_date_to')}
                             changeValue={onChangeOffer_date_to}
                             fieldName='offer_date_to'
@@ -1612,7 +1745,7 @@ const ProductForm = ({ res }: props) => {
                 </Grid>
             </CustomBox>}
             {varientsarray && <CustomBox title='Add Variant & Price'>
-                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} />)}
+                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient view={view} deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} />)}
             </CustomBox>}
 
             {/* {attributes?.some((res: any) => res.varient === true) &&
@@ -1625,18 +1758,19 @@ const ProductForm = ({ res }: props) => {
                         </Box>
                     }
                 </CustomBox>} */}
-            <Box py={3}>
-                <Custombutton
-                    disabled={loading}
-                    btncolor=''
-                    IconEnd={''}
-                    IconStart={''}
-                    endIcon={false}
-                    startIcon={false}
-                    height={''}
-                    label={res ? 'Update' : 'Add Product'}
-                    onClick={handleSubmit(onSubmit)} />
-            </Box>
+            {!view &&
+                <Box py={3}>
+                    <Custombutton
+                        disabled={loading}
+                        btncolor=''
+                        IconEnd={''}
+                        IconStart={''}
+                        endIcon={false}
+                        startIcon={false}
+                        height={''}
+                        label={res ? 'Update' : 'Add Product'}
+                        onClick={handleSubmit(onSubmit)} />
+                </Box>}
         </Box>
     )
 }

@@ -51,9 +51,9 @@ const DatePickers = ({
                                 height: "8px" // Set your height here.
                             }
                         }}
-                       
+
                         defaultValue={defaultvalue}
-                        value={value ? value : null}
+                        value={value ? value : null || values}
                         onChange={(e: any) => {
                             setValue(e)
                             changeValue(e)

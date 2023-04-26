@@ -46,7 +46,7 @@ const Polygons = ({ onComplete, path }) => {
         })
         onComplete(latlongs)
 
-        console.log({latlongs})
+        //console.log({latlongs})
        //setPolygon(createPolygon(polygon.getPath()));
     
         // Destroys the polygon that has been drawn by the manager.
@@ -65,6 +65,7 @@ const Polygons = ({ onComplete, path }) => {
 
 
     const onLoad = (polygon) => {
+        console.log({polygon})
         setPolygonRef(polygon)
     };
 

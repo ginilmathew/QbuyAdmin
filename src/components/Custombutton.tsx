@@ -24,6 +24,7 @@ const Custombutton = ({ label, onClick, endIcon, startIcon,disabled, IconStart, 
                  disabled={disabled ? disabled : false}
                 variant='contained'
                 onClick={onClick} sx={{
+                    margin:0,
                     fontFamily:`'Poppins' sans-serif`,
                     height: height,
                     px: 2,

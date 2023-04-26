@@ -1,4 +1,4 @@
-import { Avatar, Box, Typography } from '@mui/material'
+import { Avatar, Box, Tooltip, Typography } from '@mui/material'
 import React, { useCallback, useState, useContext } from 'react'
 import KeyIcon from '@mui/icons-material/Key';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -12,7 +12,7 @@ import Menus from './Menu';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import UserContext from '@/helpers/user';
-
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const Header = () => {
 
@@ -55,7 +55,7 @@ const Header = () => {
     setAnchorE2(null);
     setAnchorE3(null);
     setAnchorE4(null);
-  },[anchorEl,anchorE2,anchorE3,anchorE4])
+  }, [anchorEl, anchorE2, anchorE3, anchorE4])
 
   const Menudropdown = useCallback((e: React.MouseEvent<HTMLButtonElement>, value: string) => {
     switch (value) {
@@ -84,6 +84,12 @@ const Header = () => {
     router.push('/dashboard')
   }
 
+  const LogoutAll = useCallback(async () => {
+    await localStorage.clear();
+    userContext.setUser(null)
+    router.push('/login')
+  }, [])
+
   return (
     <Box
       height={80}
@@ -106,7 +112,7 @@ const Header = () => {
       />
 
       <Menus
-       
+
         unique={unique}
         open={open}
         handleClose={handleClose}
@@ -170,6 +176,12 @@ const Header = () => {
         </Box>
         <Box width={50} height={50} borderRadius={12} sx={{ background: '#58d36e', cursor: 'pointer' }} display={'flex'} alignItems={'center'} justifyContent={'center'}>
           <NotificationsIcon sx={{ color: "#fff" }} />
+        </Box>
+        <Box width={50} height={50} borderRadius={12} sx={{ cursor: 'pointer' }} display={'flex'} alignItems={'center'} justifyContent={'center'}>
+          <Tooltip title="Are you sure you want to log out?">
+            <LogoutIcon sx={{ fontWeight: 'bold' }} onClick={LogoutAll}/>
+          </Tooltip>
+
         </Box>
       </Box>
     </Box>

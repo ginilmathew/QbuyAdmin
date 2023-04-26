@@ -30,7 +30,7 @@ const Menus = ({ Icon, text, ArrowIcon, onClick, id, anchorEl, open, handleClose
                 aria-expanded={open ? 'true' : undefined}
                 alignItems={'center'} gap={1} direction={'row'} onClick={onClick} sx={{ display: { md: 'flex', sm: 'none', xs: 'none' } }}>
                 <Icon sx={{ cursor: 'pointer' }} />
-                <Typography sx={{ cursor: 'pointer', fontFamily: `'Poppins' sans-serif`, }} letterSpacing={1} fontSize={14} fontWeight={'bold'}>{text}</Typography>
+                <Typography sx={{ cursor: 'pointer', fontFamily: `'Poppins' sans-serif`, }} letterSpacing={1.5} fontSize={18} fontWeight={'400'}>{text}</Typography>
                 <ArrowIcon sx={{ cursor: 'pointer' }} />
             </Stack>
             <Menu

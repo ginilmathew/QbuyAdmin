@@ -43,7 +43,7 @@ type props = {
 
 const FranchiseForm = ({ res, view }: props) => {
     let dataRes = res ? res : view
-    console.log({ view })
+    console.log({ dataRes })
 
     const [paths, setPaths] = useState(null)
 
@@ -56,7 +56,7 @@ const FranchiseForm = ({ res, view }: props) => {
         .shape({
             franchise_name: yup.string().max(30, 'Maximum Character Exceeds').required('Franchise Name is Required'),
             owner_name: yup.string().max(30, 'Maximum Character Exceeds').required('Owner Name is Required'),
-            email: yup.string().max(30, 'Maximum Character Exceeds').email('Email is valid').required('Email is Required'),
+            email: yup.string().max(30, 'Maximum Character Exceeds').email('not a valid email').required('Email is Required'),
             mobile: yup.number()
                 .typeError("That doesn't look like a mobile number")
                 .positive("A mobile number can't start with a minus")
@@ -105,9 +105,7 @@ const FranchiseForm = ({ res, view }: props) => {
         try {
             await postData(res ? url_Edit : url_Create, res ? edit_Data : create_data)
             toast.success(res ? 'Edited Successfully' : 'Created Successfully')
-            if (res) {
-                router.push(`/franchise`)
-            }
+            router.push(`/franchise`)
             reset()
         } catch (err: any) {
             toast.error(err?.message)
@@ -118,10 +116,10 @@ const FranchiseForm = ({ res, view }: props) => {
     }
 
     const setDeliveryLocation = (value: any) => {
-        if(!view){
+        if (!view) {
             setValue("coordinates", value)
         }
-      
+
     }
 
     useEffect(() => {
@@ -133,14 +131,14 @@ const FranchiseForm = ({ res, view }: props) => {
             setValue('mobile', data?.mobile)
             setValue('address', data?.address)
             setValue('franchisee_commission', data?.franchisee_commission)
-            setValue('coordinates', data?.delivery_location)
             let paths = data?.delivery_location?.map((loc: any) => {
                 return {
-                    lat: loc[0],
-                    lng: loc[1]
+                    lat: parseFloat(loc[0]),
+                    lng: parseFloat(loc[1])
                 }
             })
             setPaths(paths)
+            setValue('coordinates', data?.delivery_location)
         }
     }, [res, view])
 

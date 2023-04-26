@@ -11,8 +11,9 @@ type props = {
     index: number,
     setState: any,
     state: any,
-    deafultCommission:string,
-    onChange: any
+    deafultCommission: string,
+    onChange: any,
+    view?: any
 }
 
 type Input = {
@@ -29,9 +30,9 @@ type Input = {
 }
 
 
-const CustomProductVarient = memo(({ content, index, deafultCommission, onChange,state}: props) => {
+const CustomProductVarient = memo(({ content, index, deafultCommission, onChange, state, view }: props) => {
 
-    console.log({state})
+    console.log({ state })
 
     const { register,
         handleSubmit,
@@ -43,7 +44,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
             defaultValues: content
         });
 
-
+console.log({state:state?.[index]?.offer_date_from})
     // const onChangeSellingPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
     //     state[index].attributs = content.split(" ")
     //     state[index].regular_price = e.target.value;
@@ -84,9 +85,9 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
         <Box>
             <Typography py={2} sx={{ fontFamily: `'Poppins' sans-serif` }} fontSize={16} fontWeight={'bold'}>{index + 1}. {content?.title}</Typography>
             <Grid container spacing={2}>
-            <Grid item lg={1.5} xs={12}>
+                <Grid item lg={1.5} xs={12}>
                     <CustomInputNormal
-                       
+
                         onChangeValue={(e: any) => onChange(e.target.value, 'seller_price')}
                         disabled={false}
                         type='text'
@@ -94,11 +95,11 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                         fieldName="seller_price"
                         placeholder={``}
                         fieldLabel={"Purchase Price"}
-                        view={false}
-                        defaultValue={state[index]?.regular_price}  
+                        view={view ? true : false}
+                        defaultValue={state[index]?.regular_price}
                     />
                 </Grid>
-                
+
                 <Grid item lg={1.5} xs={12}>
                     <CustomInputNormal
                         disabled={false}
@@ -108,12 +109,12 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                         placeholder={``}
                         onChangeValue={(e: any) => onChange(e.target.value, 'regular_price')}
                         fieldLabel={"Selling Price"}
-                        view={false}
+                        view={view ? true : false}
                         defaultValue={state[index]?.seller_price}
                     />
                 </Grid>
-                
-               
+
+
                 <Grid item lg={1.5} xs={12}>
                     <CustomInputNormal
                         onChangeValue={(e: any) => onChange(e.target.value, 'commission')}
@@ -123,7 +124,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                         fieldName="commission"
                         placeholder={''}
                         fieldLabel={"Commission(%)"}
-                        view={false}
+                        view={view ? true : false}
                         defaultValue={deafultCommission ? deafultCommission : 0}
                     />
                 </Grid>
@@ -136,7 +137,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                         fieldName=" fixed_delivery_price"
                         placeholder={``}
                         fieldLabel={"Fixed Delivery Price"}
-                        view={false}
+                        view={view ? true : false}
                         defaultValue={state[index]?.fixed_delivery_price}
                     />
                 </Grid>
@@ -149,25 +150,28 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                         fieldName="offer_price"
                         placeholder={``}
                         fieldLabel={"Offer Price"}
-                        view={false}
+                        view={view ? true : false}
                         defaultValue={state[index]?.offer_price}
                     />
                 </Grid>
 
                 <Grid item lg={1.5} xs={12}>
                     < DatePickers
+                        defaultvalue={state?.[index]?.offer_date_from}
                         values={getValues('offer_date_from')}
-                        changeValue={(e: any) => onChange(e, 'offer_date_from')}
+                        changeValue={(e: any) => onChange(moment(e, 'YYYY-MM-DD').format('YYYY-MM_DD'), 'offer_date_from')}
                         fieldName='offer_date_from'
                         error={errors.offer_date_from}
                         fieldLabel={'Offer From'}
-                        // defaultvalue={state[index]?.}
+                    // defaultvalue={state[index]?.}
+
                     />
                 </Grid>
                 <Grid item lg={1.5} xs={12}>
                     <DatePickers
+                        defaultvalue={state?.[index]?.offer_date_to}
                         values={getValues('offer_date_to')}
-                        changeValue={(e: any) => onChange(e, 'offer_date_to')}
+                        changeValue={(e: any) => onChange(moment(e, 'YYYY-MM-DD').format('YYYY-MM-DD'), 'offer_date_to')}
                         fieldName='offer_date_to'
                         error={errors.offer_date_to}
                         fieldLabel={'Offer To'}
@@ -182,7 +186,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
                         fieldName="stock_value"
                         placeholder={``}
                         fieldLabel={"Stock"}
-                        view={false}
+                        view={view ? true : false}
                         defaultValue={state[index]?.stock_value}
                     />
                 </Grid>
