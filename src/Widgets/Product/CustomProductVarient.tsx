@@ -96,7 +96,7 @@ console.log({state:state?.[index]?.offer_date_from})
                         placeholder={``}
                         fieldLabel={"Purchase Price"}
                         view={view ? true : false}
-                        defaultValue={state[index]?.regular_price}
+                        defaultValue={state[index]?.seller_price}
                     />
                 </Grid>
 
@@ -110,7 +110,7 @@ console.log({state:state?.[index]?.offer_date_from})
                         onChangeValue={(e: any) => onChange(e.target.value, 'regular_price')}
                         fieldLabel={"Selling Price"}
                         view={view ? true : false}
-                        defaultValue={state[index]?.seller_price}
+                        defaultValue={state[index]?.regular_price}
                     />
                 </Grid>
 
