@@ -47,14 +47,14 @@ const Franchise = () => {
     const columns: GridColDef[] = [
         {
             field: 'franchise_id',
-            headerName: 'Franchise ID',
+            headerName: 'Franchisee ID',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
         },
         {
             field: 'franchise_name',
-            headerName: 'Franchise Name',
+            headerName: 'Franchisee Name',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
@@ -230,7 +230,7 @@ const Franchise = () => {
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
-                <CustomTableHeader setState={searchfranchise} addbtn={true} imprtBtn={false} Headerlabel='Franchise' onClick={addvaendor} />
+                <CustomTableHeader setState={searchfranchise} addbtn={true} imprtBtn={false} Headerlabel='Franchisee' onClick={addvaendor} />
                 <Box py={3}>
                     <CustomTable dashboard={false} columns={columns} rows={franchiseList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
