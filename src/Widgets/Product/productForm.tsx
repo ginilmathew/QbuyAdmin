@@ -1009,8 +1009,8 @@ const ProductForm = ({ res, view }: props) => {
             video_link: data?.video_link,
             related_products: recomendedProductList,
             attributess: attributes,
-            regular_price: data?.seller_price,
-            seller_price: data?.regular_price,
+            regular_price: data?.regular_price,
+            seller_price: data?.seller_price,
             offer_price: data?.offer_price,
             commission: data?.regular_price ? 0 : data?.commission,
             fixed_delivery_price: data?.fixed_delivery_price,
@@ -1650,7 +1650,7 @@ const ProductForm = ({ res, view }: props) => {
                         {!confirmbtn && <Custombutton btncolor='' height={40} endIcon={false} startIcon={false} label={'confirm'} onClick={ConfirmVarients} IconEnd={''} IconStart={''} />}
                     </Box>} */}
             </CustomBox>
-            {attributes?.every((res: any) => res.varient === false) && <CustomBox title='Price'>
+            {varientsarray?.length === 0 && <CustomBox title='Price'>
                 <Grid container spacing={2}>
                     <Grid item lg={1.71} xs={12}>
                         <CustomInput
@@ -1744,7 +1744,7 @@ const ProductForm = ({ res, view }: props) => {
                     </Grid>
                 </Grid>
             </CustomBox>}
-            {varientsarray && <CustomBox title='Add Variant & Price'>
+            {varientsarray && varientsarray.length > 0 && <CustomBox title='Add Variant & Price'>
                 {varientsarray?.map((varian: any, i: number) => <CustomProductVarient view={view} deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} />)}
             </CustomBox>}
 

@@ -85,7 +85,7 @@ type props = {
 const Vendorform = ({ res, view }: props) => {
     const resData = res ? res : view;
 
-    console.log({resData})
+   
     const router = useRouter();
 
 
@@ -112,7 +112,7 @@ const Vendorform = ({ res, view }: props) => {
             vendor_name: yup.string().max(30, 'Maximum Character Exceeds').required('Vendor Name is Required'),
             vendor_email: yup.string().max(30, 'Maximum Character Exceeds').email("Email must be a valid email").required('Email is Required'),
             vendor_mobile: yup.string().min(10, 'Phone number is not valid').matches(phoneRegExp, 'Phone number is not valid').required('Mobile Number is  Required'),
-            store_name: yup.string().max(30, 'Maximum Character Exceeds').required('Store Name is Required'),
+            store_name: yup.string().max(60, 'Maximum Character Exceeds').required('Store Name is Required'),
             // store_address: yup.string().required('Store Address is Required'),
             franchise_id: yup.string().required('Franchise is  Required'),
             category_id: yup.array().typeError('Category is Required').required('Category is Required'),
