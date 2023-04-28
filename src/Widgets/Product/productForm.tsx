@@ -582,8 +582,8 @@ const ProductForm = ({ res, view }: props) => {
                 })
             }
             setValue('commission', resDate?.commision)
-            setValue('regular_price', resDate?.seller_price)
-            setValue('seller_price', resDate?.regular_price)
+            setValue('regular_price', resDate?.regular_price)
+            setValue('seller_price', resDate?.seller_price)
             setValue('offer_price', resDate?.offer_price)
             setValue('offer_date_from', moment(resDate?.offer_date_from, 'YYYY-MM-DD'))
             setValue('offer_date_to', moment(resDate?.offer_date_to, 'YYYY-MM-DD'))
