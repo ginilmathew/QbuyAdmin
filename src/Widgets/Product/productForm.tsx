@@ -32,6 +32,7 @@ import { useRouter } from 'next/router';
 import CustomTagInputValue from '@/components/CustomTagInputValue';
 import CustomAutoCompleteSearch from '@/components/CustomAutoCompleteSearch';
 import ClearIcon from '@mui/icons-material/Clear';
+import CustomLoader from '@/components/CustomLoader';
 type Inputs = {
     name: string,
     description: string,
@@ -566,8 +567,8 @@ const ProductForm = ({ res, view }: props) => {
                         variant_id: item._id,
                         title: item?.attributs,
                         attributs: item?.attributs,
-                        seller_price: item?.regular_price,
-                        regular_price: item?.seller_price,
+                        seller_price: item?.seller_price,
+                        regular_price: item?.regular_price,
                         offer_price: item?.offer_price,
                         offer_date_from: moment(item?.offer_date_from, 'YYYY-MM-DD'),
                         offer_date_to: moment(res?.offer_date_to, 'YYYY-MM-DD'),

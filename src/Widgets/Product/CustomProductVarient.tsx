@@ -44,6 +44,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
             defaultValues: content
         });
 
+
 console.log({state:state?.[index]?.offer_date_from})
     // const onChangeSellingPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
     //     state[index].attributs = content.split(" ")
@@ -125,7 +126,7 @@ console.log({state:state?.[index]?.offer_date_from})
                         placeholder={''}
                         fieldLabel={"Commission(%)"}
                         view={view ? true : false}
-                        defaultValue={deafultCommission ? deafultCommission : 0}
+                        defaultValue={state[index]?.commission ? state[index]?.commission   : 0}
                     />
                 </Grid>
                 <Grid item lg={1.5} xs={12}>
