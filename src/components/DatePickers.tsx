@@ -10,7 +10,8 @@ type props = {
     fieldLabel: string,
     error: any,
     changeValue: (value: any) => void,
-    values:any
+    values: any,
+    defaultvalue?: any
 
 }
 
@@ -21,6 +22,7 @@ const DatePickers = ({
     error,
     values,
     changeValue,
+    defaultvalue
 }: props) => {
 
 
@@ -42,21 +44,22 @@ const DatePickers = ({
                 >{fieldLabel}
                 </Typography>
                 <LocalizationProvider dateAdapter={AdapterMoment}>
-                       
-                        <DatePicker 
-                            sx={{
+
+                    <DatePicker
+                        sx={{
                             "& .MuiInputBase-input": {
                                 height: "8px" // Set your height here.
                             }
                         }}
-
-                        value={value? value: null}
+                       
+                        defaultValue={defaultvalue}
+                        value={value ? value : null}
                         onChange={(e: any) => {
                             setValue(e)
                             changeValue(e)
                         }}
                     />
-                
+
 
                 </LocalizationProvider>
                 {error && (

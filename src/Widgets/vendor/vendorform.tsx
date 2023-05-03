@@ -347,16 +347,18 @@ const Vendorform = ({ res, view }: props) => {
             setValue('offer_description', resData?.additional_details?.offer_description)
             setValue('tax', resData?.additional_details?.tax)
             setMultipleArray(array)
-            setValue('coordinates', resData?.delivery_location)
+ 
             setValue('display_order', resData?.display_order)
 
             let paths = resData?.delivery_location?.map((loc: any) => {
                 return {
-                    lat: loc[0],
-                    lng: loc[1]
+                    lat: parseFloat(loc[0]),
+                    lng: parseFloat(loc[1])
                 }
             })
             setPaths(paths)
+
+            setValue('coordinates',paths)
 
         }
     }, [resData])

@@ -21,16 +21,18 @@ const AddProducts = () => {
     const [productList, setProductList] = useState<any>([])
     const [setSerachList, setSearchList] = useState<any>([])
     const [pending, startTransition] = useTransition();
-
+    const [_id, set_id] = useState<string>('');
  
 
     const handleClose = () => {
         setOpen(false)
     }
 
-    const handleOpen = () => {
+    const handleOpen = (id: any) => {
+        set_id(id)
         setOpen(true)
     }
+
 
     const addproductItems = () => {
         router.push('/products/addProduct')
@@ -126,12 +128,12 @@ const AddProducts = () => {
             align: 'center',
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
-                    <RemoveRedEyeIcon
+                    {/* <RemoveRedEyeIcon
 
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
-                        }} />
+                        }} /> */}
                     <BorderColorTwoToneIcon
                         onClick={() => editProductPage(row?._id)}
                         style={{
@@ -140,7 +142,7 @@ const AddProducts = () => {
                         }}
                     />
                     <DeleteOutlineTwoToneIcon
-                        onClick={() => handleOpen()}
+                        onClick={() => handleOpen(row?._id)}
                         sx={{
                             color: '#58D36E',
                             cursor: 'pointer',
@@ -159,11 +161,12 @@ const AddProducts = () => {
        
         try {
             setLoding(true)
-            let result = productList?.filter((item:any)=>item?._id !== id)
-            setProductList([...result])
-           const response =  await postData('admin/product/status-update', value)
-           setProductList((prev:any)=>([response?.data?.data,...prev]))
+          const response =  await postData('admin/product/status-update', value)
+
+          setProductList((prev:any)=>([response?.data?.data,...prev?.filter((res:any)=>res?._id !== response?.data?.data?._id)]))
         //   fetchproduct()
+
+
         }
         catch (err: any) {
             toast.warning(err?.message)
@@ -218,9 +221,20 @@ const AddProducts = () => {
                     <CustomTable dashboard={false} columns={columns} rows={productList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
-            {/* {open && <CustomDelete onClose={() => handleClose()} open={open} />} */}
+            {open && <CustomDelete
+                _id={_id}
+                setData={setProductList}
+                data={productList}
+                url={`admin/product/delete/${_id}`}
+                onClose={handleClose}
+                open={open} />}
         </Box>
     )
 }
+
+
+
+
+  
 
 export default AddProducts

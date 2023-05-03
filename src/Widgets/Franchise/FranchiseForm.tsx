@@ -133,14 +133,15 @@ const FranchiseForm = ({ res, view }: props) => {
             setValue('mobile', data?.mobile)
             setValue('address', data?.address)
             setValue('franchisee_commission', data?.franchisee_commission)
-            setValue('coordinates', data?.delivery_location)
+        
             let paths = data?.delivery_location?.map((loc: any) => {
                 return {
-                    lat: loc[0],
-                    lng: loc[1]
+                    lat: parseFloat(loc[0]),
+                    lng: parseFloat(loc[1])
                 }
             })
             setPaths(paths)
+            setValue('coordinates', paths)
         }
     }, [res, view])
 

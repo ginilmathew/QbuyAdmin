@@ -28,6 +28,7 @@ import { IMAGE_URL } from '../../Config/index';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import TagInput from '@/components/TagInput'
 import Attributes from './Attributes'
+import { useRouter } from 'next/router';
 
 type Inputs = {
     name: string,
@@ -121,6 +122,9 @@ type props = {
 
 const ProductForm = ({ res }: props) => {
 
+    console.log({ res }, 'PRODUCT RESPONSE')
+    const router = useRouter()
+
 
     const [multipleImage, setMultipleImage] = useState<any>([])
 
@@ -148,13 +152,13 @@ const ProductForm = ({ res }: props) => {
     const [paths, setPaths] = useState<any>(null)
     const [requireShipping, setRequireShipping] = useState<boolean>(false)
     const [varientsarray, setVarientsArray] = useState<any>([])
+    const [vendorlistDirection, setVendorListDirection] = useState<any>([])
 
 
 
-  console.log({varientsarray})
 
 
-   //100KB
+ 
 
     const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
     const schema = yup
@@ -162,14 +166,14 @@ const ProductForm = ({ res }: props) => {
         .shape({
             name: yup.string().required('Product Name Required'),
             // display_order: yup.number().nullable().typeError("Must be Integer"),
-            franchisee: yup.array().typeError('Franchise is Required').required('Franchise is Required'),
-            store: yup.array().typeError('Store is Required').required('Store is Required'),
-            category: yup.array().typeError('Category is Required').required('Category is Required'),
+            franchisee: yup.string().typeError('Franchise is Required').required('Franchise is Required'),
+            store: yup.string().typeError('Store is Required').required('Store is Required'),
+            category: yup.string().typeError('Category is Required').required('Category is Required'),
             // delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
             product_image: yup
                 .mixed()
                 .required("Product Image is Required"),
-            seller_price: attributes.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
+            // seller_price: attributes.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
 
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
 
@@ -198,7 +202,7 @@ const ProductForm = ({ res }: props) => {
                 panda_suggession: false,
                 stock: false,
                 stock_value: '',
-                franchisee: '',
+                franchisee: res ? res?.franchisee : '',
                 category: '',
                 sub_category: null,
                 store: '',
@@ -278,6 +282,7 @@ const ProductForm = ({ res }: props) => {
             setLoading(true)
             const response = await fetchData('/admin/franchise/list')
             setFranchiseList(response?.data?.data)
+
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)
@@ -289,13 +294,8 @@ const ProductForm = ({ res }: props) => {
 
 
     const onselectFranchise = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        let result = franchiseList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
-            {
-                id: get?._id,
-                name: get?.franchise_name
-            }
-        ))
-        setValue('franchisee', result)
+
+        setValue('franchisee', e.target?.value)
         setError('franchisee', { message: '' })
         setFranchiseSelect(e.target.value)
         try {
@@ -320,9 +320,14 @@ const ProductForm = ({ res }: props) => {
                 id: get?._id,
                 name: get?.store_name
             }
+
         ))
+
+        let findresult = vendorList?.filter((res: any) => res?._id === e.target.value)
+        setVendorListDirection(findresult)
+     
         setValue('commission', result[0]?.commision)
-        setValue('store', result)
+        setValue('store', e.target.value)
         setError('store', { message: '' })
     }
 
@@ -347,14 +352,7 @@ const ProductForm = ({ res }: props) => {
     const onSelectCategory = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setCategorySelect(e.target.value)
 
-        let result = categoryList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
-            {
-                id: get?._id,
-                name: get?.name,
-                image: get?.image
-            }
-        ))
-        setValue('category', result)
+        setValue('category', e.target.value)
         setError('category', { message: '' })
         setSubCategoryList([])
         try {
@@ -371,13 +369,8 @@ const ProductForm = ({ res }: props) => {
 
     const onSelectSubCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSubCategorySelect(e.target.value)
-        let result = subcategoryList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
-            {
-                id: get?._id,
-                name: get?.name
-            }
-        ))
-        setValue('sub_category', result)
+
+        setValue('sub_category', e.target.value)
         setError('sub_category', { message: '' })
     }
 
@@ -399,18 +392,20 @@ const ProductForm = ({ res }: props) => {
     // }
 
     const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
-        attributes[i][key] = e;
+        if (!res) {
+            attributes[i][key] = e;
 
-        if (key === "options") {
-            let result = attributes[i].variant === true;
-            if (result) {
-                onOptionsChangeaddvarients()
-            } else {
-                return false;
+            if (key === "options") {
+                let result = attributes[i].variant === true;
+                if (result) {
+                    onOptionsChangeaddvarients()
+                } else {
+                    return false;
+                }
+
             }
 
         }
-
 
     }
 
@@ -451,10 +446,6 @@ const ProductForm = ({ res }: props) => {
     }
 
 
-    useEffect(() => {
-        getFranchiseList()
-        fetchCategoryList()
-    }, [])
 
 
 
@@ -471,7 +462,9 @@ const ProductForm = ({ res }: props) => {
             const getvendorlist = async () => {
                 try {
                     const response = await fetchData(`admin/vendor-list/${res?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
+
                     setVendorList(response?.data?.data)
+                    setValue('franchisee', res?.franchisee?._id)
                 } catch (err: any) {
                     toast.error(err?.message)
                 }
@@ -490,16 +483,16 @@ const ProductForm = ({ res }: props) => {
             setValue('name', res?.name)
             setValue('franchisee', res?.franchisee?._id)
             setFranchiseSelect(res?.franchisee?._id)
-            setValue('store', res?.store)
+            setValue('store', res?.store?._id)
             setvendorSelect(res?.store?._id)
             setValue('description', res?.description)
             setValue('weight', res?.weight)
             setValue('model', res?.model)
             setValue('width', res?.dimensions?.width)
             setValue('height', res?.dimensions?.height)
-            setValue('category', res?.category)
+            setValue('category', res?.category?._id)
             setCategorySelect(res?.category?._id)
-            setValue('sub_category', res?.sub_category)
+            setValue('sub_category', res?.sub_category?._id)
             setSubCategorySelect(res?.sub_category?._id)
             setValue('display_order', res?.display_order)
             setValue('panda_suggession', res?.panda_suggession)
@@ -509,15 +502,15 @@ const ProductForm = ({ res }: props) => {
             setValue('stock_value', res?.stock_value)
             setValue('minimum_qty', res?.minimum_qty)
             setImagePreview(`${IMAGE_URL}${res?.product_image}`)
-            setValue('delivery_locations', res?.delivery_location)
+    
             let paths = res?.delivery_locations?.map((loc: any) => {
                 return {
-                    lat: loc[0],
-                    lng: loc[1]
+                    lat: parseFloat(loc[0]),
+                    lng: parseFloat(loc[1])
                 }
             })
             setPaths(paths)
-
+            setValue('delivery_locations', paths)
             setValue('product_availability_from', moment(res?.product_availability_from, 'HH:mm'))
             setValue('product_availability_to', moment(res?.product_availability_to, 'HH:mm'))
             setValue('require_shipping', res?.require_shipping)
@@ -532,12 +525,13 @@ const ProductForm = ({ res }: props) => {
             }
             setValue('video_link', res?.video_link)
             setValue('related_products', res?.related_products)
+            setValue('product_image', res?.product_image)
             if (res?.image) {
                 let imageslist = res?.image?.map((res: any) => (
                     res
 
                 ))
-                setdefaultImage([...imageslist])    
+                setdefaultImage([...imageslist])
             }
 
 
@@ -555,15 +549,15 @@ const ProductForm = ({ res }: props) => {
                 })
             }
 
-            let myvaarientArray: { title: any; attributs: any; seller_price: any; regular_price: string; offer_price: string; offer_date_from: string; offer_date_to: string; stock: boolean; stock_value: string; commission: number; fixed_delivery_price: number; }[] = []
+            let myvaarientArray: { title: any; variant_id: string; attributs: any; seller_price: any; regular_price: string; offer_price: string; offer_date_from: string; offer_date_to: string; stock: boolean; stock_value: string; commission: number; fixed_delivery_price: number; }[] = []
             if (res?.variants?.length > 0) {
                 res?.variants?.map((item: any) => {
-
                     myvaarientArray.push({
+                        variant_id: item._id,
                         title: item?.attributs,
                         attributs: item?.attributs,
-                        seller_price: item?.seller_price,
-                        regular_price: item?.regular_price,
+                        seller_price: item?.regular_price,
+                        regular_price: item?.seller_price,
                         offer_price: item?.offer_price,
                         offer_date_from: '',
                         offer_date_to: '',
@@ -573,22 +567,28 @@ const ProductForm = ({ res }: props) => {
                         fixed_delivery_price: 0
 
                     })
-
                     setVarientsArray(myvaarientArray)
                 })
             }
 
 
-            console.log({ varientsarray })
+
             setValue('commission', res?.commision)
-            setValue('regular_price', res?.regular_price)
+            setValue('regular_price', res?.seller_price)
+            setValue('seller_price', res?.regular_price)
             setValue('offer_price', res?.offer_price)
+            setValue('offer_date_from', moment(res?.offer_date_from, 'YYYY-MM-DD'))
+            setValue('offer_date_to', moment(res?.offer_date_from, 'YYYY-MM-DD'))
 
         }
 
     }, [res])
 
 
+    useEffect(() => {
+        getFranchiseList()
+        fetchCategoryList()
+    }, [])
 
 
     useEffect(() => {
@@ -623,13 +623,16 @@ const ProductForm = ({ res }: props) => {
     // }
 
     const enableVariant = (e: any, i: number) => {
-        setVarientsArray([])
-        //setVarients
-        setIndex(i)
-        attributes[i].variant = e;
-        setAttributes([...attributes])
-        //setAddVarient(e)
-        addvarients()
+        if (!res) {
+            setVarientsArray([])
+            //setVarients
+            setIndex(i)
+            attributes[i].variant = e;
+            setAttributes([...attributes])
+            //setAddVarient(e)
+            addvarients()
+        }
+
     }
 
     const combine: any = ([head, ...[headTail, ...tailTail]]: any) => {
@@ -842,7 +845,46 @@ const ProductForm = ({ res }: props) => {
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
 
+        let franchiseData = franchiseList?.filter((res: any) => res?._id === franchiseSelect).map((get: any) => (
+            {
+                id: get?._id,
+                name: get?.franchise_name
+            }
+        ))
+
+
+
+        let categoryData = categoryList?.filter((res: any) => res?._id === categorySelect).map((get: any) => (
+            {
+                id: get?._id,
+                name: get?.name,
+                image: get?.image
+            }
+        ))
+
+
+        let subCategoryData = subcategoryList?.filter((res: any) => res?._id === subcategorySelect).map((get: any) => (
+            {
+                id: get?._id,
+                name: get?.name
+            }
+        ))
+
+
+
+        let vendorData = vendorList?.filter((res: any) => res?._id === vendorSelect).map((get: any) => (
+            {
+                commision: get?.additional_details ? get?.additional_details.commission : 0,
+                id: get?._id,
+                name: get?.store_name
+            }
+        ))
+
+
+
         let imagearray: any = []
+
+
         if (multipleImage?.length > 0) {
             const formData = new FormData();
             multipleImage?.map((img: any, i: number) => {
@@ -852,7 +894,11 @@ const ProductForm = ({ res }: props) => {
                 setLoading(true)
                 const response = await postData('admin/product/multipleupload', formData)
                 setValue('image', response?.data?.data)
-                imagearray = response?.data?.data
+                if (defaultImage?.length > 0 && res) {
+                    imagearray = [...response?.data?.data, ...defaultImage]
+                } else {
+                    imagearray = response?.data?.data
+                }
                 setError('image', { message: '' })
             } catch (err: any) {
                 toast.error(err?.message)
@@ -863,6 +909,8 @@ const ProductForm = ({ res }: props) => {
             }
 
         }
+
+      
 
         const metatagsres = metaTagValue?.map((res: any) => (
             res.title
@@ -890,13 +938,13 @@ const ProductForm = ({ res }: props) => {
         let value: any = {
             name: data?.name,
             franchisee: {
-                _id: data?.franchisee?.[0]?.id,
-                name: data?.franchisee?.[0]?.name
+                _id: franchiseData?.[0]?.id,
+                name: franchiseData?.[0]?.name
             },
             description: data?.description,
             store: {
-                _id: data?.store?.[0]?.id,
-                name: data?.store?.[0]?.name
+                _id: vendorData?.[0]?.id,
+                name: vendorData?.[0]?.name
             },
             weight: data?.weight,
             dimensions: {
@@ -906,16 +954,16 @@ const ProductForm = ({ res }: props) => {
             model: data?.model,
             type: process.env.NEXT_PUBLIC_TYPE,
             product_Type: null,
-            image: res ? data?.image : imagearray,
+            image: imagearray?.length > 0 ? imagearray : defaultImage,
             product_image: data?.product_image,
             category: {
-                _id: data?.category?.[0]?.id,
-                name: data?.category?.[0]?.name,
-                image: data?.category?.[0]?.image
+                _id: categoryData?.[0]?.id,
+                name: categoryData?.[0]?.name,
+                image: categoryData?.[0]?.image
             },
             sub_category: data?.sub_category ? {
-                _id: data?.sub_category?.[0]?.id,
-                name: data?.sub_category?.[0]?.name
+                _id: subCategoryData?.[0]?.id,
+                name: subCategoryData?.[0]?.name
             } : null,
             display_order: data?.display_order,
             panda_suggession: data?.panda_suggession,
@@ -925,7 +973,7 @@ const ProductForm = ({ res }: props) => {
             product_availability_from: data?.product_availability_from ? moment(data?.product_availability_from, 'hh:mm A').format('hh:mm') : null,
             product_availability_to: data?.product_availability_to ? moment(data?.product_availability_to, 'hh:mm A').format('hh:mm') : null,
             require_shipping: data?.require_shipping,
-            delivery_locations: data?.delivery_locations ? data?.delivery_locations : vendorList?.[0]?.delivery_location,
+            delivery_locations: data?.delivery_locations ? data?.delivery_locations : vendorlistDirection?.[0]?.delivery_location,
             coupon_details: null,
             meta_tags: metatagsres,
             video_link: data?.video_link,
@@ -945,7 +993,6 @@ const ProductForm = ({ res }: props) => {
         if (res) {
             value["id"] = res?._id;
         }
-
         try {
             setLoading(true)
             await postData(res ? EDIT_URL : CREATE_URL, value)
@@ -965,11 +1012,15 @@ const ProductForm = ({ res }: props) => {
             setRequireShipping(false)
             setMultipleImage([])
             toast.success(res ? 'Updated Successfully' : 'Created Successfully')
+            if (res) {
+                router?.push('/products')
+            }
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)
 
         } finally {
+
             setLoading(false)
         }
     }
@@ -1432,7 +1483,9 @@ const ProductForm = ({ res }: props) => {
                 </Grid>
             </CustomBox>
             <CustomBox title='Attributes'>
-                <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />
+
+                {!res &&
+                    <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
                     <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} />
                 )}
@@ -1566,7 +1619,7 @@ const ProductForm = ({ res }: props) => {
                 </Grid>
             </CustomBox>}
             {varientsarray && <CustomBox title='Add Variant & Price'>
-                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={undefined} />)}
+                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} />)}
             </CustomBox>}
 
             {/* {attributes?.some((res: any) => res.varient === true) &&
