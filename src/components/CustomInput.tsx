@@ -14,7 +14,7 @@ type props = {
     view: boolean,
     // changeValue:React.ChangeEvent<HTMLInputElement>
     disabled: boolean,
-    defaultValue: any
+    defaultValue?: any
     type: string
     onChangeValue?:any
 }

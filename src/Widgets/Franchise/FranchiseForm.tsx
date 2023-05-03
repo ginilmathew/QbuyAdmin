@@ -43,7 +43,7 @@ type props = {
 
 const FranchiseForm = ({ res, view }: props) => {
     let dataRes = res ? res : view
-    console.log({ view })
+    console.log({ dataRes })
 
     const [paths, setPaths] = useState(null)
 
@@ -56,9 +56,9 @@ const FranchiseForm = ({ res, view }: props) => {
         .shape({
             franchise_name: yup.string().max(30, 'Maximum Character Exceeds').required('Franchise Name is Required'),
             owner_name: yup.string().max(30, 'Maximum Character Exceeds').required('Owner Name is Required'),
-            email: yup.string().max(30, 'Maximum Character Exceeds').email('Email is valid').required('Email is Required'),
+            email: yup.string().max(30, 'Maximum Character Exceeds').email('not a valid email').required('Email is Required'),
             mobile: yup.number()
-                .typeError("That doesn't look like a mobile number")
+                .typeError("A Mobile number is required")
                 .positive("A mobile number can't start with a minus")
                 .integer("A mobile number can't include a decimal point")
                 .min(10)
@@ -105,9 +105,7 @@ const FranchiseForm = ({ res, view }: props) => {
         try {
             await postData(res ? url_Edit : url_Create, res ? edit_Data : create_data)
             toast.success(res ? 'Edited Successfully' : 'Created Successfully')
-            if (res) {
-                router.push(`/franchise`)
-            }
+            router.push(`/franchise`)
             reset()
         } catch (err: any) {
             toast.error(err?.message)
@@ -118,10 +116,10 @@ const FranchiseForm = ({ res, view }: props) => {
     }
 
     const setDeliveryLocation = (value: any) => {
-        if(!view){
+        if (!view) {
             setValue("coordinates", value)
         }
-      
+
     }
 
     useEffect(() => {
@@ -133,7 +131,6 @@ const FranchiseForm = ({ res, view }: props) => {
             setValue('mobile', data?.mobile)
             setValue('address', data?.address)
             setValue('franchisee_commission', data?.franchisee_commission)
-        
             let paths = data?.delivery_location?.map((loc: any) => {
                 return {
                     lat: parseFloat(loc[0]),
@@ -141,14 +138,14 @@ const FranchiseForm = ({ res, view }: props) => {
                 }
             })
             setPaths(paths)
-            setValue('coordinates', paths)
+            setValue('coordinates', data?.delivery_location)
         }
     }, [res, view])
 
 
     return (
         <Box>
-            <CustomBox title='Franchise Details'>
+            <CustomBox title='Franchisee Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={3}>
                         <CustomInput
@@ -157,7 +154,7 @@ const FranchiseForm = ({ res, view }: props) => {
                             error={errors.franchise_name}
                             fieldName="franchise_name"
                             placeholder={``}
-                            fieldLabel={"Franchise Name"}
+                            fieldLabel={"Franchisee Name"}
                             disabled={false}
                             view={view ? true : false}
                             defaultValue={''}
@@ -244,7 +241,7 @@ const FranchiseForm = ({ res, view }: props) => {
                         endIcon={false}
                         startIcon={false}
                         height={''}
-                        label={res ? 'Update' : 'Add Franchise'}
+                        label={res ? 'Update' : 'Add Franchisee'}
                         onClick={handleSubmit(onSubmit)}
                         disabled={loading}
                     />

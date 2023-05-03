@@ -83,7 +83,7 @@ const VendorSignup = () => {
 
         // },
         {
-            field: 'Approval Status',
+            field: 'approval_status',
             headerName: 'Approval Status',
             flex: 1,
             headerAlign: 'center',
@@ -192,6 +192,8 @@ const VendorSignup = () => {
                 </Box>
             </Box>
             {open && <CustomDelete
+                 heading='Vendor'
+                 paragraph='vendor'
                 _id={_id}
                 setData={setVendorList}
                 data={vendorList}

@@ -151,7 +151,7 @@ const SubCategoryForm = ({ res, view }: props) => {
         }
         formData.append("name", data?.name);
         formData.append("order_number", data?.order_number);
-        if (data?.image) {
+        if (imagefile) {
             formData.append("image", data?.image);
         }
         formData.append("type", type);
@@ -163,9 +163,7 @@ const SubCategoryForm = ({ res, view }: props) => {
             setImagePreview(null)
             setCategoryID('')
             reset()
-            if (res) {
-                router.push('/subCategory')
-            }
+            router.push('/subCategory')
             toast.success(res ? 'Updated Successfully' : 'Created Successfully')
 
         } catch (err: any) {

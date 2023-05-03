@@ -1,6 +1,6 @@
 import CustomTable from '@/components/CustomTable'
 import CustomTableHeader from '@/Widgets/CustomTableHeader'
-import { Box, Stack } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import React, { useState, useEffect, useTransition, useCallback } from 'react'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useRouter } from 'next/router';
@@ -47,14 +47,14 @@ const Franchise = () => {
     const columns: GridColDef[] = [
         {
             field: 'franchise_id',
-            headerName: 'Franchise ID',
+            headerName: 'Franchisee ID',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
         },
         {
             field: 'franchise_name',
-            headerName: 'Franchise Name',
+            headerName: 'Franchisee Name',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
@@ -62,7 +62,7 @@ const Franchise = () => {
         },
         {
             field: 'owner_name',
-            headerName: 'Owner.',
+            headerName: 'Owner',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
@@ -75,6 +75,10 @@ const Franchise = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            renderCell: ({ row }) => (
+            <Typography
+                sx={{ fontFamily: `'Poppins' sans-serif`,fontSize:16 }}
+            >{row?.mobile}</Typography>)
 
         },
         {
@@ -141,23 +145,23 @@ const Franchise = () => {
                                 }} /></> :
                         <>
                             <RemoveRedEyeIcon
-                           
+
                                 style={{
                                     color: 'grey',
-                           
+
                                 }} />
                             <BorderColorTwoToneIcon
-                            
+
                                 style={{
                                     color: 'grey',
-                           
+
                                 }}
                             />
                             <DeleteOutlineTwoToneIcon
-                           
+
                                 style={{
                                     color: 'grey',
-                           
+
                                 }} />
                         </>
                     }
@@ -226,13 +230,15 @@ const Franchise = () => {
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
-                <CustomTableHeader setState={searchfranchise} addbtn={true} imprtBtn={false} Headerlabel='Franchise' onClick={addvaendor} />
+                <CustomTableHeader setState={searchfranchise} addbtn={true} imprtBtn={false} Headerlabel='Franchisee' onClick={addvaendor} />
                 <Box py={3}>
                     <CustomTable dashboard={false} columns={columns} rows={franchiseList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
 
             {open && <CustomDelete
+                heading='Franchisee'
+                paragraph='franchisee'
                 _id={_id}
                 setData={setFranchiseList}
                 data={franchiseList}
