@@ -163,6 +163,9 @@ const ProductForm = ({ res, view }: props) => {
     const [recomendedProductEditList, setRecomendedProductEditList] = useState<any>([]);
     const [productList, setProductList] = useState<any>(null);
 
+
+   console.log({productList})
+
     const schema = yup
         .object()
         .shape({
@@ -599,7 +602,7 @@ const ProductForm = ({ res, view }: props) => {
                         regular_price: item?.regular_price,
                         offer_price: item?.offer_price,
                         offer_date_from: moment(item?.offer_date_from, 'YYYY-MM-DD'),
-                        offer_date_to: moment(res?.offer_date_to, 'YYYY-MM-DD'),
+                        offer_date_to: moment(item?.offer_date_to, 'YYYY-MM-DD'),
                         stock: item?.stock,
                         stock_value: item?.stock_value,
                         commission: item?.commission,
@@ -692,7 +695,7 @@ const ProductForm = ({ res, view }: props) => {
             setValue('offer_date_to', '')
             setValue('fixed_delivery_price', '')
             // Filter attributes array to only include those with variant true
-            const variantAttributes = attributes.filter((attr: any) => attr.variant !== false)
+            const variantAttributes = attributes?.filter((attr: any) => attr.variant !== false)
 
             let attributesArray = variantAttributes?.map((vari: any) => vari?.options)
 
@@ -717,7 +720,7 @@ const ProductForm = ({ res, view }: props) => {
             })
 
 
-            const result = attri.filter((obj: any) => {
+            const result = attri?.filter((obj: any) => {
                 return !varientsarray.some((obj1: any) => obj.title === obj1.title)
             })
 
@@ -744,7 +747,7 @@ const ProductForm = ({ res, view }: props) => {
             setValue('offer_date_to', '')
             setValue('fixed_delivery_price', '')
             // Filter attributes array to only include those with variant true
-            const variantAttributes = attributes.filter((attr: any) => attr.variant !== false)
+            const variantAttributes = attributes?.filter((attr: any) => attr.variant !== false)
 
             let attributesArray = variantAttributes?.map((vari: any) => vari?.options)
 
@@ -951,7 +954,7 @@ const ProductForm = ({ res, view }: props) => {
 
         let recomendedProductList: any = []
 
-        const recomendedProduct = recomendedProductArray.filter((obj: any) => {
+        const recomendedProduct = recomendedProductArray?.filter((obj: any) => {
             return !recomendedProductEditList.some((obj1: any) => obj._id === obj1._id)
         })
 
