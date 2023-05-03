@@ -5,7 +5,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 const CustomLoader = () => {
     return (
-        <Stack sx={{ color: 'grey.500' }} spacing={2} direction="row">
+        <Stack sx={{ color: 'grey.500' }} spacing={2} direction="row" justifyContent={'center'} alignItems={'center'} height={'60vh'}>
 
             <CircularProgress color="success" />
 

@@ -8,12 +8,13 @@ import Custombutton from '@/components/Custombutton';
 import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
-import { postData } from '@/CustomAxios';
+import { fetchData, postData } from '@/CustomAxios';
 import Maps from '@/components/maps/maps';
 import { Route } from '@mui/icons-material';
 import { useRouter } from 'next/router';
 import { isNull } from 'lodash';
 import Polygons from '@/components/maps/Polygon';
+import CustomLoader from '@/components/CustomLoader';
 
 
 type Inputs = {
@@ -42,14 +43,44 @@ type props = {
 
 
 const FranchiseForm = ({ res, view }: props) => {
-    let dataRes = res ? res : view
-    console.log({ dataRes })
+  
+    let idd = res ? res : view
+
+    const [franchiseList,setFranchiseList]=useState<any>(null)
+    const [loading, setLoading] = useState<boolean>(false)
+
+    
+  
+
+
+    const getFranchise = async () => {
+        try {
+            setLoading(true)
+            const response = await fetchData(`admin/franchise/show/${idd}`)
+            setFranchiseList(response?.data?.data)
+        } catch (err: any) {
+            toast.success(err.message)
+            setLoading(false)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        if(res || view){
+            getFranchise()
+        }
+        
+    }, [res || view])
+
+
+  
 
     const [paths, setPaths] = useState(null)
-
+  
     const router = useRouter()
 
-    const [loading, setLoading] = useState<boolean>(false)
+
     const commissionvalidation = /^(0|[1-9]\d*)$/
     const schema = yup
         .object()
@@ -99,11 +130,11 @@ const FranchiseForm = ({ res, view }: props) => {
         const create_data = data
         const edit_Data = {
             ...data,
-            id: res?._id
+            id: franchiseList?._id
         }
 
         try {
-            await postData(res ? url_Edit : url_Create, res ? edit_Data : create_data)
+            await postData(franchiseList ? url_Edit : url_Create, franchiseList ? edit_Data : create_data)
             toast.success(res ? 'Edited Successfully' : 'Created Successfully')
             router.push(`/franchise`)
             reset()
@@ -117,32 +148,37 @@ const FranchiseForm = ({ res, view }: props) => {
 
     const setDeliveryLocation = (value: any) => {
         if (!view) {
+            console.log({value})
             setValue("coordinates", value)
         }
 
     }
 
     useEffect(() => {
-        if (res || view) {
+        if (franchiseList) {
             let data = res ? res : view
-            setValue('franchise_name', data?.franchise_name)
-            setValue('owner_name', data?.owner_name)
-            setValue('email', data?.email)
-            setValue('mobile', data?.mobile)
-            setValue('address', data?.address)
-            setValue('franchisee_commission', data?.franchisee_commission)
-            let paths = data?.delivery_location?.map((loc: any) => {
+            setValue('franchise_name', franchiseList?.franchise_name)
+            setValue('owner_name', franchiseList?.owner_name)
+            setValue('email', franchiseList?.email)
+            setValue('mobile', franchiseList?.mobile)
+            setValue('address', franchiseList?.address)
+            setValue('franchisee_commission', franchiseList?.franchisee_commission)
+            let paths = franchiseList?.delivery_location?.map((loc: any) => {
                 return {
                     lat: parseFloat(loc[0]),
                     lng: parseFloat(loc[1])
                 }
             })
             setPaths(paths)
-            setValue('coordinates', data?.delivery_location)
+            setValue('coordinates', franchiseList?.delivery_location)
         }
-    }, [res, view])
+    }, [franchiseList])
 
 
+
+    if(loading){
+        return <><CustomLoader/></>
+    }
     return (
         <Box>
             <CustomBox title='Franchisee Details'>
@@ -229,7 +265,7 @@ const FranchiseForm = ({ res, view }: props) => {
                 <Box mt={2}>
                     <Divider />
                 </Box>
-                {dataRes ? <Polygons onComplete={setDeliveryLocation} path={paths} /> : <Maps onPolygonComplete={setDeliveryLocation} />}
+                {idd ? <Polygons onComplete={setDeliveryLocation} path={paths} /> : <Maps onPolygonComplete={setDeliveryLocation} />}
                 {errors && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates ? errors?.coordinates?.message : ''}`}</span>}
             </CustomBox>
             {!view &&
