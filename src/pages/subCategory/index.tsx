@@ -73,7 +73,7 @@ const SubCategory = () => {
     const columns: GridColDef[] = [
         {
             field: 'Dated Added',
-            headerName: 'Dated Added',
+            headerName: 'Date Added',
             flex: 1,
             headerAlign: 'center',
             align: 'center',

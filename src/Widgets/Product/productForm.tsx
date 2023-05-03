@@ -125,7 +125,7 @@ type props = {
 }
 
 const ProductForm = ({ res, view }: props) => {
-    let resDate = res ? res : view;
+    let idd = res ? res : view;
 
 
     const router = useRouter()
@@ -135,6 +135,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const [defaultImage, setdefaultImage] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
+    const [loader, setLoader] = useState<boolean>(false)
     const [stock, setStock] = useState<boolean>(false)
     const [imagePreview, setImagePreview] = useState<any>(null)
     const [imagefile, setImagefile] = useState<null | File>(null)
@@ -160,7 +161,7 @@ const ProductForm = ({ res, view }: props) => {
     const [recomendedProductList, setRecomendedProductList] = useState<any>([]);
     const [recomendedProductArray, setRecomendedProductArray] = useState<any>([]);
     const [recomendedProductEditList, setRecomendedProductEditList] = useState<any>([]);
-
+    const [productList, setProductList] = useState<any>(null);
 
     const schema = yup
         .object()
@@ -202,7 +203,7 @@ const ProductForm = ({ res, view }: props) => {
                 panda_suggession: false,
                 stock: false,
                 stock_value: '',
-                franchisee: resDate ? resDate?.franchisee : '',
+                franchisee: productList ? productList?.franchisee : '',
                 category: '',
                 sub_category: null,
                 store: '',
@@ -225,7 +226,34 @@ const ProductForm = ({ res, view }: props) => {
 
             }
         });
+     
 
+    
+    
+    
+        const getProduct = async () => {
+            try {
+                setLoader(true)
+                const response = await fetchData(`admin/product/show/${idd}`)
+                setProductList(response?.data?.data)
+            } catch (err: any) {
+                toast.success(err.message)
+                setLoader(false)
+            } finally {
+                setLoader(false)
+            }
+        }
+    
+      
+    
+    
+        useEffect(() => {
+            if(idd){
+                getProduct()
+            }
+        
+        }, [idd])
+    
 
 
 
@@ -464,13 +492,13 @@ const ProductForm = ({ res, view }: props) => {
 
 
     useEffect(() => {
-        if (resDate) {
+        if (productList) {
 
-            console.log({ resDate })
+            console.log({ productList })
             const getvendorlist = async () => {
                 try {
-                    const response = await fetchData(`admin/vendor-list/${resDate?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
-                    const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${resDate?.franchisee?._id}`)
+                    const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
+                    const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${productList?.franchisee?._id}`)
                     let result = recomendedProduct?.data?.data.map((res: any) => ({
                         _id: res?._id,
                         title: `${res?.name}-${res?.product_id}`,
@@ -480,14 +508,14 @@ const ProductForm = ({ res, view }: props) => {
                     setRecomendedProductList(result)
                     setVendorList(response?.data?.data)
                     setCategoryList(response?.data?.data?.[0]?.category_id)
-                    setValue('franchisee', resDate?.franchisee?._id)
+                    setValue('franchisee', productList?.franchisee?._id)
                 } catch (err: any) {
                     toast.error(err?.message)
                 }
             }
             const getSubcategory = async () => {
                 try {
-                    const response = await fetchData(`admin/subcategory-list/${resDate?.category?._id}`)
+                    const response = await fetchData(`admin/subcategory-list/${productList?.category?._id}`)
                     setSubCategoryList(response?.data?.data)
                 } catch (err: any) {
                     toast.error(err?.message)
@@ -496,49 +524,49 @@ const ProductForm = ({ res, view }: props) => {
             }
             getSubcategory()
             getvendorlist()
-            setRecomendedProductEditList(resDate?.related_products)
-            setValue('name', resDate?.name)
-            setValue('franchisee', resDate?.franchisee?._id)
-            setFranchiseSelect(resDate?.franchisee?._id)
-            setValue('store', resDate?.store?._id)
-            setvendorSelect(resDate?.store?._id)
-            setValue('description', resDate?.description)
-            setValue('weight', resDate?.weight)
-            setValue('model', resDate?.model)
-            setValue('width', resDate?.dimensions?.width)
-            setValue('height', resDate?.dimensions?.height)
-            setValue('category', resDate?.category?._id)
-            setCategorySelect(resDate?.category?._id)
-            setValue('sub_category', resDate?.sub_category?._id)
-            setSubCategorySelect(resDate?.sub_category?._id)
-            setValue('display_order', resDate?.display_order)
-            setValue('panda_suggession', resDate?.panda_suggession)
-            setPandaSuggesions(resDate?.panda_suggession)
-            setValue('stock', resDate?.stock)
-            setStock(resDate?.stock)
-            setValue('stock_value', resDate?.stock_value)
-            setValue('minimum_qty', resDate?.minimum_qty)
-            setImagePreview(`${IMAGE_URL}${resDate?.product_image}`)
-            let paths = resDate?.delivery_locations?.map((loc: any) => {
+            setRecomendedProductEditList(productList?.related_products)
+            setValue('name', productList?.name)
+            setValue('franchisee', productList?.franchisee?._id)
+            setFranchiseSelect(productList?.franchisee?._id)
+            setValue('store', productList?.store?._id)
+            setvendorSelect(productList?.store?._id)
+            setValue('description', productList?.description)
+            setValue('weight', productList?.weight)
+            setValue('model', productList?.model)
+            setValue('width', productList?.dimensions?.width)
+            setValue('height', productList?.dimensions?.height)
+            setValue('category', productList?.category?._id)
+            setCategorySelect(productList?.category?._id)
+            setValue('sub_category', productList?.sub_category?._id)
+            setSubCategorySelect(productList?.sub_category?._id)
+            setValue('display_order', productList?.display_order)
+            setValue('panda_suggession', productList?.panda_suggession)
+            setPandaSuggesions(productList?.panda_suggession)
+            setValue('stock', productList?.stock)
+            setStock(productList?.stock)
+            setValue('stock_value', productList?.stock_value)
+            setValue('minimum_qty', productList?.minimum_qty)
+            setImagePreview(`${IMAGE_URL}${productList?.product_image}`)
+            let paths = productList?.delivery_locations?.map((loc: any) => {
                 return {
                     lat: parseFloat(loc[0]),
                     lng: parseFloat(loc[1])
                 }
             })
             setPaths(paths)
-            setValue('delivery_locations', resDate?.delivery_locations)
-            setValue('product_availability_from', moment(resDate?.product_availability_from,))
-            setValue('product_availability_to', moment(resDate?.product_availability_to, 'HH:mm'))
-            setValue('require_shipping', resDate?.require_shipping)
-            setRequireShipping(resDate?.require_shipping)
-            if (resDate?.meta_tags) {
-                setMetaTag(resDate?.meta_tags)
+            setValue('delivery_locations', productList?.delivery_locations)
+            setValue('product_availability_from', moment(productList?.product_availability_from,))
+            setValue('product_availability_to', moment(productList?.product_availability_to, 'HH:mm'))
+            setValue('require_shipping', productList?.require_shipping)
+            setRequireShipping(productList?.require_shipping)
+            if (productList?.meta_tags) {
+                setMetaTag(productList?.meta_tags)
             }
-            setValue('video_link', resDate?.video_link)
-            setValue('related_products', resDate?.related_products)
-            setValue('product_image', resDate?.product_image)
-            if (resDate?.image) {
-                let imageslist = resDate?.image?.map((res: any) => (
+            setValue('video_link', productList?.video_link)
+            setValue('related_products', productList?.related_products)
+            setValue('product_image', productList?.product_image)
+            if (productList?.image) {
+                let imageslist = productList?.image?.map((res: any) => (
                     res
 
                 ))
@@ -547,8 +575,8 @@ const ProductForm = ({ res, view }: props) => {
 
 
             let attributesArray: { name: any; options: any; variant: boolean; }[] = []
-            if (resDate?.attributes?.length > 0) {
-                resDate?.attributes.map((item: any) => {
+            if (productList?.attributes?.length > 0) {
+                productList?.attributes.map((item: any) => {
                     attributesArray.push({
                         name: item?.name,
                         options: item?.options,
@@ -561,8 +589,8 @@ const ProductForm = ({ res, view }: props) => {
             }
 
             let myvaarientArray: { title: any; variant_id: string; attributs: any; seller_price: any; regular_price: string; offer_price: string; offer_date_from: any; offer_date_to: any; stock: boolean; stock_value: string; commission: number; fixed_delivery_price: number; }[] = []
-            if (resDate?.variants?.length > 0) {
-                resDate?.variants?.map((item: any) => {
+            if (productList?.variants?.length > 0) {
+                productList?.variants?.map((item: any) => {
                     myvaarientArray.push({
                         variant_id: item._id,
                         title: item?.attributs,
@@ -581,17 +609,17 @@ const ProductForm = ({ res, view }: props) => {
                     setVarientsArray(myvaarientArray)
                 })
             }
-            setValue('commission', resDate?.commision)
-            setValue('regular_price', resDate?.regular_price)
-            setValue('seller_price', resDate?.seller_price)
-            setValue('offer_price', resDate?.offer_price)
-            setValue('offer_date_from', moment(resDate?.offer_date_from, 'YYYY-MM-DD'))
-            setValue('offer_date_to', moment(resDate?.offer_date_to, 'YYYY-MM-DD'))
-            setValue('fixed_delivery_price', resDate?.fixed_delivery_price)
+            setValue('commission', productList?.commision)
+            setValue('regular_price', productList?.regular_price)
+            setValue('seller_price', productList?.seller_price)
+            setValue('offer_price', productList?.offer_price)
+            setValue('offer_date_from', moment(productList?.offer_date_from, 'YYYY-MM-DD'))
+            setValue('offer_date_to', moment(productList?.offer_date_to, 'YYYY-MM-DD'))
+            setValue('fixed_delivery_price', productList?.fixed_delivery_price)
 
         }
 
-    }, [resDate])
+    }, [productList])
 
 
     useEffect(() => {
@@ -1021,12 +1049,12 @@ const ProductForm = ({ res, view }: props) => {
             variants: varientsarray,
             approval_status: "approved"
         }
-        if (res) {
-            value["id"] = res?._id;
+        if (productList) {
+            value["id"] = productList?._id;
         }
         try {
             setLoading(true)
-            await postData(res ? EDIT_URL : CREATE_URL, value)
+            await postData(productList ? EDIT_URL : CREATE_URL, value)
             reset()
             setFranchiseSelect(null)
             setCategorySelect(null)
@@ -1052,7 +1080,9 @@ const ProductForm = ({ res, view }: props) => {
         }
     }
 
-
+if(loader){
+    return <><CustomLoader/></>
+}
 
 
 
@@ -1581,7 +1611,7 @@ const ProductForm = ({ res, view }: props) => {
                         }
 
 
-                        {res &&
+                        {productList &&
                             <>
                                 <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} py={1} >
                                     {recomendedProductEditList?.map((res: any) => (

@@ -14,6 +14,7 @@ import { fetchData, postData } from '@/CustomAxios';
 import { Message } from '@mui/icons-material';
 import { IMAGE_URL } from '@/Config';
 import { useRouter } from 'next/router';
+import CustomLoader from '@/components/CustomLoader';
 
 type Inputs = {
     name: string,
@@ -42,6 +43,8 @@ type props = {
 
 
 const CategoryForm = ({ resData, view }: props) => {
+ const idd = resData ? resData : view ;
+
   const router = useRouter()
 
 
@@ -49,7 +52,8 @@ const CategoryForm = ({ resData, view }: props) => {
     const [imagePreview, setImagePreview] = useState<any>(null)
     const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
     const [loading, setLoading] = useState<boolean>(false)
-
+    const [loader, setLoader] = useState<boolean>(false)
+    const [CategoryList,setCategoryList]=useState<any>(null)
 
     const schema = yup
         .object()
@@ -79,6 +83,30 @@ const CategoryForm = ({ resData, view }: props) => {
                 order_number: null
             }
         });
+
+       
+    
+
+        const getCategory = async () => {
+            try {
+                setLoader(true)
+                const response = await fetchData(`admin/category/show/${idd}`)
+                setCategoryList(response?.data?.data)  
+            } catch (err: any) {
+                toast.success(err.message)
+                setLoader(false)
+            } finally {
+                setLoader(false)
+            }
+        }
+    
+    
+        useEffect(()=>{
+            if(idd){
+                getCategory()
+            }
+        },[idd])
+    
 
 
     const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,8 +143,8 @@ const CategoryForm = ({ resData, view }: props) => {
 
         setLoading(true)
         const formData = new FormData();
-        if (resData) {
-            formData.append("id", resData?._id);
+        if (CategoryList) {
+            formData.append("id", CategoryList?._id);
         }
         formData.append("name", data?.name);
         formData.append("order_number", data?.order_number ? data?.order_number : null);
@@ -127,11 +155,11 @@ const CategoryForm = ({ resData, view }: props) => {
         // formData.append("seo_title", data?.name);
         formData.append("seo_description", data?.seo_description);
         try {
-            await postData(resData ? URL_EDIT : URL_CREATE, formData)
+            await postData(CategoryList ? URL_EDIT : URL_CREATE, formData)
             reset();
             setImagefile(null)
             setImagePreview(null)
-            toast.success(resData ? 'Updated Successfully' : 'Created Successfully')
+            toast.success(CategoryList ? 'Updated Successfully' : 'Created Successfully')
             router.push('/category')
         } catch (err: any) {
             toast.error(err?.message)
@@ -145,17 +173,21 @@ const CategoryForm = ({ resData, view }: props) => {
 
 
     useEffect(() => {
-        if (resData || view) {
-            let data = resData ? resData : view;
-            setValue('name', data?.name)
-            setValue('order_number', data?.order_number)
-            setValue('seo_description', data?.seo_description)
-            setValue('seo_title', data?.seo_title)
-            setValue('image', data?.image)
-            setImagePreview(`${IMAGE_URL}${data?.image}`)
+        if (CategoryList) {
+           
+            setValue('name', CategoryList?.name)
+            setValue('order_number', CategoryList?.order_number)
+            setValue('seo_description', CategoryList?.seo_description)
+            setValue('seo_title', CategoryList?.seo_title)
+            setValue('image', CategoryList?.image)
+            setImagePreview(`${IMAGE_URL}${CategoryList?.image}`)
         }
-    }, [resData || view])
+    }, [CategoryList])
 
+
+    if(loader){
+        return <><CustomLoader/></>
+    }
 
     return (
         <Box>
@@ -248,7 +280,7 @@ const CategoryForm = ({ resData, view }: props) => {
                         </Grid>}
                     {view &&
                         <Grid item xs={12} lg={2.5}>
-                            <Avatar variant='square' src={`${IMAGE_URL}${view?.image}`} sx={{ width: '100%', height: 130 }} />
+                            <Avatar variant='square' src={`${IMAGE_URL}${CategoryList?.image}`} sx={{ width: '100%', height: 130 }} />
                         </Grid>}
 
                 </Grid>

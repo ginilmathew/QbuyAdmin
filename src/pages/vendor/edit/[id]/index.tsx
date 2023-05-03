@@ -10,32 +10,12 @@ const VandorEdit = () => {
     const router = useRouter()
     const { id } = router.query
     const [loading, setLoading] = useState<boolean>(false)
-    const [vendorList, setVendorList] = useState<any>([])
 
-
-    useEffect(() => {
-        getVendorlist()
-    }, [])
-
-
-
-    const getVendorlist = async () => {
-        try {
-            setLoading(true)
-            const response = await fetchData(`admin/vendor/show/${id}`)
-            setVendorList(response?.data?.data)
-        } catch (err: any) {
-            toast.success(err.message)
-            setLoading(false)
-        } finally {
-            setLoading(false)
-        }
-    }
    
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <CustomHeaderBack backlabel='Edit Vendor' />
-             <Vendorform res={vendorList} /> 
+             <Vendorform res={id} /> 
         </Box>
     )
 }

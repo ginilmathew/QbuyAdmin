@@ -19,6 +19,7 @@ import Maps from '@/components/maps/maps';
 import Polygon from '@/components/maps/Polygon';
 import { useRouter } from 'next/router';
 import { IMAGE_URL } from '../../Config/index';
+import CustomLoader from '@/components/CustomLoader';
 
 
 
@@ -83,9 +84,10 @@ type props = {
 }
 
 const Vendorform = ({ res, view }: props) => {
-    const resData = res ? res : view;
+    const idd = res ? res : view;
 
-   
+     console.log({idd})
+
     const router = useRouter();
 
 
@@ -96,11 +98,12 @@ const Vendorform = ({ res, view }: props) => {
     const [getfranchise, setGetFranchise] = useState<any>([])
     const [getcategory, setGetCategory] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
+    const [loader, setLoader] = useState<boolean>(false)
     const [multpleArray, setMultipleArray] = useState<any>([]);
     const [postArray, setPostArray] = React.useState<any>([]);
     const [imagePreview, setImagePreview] = useState<any>(null)
     const [paths, setPaths] = useState<any>(null)
-
+    const [vendorList, setVendorList] = useState<any>([])
 
 
 
@@ -109,7 +112,12 @@ const Vendorform = ({ res, view }: props) => {
     const schema = yup
         .object()
         .shape({
-            vendor_name: yup.string().max(30, 'Maximum Character Exceeds').required('Vendor Name is Required'),
+            vendor_name:yup.string().max(30, "Name must be less than 30 characters").matches(
+                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+                'Name can only contain Latin letters.'
+              )
+                // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
+                .required('Name is Required'),
             vendor_email: yup.string().max(30, 'Maximum Character Exceeds').email("Email must be a valid email").required('Email is Required'),
             vendor_mobile: yup.string().min(10, 'Phone number is not valid').matches(phoneRegExp, 'Phone number is not valid').required('Mobile Number is  Required'),
             store_name: yup.string().max(60, 'Maximum Character Exceeds').required('Store Name is Required'),
@@ -147,7 +155,7 @@ const Vendorform = ({ res, view }: props) => {
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
             defaultValues: {
-                vendor_name:null,
+                vendor_name: null,
                 vendor_email: null,
                 vendor_mobile: null,
                 store_name: null,
@@ -176,6 +184,28 @@ const Vendorform = ({ res, view }: props) => {
 
 
 
+
+
+
+    const getVendorlist = async () => {
+        try {
+            setLoader(true)
+            const response = await fetchData(`admin/vendor/show/${idd}`)
+            setVendorList(response?.data?.data)
+        } catch (err: any) {
+            toast.success(err.message)
+            setLoader(false)
+        } finally {
+            setLoader(false)
+        }
+    }
+
+
+    useEffect(() => {
+        if (idd) {
+            getVendorlist()
+        }
+    }, [idd])
 
 
 
@@ -317,35 +347,35 @@ const Vendorform = ({ res, view }: props) => {
 
     useEffect(() => {
 
-        let array = resData?.category_id?.map((res: any) => res?.id)
-        if (resData && array) {
-            setValue('vendor_name', resData?.vendor_name)
-            setValue('vendor_mobile', resData?.vendor_mobile)
-            setValue('vendor_email', resData?.vendor_email)
-            setValue('store_name', resData?.store_name)
-            setValue('store_address', resData?.store_address)
-            setValue('franchise_id', resData?.franchise_id)
-            setFranchise(resData?.franchise_id)
-            setValue('category_id', resData?.category_id)
-            setCategory(resData?.category_id)
-            setValue('store_logo', resData?.store_logo)
-            setImagePreview(`${IMAGE_URL}${resData?.store_logo}`)
-            setValue('start_time', moment(resData?.start_time, 'HH:mm'))
-            setValue('end_time', moment(resData?.end_time, 'HH:mm'))
-            setValue('license_number', resData?.kyc_details?.license_number)
-            setValue('ffsai_number', resData?.kyc_details?.ffsai_number)
-            setValue('pan_card_number', resData?.kyc_details?.pan_card_number)
-            setValue('aadhar_card_number', resData?.kyc_details?.aadhar_card_number)
-            setValue('account_number', resData?.kyc_details?.account_number)
-            setValue('ifsc', resData?.kyc_details?.ifsc)
-            setValue('branch', resData?.kyc_details?.branch)
-            setValue('recipient_name', resData?.kyc_details?.recipient_name)
-            setValue('commission', resData?.additional_details?.commission)
-            setValue('offer_description', resData?.additional_details?.offer_description)
-            setValue('tax', resData?.additional_details?.tax)
+        let array = vendorList?.category_id?.map((res: any) => res?.id)
+        if (vendorList && array) {
+            setValue('vendor_name', vendorList?.vendor_name)
+            setValue('vendor_mobile', vendorList?.vendor_mobile)
+            setValue('vendor_email', vendorList?.vendor_email)
+            setValue('store_name', vendorList?.store_name)
+            setValue('store_address', vendorList?.store_address)
+            setValue('franchise_id', vendorList?.franchise_id)
+            setFranchise(vendorList?.franchise_id)
+            setValue('category_id', vendorList?.category_id)
+            setCategory(vendorList?.category_id)
+            setValue('store_logo', vendorList?.store_logo)
+            setImagePreview(`${IMAGE_URL}${vendorList?.store_logo}`)
+            setValue('start_time', moment(vendorList?.start_time, 'HH:mm'))
+            setValue('end_time', moment(vendorList?.end_time, 'HH:mm'))
+            setValue('license_number', vendorList?.kyc_details?.license_number)
+            setValue('ffsai_number', vendorList?.kyc_details?.ffsai_number)
+            setValue('pan_card_number', vendorList?.kyc_details?.pan_card_number)
+            setValue('aadhar_card_number', vendorList?.kyc_details?.aadhar_card_number)
+            setValue('account_number', vendorList?.kyc_details?.account_number)
+            setValue('ifsc', vendorList?.kyc_details?.ifsc)
+            setValue('branch', vendorList?.kyc_details?.branch)
+            setValue('recipient_name', vendorList?.kyc_details?.recipient_name)
+            setValue('commission', vendorList?.additional_details?.commission)
+            setValue('offer_description', vendorList?.additional_details?.offer_description)
+            setValue('tax', vendorList?.additional_details?.tax)
             setMultipleArray(array)
-            setValue('display_order', resData?.display_order)
-            let paths = resData?.delivery_location?.map((loc: any) => {
+            setValue('display_order', vendorList?.display_order)
+            let paths = vendorList?.delivery_location?.map((loc: any) => {
                 return {
                     lat: parseFloat(loc[0]),
                     lng: parseFloat(loc[1])
@@ -353,10 +383,10 @@ const Vendorform = ({ res, view }: props) => {
             })
             setPaths(paths)
 
-            setValue('coordinates', res?.delivery_location)
+            setValue('coordinates', vendorList?.delivery_location)
 
         }
-    }, [res, view])
+    }, [vendorList])
 
 
 
@@ -439,8 +469,8 @@ const Vendorform = ({ res, view }: props) => {
         formData.append("store_logo", data?.store_logo);
         formData.append("display_order", data?.display_order);
         formData.append("type", type);
-        if (res) {
-            formData.append("id", res?._id);
+        if (idd) {
+            formData.append("id", vendorList?._id);
         }
         // formData.append("license_number", data?.license_number);
         // formData.append("ffsai_number", data?.ffsai_number);
@@ -457,8 +487,8 @@ const Vendorform = ({ res, view }: props) => {
         // formData.append("tax", data?.tax);
         formData.append("coordinates", JSON.stringify(data?.coordinates));
         try {
-            await postData(res ? URL_EDIT : URL_CREATE, formData)
-            toast.success(res ? 'Updated Successfully' : 'Created Successfully')
+            await postData(vendorList ? URL_EDIT : URL_CREATE, formData)
+            toast.success(vendorList ? 'Updated Successfully' : 'Created Successfully')
             router.push('/vendor')
             reset()
             setFranchise('')
@@ -491,6 +521,10 @@ const Vendorform = ({ res, view }: props) => {
         getCategoryList();
     }, [])
 
+    if(loader){
+        return <><CustomLoader/></>
+    }
+
 
     return (
         <Box>
@@ -506,8 +540,8 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Vendor Name"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={resData?.vendor_name}
-                          
+                            defaultValue={vendorList?.vendor_name}
+
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -520,7 +554,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Email Address"}
                             disabled={false}
                             view={view ? true : false}
-                          
+
                         />
 
                     </Grid>
@@ -534,7 +568,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Mobile Number"}
                             disabled={false}
                             view={view ? true : false}
-                          
+
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -547,7 +581,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Display Order"}
                             disabled={false}
                             view={view ? true : false}
-                           
+
                         />
                     </Grid>
                 </Grid>
@@ -565,7 +599,7 @@ const Vendorform = ({ res, view }: props) => {
                                 fieldLabel={"Store Name"}
                                 disabled={false}
                                 view={view ? true : false}
-                                
+
                             />
                         </Grid>
                         <Grid item xs={12} lg={7.2}>
@@ -578,7 +612,6 @@ const Vendorform = ({ res, view }: props) => {
                                 fieldLabel={"Address"}
                                 disabled={false}
                                 view={view ? true : false}
-                           
                             />
                         </Grid>
                         <Grid item xs={12} lg={3.5}>
@@ -697,7 +730,7 @@ const Vendorform = ({ res, view }: props) => {
                     {view &&
                         <Box flex={.2} sx={{}}>
                             <Typography>Store Logo/Image</Typography>
-                            <Avatar variant='square' src={`${IMAGE_URL}${view?.store_logo}`} sx={{ width: '100%', height: 130 }} />
+                            <Avatar variant='square' src={`${IMAGE_URL}${vendorList?.store_logo}`} sx={{ width: '100%', height: 130 }} />
                         </Box>}
 
                 </Box>
@@ -722,7 +755,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"License Number"}
                             disabled={false}
                             view={view ? true : false}
-                         
+
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -735,7 +768,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"FFSAI Number"}
                             disabled={false}
                             view={view ? true : false}
-                         
+
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -748,7 +781,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"PAN Card Number"}
                             disabled={false}
                             view={view ? true : false}
-                         
+
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -761,7 +794,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"AADHAR Number"}
                             disabled={false}
                             view={view ? true : false}
-                         
+
                         />
                     </Grid>
                 </Grid>
@@ -777,7 +810,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Account Number"}
                             disabled={false}
                             view={view ? true : false}
-                         
+
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -790,7 +823,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"IFSC"}
                             disabled={false}
                             view={view ? true : false}
-                         
+
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -803,7 +836,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Branch"}
                             disabled={false}
                             view={view ? true : false}
-                         
+
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -816,7 +849,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Recipient Name"}
                             disabled={false}
                             view={view ? true : false}
-                         
+
                         />
                     </Grid>
 
@@ -835,7 +868,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Commission (%)"}
                             disabled={false}
                             view={view ? true : false}
-                         
+
                         />
                     </Grid>
                     <Grid item xs={12} lg={7.5}>
@@ -848,7 +881,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Offer Description"}
                             disabled={false}
                             view={view ? true : false}
-                         
+
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -861,7 +894,7 @@ const Vendorform = ({ res, view }: props) => {
                             fieldLabel={"Tax"}
                             disabled={false}
                             view={view ? true : false}
-                         
+
                         />
                     </Grid>
 

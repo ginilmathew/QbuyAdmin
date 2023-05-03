@@ -10,26 +10,6 @@ const CategoryEdit = () => {
     const router = useRouter()
     const { id } = router.query
     const [loading, setLoading] = useState<boolean>(false)
-    const [CategoryList,setCategoryList]=useState<any>(null)
-    
-
-    const getCategory = async () => {
-        try {
-            setLoading(true)
-            const response = await fetchData(`admin/category/show/${id}`)
-            setCategoryList(response?.data?.data)  
-        } catch (err: any) {
-            toast.success(err.message)
-            setLoading(false)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-
-    useEffect(()=>{
-        getCategory()
-    },[])
 
 
 
@@ -37,7 +17,7 @@ const CategoryEdit = () => {
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <CustomHeaderBack backlabel='Edit Category' />
-            <CategoryForm resData={CategoryList}/>
+            <CategoryForm resData={id}/>
         </Box>
     )
 }

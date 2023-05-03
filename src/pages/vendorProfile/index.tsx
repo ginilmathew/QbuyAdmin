@@ -70,7 +70,7 @@ const VendorProfile = () => {
     // },
     {
       field: 'Actions',
-      headerName: 'Actions',
+      headerName: 'Action',
       width: 200,
       headerAlign: 'center',
       align: 'center',

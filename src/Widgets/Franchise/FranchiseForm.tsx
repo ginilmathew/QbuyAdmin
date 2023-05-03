@@ -48,6 +48,7 @@ const FranchiseForm = ({ res, view }: props) => {
 
     const [franchiseList,setFranchiseList]=useState<any>(null)
     const [loading, setLoading] = useState<boolean>(false)
+    const [loader, setLoader] = useState<boolean>(false)
 
     
   
@@ -55,14 +56,14 @@ const FranchiseForm = ({ res, view }: props) => {
 
     const getFranchise = async () => {
         try {
-            setLoading(true)
+            setLoader(true)
             const response = await fetchData(`admin/franchise/show/${idd}`)
             setFranchiseList(response?.data?.data)
         } catch (err: any) {
             toast.success(err.message)
-            setLoading(false)
+            setLoader(false)
         } finally {
-            setLoading(false)
+            setLoader(false)
         }
     }
 
@@ -85,8 +86,18 @@ const FranchiseForm = ({ res, view }: props) => {
     const schema = yup
         .object()
         .shape({
-            franchise_name: yup.string().max(30, 'Maximum Character Exceeds').required('Franchise Name is Required'),
-            owner_name: yup.string().max(30, 'Maximum Character Exceeds').required('Owner Name is Required'),
+            franchise_name:yup.string().max(30, "Name must be less than 30 characters").matches(
+                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+                'Name can only contain Latin letters.'
+              )
+                // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
+                .required('Name is Required'),
+            owner_name:yup.string().max(30, "Name must be less than 30 characters").matches(
+                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+                'Name can only contain Latin letters.'
+              )
+                // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
+                .required('Owner Name is Required'),
             email: yup.string().max(30, 'Maximum Character Exceeds').email('not a valid email').required('Email is Required'),
             mobile: yup.number()
                 .typeError("A Mobile number is required")
@@ -176,7 +187,7 @@ const FranchiseForm = ({ res, view }: props) => {
 
 
 
-    if(loading){
+    if(loader){
         return <><CustomLoader/></>
     }
     return (
