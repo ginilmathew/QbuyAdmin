@@ -185,11 +185,10 @@ const FranchiseForm = ({ res, view }: props) => {
         }
     }, [franchiseList])
 
-
-
     if(loader){
         return <><CustomLoader/></>
     }
+    
     return (
         <Box>
             <CustomBox title='Franchisee Details'>

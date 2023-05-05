@@ -176,7 +176,7 @@ const ProductForm = ({ res, view }: props) => {
             product_image: yup
                 .mixed()
                 .required("Product Image is Required"),
-            // seller_price: attributes.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
+            // regular_price: attributes?.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
 
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
         })
@@ -886,7 +886,6 @@ const ProductForm = ({ res, view }: props) => {
         setValue('meta_tags', res)
     }
 
-
     const onChangeRelatedproduct = (value: any) => {
         let result = value && value?.map((res: any) => ({
             _id: res?._id,
@@ -908,8 +907,17 @@ const ProductForm = ({ res, view }: props) => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
-       
+       let priceisavail = varientsarray?.every((res:any)=>res?.seller_price !== "")
+    
+              console.log('before')
+        
+         if(!priceisavail && varientsarray?.length >= 1){
+            toast.warning('Price is mandatory')
+             return false;
+         } 
 
+       
+   console.log("false")
         let franchiseData = franchiseList?.filter((res: any) => res?._id === franchiseSelect).map((get: any) => (
             {
                 id: get?._id,
