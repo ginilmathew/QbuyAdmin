@@ -76,6 +76,7 @@ const CustomImageUploader = ({
 
                             <label htmlFor={myid} >
                                 <Input
+                                     
                                     style={{ display: 'none' }}
                                     onBlur={onBlur}
                                     aria-invalid={error ? "true" : "false"}
@@ -83,6 +84,7 @@ const CustomImageUploader = ({
                                     placeholder={placeholder}
                                     type={'file'}
                                     id={myid}
+                                    inputProps={{accept:"image/png, image/jpeg"}}
                                     onChange={onChangeValue ? (e: any) => onChangeValue(e.target.files[0]) : onChange}
                                 />
                                 <BackupIcon style={{

@@ -51,7 +51,7 @@ const SubCategory = () => {
     const fetchsubCategory = async () => {
         try {
             setLoading(true)
-            const response = await fetchData('admin/subcategory/list')
+            const response = await fetchData(`admin/subcategory/list/${process.env.NEXT_PUBLIC_TYPE}`)
             setSubCategoryList(response?.data?.data)
             setSearchList(response?.data?.data)
         } catch (err: any) {

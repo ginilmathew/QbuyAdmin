@@ -164,8 +164,6 @@ const ProductForm = ({ res, view }: props) => {
     const [productList, setProductList] = useState<any>(null);
 
 
-   console.log({productList})
-
     const schema = yup
         .object()
         .shape({
@@ -435,9 +433,9 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
+     
         if (!res && !view) {
             attributes[i][key] = e;
-
             if (key === "options") {
                 let result = attributes[i].variant === true;
                 if (result) {
@@ -710,7 +708,7 @@ const ProductForm = ({ res, view }: props) => {
                     offer_price: '',
                     offer_date_from: '',
                     offer_date_to: '',
-                    stock: true,
+                    stock: stock,
                     stock_value: '',
                     commission: 0,
                     fixed_delivery_price: 0
@@ -723,6 +721,7 @@ const ProductForm = ({ res, view }: props) => {
             })
 
             setVarientsArray([...varientsarray, ...result])
+            console.log({varientsarray})
 
         } else {
             setVarientsArray([])
@@ -762,7 +761,7 @@ const ProductForm = ({ res, view }: props) => {
                     offer_price: '',
                     offer_date_from: '',
                     offer_date_to: '',
-                    stock: true,
+                    stock: stock,
                     stock_value: '',
                     commission: getValues('commission'),
                     fixed_delivery_price: 0
