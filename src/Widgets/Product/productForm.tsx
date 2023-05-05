@@ -1054,8 +1054,8 @@ const ProductForm = ({ res, view }: props) => {
         }
         try {
             setLoading(true)
-            await postData(productList ? EDIT_URL : CREATE_URL, value)
-            toast.success(res ? 'Edited Successfully' : 'Created Successfully')
+            await postData(idd ? EDIT_URL : CREATE_URL, value)
+            toast.success(idd ? 'Edited Successfully' : 'Created Successfully')
             reset()
             setFranchiseSelect(null)
             setCategorySelect(null)

@@ -157,11 +157,11 @@ const CategoryForm = ({ resData, view }: props) => {
         // formData.append("seo_title", data?.name);
         formData.append("seo_description", data?.seo_description);
         try {
-            await postData(CategoryList ? URL_EDIT : URL_CREATE, formData)
+            await postData(idd ? URL_EDIT : URL_CREATE, formData)
             reset();
             setImagefile(null)
             setImagePreview(null)
-            toast.success(CategoryList ? 'Updated Successfully' : 'Created Successfully')
+            toast.success(idd ? 'Updated Successfully' : 'Created Successfully')
             router.push('/category')
         } catch (err: any) {
             toast.error(err?.message)

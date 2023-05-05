@@ -145,8 +145,8 @@ const FranchiseForm = ({ res, view }: props) => {
         }
 
         try {
-            await postData(franchiseList ? url_Edit : url_Create, franchiseList ? edit_Data : create_data)
-            toast.success(res ? 'Edited Successfully' : 'Created Successfully')
+            await postData(idd ? url_Edit : url_Create, idd ? edit_Data : create_data)
+            toast.success(idd ? 'Edited Successfully' : 'Created Successfully')
             router.push(`/franchise`)
             reset()
         } catch (err: any) {

@@ -197,12 +197,12 @@ const SubCategoryForm = ({ res, view }: props) => {
         formData.append("seo_description", data?.name + type);
         formData.append("category_id", data?.category_id);
         try {
-            await postData(subCategoryList ? URL_EDIT : URL_CREATE, formData)
+            await postData(idd ? URL_EDIT : URL_CREATE, formData)
             setImagePreview(null)
             setCategoryID('')
             reset()
             router.push('/subCategory')
-            toast.success(subCategoryList ? 'Updated Successfully' : 'Created Successfully')
+            toast.success(idd ? 'Updated Successfully' : 'Created Successfully')
 
         } catch (err: any) {
             toast.error(err?.message)
