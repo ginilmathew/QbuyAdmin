@@ -55,13 +55,15 @@ const CategoryForm = ({ resData, view }: props) => {
     const [loader, setLoader] = useState<boolean>(false)
     const [CategoryList,setCategoryList]=useState<any>(null)
 
+
+    const orderValidation = /^(0|[1-9]\d*)$/
     const schema = yup
         .object()
         .shape({
             name: yup.string().max(30, 'Maximum Character Exceeds').required('Category Name Required'),
             // type: yup.string().required('Type is Required'),
-            seo_description: yup.string().max(100, 'Maximum Character Exceeds'),
-       
+            // seo_description: yup.string().max(100, 'Maximum Character Exceeds'),
+            order_number:yup.string().matches(orderValidation,'Order should be number'),
             image: yup
                 .mixed()
                 .required('Image is Required')

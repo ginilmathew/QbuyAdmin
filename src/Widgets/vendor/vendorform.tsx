@@ -86,7 +86,7 @@ type props = {
 const Vendorform = ({ res, view }: props) => {
     const idd = res ? res : view;
 
-     console.log({idd})
+
 
     const router = useRouter();
 
@@ -103,12 +103,12 @@ const Vendorform = ({ res, view }: props) => {
     const [postArray, setPostArray] = React.useState<any>([]);
     const [imagePreview, setImagePreview] = useState<any>(null)
     const [paths, setPaths] = useState<any>(null)
-    const [vendorList, setVendorList] = useState<any>([])
+    const [vendorList, setVendorList] = useState<any>(null)
 
 
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-    const commissionvalidation = /^(0|[1-9]\d*)$/
+    const commissionvalidation = /^\d*\.?\d*$/
     const schema = yup
         .object()
         .shape({
@@ -119,7 +119,7 @@ const Vendorform = ({ res, view }: props) => {
                 // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
                 .required('Name is Required'),
             vendor_email: yup.string().max(30, 'Maximum Character Exceeds').email("Email must be a valid email").required('Email is Required'),
-            vendor_mobile: yup.string().min(10, 'Phone number is not valid').matches(phoneRegExp, 'Phone number is not valid').required('Mobile Number is  Required'),
+            vendor_mobile: yup.string().min(10, 'Mobile number is not valid').matches(phoneRegExp, 'Mobile number is not valid').required('Mobile Number is  Required'),
             store_name: yup.string().max(60, 'Maximum Character Exceeds').required('Store Name is Required'),
             // store_address: yup.string().required('Store Address is Required'),
             franchise_id: yup.string().required('Franchise is  Required'),
@@ -487,8 +487,8 @@ const Vendorform = ({ res, view }: props) => {
         // formData.append("tax", data?.tax);
         formData.append("coordinates", JSON.stringify(data?.coordinates));
         try {
-            await postData(vendorList ? URL_EDIT : URL_CREATE, formData)
-            toast.success(vendorList ? 'Updated Successfully' : 'Created Successfully')
+            await postData(idd ? URL_EDIT : URL_CREATE, formData)
+            toast.success(idd ? 'Updated Successfully' : 'Created Successfully')
             router.push('/vendor')
             reset()
             setFranchise('')

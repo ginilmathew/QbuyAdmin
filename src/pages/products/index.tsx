@@ -167,8 +167,8 @@ const AddProducts = () => {
             setLoding(true)
             const response = await postData('admin/product/status-update', value)
 
-            setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
-            //   fetchproduct()
+            // setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
+              fetchproduct()
 
 
         }

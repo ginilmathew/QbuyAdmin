@@ -82,7 +82,7 @@ const FranchiseForm = ({ res, view }: props) => {
     const router = useRouter()
 
 
-    const commissionvalidation = /^(0|[1-9]\d*)$/
+    const commissionvalidation = /^\d*\.?\d*$/
     const schema = yup
         .object()
         .shape({

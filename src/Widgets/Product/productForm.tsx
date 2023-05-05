@@ -496,8 +496,6 @@ const ProductForm = ({ res, view }: props) => {
 
     useEffect(() => {
         if (productList) {
-
-            console.log({ productList })
             const getvendorlist = async () => {
                 try {
                     const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
@@ -911,7 +909,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
-        console.log({ data })
+       
 
         let franchiseData = franchiseList?.filter((res: any) => res?._id === franchiseSelect).map((get: any) => (
             {
@@ -1058,6 +1056,7 @@ const ProductForm = ({ res, view }: props) => {
         try {
             setLoading(true)
             await postData(productList ? EDIT_URL : CREATE_URL, value)
+            toast.success(res ? 'Edited Successfully' : 'Created Successfully')
             reset()
             setFranchiseSelect(null)
             setCategorySelect(null)
@@ -1387,7 +1386,7 @@ if(loader){
                 </Grid>
                 <Box py={2}>
                     <Divider />
-                    {res ? <Polygon onComplete={onPolygonComplete} path={paths} /> :
+                    {productList ? <Polygon onComplete={onPolygonComplete} path={paths} /> :
                         <Maps onPolygonComplete={onPolygonComplete} />}
                     {(errors && errors?.delivery_locations) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.delivery_locations?.message}`}</span>}
                 </Box>
