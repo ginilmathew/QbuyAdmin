@@ -43,15 +43,15 @@ type props = {
 
 
 const FranchiseForm = ({ res, view }: props) => {
-  
+
     let idd = res ? res : view
 
-    const [franchiseList,setFranchiseList]=useState<any>(null)
+    const [franchiseList, setFranchiseList] = useState<any>(null)
     const [loading, setLoading] = useState<boolean>(false)
     const [loader, setLoader] = useState<boolean>(false)
 
-    
-  
+
+
 
 
     const getFranchise = async () => {
@@ -68,49 +68,58 @@ const FranchiseForm = ({ res, view }: props) => {
     }
 
     useEffect(() => {
-        if(res || view){
+        if (res || view) {
             getFranchise()
         }
-        
+
     }, [res || view])
 
 
-  
+
 
     const [paths, setPaths] = useState(null)
-  
+
     const router = useRouter()
 
 
-    const commissionvalidation = /^\d*\.?\d*$/
+    const commissionvalidation: any = /^\d*\.?\d*$/
+
+    const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+
+
     const schema = yup
         .object()
         .shape({
-            franchise_name:yup.string().max(30, "Name must be less than 30 characters").matches(
+            franchise_name: yup.string().max(30, "Name must be less than 30 characters").matches(
                 /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
                 'Name can only contain Latin letters.'
-              )
+            )
                 // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
                 .required('Name is Required'),
-            owner_name:yup.string().max(30, "Name must be less than 30 characters").matches(
+            owner_name: yup.string().max(30, "Name must be less than 30 characters").matches(
                 /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
-                'Name can only contain Latin letters.'
-              )
+                'Name can only contain alphabets letters.'
+            )
                 // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
                 .required('Owner Name is Required'),
-            email: yup.string().max(30, 'Maximum Character Exceeds').email('not a valid email').required('Email is Required'),
-            mobile: yup.number()
-                .typeError("A Mobile number is required")
-                .positive("A mobile number can't start with a minus")
-                .integer("A mobile number can't include a decimal point")
-                .min(10)
-                .required('A Mobile number is required'),
+            email: yup.string().max(30, 'Maximum Character Exceeds').email('Not a valid email').required('Email is Required'),
+            mobile: yup.string().required('Mobile Number is Required').matches(phoneRegExp, 'Mobile number is not valid').min(10, 'Mobile Number must be minimum 10 digit').max(10, 'Mobile number is not valid'),
             //address: yup.string().required('Address is Required'),
             coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required"),
-            franchisee_commission: yup.string().matches(commissionvalidation, 'Accept Number Only').required('Commission is Required')
+            franchisee_commission: yup.number().required('Commission is required')
+                .nullable('Commission is Required').typeError('Commission is required')
+                .notRequired()
+                .min(0)
+                .max(100, "Commision have maximum 100%")
+                .test(
+                    "noEOrSign", // type of the validator (should be unique)
+                    "Number had an 'e' or sign.", // error message
+                    (value) => typeof value === "number" && !/[eE+-]/.test(value.toString())
+                )
+
 
         })
-        .required();
+    
 
 
     const { register,
@@ -159,7 +168,7 @@ const FranchiseForm = ({ res, view }: props) => {
 
     const setDeliveryLocation = (value: any) => {
         if (!view) {
-            console.log({value})
+            console.log({ value })
             setValue("coordinates", value)
         }
 
@@ -185,10 +194,10 @@ const FranchiseForm = ({ res, view }: props) => {
         }
     }, [franchiseList])
 
-    if(loader){
-        return <><CustomLoader/></>
+    if (loader) {
+        return <><CustomLoader /></>
     }
-    
+
     return (
         <Box>
             <CustomBox title='Franchisee Details'>

@@ -1,6 +1,4 @@
 import React, { useState } from 'react'
-
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
@@ -8,14 +6,16 @@ import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { Controller } from "react-hook-form";
 import { Avatar, Box, FormGroup, styled, Typography } from "@mui/material";
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { DesktopTimePicker } from '@mui/x-date-pickers/DesktopTimePicker';
+import dayjs from 'dayjs';
 type props = {
     fieldName: string,
     control: any,
     fieldLabel: string,
     error: any,
     changeValue: (value: any) => void,
-    disabled?:any
+    disabled?: any
 
 }
 
@@ -28,6 +28,10 @@ const CustomTimepicker = ({
     disabled,
     changeValue,
 }: props) => {
+
+    const today = dayjs();
+    const tomorrow = dayjs().add(1, 'day');
+    const todayEndOfTheDay = today.endOf('day');
     return (
         <>
             <FormGroup>
@@ -56,6 +60,7 @@ const CustomTimepicker = ({
                                     }
                                 }}
 
+                                disablePast
                                 value={value}
                                 onChange={changeValue ? (e: any) => changeValue(e) : onChange}
                             />

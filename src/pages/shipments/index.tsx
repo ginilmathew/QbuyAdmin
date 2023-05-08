@@ -22,6 +22,10 @@ const Shipments = () => {
     const [pending, startTransition] = useTransition();
     const [serachList, setSearchList] = useState<any>([])
 
+    const ShippmentView = (id: string) => {
+        router.push(`/shipments/view/${id}`)
+    }
+
 
     const columns: GridColDef[] = [
         {
@@ -96,36 +100,36 @@ const Shipments = () => {
             align: 'center',
 
         },
-        // {
-        //     field: 'Actions',
-        //     headerName: 'Actions',
-        //     width: 200,
-        //     headerAlign: 'center',
-        //     align: 'center',
-        //     renderCell: ({ row }) => (
-        //         <Stack alignItems={'center'} gap={1} direction={'row'}>
-        //             <RemoveRedEyeIcon
+        {
+            field: 'Actions',
+            headerName: 'Actions',
+            width: 200,
+            headerAlign: 'center',
+            align: 'center',
+            renderCell: ({ row }) => (
+                <Stack alignItems={'center'} gap={1} direction={'row'}>
+                    <RemoveRedEyeIcon
+                        onClick={() => ShippmentView(row?._id)}
+                        style={{
+                            color: '#58D36E',
+                            cursor: 'pointer'
+                        }} />
+                    {/* <BorderColorTwoToneIcon
 
-        //                 style={{
-        //                     color: '#58D36E',
-        //                     cursor: 'pointer'
-        //                 }} />
-        //             <BorderColorTwoToneIcon
+                        style={{
+                            color: '#58D36E',
+                            cursor: 'pointer'
+                        }}
+                    />
+                    <DeleteOutlineTwoToneIcon
 
-        //                 style={{
-        //                     color: '#58D36E',
-        //                     cursor: 'pointer'
-        //                 }}
-        //             />
-        //             <DeleteOutlineTwoToneIcon
-
-        //                 sx={{
-        //                     color: '#58D36E',
-        //                     cursor: 'pointer',
-        //                 }} />
-        //         </Stack>
-        //     )
-        // }
+                        sx={{
+                            color: '#58D36E',
+                            cursor: 'pointer',
+                        }} /> */}
+                </Stack>
+            )
+        }
     ];
 
 
@@ -158,7 +162,7 @@ const Shipments = () => {
     }, [])
 
     const addOrderShipmets = () => {
-        router.push('/shipments/addOrder')  
+        router.push('/shipments/addOrder')
     }
 
 
@@ -166,7 +170,7 @@ const Shipments = () => {
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={true} Headerlabel='Orders' onClick={addOrderShipmets} addbtn={true} />
+                <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='Orders' onClick={addOrderShipmets} addbtn={true} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={shippingList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>

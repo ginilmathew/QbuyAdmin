@@ -88,6 +88,11 @@ const VendorSignup = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            renderCell: ({ row }) => (
+                <Stack>
+                    <Typography variant="body1" sx={{ color: row?.approval_status === "Approved" ?  '#58D36E' : '#FF0000'}} fontSize={14} letterSpacing={.5} >{row?.approval_status}</Typography>
+                </Stack>
+            )
 
         },
         {
@@ -156,8 +161,7 @@ const VendorSignup = () => {
 
 
 
-    const searchVendor = useCallback((value: any) => {
-        console.log({ value })
+    const searchVendor = useCallback((value: any) => {  
         let Result = serachList?.filter((com: any) => com?.store_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase))
         startTransition(() => {
             setVendorList(Result)

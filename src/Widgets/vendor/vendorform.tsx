@@ -107,19 +107,21 @@ const Vendorform = ({ res, view }: props) => {
 
 
 
+    console.log({ vendorList }, 'in forkm')
+
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const commissionvalidation = /^\d*\.?\d*$/
     const schema = yup
         .object()
         .shape({
-            vendor_name:yup.string().max(30, "Name must be less than 30 characters").matches(
+            vendor_name: yup.string().max(30, "Name must be less than 30 characters").matches(
                 /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
-                'Name can only contain Latin letters.'
-              )
+                'Name can only contain alphabets letters.'
+            )
                 // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
                 .required('Name is Required'),
             vendor_email: yup.string().max(30, 'Maximum Character Exceeds').email("Email must be a valid email").required('Email is Required'),
-            vendor_mobile: yup.string().min(10, 'Mobile number is not valid').matches(phoneRegExp, 'Mobile number is not valid').required('Mobile Number is  Required'),
+            vendor_mobile: yup.string().required('Mobile Number is  Required').min(10, 'Minimum 10 digits').max(10, 'Mobile number is not valid').matches(phoneRegExp, 'Mobile number is not valid'),
             store_name: yup.string().max(60, 'Maximum Character Exceeds').required('Store Name is Required'),
             // store_address: yup.string().required('Store Address is Required'),
             franchise_id: yup.string().required('Franchise is  Required'),
@@ -140,10 +142,20 @@ const Vendorform = ({ res, view }: props) => {
             // branch: yup.string().required('Branch is Required'),
             // recipient_name: yup.string().required('Recipient Name is Required'),
             coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required"),
-            commission: yup.string().max(2, 'Maximum Character Exceeds').matches(commissionvalidation, 'Accept Number Only').required('Commission is Required')
+            commission:yup.number().required('Commission is required')
+            .nullable('Commission is Required').typeError('Commission is required')
+            .notRequired()
+            .min(0)
+            .max(100, "Commision have maximum 100%")
+            .test(
+                "noEOrSign", // type of the validator (should be unique)
+                "Number had an 'e' or sign.", // error message
+                (value) => typeof value === "number" && !/[eE+-]/.test(value.toString())
+            )
 
-        })
-        .required();
+
+    })
+      
 
 
     const { register,
@@ -487,8 +499,8 @@ const Vendorform = ({ res, view }: props) => {
         // formData.append("tax", data?.tax);
         formData.append("coordinates", JSON.stringify(data?.coordinates));
         try {
-            await postData(idd ? URL_EDIT : URL_CREATE, formData)
-            toast.success(idd ? 'Updated Successfully' : 'Created Successfully')
+            await postData(vendorList ? URL_EDIT : URL_CREATE, formData)
+            toast.success(vendorList ? 'Updated Successfully' : 'Created Successfully')
             router.push('/vendor')
             reset()
             setFranchise('')
@@ -521,8 +533,8 @@ const Vendorform = ({ res, view }: props) => {
         getCategoryList();
     }, [])
 
-    if(loader){
-        return <><CustomLoader/></>
+    if (loader) {
+        return <><CustomLoader /></>
     }
 
 
