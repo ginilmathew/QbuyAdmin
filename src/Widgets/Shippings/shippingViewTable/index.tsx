@@ -16,12 +16,7 @@ type props = {
 const ShippingTable = ({ res }: props) => {
 
 
-  console.log({ res })
 
-
-  const rows = [
-    { 'name': 'ginil', 'tyson': '200', q: 0, v: 0, r: 0 }
-  ];
 
 
   return (
@@ -52,9 +47,10 @@ const ShippingTable = ({ res }: props) => {
                 <TableCell align="center">{(row.productdata?.regular_price * row?.quantity)}</TableCell>
               </TableRow>
             ))}
-            <TableRow>
+            
+            <TableRow >
               <TableCell rowSpan={5} />
-              <TableCell colSpan={2}></TableCell>
+              <TableCell  colSpan={2}></TableCell>
               <TableCell align="right">Sub-Total</TableCell>
               <TableCell align="center">{0}</TableCell>
             </TableRow>
