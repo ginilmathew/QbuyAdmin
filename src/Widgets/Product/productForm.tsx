@@ -22,7 +22,7 @@ import moment from 'moment'
 import CustomDatePicker from '@/components/CustomDatePicker';
 import Maps from '../../components/maps/maps'
 import { type } from 'os';
-import { set, values } from 'lodash';
+import { isEmpty, set, values } from 'lodash';
 import Polygon from '@/components/maps/Polygon';
 import { IMAGE_URL } from '../../Config/index';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
@@ -172,7 +172,7 @@ const ProductForm = ({ res, view }: props) => {
             franchisee: yup.string().typeError('Franchise is Required').required('Franchise is Required'),
             store: yup.string().typeError('Store is Required').required('Store is Required'),
             category: yup.string().typeError('Category is Required').required('Category is Required'),
-            // delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
+            delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
             product_image: yup
                 .mixed()
                 .required("Product Image is Required"),
@@ -227,34 +227,34 @@ const ProductForm = ({ res, view }: props) => {
 
             }
         });
-     
 
-    
-    
-    
-        const getProduct = async () => {
-            try {
-                setLoader(true)
-                const response = await fetchData(`admin/product/show/${idd}`)
-                setProductList(response?.data?.data)
-            } catch (err: any) {
-                toast.success(err.message)
-                setLoader(false)
-            } finally {
-                setLoader(false)
-            }
+
+
+
+
+    const getProduct = async () => {
+        try {
+            setLoader(true)
+            const response = await fetchData(`admin/product/show/${idd}`)
+            setProductList(response?.data?.data)
+        } catch (err: any) {
+            toast.success(err.message)
+            setLoader(false)
+        } finally {
+            setLoader(false)
         }
-    
-      
-    
-    
-        useEffect(() => {
-            if(idd){
-                getProduct()
-            }
-        
-        }, [idd])
-    
+    }
+
+
+
+
+    useEffect(() => {
+        if (idd) {
+            getProduct()
+        }
+
+    }, [idd])
+
 
 
 
@@ -433,7 +433,7 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
-     
+
         if (!res && !view) {
             attributes[i][key] = e;
             if (key === "options") {
@@ -721,7 +721,7 @@ const ProductForm = ({ res, view }: props) => {
             })
 
             setVarientsArray([...varientsarray, ...result])
-            console.log({varientsarray})
+            console.log({ varientsarray })
 
         } else {
             setVarientsArray([])
@@ -734,6 +734,8 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const addvarients = () => {
+
+        console.log({attributes})
 
         if (attributes?.some((res: any) => res?.variant === true)) {
             const output = [];
@@ -774,40 +776,6 @@ const ProductForm = ({ res, view }: props) => {
 
 
             setVarientsArray([...attri])
-
-            //console.log()
-            // Calculate the number of iterations required based on the length of the variantAttributes array
-            // const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
-            // for (let i = 0; i < numIterations; i++) {
-            //     let combination = "";
-            //     let remainder = i;
-            //     let contentIndex;
-            //     let vari = [];
-            //     for (let j = variantAttributes.length - 1; j >= 0; j--) {
-            //         contentIndex = remainder % variantAttributes[j].options?.length;
-            //         combination = variantAttributes[j].options[contentIndex].title + " " + combination;
-            //         vari.push(variantAttributes[j].options[contentIndex].title)
-            //         remainder = Math.floor(remainder / variantAttributes[j].options?.length);
-            //     }
-            //     varientsarray.push({
-            //         attributs: '',
-            //         seller_price: '',
-            //         regular_price: '',
-            //         offer_price: '',
-            //         offer_date_from: '',
-            //         offer_date_to: '',
-            //         stock: true,
-            //         stock_value: '',
-            //         commission: 0,
-            //         fixed_delivery_price: 0
-            //     })
-            //     setVarientsArray([...varientsarray])
-            //     output.push(combination.trim());
-            // }
-            // setVarients(output)
-
-            // console.log({output})
-
         } else {
             setVarientsArray([])
             setVarients([])
@@ -821,48 +789,7 @@ const ProductForm = ({ res, view }: props) => {
     }, [index])
 
 
-    const [path, setPath] = useState([
-        { lat: 52.52549080781086, lng: 13.398118538856465 },
-        { lat: 52.48578559055679, lng: 13.36653284549709 },
-        { lat: 52.48871246221608, lng: 13.44618372440334 }
-    ]);
 
-    // Define refs for Polygon instance and listeners
-    const polygonRef = useRef<google.maps.Polygon | null>(null);
-    const listenersRef = useRef<google.maps.MapsEventListener[]>([]);
-
-    // Call setPath with new edited path
-    const onEdit = useCallback(() => {
-        if (polygonRef.current) {
-            const nextPath = polygonRef.current
-                .getPath()
-                .getArray()
-                .map((latLng: google.maps.LatLng) => {
-                    return { lat: latLng.lat(), lng: latLng.lng() };
-                });
-            setPath(nextPath);
-        }
-    }, [setPath]);
-
-    // Bind refs to current Polygon and listeners
-    const onLoad = useCallback(
-        (polygon: google.maps.Polygon) => {
-            polygonRef.current = polygon;
-            const path = polygon.getPath();
-            listenersRef.current.push(
-                path.addListener("set_at", onEdit),
-                path.addListener("insert_at", onEdit),
-                path.addListener("remove_at", onEdit)
-            );
-        },
-        [onEdit]
-    );
-
-    // Clean up refs
-    const onUnmount = useCallback(() => {
-        listenersRef.current.forEach((lis: google.maps.MapsEventListener) => lis.remove());
-        polygonRef.current = null;
-    }, []);
 
 
     //remove multiple image function only for edit.........................................................
@@ -907,17 +834,34 @@ const ProductForm = ({ res, view }: props) => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
-       let priceisavail = varientsarray?.every((res:any)=>res?.seller_price !== "")
-    
-              console.log('before')
         
-         if(!priceisavail && varientsarray?.length >= 1){
-            toast.warning('Price is mandatory')
-             return false;
-         } 
 
-       
-   console.log("false")
+        //Check All Attributes have values
+        let attributeCheck = attributes.find((att:  any) => isEmpty(att?.name) || att?.options?.length === 0 );
+        if(attributeCheck){
+            toast.warning("All Attributes must have values")
+            return false;
+        }
+
+        //Check Any Variants
+        let variantsChe = attributes.find((att:  any) => att.variant === true );
+        console.log({length: attributes.length, price: isEmpty(data?.seller_price)})
+        if(!variantsChe && isEmpty(data?.seller_price)){
+            setError("seller_price", { type: 'custom', message: 'Purchase price required' })
+            return false;
+        }
+
+        let priceisavail = varientsarray?.every((res: any) => res?.seller_price !== "")
+
+        console.log('before')
+
+        if (!priceisavail && varientsarray?.length >= 1) {
+            toast.warning('Price is mandatory')
+            return false;
+        }
+
+
+        console.log("false")
         let franchiseData = franchiseList?.filter((res: any) => res?._id === franchiseSelect).map((get: any) => (
             {
                 id: get?._id,
@@ -1089,9 +1033,20 @@ const ProductForm = ({ res, view }: props) => {
         }
     }
 
-if(loader){
-    return <><CustomLoader/></>
-}
+    const removeAttributes = async(i: any) => {
+        attributes[i].variant = false;
+        setAttributes([...attributes])
+        let attribute = await attributes.filter((att : any, index: Number) =>  index!== i)
+        
+        console.log({attribute})
+        setAttributes([...attribute])
+        addvarients()
+        
+    }
+
+    if (loader) {
+        return <><CustomLoader /></>
+    }
 
 
 
@@ -1518,22 +1473,8 @@ if(loader){
                     {!view &&
                         <Grid item xs={12} lg={6}>
                             <CustomTagInputValue fieldLabel='Meta Tags' tagValues={(metaTagvalues)} values={metaTag} setState={setMetaTag} />
-                            {/* <CustomAutoComplete res={res} fieldLabel='Meta Tag' list={metaTag} setValues={setmetaTagValue} onChnageValues={() => null} /> */}
                         </Grid>}
 
-                    {/* <Grid item xs={12} lg={3}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
-                            placeholder={``}
-                            fieldLabel={"Tax Class"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid> */}
                     <Grid item xs={12} lg={3}>
                         <CustomInput
                             type='text'
@@ -1632,17 +1573,6 @@ if(loader){
 
 
                         {!view && <CustomAutoCompleteSearch onChange={onChangeRelatedproduct} list={recomendedProductList} fieldLabel={"Related Products"} />}
-                        {/* <CustomInput
-                            disabled={false}
-                            type='text'
-                            control={control}
-                            error={errors.related_products}
-                            fieldName="related_products"
-                            placeholder={``}
-                            fieldLabel={"Related Products"}
-                            view={view ? true : false}
-                            defaultValue={''}
-                        /> */}
                     </Grid>
                 </Grid>
             </CustomBox>
@@ -1651,44 +1581,8 @@ if(loader){
                 {!res && !view &&
                     <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
-                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} />
+                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} removeAttributes={ res ? () => removeAttributes(i) : null} />
                 )}
-
-                {/* {!attributes?.some((res: any) => res.varient === true) && <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
-
-
-                {attributes && attributes?.map((res: any, i: any) => (<>
-                    <Grid container spacing={2} py={1}>
-                        <Grid item xs={12} lg={2}>
-                            <CustomInput
-                                onChangeValue={(e: any) => onChangeName(e, i)}
-                                disabled={false}
-                                type='text'
-                                control={control}
-                                error={errors.attributess}
-                                fieldName="attributess"
-                                placeholder={``}
-                                fieldLabel={"Name"}
-                                view={false}
-                                defaultValue={res.name}
-                            />
-                        </Grid>
-                        <Grid item xs={12} lg={4}>
-                            
-                            <CustomAutoComplete fieldLabel='Attribute Options' vres={res?.options} list={attributeTag} setValues={setattributeTagValue} onChnageValues={(e: any) => onChangeOptions(e, i)} />
-
-                        </Grid>
-                        <Grid item xs={12} lg={2}>
-                            <Typography mb={3}></Typography>
-                            <CustomCheckBox isChecked={attributes[i].varient} label='' onChange={(e: any) => AddVarientCheckbox(e, i)} title='Add Variant' />
-                        </Grid>
-                    </Grid>
-                </>
-                ))} */}
-                {/* {attributes?.length > 0 &&
-                    <Box display={'flex'} justifyContent={'flex-end'}>
-                        {!confirmbtn && <Custombutton btncolor='' height={40} endIcon={false} startIcon={false} label={'confirm'} onClick={ConfirmVarients} IconEnd={''} IconStart={''} />}
-                    </Box>} */}
             </CustomBox>
             {varientsarray?.length === 0 && <CustomBox title='Price'>
                 <Grid container spacing={2}>

@@ -59,7 +59,7 @@ const CustomInput = (
                         <TextField
                         
                             type={type}
-                            defaultValue={defaultValue}
+                            //defaultValue={defaultValue}
                             value={value}
                             onChange={(e) => {
                                 onChangeValue ? onChangeValue(e) :
