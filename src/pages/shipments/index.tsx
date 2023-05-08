@@ -170,7 +170,7 @@ const Shipments = () => {
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='Orders' onClick={addOrderShipmets} addbtn={true} />
+                <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='Orders' onClick={addOrderShipmets} addbtn={false} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={shippingList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>

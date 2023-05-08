@@ -20,7 +20,7 @@ const ShippingTable = ({ res }: props) => {
 
 
   const rows = [
-    { 'name': 'ginil', 'tyson': '200', q: 1, v: 2, r: 4 }
+    { 'name': 'ginil', 'tyson': '200', q: 0, v: 0, r: 0 }
   ];
 
 
@@ -38,7 +38,7 @@ const ShippingTable = ({ res }: props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {res.product_details?.map((row: any) => (
+            {res?.product_details?.map((row: any) => (
               <TableRow
                 key={row.name}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -49,31 +49,38 @@ const ShippingTable = ({ res }: props) => {
                 <TableCell align="center">{row.name}</TableCell>
                 <TableCell align="center">{row.quantity}</TableCell>
                 <TableCell align="center">{row.productdata?.regular_price}</TableCell>
-                <TableCell align="center">{row.productdata?.regular_price * row?.quantity}</TableCell>
+                <TableCell align="center">{(row.productdata?.regular_price * row?.quantity)}</TableCell>
               </TableRow>
             ))}
+            <TableRow>
+              <TableCell rowSpan={5} />
+              <TableCell colSpan={2}></TableCell>
+              <TableCell align="right">Sub-Total</TableCell>
+              <TableCell align="center">{0}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={2}></TableCell>
+              <TableCell align="right" >Platform & Other Charges </TableCell>
+              <TableCell align="center">{0}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={2}></TableCell>
+              <TableCell align="right" >Multi Shop Pickup(No extra Seller)</TableCell>
+              <TableCell align="center">{0}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={2}></TableCell>
+              <TableCell align="right" >Delivery Charge (SlotBased)</TableCell>
+              <TableCell align="center">{0}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={2}></TableCell>
+              <TableCell align="right">Total</TableCell>
+              <TableCell align="center">{0}</TableCell>
+            </TableRow>
           </TableBody>
-          <TableBody>
-           
-              <TableRow
-                key={"row.name"}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                 
-                </TableCell>
-                <TableCell align="center"></TableCell>
-                <TableCell align="center"></TableCell>
-                
-                <TableCell align="center">{"20"}</TableCell>
-                <TableCell align="center">{"10"}</TableCell>
-              </TableRow>
-       
-          </TableBody>
-          
         </Table>
       </TableContainer>
-
     </Box>
   )
 }
