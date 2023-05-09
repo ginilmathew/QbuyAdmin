@@ -410,7 +410,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                 </Grid>
 
             </CustomBox>
-            <Box py={3}>
+            {/* <Box py={3}>
                 <Custombutton
                     btncolor=''
                     IconEnd={''}
@@ -421,7 +421,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                     label={'Add Order'}
                     disabled={loading}
                     onClick={null} />
-            </Box>
+            </Box> */}
         </Box>
     )
 }

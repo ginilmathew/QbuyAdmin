@@ -92,7 +92,7 @@ const AddProducts = () => {
         },
         {
             field: 'minimum_qty',
-            headerName: 'Quantity',
+            headerName: 'Minimum Quantity',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
