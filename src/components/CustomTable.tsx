@@ -16,9 +16,10 @@ type props = {
     rows: any,
     id: string,
     bg: string,
-    dashboard: boolean
+    dashboard: boolean,
+    rowheight?:number
 }
-const CustomTable = ({ columns, rows, id, bg, label, dashboard }: props) => {
+const CustomTable = ({ columns, rows, id, bg, label, dashboard,rowheight }: props) => {
     let texttruncate = label.slice(0, 3);
     let custtext = label.slice(3)
 
@@ -46,7 +47,7 @@ const CustomTable = ({ columns, rows, id, bg, label, dashboard }: props) => {
                         fontWeight: '200',
                         letterSpacing: '.5px'
                     }}
-                    rowHeight={60}
+                    rowHeight={rowheight ? rowheight : 60}
                     rows={rows}
                     columns={columns}
                     initialState={{

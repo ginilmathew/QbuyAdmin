@@ -140,6 +140,8 @@ const ShippingOrderForm = ({ view, res }: props) => {
     useEffect(() => {
         if (orderviewList) {
             setValue('mobile', orderviewList?.user?.mobile)
+            setValue('payment_address_pickup_address',orderviewList?.billaddress?.area?.address)
+            setValue('shipping_address_delivery_address',orderviewList?.shipaddress?.area?.address)
         }
 
     }, [orderviewList])
@@ -264,7 +266,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             placeholder={``}
                             fieldLabel={"Payment Address or Pickup Address"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>

@@ -9,7 +9,7 @@ import { toast } from 'react-toastify'
 const VandorEdit = () => {
     const router = useRouter()
     const { id } = router.query
-    const [loading, setLoading] = useState<boolean>(false)
+
 
    
     return (

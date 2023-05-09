@@ -394,9 +394,7 @@ const Vendorform = ({ res, view }: props) => {
                 }
             })
             setPaths(paths)
-
             setValue('coordinates', vendorList?.delivery_location)
-
         }
     }, [vendorList])
 
@@ -501,8 +499,10 @@ const Vendorform = ({ res, view }: props) => {
         try {
             await postData(vendorList ? URL_EDIT : URL_CREATE, formData)
             toast.success(vendorList ? 'Updated Successfully' : 'Created Successfully')
+             
             router.push('/vendor')
             reset()
+            setVendorList(null)
             setFranchise('')
             setCategory('')
             setMultipleArray([])

@@ -11,8 +11,12 @@ import Customselect from '@/components/Customselect';
 import CustomImageUploader from '@/components/CustomImageUploader';
 import Custombutton from '@/components/Custombutton';
 import { useRouter } from 'next/router';
+import { type } from 'os';
+import { IMAGE_URL } from '@/Config';
 
-
+type Props = {
+    res?: any
+}
 
 type Inputs = {
     order_number: any,
@@ -21,7 +25,17 @@ type Inputs = {
 
 }
 
-const SliderManagementForm = () => {
+type IFormInput = {
+    order_number: any,
+    image: any,
+    franchise_id: string,
+
+}
+
+const SliderManagementForm = ({ res }: Props) => {
+
+    console.log({ res })
+
     const router = useRouter()
 
     const [imagefile, setImagefile] = useState<null | File>(null)
@@ -30,8 +44,8 @@ const SliderManagementForm = () => {
     const [getfranchise, setGetFranchise] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [franchise, setFranchise] = useState<string>('')
-
-
+    const [sliderList, setSliderList] = useState<any>(null);
+    const [loader, setLoader] = useState<boolean>(false)
 
     const orderValidation = /^(0|[1-9]\d*)$/
     const schema = yup
@@ -66,13 +80,10 @@ const SliderManagementForm = () => {
         setFranchise(e.target.value)
         setValue('franchise_id', e.target.value)
         setError('franchise_id', { message: '' })
-
-
     }
 
 
     const imageUploder = (file: any) => {
-
         if (file.size <= 1000000) {
             setImagefile(file)
             setImagePreview(null)
@@ -86,12 +97,28 @@ const SliderManagementForm = () => {
         }
     }
 
+
+    const getSlider = async () => {
+        try {
+            setLoader(true)
+            const response = await fetchData(`admin/slider/show/${res}`)
+            setSliderList(response?.data?.data)
+        } catch (err: any) {
+            toast.success(err.message)
+            setLoader(false)
+        } finally {
+            setLoader(false)
+        }
+    }
+
+
     const getFranchiseList = async () => {
         try {
             setLoading(true)
             const response = await fetchData('/admin/franchise/list')
             setGetFranchise(response?.data?.data)
             reset()
+
             setLoading(false)
 
         } catch (err: any) {
@@ -105,21 +132,49 @@ const SliderManagementForm = () => {
     }
 
     useEffect(() => {
+        if (sliderList) {
+            setValue('franchise_id', sliderList?.franchise_id)
+            setFranchise(sliderList?.franchise_id)
+            setValue('order_number', sliderList?.order_number)
+            setValue('image', sliderList?.image)
+            setImagePreview(`${IMAGE_URL}${sliderList?.image}`)
+        }
+
+    }, [sliderList])
+
+
+    useEffect(() => {
         getFranchiseList()
     }, [])
 
+    useEffect(() => {
+        if (res) {
+            getSlider()
+        }
+    }, [res])
 
-    const onSubmit = async (data: any) => {
+
+    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+
+        const CREATE_URL = 'admin/slider/create';
+        const UPDATE_URL = 'admin/slider/update';
+
         const formData = new FormData();
         formData.append("franchise_id", data?.franchise_id);
-        formData.append("image", data?.image);
+        if (imagefile) {
+            formData.append("image", data?.image);
+        }
+        if (sliderList) {
+            formData.append("id", sliderList?._id);
+        }
+        
         formData.append("type", type);
         formData.append("order_number", data?.order_number);
         try {
             setLoading(true)
-            await postData('admin/slider/create', formData)
+            await postData(res ? UPDATE_URL : CREATE_URL, formData)
             reset()
-            toast.success('Created Successfully')
+            toast.success(res ? 'Update Successfully' : 'Created Successfully')
             router.push('/sliderManagement')
         } catch (err: any) {
             toast.error(err?.message)
@@ -193,7 +248,6 @@ const SliderManagementForm = () => {
                     </Grid>
                 </Grid>
             </CustomBox>
-
             <Box py={3}>
                 <Custombutton
                     disabled={loading}
@@ -202,7 +256,7 @@ const SliderManagementForm = () => {
                     IconStart={''}
                     endIcon={false} startIcon={false}
                     height={''}
-                    label={'Add Slider'}
+                    label={res ? 'Update Slider' : 'Add Slider'}
                     onClick={handleSubmit(onSubmit)} />
             </Box>
         </Box>

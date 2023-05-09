@@ -73,6 +73,14 @@ const VendorSignup = () => {
             align: 'center',
 
         },
+        {
+            field: 'display_order',
+            headerName: 'Order',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
 
         // {
         //     field: 'delivery_location',
