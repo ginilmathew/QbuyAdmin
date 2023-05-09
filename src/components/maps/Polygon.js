@@ -2,7 +2,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { PolygonF, GoogleMap } from "@react-google-maps/api";
 
-const Polygons = ({ onComplete:any, path }) => {
+const Polygons = ({ onComplete, path }) => {
 
     const [polygonRef, setPolygonRef] = useState(null)
 

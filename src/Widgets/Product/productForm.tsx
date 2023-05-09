@@ -163,6 +163,8 @@ const ProductForm = ({ res, view }: props) => {
     const [recomendedProductEditList, setRecomendedProductEditList] = useState<any>([]);
     const [productList, setProductList] = useState<any>(null);
 
+    console.log({ stock })
+
 
     const schema = yup
         .object()
@@ -312,7 +314,7 @@ const ProductForm = ({ res, view }: props) => {
     }
 
 
-    console.log({errors})
+    console.log({ errors })
 
 
 
@@ -440,17 +442,17 @@ const ProductForm = ({ res, view }: props) => {
     const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
 
         //if (!res && !view) {
-            console.log({attributes})
-            attributes[i][key] = e;
-            if (key === "options") {
-                let result = attributes[i].variant === true;
-                if (result) {
-                    onOptionsChangeaddvarients()
-                } else {
-                    return false;
-                }
-
+        console.log({ attributes })
+        attributes[i][key] = e;
+        if (key === "options") {
+            let result = attributes[i].variant === true;
+            if (result) {
+                onOptionsChangeaddvarients()
+            } else {
+                return false;
             }
+
+        }
 
         //}
 
@@ -705,7 +707,7 @@ const ProductForm = ({ res, view }: props) => {
 
             let combines = combine(attributesArray);
 
-            console.log({combines, varientsarray})
+            console.log({ combines, varientsarray })
 
             let attri = combines.map((val: any) => {
                 return {
@@ -723,10 +725,10 @@ const ProductForm = ({ res, view }: props) => {
                 }
             })
 
-            console.log({varientsarray, attri})
+            console.log({ varientsarray, attri })
 
 
-            let varia = varientsarray.filter((obj: any) => {
+            let varia = varientsarray?.filter((obj: any) => {
                 return attri.some((obj1: any) => obj.title === obj1.title)
             })
 
@@ -735,7 +737,7 @@ const ProductForm = ({ res, view }: props) => {
             })
 
             //filter results
-            
+
 
             setVarientsArray([...varia, ...result])
             console.log({ varientsarray })
@@ -752,7 +754,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const addvarients = () => {
 
-        console.log({attributes})
+        console.log({ attributes })
 
         if (attributes?.some((res: any) => res?.variant === true)) {
             const output = [];
@@ -851,69 +853,69 @@ const ProductForm = ({ res, view }: props) => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
-        
+
 
         //Check All Attributes have values
-        let attributeCheck = attributes.find((att:  any) => isEmpty(att?.name) || att?.options?.length === 0 );
-        console.log({attributeCheck, attributes})
-        if(attributeCheck){
+        let attributeCheck = attributes?.find((att: any) => isEmpty(att?.name) || att?.options?.length === 0);
+        console.log({ attributeCheck, attributes })
+        if (attributeCheck) {
             toast.warning("All Attributes must have values")
             return false;
         }
 
         //Check Any Variants
-        let variantsChe = attributes.find((att:  any) => att.variant === true );
-        console.log({length: attributes.length, price: isEmpty(data?.seller_price)})
-        if(!variantsChe){
-            if(isNaN(data?.seller_price) || data?.seller_price <=0){
+        let variantsChe = attributes?.find((att: any) => att.variant === true);
+        console.log({ length: attributes.length, price: isEmpty(data?.seller_price) })
+        if (!variantsChe) {
+            if (isNaN(data?.seller_price) || data?.seller_price <= 0) {
                 setError("seller_price", { type: 'custom', message: 'Purchase price must be greater than 0' })
                 return false;
             }
-            if(!isEmpty(data?.offer_price)){
-                if(isNaN(data?.offer_price)){
+            if (!isEmpty(data?.offer_price)) {
+                if (isNaN(data?.offer_price)) {
                     setError("offer_price", { type: 'custom', message: 'Offer price must be a number' })
                 }
-                else if(data?.offer_price <= 0){
+                else if (data?.offer_price <= 0) {
                     setError("offer_price", { type: 'custom', message: 'Offer price must be a greater than 0' })
                 }
                 return false;
             }
 
-            if(isNaN(data?.fixed_delivery_price) || isEmpty(data?.fixed_delivery_price) || data?.fixed_delivery_price < 0){
+            if (isNaN(data?.fixed_delivery_price) || isEmpty(data?.fixed_delivery_price) || data?.fixed_delivery_price < 0) {
                 setError("fixed_delivery_price", { type: 'custom', message: 'delivery price required' })
                 return false;
             }
             //setError("seller_price", { type: 'custom', message: 'Purchase price required' })
             //console.log({delivery: data?.fixed_delivery_price})
         }
-        else{
-            let varicheck = varientsarray.find((vari: any) => isEmpty(vari?.seller_price) || isNaN(vari?.seller_price) || (isNumber(vari?.seller_price) &&  vari?.seller_price <=0)  )
-            if(varicheck){
-                console.log({varicheck, varientsarray})
+        else {
+            let varicheck = varientsarray?.find((vari: any) => isEmpty(vari?.seller_price) || isNaN(vari?.seller_price) || (isNumber(vari?.seller_price) && vari?.seller_price <= 0))
+            if (varicheck) {
+                console.log({ varicheck, varientsarray })
                 toast.warning("All variants mush have price. Please update price and continue")
                 return false;
             }
-            else{
-                let offer = varientsarray.filter((vari: any) => !isEmpty(vari?.offer_price))
-                if(offer){
-                    let offerpr = offer.find((off: any) => !off.offer_date_from || !off?.offer_date_to);
-                    if(offerpr){
+            else {
+                let offer = varientsarray?.filter((vari: any) => !isEmpty(vari?.offer_price))
+                if (offer) {
+                    let offerpr = offer?.find((off: any) => !off.offer_date_from || !off?.offer_date_to);
+                    if (offerpr) {
                         toast.warning("Offer From date and to date required")
                         return false;
                     }
                 }
 
-                if(stock){
-                    let stockValue = varientsarray?.find((vari: any) => isEmpty(vari?.stock_value) || isNaN(vari?.stock_value) )
-                    if(stockValue){
+                if (stock) {
+                    let stockValue = varientsarray?.find((vari: any) => isEmpty(vari?.stock_value) || isNaN(vari?.stock_value))
+                    if (stockValue) {
                         toast.warning("Stock value required for all variants")
                         return false;
                     }
                 }
 
-                let delivery = varientsarray.find((vari: any) => isNaN(vari?.fixed_delivery_price) || vari?.fixed_delivery_price < 0 || isEmpty(vari?.fixed_delivery_price))
-                console.log({delivery})
-                if(delivery){
+                let delivery = varientsarray?.find((vari: any) => isNaN(vari?.fixed_delivery_price) || vari?.fixed_delivery_price < 0 || isEmpty(vari?.fixed_delivery_price))
+                console.log({ delivery })
+                if (delivery) {
                     toast.warning("Delivery price required for all variants")
                     return false;
                 }
@@ -1041,8 +1043,8 @@ const ProductForm = ({ res, view }: props) => {
             stock: data?.stock,
             stock_value: data?.stock_value,
             minimum_qty: data?.minimum_qty,
-            product_availability_from: data?.product_availability_from ? moment(data?.product_availability_from, 'hh:mm A').format('hh:mm') : null,
-            product_availability_to: data?.product_availability_to ? moment(data?.product_availability_to, 'hh:mm A').format('hh:mm') : null,
+            product_availability_from: data?.product_availability_from ? moment(data?.product_availability_from, 'hh:mm A').format('HH:mm') : null,
+            product_availability_to: data?.product_availability_to ? moment(data?.product_availability_to, 'hh:mm A').format('HH:mm') : null,
             require_shipping: data?.require_shipping,
             delivery_locations: data?.delivery_locations ? data?.delivery_locations : vendorlistDirection?.[0]?.delivery_location,
             coupon_details: null,
@@ -1093,15 +1095,15 @@ const ProductForm = ({ res, view }: props) => {
         }
     }
 
-    const removeAttributes = async(i: any) => {
+    const removeAttributes = async (i: any) => {
         attributes[i].variant = false;
         setAttributes([...attributes])
-        let attribute = await attributes.filter((att : any, index: Number) =>  index!== i)
-        
-        console.log({attribute})
+        let attribute = await attributes?.filter((att: any, index: Number) => index !== i)
+
+        console.log({ attribute })
         setAttributes([...attribute])
         addvarients()
-        
+
     }
 
     if (loader) {
@@ -1321,7 +1323,8 @@ const ProductForm = ({ res, view }: props) => {
                         <Typography mb={3}></Typography>
                         <CustomCheckBox isChecked={stock} label='' onChange={StockCheck} title='Enable Stock' />
                     </Grid>
-                    {stock && varientsarray.length === 0 &&
+                    {stock &&
+                        varientsarray?.length === 0 &&
                         <Grid item xs={12} lg={3}>
                             <CustomInput
                                 type='text'
@@ -1548,7 +1551,7 @@ const ProductForm = ({ res, view }: props) => {
                 {!res && !view &&
                     <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
-                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} removeAttributes={ !productList ? () => removeAttributes(i) : null} />
+                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} removeAttributes={!productList ? () => removeAttributes(i) : null} />
                 )}
             </CustomBox>
             {varientsarray?.length === 0 && <CustomBox title='Price'>

@@ -15,10 +15,6 @@ type props = {
 
 const ShippingTable = ({ res }: props) => {
 
-
-
-
-
   return (
     <Box>
       <TableContainer component={Paper} >
@@ -47,14 +43,14 @@ const ShippingTable = ({ res }: props) => {
                 <TableCell align="center">{(row.productdata?.regular_price * row?.quantity)}</TableCell>
               </TableRow>
             ))}
-            
             <TableRow >
-              <TableCell rowSpan={5} />
+            <TableCell rowSpan={5} />
               <TableCell  colSpan={2}></TableCell>
               <TableCell align="right">Sub-Total</TableCell>
               <TableCell align="center">{0}</TableCell>
             </TableRow>
             <TableRow>
+              
               <TableCell colSpan={2}></TableCell>
               <TableCell align="right" >Platform & Other Charges </TableCell>
               <TableCell align="center">{0}</TableCell>

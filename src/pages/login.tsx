@@ -82,9 +82,9 @@ const Login = () => {
         try {
             setLoading(true)
             const response = await postData('/auth/login', data)
-            await localStorage.setItem("user", JSON.stringify(response.data.user));
-            await localStorage.setItem("token", response.data.access_token);
-            await userContext.setUser(response.data.user)
+            await localStorage.setItem("user", JSON.stringify(response?.data?.user));
+            await localStorage.setItem("token", response?.data?.access_token);
+            await userContext.setUser(response?.data?.user)
             
             router.push('/dashboard')
             toast.success(`Login Successfull`);

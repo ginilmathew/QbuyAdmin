@@ -22,7 +22,7 @@ const poppins = Poppins({
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const showHeader = router.pathname === '/login' || router.pathname === "/404" ? false : true;
+  const showHeader = (router.pathname === '/login' || router.pathname === "/404") ? false : true;
 
   const [isLoading, setLoading] = React.useState(false);
 

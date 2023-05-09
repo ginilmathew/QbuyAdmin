@@ -30,13 +30,9 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
         }
     }
 
-
-
-
     useEffect(() => {
         const token = localStorage.getItem('token');
         const user: any = JSON.parse(localStorage.getItem('user') ?? '{}');
-        console.log({ user })
         if (!token && loading) {
             router.push('/login')
         } else {

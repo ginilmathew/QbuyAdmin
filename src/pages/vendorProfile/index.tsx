@@ -21,7 +21,7 @@ const VendorProfile = () => {
 
 
 
-  console.log({ vendorList })
+
 
   const columns: GridColDef[] = [
     {
@@ -52,7 +52,7 @@ const VendorProfile = () => {
       flex: 1,
       headerAlign: 'center',
       align: 'center',
-      valueGetter:(params) => params?.row?.franchise?.franchise_name
+      valueGetter: (params) => params?.row?.franchise?.franchise_name
     },
     // {
     //   field: 'Category',
@@ -96,19 +96,6 @@ const VendorProfile = () => {
   }
 
 
-  const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  ];
-
-
 
 
   const fetchVendorList = useCallback(async () => {
@@ -129,6 +116,14 @@ const VendorProfile = () => {
   }, [vendorList])
 
 
+  const searchVendor = useCallback((value: any) => {
+    let Result = serachList?.filter((com: any) => com?.store_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase))
+    startTransition(() => {
+      setVendorList(Result)
+    })
+  }, [vendorList])
+
+
   useEffect(() => {
     fetchVendorList()
   }, [])
@@ -139,7 +134,7 @@ const VendorProfile = () => {
   return (
     <Box px={5} py={2} pt={10} mt={0}>
       <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-        <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Vendor Profile' onClick={() => null} />
+        <CustomTableHeader setState={searchVendor} addbtn={false} imprtBtn={false} Headerlabel='Vendor Profile' onClick={() => null} />
         <Box py={5}>
           <CustomTable dashboard={false} columns={columns} rows={vendorList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
         </Box>

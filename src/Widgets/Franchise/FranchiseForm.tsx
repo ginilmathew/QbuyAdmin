@@ -168,7 +168,7 @@ const FranchiseForm = ({ res, view }: props) => {
 
     const setDeliveryLocation = (value: any) => {
         if (!view) {
-            console.log({ value })
+      
             setValue("coordinates", value)
         }
 

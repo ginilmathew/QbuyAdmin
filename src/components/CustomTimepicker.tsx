@@ -28,9 +28,8 @@ const CustomTimepicker = ({
     changeValue,
 }: props) => {
 
-    const today = dayjs();
-    const tomorrow = dayjs().add(1, 'day');
-    const todayEndOfTheDay = today.endOf('day');
+
+
     return (
         <>
             <FormGroup>
@@ -53,11 +52,11 @@ const CustomTimepicker = ({
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                             <MobileTimePicker
                             //disabled={disabled}
-                                // sx={{
-                                //     "& .MuiInputBase-input": {
-                                //         height: "10px" // Set your height here.
-                                //     }
-                                // }}
+                                sx={{
+                                    "& .MuiInputBase-input": {
+                                        height: "10px" // Set your height here.
+                                    }
+                                }}
 
                                 disablePast
                                 value={value}

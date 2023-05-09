@@ -1,4 +1,4 @@
-import React, { useState,memo } from 'react'
+import React, { useState, memo } from 'react'
 import { Controller } from "react-hook-form";
 import { Avatar, Box, FormGroup, styled } from "@mui/material";
 import TextField from "@mui/material/TextField";
@@ -20,7 +20,20 @@ type Inputs = {
 
 const CustomLoginInput = memo(({ control, fieldName, placeholder, error, Icon, type }: Inputs) => {
 
-    const [show, setShow] = useState<boolean>(false)
+    const [show, setShow] = useState<boolean>(true);
+    const [textType, setTextType] = useState<any>(null);
+
+
+
+    const passwordType = () => {
+        setShow(!show)
+        if (show) {
+            setTextType('text')
+        } else {
+            setTextType('password')
+        }
+    }
+
 
 
     return (
@@ -37,16 +50,16 @@ const CustomLoginInput = memo(({ control, fieldName, placeholder, error, Icon, t
                                 className="form-control"
                                 placeholder={placeholder}
                                 id="exampleInputEmail1"
-
+                                type={textType ? textType : type}
                                 InputProps={{
                                     style: {
                                         opacity: "1",
                                         background: "#ffff",
                                         height: "48px",
-                                        fontFamily:`'Poppins' sans-serif`,
+                                        fontFamily: `'Poppins' sans-serif`,
                                         letterSpacing: "1px",
                                         fontWeight: '600px',
-                                        minWidth: 280
+                                        width: 280
                                     },
                                     startAdornment: (
                                         <InputAdornment position={'start'}>
@@ -55,7 +68,7 @@ const CustomLoginInput = memo(({ control, fieldName, placeholder, error, Icon, t
                                             </Box>
                                         </InputAdornment>
                                     ),
-                                    endAdornment: type === "password" ? show ? <VisibilityOffIcon sx={{cursor:'pointer'}} onClick={() => setShow(false)} /> : <VisibilityIcon sx={{cursor:'pointer'}}  onClick={() => setShow(true)} /> : null
+                                    endAdornment: type === "password" ? show ? <VisibilityOffIcon sx={{ cursor: 'pointer' }} onClick={passwordType} /> : <VisibilityIcon sx={{ cursor: 'pointer' }} onClick={passwordType} /> : null
                                 }}
                             />
                         </>
@@ -69,7 +82,7 @@ const CustomLoginInput = memo(({ control, fieldName, placeholder, error, Icon, t
                             display: "flex",
                             paddingLeft: "5px",
                             fontSize: "12px",
-                            fontFamily:`'Poppins' sans-serif`
+                            fontFamily: `'Poppins' sans-serif`
                         }}
                     >
                         {error?.message}

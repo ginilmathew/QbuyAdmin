@@ -146,10 +146,10 @@ const Vendorform = ({ res, view }: props) => {
             .nullable('Commission is Required').typeError('Commission is required')
             .notRequired()
             .min(0)
-            .max(100, "Commision have maximum 100%")
+            .max(100, "Commission have maximum 100%")
             .test(
                 "noEOrSign", // type of the validator (should be unique)
-                "Number had an 'e' or sign.", // error message
+                "Commission is Required", // error message
                 (value) => typeof value === "number" && !/[eE+-]/.test(value.toString())
             )
 
@@ -476,8 +476,8 @@ const Vendorform = ({ res, view }: props) => {
         formData.append("store_address", data?.store_address);
         formData.append("franchise_id", data?.franchise_id);
         formData.append("category_id", JSON.stringify(data?.category_id));
-        formData.append("start_time", moment(data?.start_time, 'hh:mm A').format('hh:mm'));
-        formData.append("end_time", moment(data?.end_time, 'hh:mm A').format('hh:mm'));
+        formData.append("start_time", moment(data?.start_time, 'hh:mm A').format('HH:mm'));
+        formData.append("end_time", moment(data?.end_time, 'hh:mm A').format('HH:mm'));
         formData.append("store_logo", data?.store_logo);
         formData.append("display_order", data?.display_order);
         formData.append("type", type);
