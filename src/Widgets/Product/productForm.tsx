@@ -165,12 +165,13 @@ const ProductForm = ({ res, view }: props) => {
 
     console.log({ stock })
 
-
+    const orderValidation = /^[0-9]*$/
     const schema = yup
         .object()
         .shape({
             name: yup.string().required('Product Name Required'),
             // display_order: yup.number().nullable().typeError("Must be Integer"),
+            display_order: yup.string().matches(orderValidation, 'Accept only positive number').nullable(),
             franchisee: yup.string().typeError('Franchise is Required').required('Franchise is Required'),
             store: yup.string().typeError('Store is Required').required('Store is Required'),
             stock: yup.boolean(),

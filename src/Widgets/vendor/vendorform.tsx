@@ -90,31 +90,6 @@ const Vendorform = ({ res, view }: props) => {
 
     const router = useRouter();
 
-    const [defaultValues, setDefaultValues] = useState({
-        vendor_name: null,
-        vendor_email: null,
-        vendor_mobile: null,
-        store_name: null,
-        store_address: null,
-        store_logo: null,
-        franchise_id: null,
-        category_id: null,
-        start_time: null,
-        end_time: null,
-        license_number: null,
-        ffsai_number: null,
-        pan_card_number: null,
-        aadhar_card_number: null,
-        account_number: null,
-        ifsc: null,
-        branch: null,
-        recipient_name: null,
-        commission: null,
-        offer_description: null,
-        tax: null,
-        coordinates: null,
-        display_order: null,
-    })
 
 
 
@@ -134,6 +109,8 @@ const Vendorform = ({ res, view }: props) => {
 
 
     console.log({ getfranchise }, 'in forkm')
+
+    const orderValidation = /^[0-9]*$/
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const commissionvalidation = /^\d*\.?\d*$/
@@ -159,20 +136,20 @@ const Vendorform = ({ res, view }: props) => {
                 .typeError("Store Logo is Required")
                 .required("Store Logo is Required"),
             coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required"),
-            commission:yup.number().required('Commission is required')
-            .nullable('Commission is Required').typeError('Commission is required')
-            .notRequired()
-            .min(0)
-            .max(100, "Commission have maximum 100%")
-            .test(
-                "noEOrSign", // type of the validator (should be unique)
-                "Commission is Required", // error message
-                (value) => typeof value === "number" && !/[eE+-]/.test(value.toString())
-            )
+            commission: yup.number().required('Commission is required')
+                .nullable('Commission is Required').typeError('Commission is required')
+                .notRequired()
+                .min(0)
+                .max(100, "Commission have maximum 100%")
+                .test(
+                    "noEOrSign", // type of the validator (should be unique)
+                    "Commission is Required", // error message
+                    (value) => typeof value === "number" && !/[eE+-]/.test(value.toString())
+                ),
+            display_order: yup.string().matches(orderValidation, 'Accept only positive number').nullable()
 
+        })
 
-    })
-      
 
 
     const { register,
@@ -183,7 +160,31 @@ const Vendorform = ({ res, view }: props) => {
         setError,
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
-            defaultValues: defaultValues
+            defaultValues: {
+                vendor_name: null,
+                vendor_email: null,
+                vendor_mobile: null,
+                store_name: null,
+                store_address: null,
+                store_logo: null,
+                franchise_id: null,
+                category_id: null,
+                start_time: null,
+                end_time: null,
+                license_number: null,
+                ffsai_number: null,
+                pan_card_number: null,
+                aadhar_card_number: null,
+                account_number: null,
+                ifsc: null,
+                branch: null,
+                recipient_name: null,
+                commission: null,
+                offer_description: null,
+                tax: null,
+                coordinates: null,
+                display_order: null,
+            }
         });
 
 
@@ -197,7 +198,7 @@ const Vendorform = ({ res, view }: props) => {
             setLoader(true)
             const response = await fetchData(`admin/vendor/show/${idd}`)
             setVendorList(response?.data?.data)
-            setDefaultValues(response?.data?.data)
+
         } catch (err: any) {
             toast.success(err.message)
             setLoader(false)
@@ -493,7 +494,7 @@ const Vendorform = ({ res, view }: props) => {
         try {
             await postData(vendorList ? URL_EDIT : URL_CREATE, formData)
             toast.success(vendorList ? 'Updated Successfully' : 'Created Successfully')
-             
+
             router.push('/vendor')
             reset()
             setVendorList(null)
@@ -641,7 +642,7 @@ const Vendorform = ({ res, view }: props) => {
                                 <MenuItem value="" disabled >
                                     <>Select Franchise</>
                                 </MenuItem>
-                                {getfranchise && getfranchise?.filter((act:any)=>act?.status !== 'inactive').map((res: any) => (
+                                {getfranchise && getfranchise?.filter((act: any) => act?.status !== 'inactive').map((res: any) => (
                                     <MenuItem key={res?._id} value={res?._id}>{res?.franchise_name}</MenuItem>
                                 ))}
                             </Customselect>
