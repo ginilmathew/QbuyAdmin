@@ -169,6 +169,7 @@ const ProductForm = ({ res, view }: props) => {
     const schema = yup
         .object()
         .shape({
+
             name: yup.string().required('Product Name Required'),
             // display_order: yup.number().nullable().typeError("Must be Integer"),
             display_order: yup.string().matches(orderValidation, 'Accept only positive number').nullable(),
@@ -180,10 +181,11 @@ const ProductForm = ({ res, view }: props) => {
             product_image: yup
                 .mixed()
                 .required("Product Image is Required"),
-            stock_value: (stock === true && varientsarray?.length === 0) ? yup.number().required("Stock value required").typeError("Stock value must be a number") : yup.string().nullable()
+            stock_value: (stock === true && varientsarray?.length === 0) ? yup.number().required("Stock value required").typeError("Stock value must be a number") : yup.string().nullable(),
             // regular_price: attributes?.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
 
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
+            minimum_qty: yup.string().matches(orderValidation, 'Accept only positive number').nullable()
         })
         .required();
 
