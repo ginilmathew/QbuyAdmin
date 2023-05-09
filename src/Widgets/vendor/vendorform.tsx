@@ -107,7 +107,7 @@ const Vendorform = ({ res, view }: props) => {
 
 
 
-    console.log({ vendorList }, 'in forkm')
+    console.log({ getfranchise }, 'in forkm')
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const commissionvalidation = /^\d*\.?\d*$/
@@ -647,7 +647,7 @@ const Vendorform = ({ res, view }: props) => {
                                 <MenuItem value="" disabled >
                                     <>Select Franchise</>
                                 </MenuItem>
-                                {getfranchise && getfranchise?.map((res: any) => (
+                                {getfranchise && getfranchise?.filter((act:any)=>act?.status !== 'inactive').map((res: any) => (
                                     <MenuItem key={res?._id} value={res?._id}>{res?.franchise_name}</MenuItem>
                                 ))}
                             </Customselect>

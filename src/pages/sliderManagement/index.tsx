@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
@@ -9,12 +9,19 @@ import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
 import CustomSwitch from '@/components/CustomSwitch';
 import CustomDelete from '@/Widgets/CustomDelete';
-
+import { toast } from "react-toastify";
+import moment from 'moment'
+import { fetchData } from '@/CustomAxios';
 const SliderManagement = () => {
     const router = useRouter()
 
 
     const [open, setOpen] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false);
+    const [sliderList, setSliderList] = useState<any>([])
+
+
+    console.log({ sliderList })
 
     const handleClose = () => {
         setOpen(false)
@@ -25,7 +32,7 @@ const SliderManagement = () => {
     }
 
     const addSlider = () => {
-        router.push('/')
+        router.push('/sliderManagement/addSlider')
 
     }
 
@@ -33,17 +40,22 @@ const SliderManagement = () => {
 
 
     const columns: GridColDef[] = [
-        { field: 'Date Added', headerName: 'Date Added', flex: 1, },
+        { field: 'Date Added',
+         headerName: 'Date Added', 
+         flex: 1,
+         valueGetter: (params) => moment(params.row.created_at).format("DD/MM/YYYY"),
+         },
         {
             field: 'Franchisee',
             headerName: 'Franchisee',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params?.row?.franchise?.franchise_name
 
         },
         {
-            field: 'Order',
+            field: 'order_number',
             headerName: 'Order',
             flex: 1,
             headerAlign: 'center',
@@ -58,7 +70,7 @@ const SliderManagement = () => {
             align: 'center',
 
         },
-      
+
         {
             field: 'Status',
             headerName: 'Status',
@@ -109,29 +121,39 @@ const SliderManagement = () => {
         }
     ];
 
-    const rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-    ];
 
-  return (
-    <Box px={5} py={2} pt={10} mt={0}>
 
-    <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-        <CustomTableHeader imprtBtn={false} Headerlabel='Slider Management' onClick={addSlider} addbtn={true} />
-        <Box py={5}>
-            <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+
+    const getSlider = async () => {
+        try {
+            setLoading(true)
+            const response = await fetchData('admin/slider/list');
+            setSliderList(response?.data?.data)
+        } catch (err: any) {
+            toast.error(err?.message)
+            setLoading(false)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        getSlider()
+    }, [])
+
+
+
+    return (
+        <Box px={5} py={2} pt={10} mt={0}>
+
+            <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
+                <CustomTableHeader imprtBtn={false} Headerlabel='Slider Management' onClick={addSlider} addbtn={true} />
+                <Box py={5}>
+                    <CustomTable dashboard={false} columns={columns} rows={sliderList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                </Box>
+            </Box>
         </Box>
-    </Box>
-    </Box>
-  )
+    )
 }
 
 export default SliderManagement

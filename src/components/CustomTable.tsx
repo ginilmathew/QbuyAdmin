@@ -46,6 +46,7 @@ const CustomTable = ({ columns, rows, id, bg, label, dashboard }: props) => {
                         fontWeight: '200',
                         letterSpacing: '.5px'
                     }}
+                    rowHeight={60}
                     rows={rows}
                     columns={columns}
                     initialState={{

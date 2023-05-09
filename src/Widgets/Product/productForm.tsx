@@ -1151,7 +1151,7 @@ const ProductForm = ({ res, view }: props) => {
                             <MenuItem value="" disabled >
                                 <>Select Franchise</>
                             </MenuItem>
-                            {franchiseList && franchiseList?.map((res: any) => (
+                            {franchiseList && franchiseList?.filter((act:any)=>act?.status !== 'inactive').map((res: any) => (
                                 <MenuItem value={res?._id}>{res?.franchise_name}</MenuItem>
                             ))}
                         </Customselect>
@@ -1354,7 +1354,7 @@ const ProductForm = ({ res, view }: props) => {
 
                     {view &&
                         <Grid item xs={12} lg={3}>
-                            <Avatar variant='square' src={`${IMAGE_URL}${view?.product_image}`} sx={{ width: '100%', height: 130 }} />
+                            <Avatar variant='square' src={`${IMAGE_URL}${productList?.product_image}`} sx={{ width: '100%', height: 130 }} />
                         </Grid>}
                     {!view &&
                         <Grid item xs={12} lg={3}>
