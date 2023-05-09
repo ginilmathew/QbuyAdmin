@@ -22,7 +22,7 @@ import moment from 'moment'
 import CustomDatePicker from '@/components/CustomDatePicker';
 import Maps from '../../components/maps/maps'
 import { type } from 'os';
-import { isEmpty, set, values } from 'lodash';
+import { isEmpty, isNull, isNumber } from 'lodash';
 import Polygon from '@/components/maps/Polygon';
 import { IMAGE_URL } from '../../Config/index';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
@@ -171,11 +171,13 @@ const ProductForm = ({ res, view }: props) => {
             // display_order: yup.number().nullable().typeError("Must be Integer"),
             franchisee: yup.string().typeError('Franchise is Required').required('Franchise is Required'),
             store: yup.string().typeError('Store is Required').required('Store is Required'),
+            stock: yup.boolean(),
             category: yup.string().typeError('Category is Required').required('Category is Required'),
             delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
             product_image: yup
                 .mixed()
                 .required("Product Image is Required"),
+            stock_value: (stock === true && varientsarray?.length === 0) ? yup.number().required("Stock value required").typeError("Stock value must be a number") : yup.string().nullable()
             // regular_price: attributes?.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
 
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
@@ -310,6 +312,9 @@ const ProductForm = ({ res, view }: props) => {
     }
 
 
+    console.log({errors})
+
+
 
 
     const getFranchiseList = async () => {
@@ -434,7 +439,8 @@ const ProductForm = ({ res, view }: props) => {
 
     const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
 
-        if (!res && !view) {
+        //if (!res && !view) {
+            console.log({attributes})
             attributes[i][key] = e;
             if (key === "options") {
                 let result = attributes[i].variant === true;
@@ -446,7 +452,7 @@ const ProductForm = ({ res, view }: props) => {
 
             }
 
-        }
+        //}
 
     }
 
@@ -592,7 +598,7 @@ const ProductForm = ({ res, view }: props) => {
                 productList?.variants?.map((item: any) => {
                     myvaarientArray.push({
                         variant_id: item._id,
-                        title: item?.attributs,
+                        title: item?.title,
                         attributs: item?.attributs,
                         seller_price: item?.seller_price,
                         regular_price: item?.regular_price,
@@ -699,6 +705,8 @@ const ProductForm = ({ res, view }: props) => {
 
             let combines = combine(attributesArray);
 
+            console.log({combines, varientsarray})
+
             let attri = combines.map((val: any) => {
                 return {
                     title: val,
@@ -715,12 +723,21 @@ const ProductForm = ({ res, view }: props) => {
                 }
             })
 
+            console.log({varientsarray, attri})
+
+
+            let varia = varientsarray.filter((obj: any) => {
+                return attri.some((obj1: any) => obj.title === obj1.title)
+            })
 
             const result = attri?.filter((obj: any) => {
                 return !varientsarray.some((obj1: any) => obj.title === obj1.title)
             })
 
-            setVarientsArray([...varientsarray, ...result])
+            //filter results
+            
+
+            setVarientsArray([...varia, ...result])
             console.log({ varientsarray })
 
         } else {
@@ -838,6 +855,7 @@ const ProductForm = ({ res, view }: props) => {
 
         //Check All Attributes have values
         let attributeCheck = attributes.find((att:  any) => isEmpty(att?.name) || att?.options?.length === 0 );
+        console.log({attributeCheck, attributes})
         if(attributeCheck){
             toast.warning("All Attributes must have values")
             return false;
@@ -846,22 +864,64 @@ const ProductForm = ({ res, view }: props) => {
         //Check Any Variants
         let variantsChe = attributes.find((att:  any) => att.variant === true );
         console.log({length: attributes.length, price: isEmpty(data?.seller_price)})
-        if(!variantsChe && isEmpty(data?.seller_price)){
-            setError("seller_price", { type: 'custom', message: 'Purchase price required' })
-            return false;
+        if(!variantsChe){
+            if(isNaN(data?.seller_price) || data?.seller_price <=0){
+                setError("seller_price", { type: 'custom', message: 'Purchase price must be greater than 0' })
+                return false;
+            }
+            if(!isEmpty(data?.offer_price)){
+                if(isNaN(data?.offer_price)){
+                    setError("offer_price", { type: 'custom', message: 'Offer price must be a number' })
+                }
+                else if(data?.offer_price <= 0){
+                    setError("offer_price", { type: 'custom', message: 'Offer price must be a greater than 0' })
+                }
+                return false;
+            }
+
+            if(isNaN(data?.fixed_delivery_price) || isEmpty(data?.fixed_delivery_price) || data?.fixed_delivery_price < 0){
+                setError("fixed_delivery_price", { type: 'custom', message: 'delivery price required' })
+                return false;
+            }
+            //setError("seller_price", { type: 'custom', message: 'Purchase price required' })
+            //console.log({delivery: data?.fixed_delivery_price})
+        }
+        else{
+            let varicheck = varientsarray.find((vari: any) => isEmpty(vari?.seller_price) || isNaN(vari?.seller_price) || (isNumber(vari?.seller_price) &&  vari?.seller_price <=0)  )
+            if(varicheck){
+                console.log({varicheck, varientsarray})
+                toast.warning("All variants mush have price. Please update price and continue")
+                return false;
+            }
+            else{
+                let offer = varientsarray.filter((vari: any) => !isEmpty(vari?.offer_price))
+                if(offer){
+                    let offerpr = offer.find((off: any) => !off.offer_date_from || !off?.offer_date_to);
+                    if(offerpr){
+                        toast.warning("Offer From date and to date required")
+                        return false;
+                    }
+                }
+
+                if(stock){
+                    let stockValue = varientsarray?.find((vari: any) => isEmpty(vari?.stock_value) || isNaN(vari?.stock_value) )
+                    if(stockValue){
+                        toast.warning("Stock value required for all variants")
+                        return false;
+                    }
+                }
+
+                let delivery = varientsarray.find((vari: any) => isNaN(vari?.fixed_delivery_price) || vari?.fixed_delivery_price < 0 || isEmpty(vari?.fixed_delivery_price))
+                console.log({delivery})
+                if(delivery){
+                    toast.warning("Delivery price required for all variants")
+                    return false;
+                }
+            }
         }
 
-        let priceisavail = varientsarray?.every((res: any) => res?.seller_price !== "")
-
-        console.log('before')
-
-        if (!priceisavail && varientsarray?.length >= 1) {
-            toast.warning('Price is mandatory')
-            return false;
-        }
 
 
-        console.log("false")
         let franchiseData = franchiseList?.filter((res: any) => res?._id === franchiseSelect).map((get: any) => (
             {
                 id: get?._id,
@@ -993,7 +1053,7 @@ const ProductForm = ({ res, view }: props) => {
             regular_price: data?.regular_price,
             seller_price: data?.seller_price,
             offer_price: data?.offer_price,
-            commission: data?.regular_price ? 0 : data?.commission,
+            commission: data?.commission,
             fixed_delivery_price: data?.fixed_delivery_price,
             offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
@@ -1261,7 +1321,7 @@ const ProductForm = ({ res, view }: props) => {
                         <Typography mb={3}></Typography>
                         <CustomCheckBox isChecked={stock} label='' onChange={StockCheck} title='Enable Stock' />
                     </Grid>
-                    {stock &&
+                    {stock && varientsarray.length === 0 &&
                         <Grid item xs={12} lg={3}>
                             <CustomInput
                                 type='text'
@@ -1353,99 +1413,6 @@ const ProductForm = ({ res, view }: props) => {
                     {(errors && errors?.delivery_locations) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.delivery_locations?.message}`}</span>}
                 </Box>
             </CustomBox>
-            {/* <CustomBox title='offers & Promotions'>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} lg={3}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
-                            placeholder={``}
-                            fieldLabel={"Product offer"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} lg={6}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
-                            placeholder={``}
-                            fieldLabel={"Offer Description"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={3}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
-                            placeholder={``}
-                            fieldLabel={"Coupon Name"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} lg={3}>
-                        <Customselect
-                            type='text'
-                            control={control}
-                            error={errors.subcategory}
-                            fieldName="subcategory"
-                            placeholder={``}
-                            fieldLabel={"Coupon Type"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={'subcategory'}
-                            options={''}
-                            onChangeValue={onChangeSelect}
-                            background={'#fff'}
-                        >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
-                        </Customselect>
-                    </Grid>
-                    <Grid item xs={12} lg={3}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
-                            placeholder={``}
-                            fieldLabel={"Coupon Value"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={3}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
-                            placeholder={``}
-                            fieldLabel={"Coupon Code"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                </Grid>
-            </CustomBox> */}
             <CustomBox title='Additional Options'>
                 <Grid container spacing={2}>
                     {view && <Grid item xs={12} lg={6}>
@@ -1581,7 +1548,7 @@ const ProductForm = ({ res, view }: props) => {
                 {!res && !view &&
                     <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
-                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} removeAttributes={ res ? () => removeAttributes(i) : null} />
+                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} removeAttributes={ !productList ? () => removeAttributes(i) : null} />
                 )}
             </CustomBox>
             {varientsarray?.length === 0 && <CustomBox title='Price'>
@@ -1679,7 +1646,7 @@ const ProductForm = ({ res, view }: props) => {
                 </Grid>
             </CustomBox>}
             {varientsarray && varientsarray.length > 0 && <CustomBox title='Add Variant & Price'>
-                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient view={view} deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} />)}
+                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient view={view} deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} stock={stock} />)}
             </CustomBox>}
 
             {/* {attributes?.some((res: any) => res.varient === true) &&

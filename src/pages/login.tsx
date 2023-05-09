@@ -12,6 +12,9 @@ import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import UserContext from '@/helpers/user';
+import { signIn } from 'next-auth/react'
+
+
 const Login = () => {
 
     const router = useRouter();
@@ -64,6 +67,18 @@ const Login = () => {
 
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        // try {
+        //     const res = await signIn('credentials', {
+        //         redirect: false,
+        //         email: data.email,
+        //         password: data.password,
+        //         callbackUrl: `${window.location.origin}`,
+        //     });
+
+        //     console.log({res})
+        // } catch (error) {
+            
+        // }
         try {
             setLoading(true)
             const response = await postData('/auth/login', data)

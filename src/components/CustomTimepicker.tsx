@@ -3,11 +3,12 @@ import React, { useState } from 'react'
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { DesktopTimePicker } from '@mui/x-date-pickers/DesktopTimePicker';
 import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { Controller } from "react-hook-form";
 import { Avatar, Box, FormGroup, styled, Typography } from "@mui/material";
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { MobileDatePicker, MobileTimePicker } from '@mui/x-date-pickers';
 
 type props = {
     fieldName: string,
@@ -48,13 +49,13 @@ const CustomTimepicker = ({
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
                         <LocalizationProvider dateAdapter={AdapterMoment}>
-                            <TimePicker
-                            disabled={disabled}
-                                sx={{
-                                    "& .MuiInputBase-input": {
-                                        height: "10px" // Set your height here.
-                                    }
-                                }}
+                            <MobileTimePicker
+                            //disabled={disabled}
+                                // sx={{
+                                //     "& .MuiInputBase-input": {
+                                //         height: "10px" // Set your height here.
+                                //     }
+                                // }}
 
                                 value={value}
                                 onChange={changeValue ? (e: any) => changeValue(e) : onChange}
