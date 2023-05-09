@@ -28,8 +28,6 @@ const CustomTimepicker = ({
     changeValue,
 }: props) => {
 
-
-
     return (
         <>
             <FormGroup>
