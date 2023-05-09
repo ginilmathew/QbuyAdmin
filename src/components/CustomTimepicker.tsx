@@ -28,9 +28,6 @@ const CustomTimepicker = ({
     changeValue,
 }: props) => {
 
-    const today = dayjs();
-    const tomorrow = dayjs().add(1, 'day');
-    const todayEndOfTheDay = today.endOf('day');
     return (
         <>
             <FormGroup>
