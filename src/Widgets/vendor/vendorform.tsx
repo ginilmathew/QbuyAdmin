@@ -90,6 +90,32 @@ const Vendorform = ({ res, view }: props) => {
 
     const router = useRouter();
 
+    const [defaultValues, setDefaultValues] = useState({
+        vendor_name: null,
+        vendor_email: null,
+        vendor_mobile: null,
+        store_name: null,
+        store_address: null,
+        store_logo: null,
+        franchise_id: null,
+        category_id: null,
+        start_time: null,
+        end_time: null,
+        license_number: null,
+        ffsai_number: null,
+        pan_card_number: null,
+        aadhar_card_number: null,
+        account_number: null,
+        ifsc: null,
+        branch: null,
+        recipient_name: null,
+        commission: null,
+        offer_description: null,
+        tax: null,
+        coordinates: null,
+        display_order: null,
+    })
+
 
 
     const [imagefile, setImagefile] = useState<null | File>(null)
@@ -132,15 +158,6 @@ const Vendorform = ({ res, view }: props) => {
                 .mixed()
                 .typeError("Store Logo is Required")
                 .required("Store Logo is Required"),
-            // // coordinates: any,
-            // license_number: yup.string().required('License Number is Required'),
-            // ffsai_number: yup.string().required('FFASI Number is Required'),
-            // pan_card_number: yup.string().required('PAN card Number is Required'),
-            // aadhar_card_number: yup.string().required('Adhar card Number is Required'),
-            // account_number: yup.string().required('Account Number is Required'),
-            // ifsc: yup.string().required('IFSC is Required'),
-            // branch: yup.string().required('Branch is Required'),
-            // recipient_name: yup.string().required('Recipient Name is Required'),
             coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required"),
             commission:yup.number().required('Commission is required')
             .nullable('Commission is Required').typeError('Commission is required')
@@ -166,31 +183,7 @@ const Vendorform = ({ res, view }: props) => {
         setError,
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
-            defaultValues: {
-                vendor_name: null,
-                vendor_email: null,
-                vendor_mobile: null,
-                store_name: null,
-                store_address: null,
-                store_logo: null,
-                franchise_id: null,
-                category_id: null,
-                start_time: null,
-                end_time: null,
-                license_number: null,
-                ffsai_number: null,
-                pan_card_number: null,
-                aadhar_card_number: null,
-                account_number: null,
-                ifsc: null,
-                branch: null,
-                recipient_name: null,
-                commission: null,
-                offer_description: null,
-                tax: null,
-                coordinates: null,
-                display_order: null,
-            }
+            defaultValues: defaultValues
         });
 
 
@@ -204,6 +197,7 @@ const Vendorform = ({ res, view }: props) => {
             setLoader(true)
             const response = await fetchData(`admin/vendor/show/${idd}`)
             setVendorList(response?.data?.data)
+            setDefaultValues(response?.data?.data)
         } catch (err: any) {
             toast.success(err.message)
             setLoader(false)
@@ -321,9 +315,9 @@ const Vendorform = ({ res, view }: props) => {
             setLoading(true)
             const response = await fetchData('/admin/franchise/list')
             setGetFranchise(response?.data?.data)
-            reset()
-            setCategory('')
-            setFranchise('')
+            //reset()
+            //setCategory('')
+            //setFranchise('')
             setImagefile(null)
             setLoading(false)
 
