@@ -65,7 +65,7 @@ const SubCategoryForm = ({ res, view }: props) => {
             category_id: yup.string().required('Category is Required'),
             name: yup.string().max(30, "Name must be less than 30 characters").matches(
                 /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
-                'Name can only contain Latin letters.'
+                'Name can only contain alphabet letters.'
             )
                 .required('Name is Required'),
 
@@ -73,7 +73,7 @@ const SubCategoryForm = ({ res, view }: props) => {
                 .mixed()
                 .required('Image is Required')
         })
-        .required();
+    
 
 
     const { register,

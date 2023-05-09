@@ -77,7 +77,7 @@ const Franchise = () => {
             align: 'center',
             renderCell: ({ row }) => (
             <Typography
-                sx={{ fontFamily: `'Poppins' sans-serif`,fontSize:16 }}
+                sx={{ fontFamily: `'Poppins' sans-serif`,fontSize:14 ,color:'#939393'}}
             >{row?.mobile}</Typography>)
 
         },
@@ -95,6 +95,11 @@ const Franchise = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            renderCell: ({ row }) => (
+                <Typography
+                    sx={{ fontFamily: `'Poppins' sans-serif`,fontSize:14 ,color:'#939393'}}
+                >{row?.address ? row?.address : '-'}</Typography>)
+    
 
         },
         {

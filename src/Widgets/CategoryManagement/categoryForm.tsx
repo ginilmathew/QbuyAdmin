@@ -43,9 +43,9 @@ type props = {
 
 
 const CategoryForm = ({ resData, view }: props) => {
- const idd = resData ? resData : view ;
+    const idd = resData ? resData : view;
 
-  const router = useRouter()
+    const router = useRouter()
 
 
     const [imagefile, setImagefile] = useState<null | File>(null)
@@ -53,22 +53,27 @@ const CategoryForm = ({ resData, view }: props) => {
     const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
     const [loading, setLoading] = useState<boolean>(false)
     const [loader, setLoader] = useState<boolean>(false)
-    const [CategoryList,setCategoryList]=useState<any>(null)
+    const [CategoryList, setCategoryList] = useState<any>(null)
 
 
     const orderValidation = /^(0|[1-9]\d*)$/
     const schema = yup
         .object()
         .shape({
-            name: yup.string().max(30, 'Maximum Character Exceeds').required('Category Name Required'),
+            name: yup.string().max(30, "Name must be less than 30 characters").matches(
+                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+                'Name can only contain Alphabets letters.'
+            )
+                // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
+                .required('Category Name is Required'),
             // type: yup.string().required('Type is Required'),
             // seo_description: yup.string().max(100, 'Maximum Character Exceeds'),
-            order_number:yup.string().matches(orderValidation,'Order should be number'),
+            order_number: yup.string().matches(orderValidation, 'Order should be number'),
             image: yup
                 .mixed()
                 .required('Image is Required')
         })
-        .required();
+  
 
 
     const { register,
@@ -82,33 +87,33 @@ const CategoryForm = ({ resData, view }: props) => {
             defaultValues: {
                 name: '',
                 seo_description: '',
-                order_number: null
+                order_number: ''
             }
         });
 
-       
-    
 
-        const getCategory = async () => {
-            try {
-                setLoader(true)
-                const response = await fetchData(`admin/category/show/${idd}`)
-                setCategoryList(response?.data?.data)  
-            } catch (err: any) {
-                toast.success(err.message)
-                setLoader(false)
-            } finally {
-                setLoader(false)
-            }
+
+
+    const getCategory = async () => {
+        try {
+            setLoader(true)
+            const response = await fetchData(`admin/category/show/${idd}`)
+            setCategoryList(response?.data?.data)
+        } catch (err: any) {
+            toast.success(err.message)
+            setLoader(false)
+        } finally {
+            setLoader(false)
         }
-    
-    
-        useEffect(()=>{
-            if(idd){
-                getCategory()
-            }
-        },[idd])
-    
+    }
+
+
+    useEffect(() => {
+        if (idd) {
+            getCategory()
+        }
+    }, [idd])
+
 
 
     const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -176,7 +181,7 @@ const CategoryForm = ({ resData, view }: props) => {
 
     useEffect(() => {
         if (CategoryList) {
-           
+
             setValue('name', CategoryList?.name)
             setValue('order_number', CategoryList?.order_number)
             setValue('seo_description', CategoryList?.seo_description)
@@ -187,8 +192,8 @@ const CategoryForm = ({ resData, view }: props) => {
     }, [CategoryList])
 
 
-    if(loader){
-        return <><CustomLoader/></>
+    if (loader) {
+        return <><CustomLoader /></>
     }
 
     return (
