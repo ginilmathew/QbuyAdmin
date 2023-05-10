@@ -181,7 +181,7 @@ const ProductForm = ({ res, view }: props) => {
             product_image: yup
                 .mixed()
                 .required("Product Image is Required"),
-            stock_value: (stock === true && varientsarray?.length === 0) ? yup.number().required("Stock value required").typeError("Stock value must be a number") : yup.string().nullable(),
+            stock_value: (stock === true && varientsarray?.length === 0) ? yup.string().matches(orderValidation, 'Accept only positive number').required("Stock value required").typeError("Stock value must be a number") : yup.string().nullable(),
             // regular_price: attributes?.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
 
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
@@ -791,12 +791,6 @@ const ProductForm = ({ res, view }: props) => {
                     fixed_delivery_price: 0
                 }
             })
-
-
-
-
-
-
             setVarientsArray([...attri])
         } else {
             setVarientsArray([])
@@ -898,7 +892,7 @@ const ProductForm = ({ res, view }: props) => {
             //console.log({delivery: data?.fixed_delivery_price})
         }
         else {
-            let varicheck = varientsarray?.find((vari: any) => isEmpty(vari?.seller_price) || isNaN(vari?.seller_price) || (isNumber(vari?.seller_price) && vari?.seller_price <= 0))
+            let varicheck = varientsarray?.find((vari: any) => isEmpty(vari?.seller_price) || isNaN(vari?.seller_price) || (isNumber(vari?.seller_price) && vari?.seller_price >= 0))
             if (varicheck) {
                 console.log({ varicheck, varientsarray })
                 toast.warning("All variants mush have price. Please update price and continue")
@@ -915,7 +909,7 @@ const ProductForm = ({ res, view }: props) => {
                 }
 
                 if (stock) {
-                    let stockValue = varientsarray?.find((vari: any) => isEmpty(vari?.stock_value) || isNaN(vari?.stock_value))
+                    let stockValue = varientsarray?.find((vari: any) => isEmpty(vari?.stock_value) || isNaN(vari?.stock_value) || (isNumber(vari?.stock_value) && parseInt(vari?.stock_value) <= 0))
                     if (stockValue) {
                         toast.warning("Stock value required for all variants")
                         return false;

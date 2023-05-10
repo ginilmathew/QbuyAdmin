@@ -108,7 +108,7 @@ const Vendorform = ({ res, view }: props) => {
 
 
 
-    console.log({ getfranchise }, 'in forkm')
+
 
     const orderValidation = /^[0-9]*$/
 
