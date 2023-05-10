@@ -39,8 +39,8 @@ const ShippingTable = ({ res }: props) => {
                 </TableCell>
                 <TableCell align="center">{row.name}</TableCell>
                 <TableCell align="center">{row.quantity}</TableCell>
-                <TableCell align="center">{row.productdata?.regular_price}</TableCell>
-                <TableCell align="center">{(row.productdata?.regular_price * row?.quantity)}</TableCell>
+                <TableCell align="center">{row?.unitPrice}</TableCell>
+                <TableCell align="center">{row?.quantity * row?.price}</TableCell>
               </TableRow>
             ))}
             {/* <TableRow >

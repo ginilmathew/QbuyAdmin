@@ -126,7 +126,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
             setLoader(false)
 
         } catch (err: any) {
-            toast.error(err?.message3)
+            toast.error(err?.message)
             setLoader(false)
 
         } finally {
