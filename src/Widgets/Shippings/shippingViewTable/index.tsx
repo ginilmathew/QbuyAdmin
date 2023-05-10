@@ -43,13 +43,13 @@ const ShippingTable = ({ res }: props) => {
                 <TableCell align="center">{row?.quantity * row?.price}</TableCell>
               </TableRow>
             ))}
-            {/* <TableRow >
+            <TableRow >
             <TableCell rowSpan={5} />
               <TableCell  colSpan={2}></TableCell>
               <TableCell align="right">Sub-Total</TableCell>
-              <TableCell align="center">{0}</TableCell>
+              <TableCell align="center">₹ {res?.total_amount}</TableCell>
             </TableRow>
-            <TableRow>
+            {/* <TableRow>
               
               <TableCell colSpan={2}></TableCell>
               <TableCell align="right" >Platform & Other Charges </TableCell>
@@ -59,17 +59,17 @@ const ShippingTable = ({ res }: props) => {
               <TableCell colSpan={2}></TableCell>
               <TableCell align="right" >Multi Shop Pickup(No extra Seller)</TableCell>
               <TableCell align="center">{0}</TableCell>
-            </TableRow>
+            </TableRow> */}
             <TableRow>
               <TableCell colSpan={2}></TableCell>
               <TableCell align="right" >Delivery Charge (SlotBased)</TableCell>
-              <TableCell align="center">{0}</TableCell>
+              <TableCell align="center">₹ {res?.delivery_charge}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell colSpan={2}></TableCell>
               <TableCell align="right">Total</TableCell>
-              <TableCell align="center">{0}</TableCell>
-            </TableRow> */}
+              <TableCell align="center">₹ {res?.grand_total}</TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
