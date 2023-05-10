@@ -877,11 +877,17 @@ const ProductForm = ({ res, view }: props) => {
             if (!isEmpty(data?.offer_price)) {
                 if (isNaN(data?.offer_price)) {
                     setError("offer_price", { type: 'custom', message: 'Offer price must be a number' })
+                    return false;
                 }
                 else if (data?.offer_price <= 0) {
                     setError("offer_price", { type: 'custom', message: 'Offer price must be a greater than 0' })
+                    return false;
+                } else if (!data?.offer_date_from || !data?.offer_date_to) {
+                    toast.warning("Offer From date and to date required")
+                    return false;
+
                 }
-                return false;
+
             }
 
             if (isNaN(data?.fixed_delivery_price) || isEmpty(data?.fixed_delivery_price) || data?.fixed_delivery_price < 0) {
@@ -1154,7 +1160,7 @@ const ProductForm = ({ res, view }: props) => {
                             <MenuItem value="" disabled >
                                 <>Select Franchise</>
                             </MenuItem>
-                            {franchiseList && franchiseList?.filter((act:any)=>act?.status !== 'inactive').map((res: any) => (
+                            {franchiseList && franchiseList?.filter((act: any) => act?.status !== 'inactive').map((res: any) => (
                                 <MenuItem value={res?._id}>{res?.franchise_name}</MenuItem>
                             ))}
                         </Customselect>
