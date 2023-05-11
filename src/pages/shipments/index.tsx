@@ -57,14 +57,7 @@ const Shipments = () => {
             align: 'center',
 
         },
-        {
-            field: 'Store',
-            headerName: 'Store',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-
-        },
+     
         {
             field: 'Franchisee',
             headerName: 'Franchisee',

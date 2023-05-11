@@ -108,7 +108,7 @@ const Vendorform = ({ res, view }: props) => {
 
 
 
-    console.log({ getfranchise }, 'in forkm')
+
 
     const orderValidation = /^[0-9]*$/
 
@@ -745,7 +745,7 @@ const Vendorform = ({ res, view }: props) => {
                     <Divider />
                     {/* {isLoaded && */}
                     <Box py={1}>
-                        {res ? <Polygon onComplete={polygonComplete} path={paths} /> : <Maps onPolygonComplete={polygonComplete} />}
+                        {idd ? <Polygon onComplete={polygonComplete} path={paths} /> : <Maps onPolygonComplete={polygonComplete} />}
                         {(errors && errors?.coordinates) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates?.message}`}</span>}
                     </Box>
                 </Box>

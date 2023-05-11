@@ -117,10 +117,7 @@ const SliderManagementForm = ({ res }: Props) => {
             setLoading(true)
             const response = await fetchData('/admin/franchise/list')
             setGetFranchise(response?.data?.data)
-            reset()
-
             setLoading(false)
-
         } catch (err: any) {
             toast.error(err)
             setLoading(false)
