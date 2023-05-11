@@ -132,6 +132,15 @@ const AddProducts = ({data} : datapr) => {
             }
         },
         {
+            field: 'Commission',
+            headerName: 'Commission',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => params.row.commission ? params.row.commission : '-'
+
+        },
+        {
             field: 'minimum_qty',
             headerName: 'Minimum Quantity',
             flex: 1,
