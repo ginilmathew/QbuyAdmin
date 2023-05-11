@@ -7,21 +7,28 @@ import { Grid, LinearProgress, Stack } from '@mui/material'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useRouter } from 'next/router';
 import React, { useContext, useState, useEffect } from 'react'
+import { useSession } from "next-auth/react"
+
 
 const Dashboard = () => {
     const userContext = useContext(UserContext);
     const [loading, setLoading] = useState(true)
     const router = useRouter();
 
-    // useEffect(() => {
-    //     if(userContext.user){
-    //         console.log(userContext.user,"get user")
-    //         setLoading(false)
-    //     }
-    //     else{
-    //         router.push('/login')
-    //     }
-    // }, [])
+    const { data: session, status } = useSession()
+
+    console.log({session})
+
+    useEffect(() => {
+        if(session){
+            let details = JSON.parse(JSON.stringify(session.user))
+            localStorage.setItem("token", details?.accessToken)
+        }
+    }, [session])
+    
+
+   
+    
 
 
 

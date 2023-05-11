@@ -5,11 +5,11 @@ import styles from '@/styles/Home.module.css'
 import Dashboard from './dashboard'
 import React from 'react'
 import { useRouter } from 'next/router'
+import { useSession } from "next-auth/react"
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
-
 
   return (
     <>

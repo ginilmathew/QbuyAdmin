@@ -13,6 +13,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import UserContext from '@/helpers/user';
 import { signIn } from 'next-auth/react'
+import { useSession } from "next-auth/react"
 
 
 const Login = () => {
@@ -21,6 +22,8 @@ const Login = () => {
 
     const [loading, setLoading] = useState<boolean>(false)
     const userContext = useContext(UserContext);
+
+    const { data: session } = useSession()
 
 
     type Inputs = {
@@ -67,33 +70,50 @@ const Login = () => {
 
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-        // try {
-        //     const res = await signIn('credentials', {
-        //         redirect: false,
-        //         email: data.email,
-        //         password: data.password,
-        //         callbackUrl: `${window.location.origin}`,
-        //     });
-
-        //     console.log({res})
-        // } catch (error) {
-            
-        // }
         try {
-            setLoading(true)
-            const response = await postData('/auth/login', data)
-            await localStorage.setItem("user", JSON.stringify(response?.data?.user));
-            await localStorage.setItem("token", response?.data?.access_token);
-            await userContext.setUser(response?.data?.user)
-            
-            router.push('/dashboard')
-            toast.success(`Login Successfull`);
-        } catch (error: any) {
-            toast.error(error?.message);
-            setLoading(false)
-        } finally {
-            setLoading(false)
+            const res = await signIn('credentials', {
+                redirect: false,
+                email: data.email,
+                password: data.password,
+                callbackUrl: `${window.location.origin}`,
+            });
+
+            if (res?.error) {
+                toast.error(res.error)
+            } else {
+                
+                
+    
+        
+                if (res?.url) {
+                    //auth.setUser(session?.user)
+                    console.log("in")
+                    //router.push('/home');
+                    router.push(res?.url);
+                }
+                else{
+                    //console.log({sessions: session})
+                    router.push('/');
+                }
+            }
+        } catch (error) {
+            console.log({error})
         }
+        // try {
+        //     setLoading(true)
+        //     const response = await postData('/auth/login', data)
+        //     await localStorage.setItem("user", JSON.stringify(response?.data?.user));
+        //     await localStorage.setItem("token", response?.data?.access_token);
+        //     await userContext.setUser(response?.data?.user)
+            
+        //     router.push('/dashboard')
+        //     toast.success(`Login Successfull`);
+        // } catch (error: any) {
+        //     toast.error(error?.message);
+        //     setLoading(false)
+        // } finally {
+        //     setLoading(false)
+        // }
     }
 
 

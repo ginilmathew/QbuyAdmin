@@ -12,7 +12,48 @@ import CustomDelete from '@/Widgets/CustomDelete';
 import { fetchData, postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import { max, min } from 'lodash'
-const AddProducts = () => {
+import { authOptions } from '../api/auth/[...nextauth]'
+import { getServerSession } from "next-auth/next"
+
+type props = {
+    req: any,
+    res: any
+}
+
+type datapr = {
+    data: any
+}
+
+// This gets called on every request
+export async function getServerSideProps({ req, res }: props) {
+    // Fetch data from external API
+    //const res = await fetch(`https://.../data`);
+    //const data = await res.json();
+
+    let session = await getServerSession(req, res, authOptions)
+
+    let token = session?.user?.accessToken
+
+    const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/product/list/${process.env.NEXT_PUBLIC_TYPE}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+
+    const data = await resu.json();
+
+    
+   
+    // Pass data to the page via props
+    return { props: { data : data } };
+}
+
+
+const AddProducts = ({data} : datapr) => {
+
+    console.log({data})
     const router = useRouter()
 
 
@@ -211,7 +252,7 @@ const AddProducts = () => {
     }, [productList])
 
     useEffect(() => {
-        fetchproduct()
+        //fetchproduct()
     }, [])
 
 
@@ -222,7 +263,7 @@ const AddProducts = () => {
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchProducts} imprtBtn={true} Headerlabel='Products' onClick={addproductItems} addbtn={true} />
                 <Box py={3}>
-                    <CustomTable dashboard={false} columns={columns} rows={productList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={data?.data} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
             {open && <CustomDelete

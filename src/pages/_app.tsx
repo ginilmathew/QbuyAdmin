@@ -12,6 +12,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SessionProvider } from "next-auth/react"
 import HeaderProvider from '@/helpers/header/HeaderContext';
 const poppins = Poppins({
   subsets: ['latin'],
@@ -50,7 +51,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <LinearProgress color="success" />
       </Stack>
     )}
-
+<SessionProvider session={pageProps.session}>
     <UserProvider>
       <ProtectedRoute>
         <LoadScript
@@ -66,7 +67,7 @@ export default function App({ Component, pageProps }: AppProps) {
         </LoadScript>
       </ProtectedRoute>
     </UserProvider>
-
+    </SessionProvider>
     {/* </LoadScript> */}
   </main>
 

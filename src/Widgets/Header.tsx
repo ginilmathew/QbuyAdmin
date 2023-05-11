@@ -13,6 +13,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import UserContext from '@/helpers/user';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { signOut } from "next-auth/react"
 
 const Header = () => {
 
@@ -85,9 +86,11 @@ const Header = () => {
   }
 
   const LogoutAll = useCallback(async () => {
+    
     await localStorage.clear();
     userContext.setUser(null)
-    router.push('/login')
+    signOut()
+    //router.push('/login')
   }, [])
 
   return (

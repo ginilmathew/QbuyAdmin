@@ -11,8 +11,47 @@ import { fetchData, postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import CustomDelete from '@/Widgets/CustomDelete';
 import CustomSwitch from '@/components/CustomSwitch';
+import { getSession } from "next-auth/react"
+import { authOptions } from '../api/auth/[...nextauth]'
+import { getServerSession } from "next-auth/next"
 
-const Franchise = () => {
+type props = {
+    req: any,
+    res: any
+}
+
+type datapr = {
+    data: any
+}
+// This gets called on every request
+export async function getServerSideProps({ req, res }: props) {
+    // Fetch data from external API
+    //const res = await fetch(`https://.../data`);
+    //const data = await res.json();
+
+    let session = await getServerSession(req, res, authOptions)
+
+    let token = session?.user?.accessToken
+
+    const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/franchise/list`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+
+    const data = await resu.json();
+
+    
+   
+    // Pass data to the page via props
+    return { props: { data : data } };
+}
+
+const Franchise = ({data} : datapr) => {
+
+    //console.log({user: user})
 
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(false);
@@ -228,7 +267,7 @@ const Franchise = () => {
 
 
     useEffect(() => {
-        getFranchiseList()
+        //getFranchiseList()
     }, [])
 
 
@@ -237,7 +276,7 @@ const Franchise = () => {
             <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchfranchise} addbtn={true} imprtBtn={false} Headerlabel='Franchisee' onClick={addvaendor} />
                 <Box py={3}>
-                    <CustomTable dashboard={false} columns={columns} rows={franchiseList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={data?.data} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
 
