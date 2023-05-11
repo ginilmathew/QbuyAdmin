@@ -7,6 +7,7 @@ import { Controller } from "react-hook-form";
 import { Avatar, Box, FormGroup, styled, Typography } from "@mui/material";
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { MobileDatePicker, MobileTimePicker } from '@mui/x-date-pickers';
+import moment from 'moment';
 
 type props = {
     fieldName: string,
@@ -55,8 +56,9 @@ const CustomTimepicker = ({
                                         height: "10px" // Set your height here.
                                     }
                                 }}
+                                // minTime={moment()}
 
-                                disablePast
+                                // disablePast
                                 value={value}
                                 onChange={changeValue ? (e: any) => changeValue(e) : onChange}
                             />
