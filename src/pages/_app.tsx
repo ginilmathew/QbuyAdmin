@@ -51,22 +51,22 @@ export default function App({ Component, pageProps }: AppProps) {
         <LinearProgress color="success" />
       </Stack>
     )}
-<SessionProvider session={pageProps.session}>
-    <UserProvider>
-      <ProtectedRoute>
-        <LoadScript
-          id="script-loader"
-          googleMapsApiKey={`${process.env.NEXT_PUBLIC_GOOGLEKEY}`}
-          language="en"
-          region="us"
-          libraries={["drawing"]}
-        >
-          {showHeader && <Header />}
-          <Component {...pageProps} />
-          <ToastContainer />
-        </LoadScript>
-      </ProtectedRoute>
-    </UserProvider>
+    <SessionProvider session={pageProps.session}>
+      <UserProvider>
+        <ProtectedRoute>
+          <LoadScript
+            id="script-loader"
+            googleMapsApiKey={`${process.env.NEXT_PUBLIC_GOOGLEKEY}`}
+            language="en"
+            region="us"
+            libraries={["drawing"]}
+          >
+            {showHeader && <Header />}
+            <Component {...pageProps} />
+            <ToastContainer />
+          </LoadScript>
+        </ProtectedRoute>
+      </UserProvider>
     </SessionProvider>
     {/* </LoadScript> */}
   </main>

@@ -13,6 +13,7 @@ import Custombutton from '@/components/Custombutton';
 import { useRouter } from 'next/router';
 import { type } from 'os';
 import { IMAGE_URL } from '@/Config';
+import CustomLoader from '@/components/CustomLoader';
 
 type Props = {
     res?: any
@@ -164,7 +165,7 @@ const SliderManagementForm = ({ res }: Props) => {
         if (sliderList) {
             formData.append("id", sliderList?._id);
         }
-        
+
         formData.append("type", type);
         formData.append("order_number", data?.order_number);
         try {
@@ -179,6 +180,11 @@ const SliderManagementForm = ({ res }: Props) => {
         } finally {
             setLoading(false)
         }
+    }
+    if (loader) {
+        return <>
+            <CustomLoader />
+        </>
     }
 
     return (
