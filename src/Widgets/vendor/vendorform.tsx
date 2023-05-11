@@ -80,10 +80,11 @@ type IFormInput = {
 
 type props = {
     res?: any
-    view?: any
+    view?: any,
+    data?: any
 }
 
-const Vendorform = ({ res, view }: props) => {
+const Vendorform = ({ res, view, data }: props) => {
     const idd = res ? res : view;
 
 
@@ -104,7 +105,7 @@ const Vendorform = ({ res, view }: props) => {
     const [postArray, setPostArray] = React.useState<any>([]);
     const [imagePreview, setImagePreview] = useState<any>(null)
     const [paths, setPaths] = useState<any>(null)
-    const [vendorList, setVendorList] = useState<any>(null)
+    const [vendorList, setVendorList] = useState<any>(data)
 
 
 
@@ -208,11 +209,11 @@ const Vendorform = ({ res, view }: props) => {
     }
 
 
-    useEffect(() => {
-        if (idd) {
-            getVendorlist()
-        }
-    }, [idd])
+    // useEffect(() => {
+    //     if (idd) {
+    //         getVendorlist()
+    //     }
+    // }, [idd])
 
 
 

@@ -11,7 +11,6 @@ import { fetchData, postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import CustomDelete from '@/Widgets/CustomDelete';
 import CustomSwitch from '@/components/CustomSwitch';
-import { getSession } from "next-auth/react"
 import { authOptions } from '../api/auth/[...nextauth]'
 import { getServerSession } from "next-auth/next"
 

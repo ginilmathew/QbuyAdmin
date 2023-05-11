@@ -11,17 +11,53 @@ import { fetchData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import CustomDelete from '@/Widgets/CustomDelete';
 import { CleanHands } from '@mui/icons-material';
+import { authOptions } from '../api/auth/[...nextauth]'
+import { getServerSession } from "next-auth/next"
 
-const VendorSignup = () => {
+type props = {
+    req: any,
+    res: any
+}
+
+type datapr = {
+    data: any
+}
+// This gets called on every request
+export async function getServerSideProps({ req, res }: props) {
+    // Fetch data from external API
+    //const res = await fetch(`https://.../data`);
+    //const data = await res.json();
+
+    let session = await getServerSession(req, res, authOptions)
+
+    let token = session?.user?.accessToken
+
+    const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/vendor/list/${process.env.NEXT_PUBLIC_TYPE}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+
+    const data = await resu.json();
+
+    
+   
+    // Pass data to the page via props
+    return { props: { data : data } };
+}
+
+const VendorSignup = ({data}: datapr) => {
 
     const router = useRouter();
 
 
-    const [vendorList, setVendorList] = useState([]);
+    const [vendorList, setVendorList] = useState(data?.data);
     const [loading, setLoading] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(false);
     const [_id, set_id] = useState<string>('');
-    const [serachList, setSearchList] = useState<any>([])
+    const [serachList, setSearchList] = useState<any>(data?.data)
     const [pending, startTransition] = useTransition();
 
 
@@ -177,9 +213,9 @@ const VendorSignup = () => {
     }, [vendorList])
 
 
-    useEffect(() => {
-        fetchVendorList()
-    }, [])
+    // useEffect(() => {
+    //     fetchVendorList()
+    // }, [])
 
 
 

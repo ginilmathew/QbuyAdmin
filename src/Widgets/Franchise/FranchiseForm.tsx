@@ -17,6 +17,7 @@ import Polygons from '@/components/maps/Polygon';
 import CustomLoader from '@/components/CustomLoader';
 
 
+
 type Inputs = {
     franchise_name: string,
     owner_name: string,
@@ -38,15 +39,20 @@ type IFormInput = {
 }
 type props = {
     res?: any,
-    view?: any
+    view?: any,
+    data?: any
 }
 
 
-const FranchiseForm = ({ res, view }: props) => {
+
+
+
+
+const FranchiseForm = ({ res, view, data }: props) => {
 
     let idd = res ? res : view
 
-    const [franchiseList, setFranchiseList] = useState<any>(null)
+    const [franchiseList, setFranchiseList] = useState<any>(data)
     const [loading, setLoading] = useState<boolean>(false)
     const [loader, setLoader] = useState<boolean>(false)
 
@@ -69,7 +75,7 @@ const FranchiseForm = ({ res, view }: props) => {
 
     useEffect(() => {
         if (res || view) {
-            getFranchise()
+            //getFranchise()
         }
 
     }, [res || view])
