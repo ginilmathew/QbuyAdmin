@@ -126,7 +126,7 @@ console.log({state:state?.[index]?.offer_date_from})
                     < DatePickers
                         defaultvalue={state?.[index]?.offer_date_from}
                         values={getValues('offer_date_from')}
-                        changeValue={(e: any) => onChange(moment(e, 'YYYY-MM-DD').format('YYYY-MM_DD'), 'offer_date_from')}
+                        changeValue={(e: any) => onChange(moment(e, 'YYYY-MM-DD').format('YYYY-MM-DD'), 'offer_date_from')}
                         fieldName='offer_date_from'
                         error={errors.offer_date_from}
                         fieldLabel={'Offer From'}
