@@ -21,17 +21,20 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     const { data: session, status } = useSession()
 
     useEffect(() => {
-        if(session){
-            
+        if (session) {
             let details = JSON.parse(JSON.stringify(session.user))
+
             localStorage.setItem("token", details?.accessToken)
-            
             getProfile(details?._id)
+            console.log({ details }, 'DETAILS INNN ')
         }
-        else{
+        else {
+            console.log('CATCH INNN ')
             router.push('/login')
         }
     }, [session])
+
+
 
     const getProfile = async (id: any) => {
         try {

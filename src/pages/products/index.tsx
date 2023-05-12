@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { max, min } from 'lodash'
 import { authOptions } from '../api/auth/[...nextauth]'
 import { getServerSession } from "next-auth/next"
+import moment from 'moment';
 
 type props = {
     req: any,
@@ -44,23 +45,23 @@ export async function getServerSideProps({ req, res }: props) {
 
     const data = await resu.json();
 
-    
-   
+
+
     // Pass data to the page via props
-    return { props: { data : data } };
+    return { props: { data: data } };
 }
 
 
-const AddProducts = ({data} : datapr) => {
+const AddProducts = ({ data }: datapr) => {
 
-    console.log({data})
+    console.log({ data })
     const router = useRouter()
 
 
     const [open, setOpen] = useState<boolean>(false)
     const [loading, setLoding] = useState<boolean>(false)
-    const [productList, setProductList] = useState<any>([])
-    const [setSerachList, setSearchList] = useState<any>([])
+    const [productList, setProductList] = useState<any>(data ? data?.data : [])
+    const [setSerachList, setSearchList] = useState<any>(data ? data?.data : [])
     const [pending, startTransition] = useTransition();
     const [_id, set_id] = useState<string>('');
 
@@ -126,8 +127,16 @@ const AddProducts = ({data} : datapr) => {
                     })
                     return `₹${min(price)} - ₹${max(price)} `
                 }
-                else {
-                    return ` ₹${params?.row?.seller_price ? params?.row?.seller_price : 0}`
+                else if (moment(params?.row?.offer_date_from) < moment(params?.row?.to)) {
+                    return ` ₹${params?.row?.offer_price ? params?.row?.offer_price : 0}`
+                } else {
+                    if (params?.row?.seller_price > 0 ) {
+                        return `₹${params?.row?.seller_price ? params?.row?.seller_price : 0}`
+                    } else {
+                        return `₹${params?.row?.regular_price ? params?.row?.regular_price : 0}`
+                    }
+
+
                 }
             }
         },
@@ -212,15 +221,12 @@ const AddProducts = ({data} : datapr) => {
             product_id: id,
             status: e.target.checked === true ? "active" : "inactive"
         }
-       
+
         try {
             setLoding(true)
             const response = await postData('admin/product/status-update', value)
-
             // setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
-              fetchproduct()
-
-
+            fetchproduct()
         }
         catch (err: any) {
             toast.warning(err?.message)
@@ -260,24 +266,25 @@ const AddProducts = ({data} : datapr) => {
         })
     }, [productList])
 
-    useEffect(() => {
-        //fetchproduct()
-    }, [])
+    // useEffect(() => {
+
+
+    // fetchproduct()
+    // }, [])
 
 
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
-
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchProducts} imprtBtn={true} Headerlabel='Products' onClick={addproductItems} addbtn={true} />
                 <Box py={3}>
-                    <CustomTable dashboard={false} columns={columns} rows={data?.data} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={productList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
             {open && <CustomDelete
-                 heading='Product'
-                 paragraph='product'
+                heading='Product'
+                paragraph='product'
                 _id={_id}
                 setData={setProductList}
                 data={productList}

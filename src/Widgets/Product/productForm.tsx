@@ -162,8 +162,11 @@ const ProductForm = ({ res, view }: props) => {
     const [recomendedProductArray, setRecomendedProductArray] = useState<any>([]);
     const [recomendedProductEditList, setRecomendedProductEditList] = useState<any>([]);
     const [productList, setProductList] = useState<any>(null);
+    const [offerDate_from, setOffer_Date_from] = useState<any>(null);
+    const [offerDate_to, setOffer_Date_to] = useState<any>(null);
+  
 
-    console.log({ stock })
+    console.log({ productList })
 
     const orderValidation = /^[0-9]*$/
     const schema = yup
@@ -230,7 +233,7 @@ const ProductForm = ({ res, view }: props) => {
                 product_availability_from: null,
                 product_availability_to: null,
                 fixed_delivery_price: 0,
-                commission: 0
+                commission:0
 
             }
         });
@@ -491,10 +494,13 @@ const ProductForm = ({ res, view }: props) => {
     }
 
     const onChangeOffer_date_from = (e: any) => {
+        setOffer_Date_from(e)
+      
         setValue('offer_date_from', e)
     }
 
     const onChangeOffer_date_to = (e: any) => {
+        setOffer_Date_to(e)
         setValue('offer_date_to', e)
 
     }
@@ -565,6 +571,7 @@ const ProductForm = ({ res, view }: props) => {
             })
             setPaths(paths)
             setValue('delivery_locations', productList?.delivery_locations)
+          
             setValue('product_availability_from', moment(productList?.product_availability_from,))
             setValue('product_availability_to', moment(productList?.product_availability_to, 'HH:mm'))
             setValue('require_shipping', productList?.require_shipping)
@@ -614,15 +621,16 @@ const ProductForm = ({ res, view }: props) => {
                         stock_value: item?.stock_value,
                         commission: item?.commission,
                         fixed_delivery_price: item?.fixed_delivery_price
-
                     })
                     setVarientsArray(myvaarientArray)
                 })
             }
-            setValue('commission', productList?.commision)
+            setValue('commission',productList?.commission)
             setValue('regular_price', productList?.regular_price)
             setValue('seller_price', productList?.seller_price)
             setValue('offer_price', productList?.offer_price)
+            // setOffer_Date_from(moment(productList?.offer_date_from, 'YYYY-MM-DD'))
+            // setOffer_Date_to(moment(productList?.offer_date_from, 'YYYY-MM-DD'))
             setValue('offer_date_from', moment(productList?.offer_date_from, 'YYYY-MM-DD'))
             setValue('offer_date_to', moment(productList?.offer_date_to, 'YYYY-MM-DD'))
             setValue('fixed_delivery_price', productList?.fixed_delivery_price)
@@ -1589,7 +1597,7 @@ const ProductForm = ({ res, view }: props) => {
                     <Grid item lg={1.71} xs={12}>
                         <CustomInput
                             disabled={false}
-                            type='text'
+                            type='number'
                             control={control}
                             error={errors.commission}
                             fieldName="commission"
@@ -1628,7 +1636,7 @@ const ProductForm = ({ res, view }: props) => {
                     <Grid item lg={1.71} xs={12}>
                         <CustomDatePicker
                             disabled={view ? true : false}
-                            values={getValues('offer_date_from')}
+                            values={offerDate_from ? offerDate_from : getValues('offer_date_from')}
                             changeValue={onChangeOffer_date_from}
                             fieldName='offer_date_from'
                             control={control}
@@ -1640,7 +1648,7 @@ const ProductForm = ({ res, view }: props) => {
                     <Grid item lg={1.71} xs={12}>
                         <CustomDatePicker
                             disabled={view ? true : false}
-                            values={getValues('offer_date_to')}
+                            values={offerDate_to ? offerDate_to : getValues('offer_date_to')}
                             changeValue={onChangeOffer_date_to}
                             fieldName='offer_date_to'
                             control={control}
