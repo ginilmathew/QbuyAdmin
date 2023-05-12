@@ -8,33 +8,14 @@ import { toast } from 'react-toastify'
 const ProductView = () => {
     const router = useRouter()
     const { id } = router.query
-    const [loading, setLoading] = useState<boolean>(false);
-    const [productList, setProductList] = useState<any>(null);
+ 
 
-    const getProduct = useCallback(async () => {
-        try {
-            setLoading(true)
-            const response = await fetchData(`admin/product/show/${id}`)
-            setProductList(response?.data?.data)
-        } catch (err: any) {
-            toast.success(err.message)
-            setLoading(false)
-        } finally {
-            setLoading(false)
-        }
-    }, [productList]);
-
-    useEffect(() => {
-        getProduct()
-    }, [])
-
-
-
+  
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <CustomHeaderBack backlabel='View Product' />
-            <ProductForm view={productList} />
+            <ProductForm view={id} />
         </Box>
     )
 }

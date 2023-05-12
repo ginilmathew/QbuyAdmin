@@ -12,14 +12,56 @@ import CustomDelete from '@/Widgets/CustomDelete';
 import { fetchData, postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import { max, min } from 'lodash'
-const AddProducts = () => {
+import { authOptions } from '../api/auth/[...nextauth]'
+import { getServerSession } from "next-auth/next"
+import moment from 'moment';
+
+type props = {
+    req: any,
+    res: any
+}
+
+type datapr = {
+    data: any
+}
+
+// This gets called on every request
+export async function getServerSideProps({ req, res }: props) {
+    // Fetch data from external API
+    //const res = await fetch(`https://.../data`);
+    //const data = await res.json();
+
+    let session = await getServerSession(req, res, authOptions)
+
+    let token = session?.user?.accessToken
+
+    const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/product/list/${process.env.NEXT_PUBLIC_TYPE}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+
+    const data = await resu.json();
+
+
+
+    // Pass data to the page via props
+    return { props: { data: data } };
+}
+
+
+const AddProducts = ({ data }: datapr) => {
+
+    console.log({ data })
     const router = useRouter()
 
 
     const [open, setOpen] = useState<boolean>(false)
     const [loading, setLoding] = useState<boolean>(false)
-    const [productList, setProductList] = useState<any>([])
-    const [setSerachList, setSearchList] = useState<any>([])
+    const [productList, setProductList] = useState<any>(data ? data?.data : [])
+    const [setSerachList, setSearchList] = useState<any>(data ? data?.data : [])
     const [pending, startTransition] = useTransition();
     const [_id, set_id] = useState<string>('');
 
@@ -85,14 +127,31 @@ const AddProducts = () => {
                     })
                     return `₹${min(price)} - ₹${max(price)} `
                 }
-                else {
-                    return ` ₹${params?.row?.seller_price ? params?.row?.seller_price : 0}`
+                else if (moment(params?.row?.offer_date_from) < moment(params?.row?.to)) {
+                    return ` ₹${params?.row?.offer_price ? params?.row?.offer_price : 0}`
+                } else {
+                    if (params?.row?.seller_price > 0 ) {
+                        return `₹${params?.row?.seller_price ? params?.row?.seller_price : 0}`
+                    } else {
+                        return `₹${params?.row?.regular_price ? params?.row?.regular_price : 0}`
+                    }
+
+
                 }
             }
         },
         {
+            field: 'Commission',
+            headerName: 'Commission',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => params.row.commission ? params.row.commission : '-'
+
+        },
+        {
             field: 'minimum_qty',
-            headerName: 'Quantity',
+            headerName: 'Minimum Quantity',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
@@ -162,16 +221,12 @@ const AddProducts = () => {
             product_id: id,
             status: e.target.checked === true ? "active" : "inactive"
         }
-        // let result = productList?.filter((item:any)=>item?._id !== id)
-        //    setProductList([...result])
+
         try {
             setLoding(true)
             const response = await postData('admin/product/status-update', value)
-
-            setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
-            //   fetchproduct()
-
-
+            // setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
+            fetchproduct()
         }
         catch (err: any) {
             toast.warning(err?.message)
@@ -211,15 +266,16 @@ const AddProducts = () => {
         })
     }, [productList])
 
-    useEffect(() => {
-        fetchproduct()
-    }, [])
+    // useEffect(() => {
+
+
+    // fetchproduct()
+    // }, [])
 
 
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
-
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchProducts} imprtBtn={true} Headerlabel='Products' onClick={addproductItems} addbtn={true} />
                 <Box py={3}>
@@ -227,8 +283,8 @@ const AddProducts = () => {
                 </Box>
             </Box>
             {open && <CustomDelete
-                 heading='Product'
-                 paragraph='product'
+                heading='Product'
+                paragraph='product'
                 _id={_id}
                 setData={setProductList}
                 data={productList}

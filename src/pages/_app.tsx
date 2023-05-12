@@ -12,6 +12,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SessionProvider } from "next-auth/react"
 import HeaderProvider from '@/helpers/header/HeaderContext';
 const poppins = Poppins({
   subsets: ['latin'],
@@ -22,7 +23,7 @@ const poppins = Poppins({
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const showHeader = router.pathname === '/login' || router.pathname === "/404" ? false : true;
+  const showHeader = (router.pathname === '/login' || router.pathname === "/404") ? false : true;
 
   const [isLoading, setLoading] = React.useState(false);
 
@@ -33,7 +34,6 @@ export default function App({ Component, pageProps }: AppProps) {
     Router.events.on('routeChangeStart', handleStart);
     Router.events.on('routeChangeComplete', handleComplete);
     Router.events.on('routeChangeError', handleComplete);
-
     return () => {
       Router.events.off('routeChangeStart', handleStart);
       Router.events.off('routeChangeComplete', handleComplete);
@@ -50,23 +50,23 @@ export default function App({ Component, pageProps }: AppProps) {
         <LinearProgress color="success" />
       </Stack>
     )}
-
-    <UserProvider>
-      <ProtectedRoute>
-        <LoadScript
-          id="script-loader"
-          googleMapsApiKey={`${process.env.NEXT_PUBLIC_GOOGLEKEY}`}
-          language="en"
-          region="us"
-          libraries={["drawing"]}
-        >
-          {showHeader && <Header />}
-          <Component {...pageProps} />
-          <ToastContainer />
-        </LoadScript>
-      </ProtectedRoute>
-    </UserProvider>
-
+    <SessionProvider session={pageProps.session}>
+      <UserProvider>
+        <ProtectedRoute>
+          <LoadScript
+            id="script-loader"
+            googleMapsApiKey={`${process.env.NEXT_PUBLIC_GOOGLEKEY}`}
+            language="en"
+            region="us"
+            libraries={["drawing"]}
+          >
+            {showHeader && <Header />}
+            <Component {...pageProps} />
+            <ToastContainer />
+          </LoadScript>
+        </ProtectedRoute>
+      </UserProvider>
+    </SessionProvider>
     {/* </LoadScript> */}
   </main>
 

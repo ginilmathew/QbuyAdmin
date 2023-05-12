@@ -21,7 +21,15 @@ import Polygon from '@/components/maps/Polygon';
 import { useRouter } from 'next/router';
 import { IMAGE_URL } from '../../Config/index';
 import CustomTextarea from '@/components/CustomTextarea';
-
+import CustomLoader from '@/components/CustomLoader';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import ShippingTable from './shippingViewTable';
 
 
 type Inputs = {
@@ -37,9 +45,21 @@ type Inputs = {
     comment: string
 };
 
-const ShippingOrderForm = () => {
+type props = {
+    view?: any,
+    res?: any
+}
+
+const ShippingOrderForm = ({ view, res }: props) => {
+
+    const idd = view ? view : res;
+
+
+
+
 
     const [customerGroupList, setCustomerGroupList] = useState<any>([])
+
     const [customerGroupSelect, setCustomerGroupSelect] = useState<string>('')
     const [paymentMethodList, setPaymentMethodList] = useState<any>([])
     const [paymentMethodSelect, setPaymentMethodSelect] = useState<string>('')
@@ -49,14 +69,18 @@ const ShippingOrderForm = () => {
     const [orderSelect, setOrderSelect] = useState<string>('')
     const [orderhistoryList, setOrderHistoryList] = useState<any>([])
     const [orderhistorySelect, setOrderHistorySelect] = useState<string>('')
-    const [loading,setLoading]=useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
+    const [loader, setLoader] = useState<boolean>(false)
+    const [orderviewList, setOrderViewList] = useState<any>(null)
+
+
+
+    console.log({ orderviewList })
 
 
     const schema = yup
         .object()
         .shape({
-
-
         })
         .required();
 
@@ -92,6 +116,55 @@ const ShippingOrderForm = () => {
 
     }
 
+
+    const getVenderListShow = async () => {
+
+        try {
+            setLoader(true)
+            const response = await fetchData(`admin/order/show/${idd}`)
+            setOrderViewList(response?.data?.data)
+            setLoader(false)
+
+        } catch (err: any) {
+            toast.error(err?.message)
+            setLoader(false)
+
+        } finally {
+            setLoader(false)
+        }
+
+    }
+
+
+
+    useEffect(() => {
+        if (orderviewList) {
+            setValue('mobile', orderviewList?.user?.mobile)
+            setValue('payment_address_pickup_address',orderviewList?.billaddress?.area?.address)
+            setValue('shipping_address_delivery_address',orderviewList?.shipaddress?.area?.address)
+        }
+
+    }, [orderviewList])
+
+
+
+
+    useEffect(() => {
+        if (idd) {
+            getVenderListShow()
+        }
+    }, [idd])
+
+
+    const rows = [
+        { 'name': 'ginil', 'tyson': '200', q: 1, v: 2, r: 4 }
+    ];
+
+
+    if (loader) {
+        return <><CustomLoader /></>
+    }
+
     return (
         <Box>
             <CustomBox title='Customer Details'>
@@ -124,6 +197,7 @@ const ShippingOrderForm = () => {
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput
+
                             type='text'
                             control={control}
                             error={errors.mobile}
@@ -131,7 +205,7 @@ const ShippingOrderForm = () => {
                             placeholder={``}
                             fieldLabel={"Mobile Number"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -192,7 +266,7 @@ const ShippingOrderForm = () => {
                             placeholder={``}
                             fieldLabel={"Payment Address or Pickup Address"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -289,6 +363,10 @@ const ShippingOrderForm = () => {
                     </Grid>
                 </Grid>
             </CustomBox>
+            <CustomBox title='Product Details'>
+                {orderviewList &&
+                <ShippingTable res={orderviewList}/> }
+            </CustomBox>
             <CustomBox title='Add Order History'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
@@ -332,7 +410,7 @@ const ShippingOrderForm = () => {
                 </Grid>
 
             </CustomBox>
-            <Box py={3}>
+            {/* <Box py={3}>
                 <Custombutton
                     btncolor=''
                     IconEnd={''}
@@ -343,7 +421,7 @@ const ShippingOrderForm = () => {
                     label={'Add Order'}
                     disabled={loading}
                     onClick={null} />
-            </Box>
+            </Box> */}
         </Box>
     )
 }

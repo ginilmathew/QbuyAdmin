@@ -22,7 +22,7 @@ import moment from 'moment'
 import CustomDatePicker from '@/components/CustomDatePicker';
 import Maps from '../../components/maps/maps'
 import { type } from 'os';
-import { set, values } from 'lodash';
+import { isEmpty, isNull, isNumber } from 'lodash';
 import Polygon from '@/components/maps/Polygon';
 import { IMAGE_URL } from '../../Config/index';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
@@ -32,6 +32,7 @@ import { useRouter } from 'next/router';
 import CustomTagInputValue from '@/components/CustomTagInputValue';
 import CustomAutoCompleteSearch from '@/components/CustomAutoCompleteSearch';
 import ClearIcon from '@mui/icons-material/Clear';
+import CustomLoader from '@/components/CustomLoader';
 type Inputs = {
     name: string,
     description: string,
@@ -124,7 +125,7 @@ type props = {
 }
 
 const ProductForm = ({ res, view }: props) => {
-    let resDate = res ? res : view;
+    let idd = res ? res : view;
 
 
     const router = useRouter()
@@ -134,6 +135,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const [defaultImage, setdefaultImage] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
+    const [loader, setLoader] = useState<boolean>(false)
     const [stock, setStock] = useState<boolean>(false)
     const [imagePreview, setImagePreview] = useState<any>(null)
     const [imagefile, setImagefile] = useState<null | File>(null)
@@ -159,23 +161,34 @@ const ProductForm = ({ res, view }: props) => {
     const [recomendedProductList, setRecomendedProductList] = useState<any>([]);
     const [recomendedProductArray, setRecomendedProductArray] = useState<any>([]);
     const [recomendedProductEditList, setRecomendedProductEditList] = useState<any>([]);
+    const [productList, setProductList] = useState<any>(null);
+    const [offerDate_from, setOffer_Date_from] = useState<any>(null);
+    const [offerDate_to, setOffer_Date_to] = useState<any>(null);
+  
 
+    console.log({ productList })
 
+    const orderValidation = /^[0-9]*$/
     const schema = yup
         .object()
         .shape({
+
             name: yup.string().required('Product Name Required'),
             // display_order: yup.number().nullable().typeError("Must be Integer"),
+            display_order: yup.string().matches(orderValidation, 'Accept only positive number').nullable(),
             franchisee: yup.string().typeError('Franchise is Required').required('Franchise is Required'),
             store: yup.string().typeError('Store is Required').required('Store is Required'),
+            stock: yup.boolean(),
             category: yup.string().typeError('Category is Required').required('Category is Required'),
-            // delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
+            delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
             product_image: yup
                 .mixed()
                 .required("Product Image is Required"),
-            // seller_price: attributes.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
+            stock_value: (stock === true && varientsarray?.length === 0) ? yup.string().matches(orderValidation, 'Accept only positive number').required("Stock value required").typeError("Stock value must be a number") : yup.string().nullable(),
+            // regular_price: attributes?.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
 
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
+            minimum_qty: yup.string().matches(orderValidation, 'Accept only positive number').nullable()
         })
         .required();
 
@@ -201,7 +214,7 @@ const ProductForm = ({ res, view }: props) => {
                 panda_suggession: false,
                 stock: false,
                 stock_value: '',
-                franchisee: resDate ? resDate?.franchisee : '',
+                franchisee: productList ? productList?.franchisee : '',
                 category: '',
                 sub_category: null,
                 store: '',
@@ -220,10 +233,37 @@ const ProductForm = ({ res, view }: props) => {
                 product_availability_from: null,
                 product_availability_to: null,
                 fixed_delivery_price: 0,
-                commission: 0
+                commission:0
 
             }
         });
+
+
+
+
+
+    const getProduct = async () => {
+        try {
+            setLoader(true)
+            const response = await fetchData(`admin/product/show/${idd}`)
+            setProductList(response?.data?.data)
+        } catch (err: any) {
+            toast.success(err.message)
+            setLoader(false)
+        } finally {
+            setLoader(false)
+        }
+    }
+
+
+
+
+    useEffect(() => {
+        if (idd) {
+            getProduct()
+        }
+
+    }, [idd])
 
 
 
@@ -278,6 +318,9 @@ const ProductForm = ({ res, view }: props) => {
         setMultipleImage(image)
         setError('image', { message: '' })
     }
+
+
+    console.log({ errors })
 
 
 
@@ -403,20 +446,21 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
-        if (!res && !view) {
-            attributes[i][key] = e;
 
-            if (key === "options") {
-                let result = attributes[i].variant === true;
-                if (result) {
-                    onOptionsChangeaddvarients()
-                } else {
-                    return false;
-                }
-
+        //if (!res && !view) {
+        console.log({ attributes })
+        attributes[i][key] = e;
+        if (key === "options") {
+            let result = attributes[i].variant === true;
+            if (result) {
+                onOptionsChangeaddvarients()
+            } else {
+                return false;
             }
 
         }
+
+        //}
 
     }
 
@@ -450,10 +494,13 @@ const ProductForm = ({ res, view }: props) => {
     }
 
     const onChangeOffer_date_from = (e: any) => {
+        setOffer_Date_from(e)
+      
         setValue('offer_date_from', e)
     }
 
     const onChangeOffer_date_to = (e: any) => {
+        setOffer_Date_to(e)
         setValue('offer_date_to', e)
 
     }
@@ -463,13 +510,11 @@ const ProductForm = ({ res, view }: props) => {
 
 
     useEffect(() => {
-        if (resDate) {
-
-            console.log({ resDate })
+        if (productList) {
             const getvendorlist = async () => {
                 try {
-                    const response = await fetchData(`admin/vendor-list/${resDate?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
-                    const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${resDate?.franchisee?._id}`)
+                    const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
+                    const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${productList?.franchisee?._id}`)
                     let result = recomendedProduct?.data?.data.map((res: any) => ({
                         _id: res?._id,
                         title: `${res?.name}-${res?.product_id}`,
@@ -479,14 +524,14 @@ const ProductForm = ({ res, view }: props) => {
                     setRecomendedProductList(result)
                     setVendorList(response?.data?.data)
                     setCategoryList(response?.data?.data?.[0]?.category_id)
-                    setValue('franchisee', resDate?.franchisee?._id)
+                    setValue('franchisee', productList?.franchisee?._id)
                 } catch (err: any) {
                     toast.error(err?.message)
                 }
             }
             const getSubcategory = async () => {
                 try {
-                    const response = await fetchData(`admin/subcategory-list/${resDate?.category?._id}`)
+                    const response = await fetchData(`admin/subcategory-list/${productList?.category?._id}`)
                     setSubCategoryList(response?.data?.data)
                 } catch (err: any) {
                     toast.error(err?.message)
@@ -495,49 +540,50 @@ const ProductForm = ({ res, view }: props) => {
             }
             getSubcategory()
             getvendorlist()
-            setRecomendedProductEditList(resDate?.related_products)
-            setValue('name', resDate?.name)
-            setValue('franchisee', resDate?.franchisee?._id)
-            setFranchiseSelect(resDate?.franchisee?._id)
-            setValue('store', resDate?.store?._id)
-            setvendorSelect(resDate?.store?._id)
-            setValue('description', resDate?.description)
-            setValue('weight', resDate?.weight)
-            setValue('model', resDate?.model)
-            setValue('width', resDate?.dimensions?.width)
-            setValue('height', resDate?.dimensions?.height)
-            setValue('category', resDate?.category?._id)
-            setCategorySelect(resDate?.category?._id)
-            setValue('sub_category', resDate?.sub_category?._id)
-            setSubCategorySelect(resDate?.sub_category?._id)
-            setValue('display_order', resDate?.display_order)
-            setValue('panda_suggession', resDate?.panda_suggession)
-            setPandaSuggesions(resDate?.panda_suggession)
-            setValue('stock', resDate?.stock)
-            setStock(resDate?.stock)
-            setValue('stock_value', resDate?.stock_value)
-            setValue('minimum_qty', resDate?.minimum_qty)
-            setImagePreview(`${IMAGE_URL}${resDate?.product_image}`)
-            let paths = resDate?.delivery_locations?.map((loc: any) => {
+            setRecomendedProductEditList(productList?.related_products)
+            setValue('name', productList?.name)
+            setValue('franchisee', productList?.franchisee?._id)
+            setFranchiseSelect(productList?.franchisee?._id)
+            setValue('store', productList?.store?._id)
+            setvendorSelect(productList?.store?._id)
+            setValue('description', productList?.description)
+            setValue('weight', productList?.weight)
+            setValue('model', productList?.model)
+            setValue('width', productList?.dimensions?.width)
+            setValue('height', productList?.dimensions?.height)
+            setValue('category', productList?.category?._id)
+            setCategorySelect(productList?.category?._id)
+            setValue('sub_category', productList?.sub_category?._id)
+            setSubCategorySelect(productList?.sub_category?._id)
+            setValue('display_order', productList?.display_order)
+            setValue('panda_suggession', productList?.panda_suggession)
+            setPandaSuggesions(productList?.panda_suggession)
+            setValue('stock', productList?.stock)
+            setStock(productList?.stock)
+            setValue('stock_value', productList?.stock_value)
+            setValue('minimum_qty', productList?.minimum_qty)
+            setImagePreview(`${IMAGE_URL}${productList?.product_image}`)
+            let paths = productList?.delivery_locations?.map((loc: any) => {
                 return {
                     lat: parseFloat(loc[0]),
                     lng: parseFloat(loc[1])
                 }
             })
             setPaths(paths)
-            setValue('delivery_locations', resDate?.delivery_locations)
-            setValue('product_availability_from', moment(resDate?.product_availability_from,))
-            setValue('product_availability_to', moment(resDate?.product_availability_to, 'HH:mm'))
-            setValue('require_shipping', resDate?.require_shipping)
-            setRequireShipping(resDate?.require_shipping)
-            if (resDate?.meta_tags) {
-                setMetaTag(resDate?.meta_tags)
+            setValue('delivery_locations', productList?.delivery_locations)
+          
+            setValue('product_availability_from', moment(productList?.product_availability_from,))
+            setValue('product_availability_to', moment(productList?.product_availability_to, 'HH:mm'))
+            setValue('require_shipping', productList?.require_shipping)
+            setRequireShipping(productList?.require_shipping)
+            if (productList?.meta_tags) {
+                setMetaTag(productList?.meta_tags)
             }
-            setValue('video_link', resDate?.video_link)
-            setValue('related_products', resDate?.related_products)
-            setValue('product_image', resDate?.product_image)
-            if (resDate?.image) {
-                let imageslist = resDate?.image?.map((res: any) => (
+            setValue('video_link', productList?.video_link)
+            setValue('related_products', productList?.related_products)
+            setValue('product_image', productList?.product_image)
+            if (productList?.image) {
+                let imageslist = productList?.image?.map((res: any) => (
                     res
 
                 ))
@@ -546,8 +592,8 @@ const ProductForm = ({ res, view }: props) => {
 
 
             let attributesArray: { name: any; options: any; variant: boolean; }[] = []
-            if (resDate?.attributes?.length > 0) {
-                resDate?.attributes.map((item: any) => {
+            if (productList?.attributes?.length > 0) {
+                productList?.attributes.map((item: any) => {
                     attributesArray.push({
                         name: item?.name,
                         options: item?.options,
@@ -560,37 +606,38 @@ const ProductForm = ({ res, view }: props) => {
             }
 
             let myvaarientArray: { title: any; variant_id: string; attributs: any; seller_price: any; regular_price: string; offer_price: string; offer_date_from: any; offer_date_to: any; stock: boolean; stock_value: string; commission: number; fixed_delivery_price: number; }[] = []
-            if (resDate?.variants?.length > 0) {
-                resDate?.variants?.map((item: any) => {
+            if (productList?.variants?.length > 0) {
+                productList?.variants?.map((item: any) => {
                     myvaarientArray.push({
                         variant_id: item._id,
-                        title: item?.attributs,
+                        title: item?.title,
                         attributs: item?.attributs,
-                        seller_price: item?.regular_price,
-                        regular_price: item?.seller_price,
+                        seller_price: item?.seller_price,
+                        regular_price: item?.regular_price,
                         offer_price: item?.offer_price,
                         offer_date_from: moment(item?.offer_date_from, 'YYYY-MM-DD'),
-                        offer_date_to: moment(res?.offer_date_to, 'YYYY-MM-DD'),
+                        offer_date_to: moment(item?.offer_date_to, 'YYYY-MM-DD'),
                         stock: item?.stock,
                         stock_value: item?.stock_value,
                         commission: item?.commission,
                         fixed_delivery_price: item?.fixed_delivery_price
-
                     })
                     setVarientsArray(myvaarientArray)
                 })
             }
-            setValue('commission', resDate?.commision)
-            setValue('regular_price', resDate?.seller_price)
-            setValue('seller_price', resDate?.regular_price)
-            setValue('offer_price', resDate?.offer_price)
-            setValue('offer_date_from', moment(resDate?.offer_date_from, 'YYYY-MM-DD'))
-            setValue('offer_date_to', moment(resDate?.offer_date_to, 'YYYY-MM-DD'))
-            setValue('fixed_delivery_price', resDate?.fixed_delivery_price)
+            setValue('commission',productList?.commission)
+            setValue('regular_price', productList?.regular_price)
+            setValue('seller_price', productList?.seller_price)
+            setValue('offer_price', productList?.offer_price)
+            // setOffer_Date_from(moment(productList?.offer_date_from, 'YYYY-MM-DD'))
+            // setOffer_Date_to(moment(productList?.offer_date_from, 'YYYY-MM-DD'))
+            setValue('offer_date_from', moment(productList?.offer_date_from, 'YYYY-MM-DD'))
+            setValue('offer_date_to', moment(productList?.offer_date_to, 'YYYY-MM-DD'))
+            setValue('fixed_delivery_price', productList?.fixed_delivery_price)
 
         }
 
-    }, [resDate])
+    }, [productList])
 
 
     useEffect(() => {
@@ -663,13 +710,15 @@ const ProductForm = ({ res, view }: props) => {
             setValue('offer_date_to', '')
             setValue('fixed_delivery_price', '')
             // Filter attributes array to only include those with variant true
-            const variantAttributes = attributes.filter((attr: any) => attr.variant !== false)
+            const variantAttributes = attributes?.filter((attr: any) => attr.variant !== false)
 
             let attributesArray = variantAttributes?.map((vari: any) => vari?.options)
 
 
 
             let combines = combine(attributesArray);
+
+            console.log({ combines, varientsarray })
 
             let attri = combines.map((val: any) => {
                 return {
@@ -680,19 +729,29 @@ const ProductForm = ({ res, view }: props) => {
                     offer_price: '',
                     offer_date_from: '',
                     offer_date_to: '',
-                    stock: true,
+                    stock: stock,
                     stock_value: '',
                     commission: 0,
                     fixed_delivery_price: 0
                 }
             })
 
+            console.log({ varientsarray, attri })
 
-            const result = attri.filter((obj: any) => {
+
+            let varia = varientsarray?.filter((obj: any) => {
+                return attri.some((obj1: any) => obj.title === obj1.title)
+            })
+
+            const result = attri?.filter((obj: any) => {
                 return !varientsarray.some((obj1: any) => obj.title === obj1.title)
             })
 
-            setVarientsArray([...varientsarray, ...result])
+            //filter results
+
+
+            setVarientsArray([...varia, ...result])
+            console.log({ varientsarray })
 
         } else {
             setVarientsArray([])
@@ -706,6 +765,8 @@ const ProductForm = ({ res, view }: props) => {
 
     const addvarients = () => {
 
+        console.log({ attributes })
+
         if (attributes?.some((res: any) => res?.variant === true)) {
             const output = [];
             setValue('seller_price', '')
@@ -715,7 +776,7 @@ const ProductForm = ({ res, view }: props) => {
             setValue('offer_date_to', '')
             setValue('fixed_delivery_price', '')
             // Filter attributes array to only include those with variant true
-            const variantAttributes = attributes.filter((attr: any) => attr.variant !== false)
+            const variantAttributes = attributes?.filter((attr: any) => attr.variant !== false)
 
             let attributesArray = variantAttributes?.map((vari: any) => vari?.options)
 
@@ -732,53 +793,13 @@ const ProductForm = ({ res, view }: props) => {
                     offer_price: '',
                     offer_date_from: '',
                     offer_date_to: '',
-                    stock: true,
+                    stock: stock,
                     stock_value: '',
                     commission: getValues('commission'),
                     fixed_delivery_price: 0
                 }
             })
-
-
-
-
-
-
             setVarientsArray([...attri])
-
-            //console.log()
-            // Calculate the number of iterations required based on the length of the variantAttributes array
-            // const numIterations = variantAttributes.reduce((acc: any, curr: any) => acc * curr?.options?.length, 1);
-            // for (let i = 0; i < numIterations; i++) {
-            //     let combination = "";
-            //     let remainder = i;
-            //     let contentIndex;
-            //     let vari = [];
-            //     for (let j = variantAttributes.length - 1; j >= 0; j--) {
-            //         contentIndex = remainder % variantAttributes[j].options?.length;
-            //         combination = variantAttributes[j].options[contentIndex].title + " " + combination;
-            //         vari.push(variantAttributes[j].options[contentIndex].title)
-            //         remainder = Math.floor(remainder / variantAttributes[j].options?.length);
-            //     }
-            //     varientsarray.push({
-            //         attributs: '',
-            //         seller_price: '',
-            //         regular_price: '',
-            //         offer_price: '',
-            //         offer_date_from: '',
-            //         offer_date_to: '',
-            //         stock: true,
-            //         stock_value: '',
-            //         commission: 0,
-            //         fixed_delivery_price: 0
-            //     })
-            //     setVarientsArray([...varientsarray])
-            //     output.push(combination.trim());
-            // }
-            // setVarients(output)
-
-            // console.log({output})
-
         } else {
             setVarientsArray([])
             setVarients([])
@@ -792,48 +813,7 @@ const ProductForm = ({ res, view }: props) => {
     }, [index])
 
 
-    const [path, setPath] = useState([
-        { lat: 52.52549080781086, lng: 13.398118538856465 },
-        { lat: 52.48578559055679, lng: 13.36653284549709 },
-        { lat: 52.48871246221608, lng: 13.44618372440334 }
-    ]);
 
-    // Define refs for Polygon instance and listeners
-    const polygonRef = useRef<google.maps.Polygon | null>(null);
-    const listenersRef = useRef<google.maps.MapsEventListener[]>([]);
-
-    // Call setPath with new edited path
-    const onEdit = useCallback(() => {
-        if (polygonRef.current) {
-            const nextPath = polygonRef.current
-                .getPath()
-                .getArray()
-                .map((latLng: google.maps.LatLng) => {
-                    return { lat: latLng.lat(), lng: latLng.lng() };
-                });
-            setPath(nextPath);
-        }
-    }, [setPath]);
-
-    // Bind refs to current Polygon and listeners
-    const onLoad = useCallback(
-        (polygon: google.maps.Polygon) => {
-            polygonRef.current = polygon;
-            const path = polygon.getPath();
-            listenersRef.current.push(
-                path.addListener("set_at", onEdit),
-                path.addListener("insert_at", onEdit),
-                path.addListener("remove_at", onEdit)
-            );
-        },
-        [onEdit]
-    );
-
-    // Clean up refs
-    const onUnmount = useCallback(() => {
-        listenersRef.current.forEach((lis: google.maps.MapsEventListener) => lis.remove());
-        polygonRef.current = null;
-    }, []);
 
 
     //remove multiple image function only for edit.........................................................
@@ -857,7 +837,6 @@ const ProductForm = ({ res, view }: props) => {
         setValue('meta_tags', res)
     }
 
-
     const onChangeRelatedproduct = (value: any) => {
         let result = value && value?.map((res: any) => ({
             _id: res?._id,
@@ -879,7 +858,82 @@ const ProductForm = ({ res, view }: props) => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
-        console.log({ data })
+
+
+        //Check All Attributes have values
+        let attributeCheck = attributes?.find((att: any) => isEmpty(att?.name) || att?.options?.length === 0);
+        console.log({ attributeCheck, attributes })
+        if (attributeCheck) {
+            toast.warning("All Attributes must have values")
+            return false;
+        }
+
+        //Check Any Variants
+        let variantsChe = attributes?.find((att: any) => att.variant === true);
+        console.log({ length: attributes.length, price: isEmpty(data?.seller_price) })
+        if (!variantsChe) {
+            if (isNaN(data?.seller_price) || data?.seller_price <= 0) {
+                setError("seller_price", { type: 'custom', message: 'Purchase price must be greater than 0' })
+                return false;
+            }
+            if (!isEmpty(data?.offer_price)) {
+                if (isNaN(data?.offer_price)) {
+                    setError("offer_price", { type: 'custom', message: 'Offer price must be a number' })
+                    return false;
+                }
+                else if (data?.offer_price <= 0) {
+                    setError("offer_price", { type: 'custom', message: 'Offer price must be a greater than 0' })
+                    return false;
+                } else if (!data?.offer_date_from || !data?.offer_date_to) {
+                    toast.warning("Offer From date and to date required")
+                    return false;
+
+                }
+
+            }
+
+            if (isNaN(data?.fixed_delivery_price) || isEmpty(data?.fixed_delivery_price) || data?.fixed_delivery_price < 0) {
+                setError("fixed_delivery_price", { type: 'custom', message: 'delivery price required' })
+                return false;
+            }
+            //setError("seller_price", { type: 'custom', message: 'Purchase price required' })
+            //console.log({delivery: data?.fixed_delivery_price})
+        }
+        else {
+            let varicheck = varientsarray?.find((vari: any) => isEmpty(vari?.seller_price) || isNaN(vari?.seller_price) || (isNumber(vari?.seller_price) && vari?.seller_price >= 0))
+            if (varicheck) {
+                console.log({ varicheck, varientsarray })
+                toast.warning("All variants mush have price. Please update price and continue")
+                return false;
+            }
+            else {
+                let offer = varientsarray?.filter((vari: any) => !isEmpty(vari?.offer_price))
+                if (offer) {
+                    let offerpr = offer?.find((off: any) => !off.offer_date_from || !off?.offer_date_to);
+                    if (offerpr) {
+                        toast.warning("Offer From date and to date required")
+                        return false;
+                    }
+                }
+
+                if (stock) {
+                    let stockValue = varientsarray?.find((vari: any) => isEmpty(vari?.stock_value) || isNaN(vari?.stock_value) || (isNumber(vari?.stock_value) && parseInt(vari?.stock_value) <= 0))
+                    if (stockValue) {
+                        toast.warning("Stock value required for all variants")
+                        return false;
+                    }
+                }
+
+                let delivery = varientsarray?.find((vari: any) => isNaN(vari?.fixed_delivery_price) || vari?.fixed_delivery_price < 0 || isEmpty(vari?.fixed_delivery_price))
+                console.log({ delivery })
+                if (delivery) {
+                    toast.warning("Delivery price required for all variants")
+                    return false;
+                }
+            }
+        }
+
+
 
         let franchiseData = franchiseList?.filter((res: any) => res?._id === franchiseSelect).map((get: any) => (
             {
@@ -922,7 +976,7 @@ const ProductForm = ({ res, view }: props) => {
 
         let recomendedProductList: any = []
 
-        const recomendedProduct = recomendedProductArray.filter((obj: any) => {
+        const recomendedProduct = recomendedProductArray?.filter((obj: any) => {
             return !recomendedProductEditList.some((obj1: any) => obj._id === obj1._id)
         })
 
@@ -1000,8 +1054,8 @@ const ProductForm = ({ res, view }: props) => {
             stock: data?.stock,
             stock_value: data?.stock_value,
             minimum_qty: data?.minimum_qty,
-            product_availability_from: data?.product_availability_from ? moment(data?.product_availability_from, 'hh:mm A').format('hh:mm') : null,
-            product_availability_to: data?.product_availability_to ? moment(data?.product_availability_to, 'hh:mm A').format('hh:mm') : null,
+            product_availability_from: data?.product_availability_from ? moment(data?.product_availability_from, 'hh:mm A').format('HH:mm') : null,
+            product_availability_to: data?.product_availability_to ? moment(data?.product_availability_to, 'hh:mm A').format('HH:mm') : null,
             require_shipping: data?.require_shipping,
             delivery_locations: data?.delivery_locations ? data?.delivery_locations : vendorlistDirection?.[0]?.delivery_location,
             coupon_details: null,
@@ -1012,7 +1066,7 @@ const ProductForm = ({ res, view }: props) => {
             regular_price: data?.regular_price,
             seller_price: data?.seller_price,
             offer_price: data?.offer_price,
-            commission: data?.regular_price ? 0 : data?.commission,
+            commission: data?.commission,
             fixed_delivery_price: data?.fixed_delivery_price,
             offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
@@ -1020,12 +1074,13 @@ const ProductForm = ({ res, view }: props) => {
             variants: varientsarray,
             approval_status: "approved"
         }
-        if (res) {
-            value["id"] = res?._id;
+        if (productList) {
+            value["id"] = productList?._id;
         }
         try {
             setLoading(true)
-            await postData(res ? EDIT_URL : CREATE_URL, value)
+            await postData(idd ? EDIT_URL : CREATE_URL, value)
+            toast.success(idd ? 'Edited Successfully' : 'Created Successfully')
             reset()
             setFranchiseSelect(null)
             setCategorySelect(null)
@@ -1051,7 +1106,20 @@ const ProductForm = ({ res, view }: props) => {
         }
     }
 
+    const removeAttributes = async (i: any) => {
+        attributes[i].variant = false;
+        setAttributes([...attributes])
+        let attribute = await attributes?.filter((att: any, index: Number) => index !== i)
 
+        console.log({ attribute })
+        setAttributes([...attribute])
+        addvarients()
+
+    }
+
+    if (loader) {
+        return <><CustomLoader /></>
+    }
 
 
 
@@ -1094,7 +1162,7 @@ const ProductForm = ({ res, view }: props) => {
                             <MenuItem value="" disabled >
                                 <>Select Franchise</>
                             </MenuItem>
-                            {franchiseList && franchiseList?.map((res: any) => (
+                            {franchiseList && franchiseList?.filter((act: any) => act?.status !== 'inactive').map((res: any) => (
                                 <MenuItem value={res?._id}>{res?.franchise_name}</MenuItem>
                             ))}
                         </Customselect>
@@ -1267,6 +1335,7 @@ const ProductForm = ({ res, view }: props) => {
                         <CustomCheckBox isChecked={stock} label='' onChange={StockCheck} title='Enable Stock' />
                     </Grid>
                     {stock &&
+                        varientsarray?.length === 0 &&
                         <Grid item xs={12} lg={3}>
                             <CustomInput
                                 type='text'
@@ -1296,7 +1365,7 @@ const ProductForm = ({ res, view }: props) => {
 
                     {view &&
                         <Grid item xs={12} lg={3}>
-                            <Avatar variant='square' src={`${IMAGE_URL}${view?.product_image}`} sx={{ width: '100%', height: 130 }} />
+                            <Avatar variant='square' src={`${IMAGE_URL}${productList?.product_image}`} sx={{ width: '100%', height: 130 }} />
                         </Grid>}
                     {!view &&
                         <Grid item xs={12} lg={3}>
@@ -1353,104 +1422,11 @@ const ProductForm = ({ res, view }: props) => {
                 </Grid>
                 <Box py={2}>
                     <Divider />
-                    {res ? <Polygon onComplete={onPolygonComplete} path={paths} /> :
+                    {productList ? <Polygon onComplete={onPolygonComplete} path={paths} /> :
                         <Maps onPolygonComplete={onPolygonComplete} />}
                     {(errors && errors?.delivery_locations) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.delivery_locations?.message}`}</span>}
                 </Box>
             </CustomBox>
-            {/* <CustomBox title='offers & Promotions'>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} lg={3}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
-                            placeholder={``}
-                            fieldLabel={"Product offer"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} lg={6}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
-                            placeholder={``}
-                            fieldLabel={"Offer Description"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={3}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
-                            placeholder={``}
-                            fieldLabel={"Coupon Name"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} lg={3}>
-                        <Customselect
-                            type='text'
-                            control={control}
-                            error={errors.subcategory}
-                            fieldName="subcategory"
-                            placeholder={``}
-                            fieldLabel={"Coupon Type"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={'subcategory'}
-                            options={''}
-                            onChangeValue={onChangeSelect}
-                            background={'#fff'}
-                        >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
-                        </Customselect>
-                    </Grid>
-                    <Grid item xs={12} lg={3}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
-                            placeholder={``}
-                            fieldLabel={"Coupon Value"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={3}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
-                            placeholder={``}
-                            fieldLabel={"Coupon Code"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                </Grid>
-            </CustomBox> */}
             <CustomBox title='Additional Options'>
                 <Grid container spacing={2}>
                     {view && <Grid item xs={12} lg={6}>
@@ -1478,22 +1454,8 @@ const ProductForm = ({ res, view }: props) => {
                     {!view &&
                         <Grid item xs={12} lg={6}>
                             <CustomTagInputValue fieldLabel='Meta Tags' tagValues={(metaTagvalues)} values={metaTag} setState={setMetaTag} />
-                            {/* <CustomAutoComplete res={res} fieldLabel='Meta Tag' list={metaTag} setValues={setmetaTagValue} onChnageValues={() => null} /> */}
                         </Grid>}
 
-                    {/* <Grid item xs={12} lg={3}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.product_offer}
-                            fieldName="product_offer"
-                            placeholder={``}
-                            fieldLabel={"Tax Class"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid> */}
                     <Grid item xs={12} lg={3}>
                         <CustomInput
                             type='text'
@@ -1580,7 +1542,7 @@ const ProductForm = ({ res, view }: props) => {
                         }
 
 
-                        {res &&
+                        {productList &&
                             <>
                                 <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} py={1} >
                                     {recomendedProductEditList?.map((res: any) => (
@@ -1592,17 +1554,6 @@ const ProductForm = ({ res, view }: props) => {
 
 
                         {!view && <CustomAutoCompleteSearch onChange={onChangeRelatedproduct} list={recomendedProductList} fieldLabel={"Related Products"} />}
-                        {/* <CustomInput
-                            disabled={false}
-                            type='text'
-                            control={control}
-                            error={errors.related_products}
-                            fieldName="related_products"
-                            placeholder={``}
-                            fieldLabel={"Related Products"}
-                            view={view ? true : false}
-                            defaultValue={''}
-                        /> */}
                     </Grid>
                 </Grid>
             </CustomBox>
@@ -1611,44 +1562,8 @@ const ProductForm = ({ res, view }: props) => {
                 {!res && !view &&
                     <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
-                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} />
+                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} removeAttributes={!productList ? () => removeAttributes(i) : null} />
                 )}
-
-                {/* {!attributes?.some((res: any) => res.varient === true) && <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
-
-
-                {attributes && attributes?.map((res: any, i: any) => (<>
-                    <Grid container spacing={2} py={1}>
-                        <Grid item xs={12} lg={2}>
-                            <CustomInput
-                                onChangeValue={(e: any) => onChangeName(e, i)}
-                                disabled={false}
-                                type='text'
-                                control={control}
-                                error={errors.attributess}
-                                fieldName="attributess"
-                                placeholder={``}
-                                fieldLabel={"Name"}
-                                view={false}
-                                defaultValue={res.name}
-                            />
-                        </Grid>
-                        <Grid item xs={12} lg={4}>
-                            
-                            <CustomAutoComplete fieldLabel='Attribute Options' vres={res?.options} list={attributeTag} setValues={setattributeTagValue} onChnageValues={(e: any) => onChangeOptions(e, i)} />
-
-                        </Grid>
-                        <Grid item xs={12} lg={2}>
-                            <Typography mb={3}></Typography>
-                            <CustomCheckBox isChecked={attributes[i].varient} label='' onChange={(e: any) => AddVarientCheckbox(e, i)} title='Add Variant' />
-                        </Grid>
-                    </Grid>
-                </>
-                ))} */}
-                {/* {attributes?.length > 0 &&
-                    <Box display={'flex'} justifyContent={'flex-end'}>
-                        {!confirmbtn && <Custombutton btncolor='' height={40} endIcon={false} startIcon={false} label={'confirm'} onClick={ConfirmVarients} IconEnd={''} IconStart={''} />}
-                    </Box>} */}
             </CustomBox>
             {varientsarray?.length === 0 && <CustomBox title='Price'>
                 <Grid container spacing={2}>
@@ -1682,7 +1597,7 @@ const ProductForm = ({ res, view }: props) => {
                     <Grid item lg={1.71} xs={12}>
                         <CustomInput
                             disabled={false}
-                            type='text'
+                            type='number'
                             control={control}
                             error={errors.commission}
                             fieldName="commission"
@@ -1721,7 +1636,7 @@ const ProductForm = ({ res, view }: props) => {
                     <Grid item lg={1.71} xs={12}>
                         <CustomDatePicker
                             disabled={view ? true : false}
-                            values={getValues('offer_date_from')}
+                            values={offerDate_from ? offerDate_from : getValues('offer_date_from')}
                             changeValue={onChangeOffer_date_from}
                             fieldName='offer_date_from'
                             control={control}
@@ -1733,7 +1648,7 @@ const ProductForm = ({ res, view }: props) => {
                     <Grid item lg={1.71} xs={12}>
                         <CustomDatePicker
                             disabled={view ? true : false}
-                            values={getValues('offer_date_to')}
+                            values={offerDate_to ? offerDate_to : getValues('offer_date_to')}
                             changeValue={onChangeOffer_date_to}
                             fieldName='offer_date_to'
                             control={control}
@@ -1745,7 +1660,7 @@ const ProductForm = ({ res, view }: props) => {
                 </Grid>
             </CustomBox>}
             {varientsarray && varientsarray.length > 0 && <CustomBox title='Add Variant & Price'>
-                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient view={view} deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} />)}
+                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient view={view} deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} stock={stock} />)}
             </CustomBox>}
 
             {/* {attributes?.some((res: any) => res.varient === true) &&

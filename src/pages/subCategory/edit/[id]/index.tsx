@@ -9,33 +9,14 @@ import { toast } from 'react-toastify'
 const SubCategoryEdit = () => {
     const router = useRouter()
     const { id } = router.query
-    const [loading, setLoading] = useState<boolean>(false)
-    const [subCategoryList,setSubCategoryList]=useState<any>([])
-
-    const getSubCategory = async () => {
-        try {
-            setLoading(true)
-            const response = await fetchData(`admin/subcategory/show/${id}`)
-            setSubCategoryList(response?.data?.data)  
-        } catch (err: any) {
-            toast.success(err.message)
-            setLoading(false)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-
-    useEffect(()=>{
-        getSubCategory()
-    },[])
+  
 
 
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <CustomHeaderBack backlabel='Edit SubCategory' />
-            <SubCategoryForm res={subCategoryList}/>
+            <SubCategoryForm res={id}/>
 
         </Box>
     )

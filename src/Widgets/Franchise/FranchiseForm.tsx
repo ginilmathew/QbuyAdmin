@@ -8,12 +8,14 @@ import Custombutton from '@/components/Custombutton';
 import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
-import { postData } from '@/CustomAxios';
+import { fetchData, postData } from '@/CustomAxios';
 import Maps from '@/components/maps/maps';
 import { Route } from '@mui/icons-material';
 import { useRouter } from 'next/router';
 import { isNull } from 'lodash';
 import Polygons from '@/components/maps/Polygon';
+import CustomLoader from '@/components/CustomLoader';
+
 
 
 type Inputs = {
@@ -37,38 +39,93 @@ type IFormInput = {
 }
 type props = {
     res?: any,
-    view?: any
+    view?: any,
+    data?: any
 }
 
 
-const FranchiseForm = ({ res, view }: props) => {
-    let dataRes = res ? res : view
-    console.log({ dataRes })
+
+
+
+
+const FranchiseForm = ({ res, view, data }: props) => {
+
+    let idd = res ? res : view
+
+    const [franchiseList, setFranchiseList] = useState<any>(data)
+    const [loading, setLoading] = useState<boolean>(false)
+    const [loader, setLoader] = useState<boolean>(false)
+
+
+
+
+
+    const getFranchise = async () => {
+        try {
+            setLoader(true)
+            const response = await fetchData(`admin/franchise/show/${idd}`)
+            setFranchiseList(response?.data?.data)
+        } catch (err: any) {
+            toast.success(err.message)
+            setLoader(false)
+        } finally {
+            setLoader(false)
+        }
+    }
+
+    useEffect(() => {
+        if (res || view) {
+            //getFranchise()
+        }
+
+    }, [res || view])
+
+
+
 
     const [paths, setPaths] = useState(null)
 
     const router = useRouter()
 
-    const [loading, setLoading] = useState<boolean>(false)
-    const commissionvalidation = /^(0|[1-9]\d*)$/
+
+    const commissionvalidation: any = /^\d*\.?\d*$/
+
+    const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+
+
     const schema = yup
         .object()
         .shape({
-            franchise_name: yup.string().max(30, 'Maximum Character Exceeds').required('Franchise Name is Required'),
-            owner_name: yup.string().max(30, 'Maximum Character Exceeds').required('Owner Name is Required'),
-            email: yup.string().max(30, 'Maximum Character Exceeds').email('not a valid email').required('Email is Required'),
-            mobile: yup.number()
-                .typeError("A Mobile number is required")
-                .positive("A mobile number can't start with a minus")
-                .integer("A mobile number can't include a decimal point")
-                .min(10)
-                .required('A Mobile number is required'),
+            franchise_name: yup.string().max(30, "Name must be less than 30 characters").matches(
+                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+                'Name can only contain Latin letters.'
+            )
+                // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
+                .required('Name is Required'),
+            owner_name: yup.string().max(30, "Name must be less than 30 characters").matches(
+                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+                'Name can only contain alphabets letters.'
+            )
+                // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
+                .required('Owner Name is Required'),
+            email: yup.string().max(30, 'Maximum Character Exceeds').email('Not a valid email').required('Email is Required'),
+            mobile: yup.string().required('Mobile Number is Required').matches(phoneRegExp, 'Mobile number is not valid').min(10, 'Mobile Number must be minimum 10 digit').max(10, 'Mobile number is not valid'),
             //address: yup.string().required('Address is Required'),
             coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required"),
-            franchisee_commission: yup.string().matches(commissionvalidation, 'Accept Number Only').required('Commission is Required')
+            franchisee_commission: yup.number().required('Commission is required')
+                .nullable('Commission is Required').typeError('Commission is required')
+                .notRequired()
+                .min(0)
+                .max(100, "Commision have maximum 100%")
+                .test(
+                    "noEOrSign", // type of the validator (should be unique)
+                    "Number had an 'e' or sign.", // error message
+                    (value) => typeof value === "number" && !/[eE+-]/.test(value.toString())
+                )
+
 
         })
-        .required();
+    
 
 
     const { register,
@@ -99,12 +156,12 @@ const FranchiseForm = ({ res, view }: props) => {
         const create_data = data
         const edit_Data = {
             ...data,
-            id: res?._id
+            id: franchiseList?._id
         }
 
         try {
-            await postData(res ? url_Edit : url_Create, res ? edit_Data : create_data)
-            toast.success(res ? 'Edited Successfully' : 'Created Successfully')
+            await postData(idd ? url_Edit : url_Create, idd ? edit_Data : create_data)
+            toast.success(idd ? 'Edited Successfully' : 'Created Successfully')
             router.push(`/franchise`)
             reset()
         } catch (err: any) {
@@ -117,31 +174,35 @@ const FranchiseForm = ({ res, view }: props) => {
 
     const setDeliveryLocation = (value: any) => {
         if (!view) {
+      
             setValue("coordinates", value)
         }
 
     }
 
     useEffect(() => {
-        if (res || view) {
+        if (franchiseList) {
             let data = res ? res : view
-            setValue('franchise_name', data?.franchise_name)
-            setValue('owner_name', data?.owner_name)
-            setValue('email', data?.email)
-            setValue('mobile', data?.mobile)
-            setValue('address', data?.address)
-            setValue('franchisee_commission', data?.franchisee_commission)
-            let paths = data?.delivery_location?.map((loc: any) => {
+            setValue('franchise_name', franchiseList?.franchise_name)
+            setValue('owner_name', franchiseList?.owner_name)
+            setValue('email', franchiseList?.email)
+            setValue('mobile', franchiseList?.mobile)
+            setValue('address', franchiseList?.address)
+            setValue('franchisee_commission', franchiseList?.franchisee_commission)
+            let paths = franchiseList?.delivery_location?.map((loc: any) => {
                 return {
                     lat: parseFloat(loc[0]),
                     lng: parseFloat(loc[1])
                 }
             })
             setPaths(paths)
-            setValue('coordinates', data?.delivery_location)
+            setValue('coordinates', franchiseList?.delivery_location)
         }
-    }, [res, view])
+    }, [franchiseList])
 
+    if (loader) {
+        return <><CustomLoader /></>
+    }
 
     return (
         <Box>
@@ -229,7 +290,7 @@ const FranchiseForm = ({ res, view }: props) => {
                 <Box mt={2}>
                     <Divider />
                 </Box>
-                {dataRes ? <Polygons onComplete={setDeliveryLocation} path={paths} /> : <Maps onPolygonComplete={setDeliveryLocation} />}
+                {idd ? <Polygons onComplete={setDeliveryLocation} path={paths} /> : <Maps onPolygonComplete={setDeliveryLocation} />}
                 {errors && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates ? errors?.coordinates?.message : ''}`}</span>}
             </CustomBox>
             {!view &&

@@ -48,6 +48,8 @@ const CustomDatePicker = ({
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                        
                                 <DatePicker 
+                                disablePast
+                                format='DD/MM/YYYY'
                                 disabled={disabled}
                                   sx={{
                                     "& .MuiInputBase-input": {

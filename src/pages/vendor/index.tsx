@@ -11,17 +11,53 @@ import { fetchData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import CustomDelete from '@/Widgets/CustomDelete';
 import { CleanHands } from '@mui/icons-material';
+import { authOptions } from '../api/auth/[...nextauth]'
+import { getServerSession } from "next-auth/next"
 
-const VendorSignup = () => {
+type props = {
+    req: any,
+    res: any
+}
+
+type datapr = {
+    data: any
+}
+// This gets called on every request
+export async function getServerSideProps({ req, res }: props) {
+    // Fetch data from external API
+    //const res = await fetch(`https://.../data`);
+    //const data = await res.json();
+
+    let session = await getServerSession(req, res, authOptions)
+
+    let token = session?.user?.accessToken
+
+    const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/vendor/list/${process.env.NEXT_PUBLIC_TYPE}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+
+    const data = await resu.json();
+
+    
+   
+    // Pass data to the page via props
+    return { props: { data : data } };
+}
+
+const VendorSignup = ({data}: datapr) => {
 
     const router = useRouter();
 
 
-    const [vendorList, setVendorList] = useState([]);
+    const [vendorList, setVendorList] = useState(data?.data);
     const [loading, setLoading] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(false);
     const [_id, set_id] = useState<string>('');
-    const [serachList, setSearchList] = useState<any>([])
+    const [serachList, setSearchList] = useState<any>(data?.data)
     const [pending, startTransition] = useTransition();
 
 
@@ -73,6 +109,14 @@ const VendorSignup = () => {
             align: 'center',
 
         },
+        {
+            field: 'display_order',
+            headerName: 'Order',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
 
         // {
         //     field: 'delivery_location',
@@ -88,6 +132,11 @@ const VendorSignup = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            renderCell: ({ row }) => (
+                <Stack>
+                    <Typography variant="body1" sx={{ color: row?.approval_status === "Approved" ? '#58D36E' : '#FF0000' }} fontSize={14} letterSpacing={.5} >{row?.approval_status}</Typography>
+                </Stack>
+            )
 
         },
         {
@@ -157,17 +206,16 @@ const VendorSignup = () => {
 
 
     const searchVendor = useCallback((value: any) => {
-        console.log({ value })
-        let Result = serachList?.filter((com: any) => com?.store_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase))
+        let Result = serachList?.filter((com: any) => com?.store_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase) || com?.vendor_mobile?.toString().toLowerCase().includes(value.toLowerCase()))
         startTransition(() => {
             setVendorList(Result)
         })
     }, [vendorList])
 
 
-    useEffect(() => {
-        fetchVendorList()
-    }, [])
+    // useEffect(() => {
+    //     fetchVendorList()
+    // }, [])
 
 
 
@@ -179,10 +227,6 @@ const VendorSignup = () => {
         set_id(id)
         setOpen(true)
     }
-
-
-
-
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
@@ -192,8 +236,8 @@ const VendorSignup = () => {
                 </Box>
             </Box>
             {open && <CustomDelete
-                 heading='Vendor'
-                 paragraph='vendor'
+                heading='Vendor'
+                paragraph='vendor'
                 _id={_id}
                 setData={setVendorList}
                 data={vendorList}

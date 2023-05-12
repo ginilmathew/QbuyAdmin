@@ -12,6 +12,7 @@ import { fetchData, postData } from '@/CustomAxios';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from 'next/router';
 import { IMAGE_URL } from '@/Config';
+import CustomLoader from '@/components/CustomLoader';
 
 
 type Inputs = {
@@ -31,7 +32,7 @@ type IFormInput = {
     image: any,
     seo_title: string,
     seo_description: string,
-    category_id: string
+    category_id: any
 
 }
 type props = {
@@ -42,7 +43,7 @@ type props = {
 
 const SubCategoryForm = ({ res, view }: props) => {
 
-    const resData = res ? res : view;
+    const idd = res ? res : view;
 
 
     const router = useRouter()
@@ -52,22 +53,27 @@ const SubCategoryForm = ({ res, view }: props) => {
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
     const [_id, set_id] = useState<string>("");
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false);
+    const [loader, setLoader] = useState<boolean>(false)
     const [categoryList, setCategoryList] = useState<any>([])
-    const [categoryID, setCategoryID] = useState<string>('')
+    const [categoryID, setCategoryID] = useState<any>('')
     const [imagePreview, setImagePreview] = useState<any>(null)
-
+    const [subCategoryList, setSubCategoryList] = useState<any>([])
     const schema = yup
         .object()
         .shape({
             category_id: yup.string().required('Category is Required'),
-            name: yup.string().required('Name is Required'),
+            name: yup.string().max(30, "Name must be less than 30 characters").matches(
+                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+                'Name can only contain alphabet letters.'
+            )
+                .required('Name is Required'),
 
             image: yup
                 .mixed()
                 .required('Image is Required')
         })
-        .required();
+    
 
 
     const { register,
@@ -81,9 +87,50 @@ const SubCategoryForm = ({ res, view }: props) => {
             defaultValues: {
                 name: '',
                 order_number: '',
-                category_id: ''
+                category_id: '',
             }
         });
+
+
+
+
+
+
+
+    const getCategoryList = async () => {
+        try {
+            setLoading(true)
+            const response = await fetchData(`admin/category/list/${type}`)
+            setCategoryList(response?.data?.data)
+        } catch (err: any) {
+            toast.error(err.message)
+            setLoading(false)
+
+        }
+        finally {
+            setLoading(false)
+
+        }
+    }
+
+
+    useEffect(() => {
+        getCategoryList()
+    }, [])
+
+    const getSubCategory = async () => {
+        try {
+            setLoader(true)
+            const response = await fetchData(`admin/subcategory/show/${idd}`)
+            setSubCategoryList(response?.data?.data)
+        } catch (err: any) {
+            toast.success(err.message)
+            setLoader(false)
+        } finally {
+            setLoader(false)
+        }
+    }
+
 
     const imageUploder = (file: any) => {
         if (file.size <= 1000000) {
@@ -106,38 +153,29 @@ const SubCategoryForm = ({ res, view }: props) => {
         setError('category_id', { message: '' })
     }
 
-    const getCategoryList = async () => {
-        try {
-            setLoading(true)
-            const response = await fetchData(`admin/category/list/${process.env.NEXT_PUBLIC_TYPE}`)
-            setCategoryList(response?.data?.data)
-        } catch (err: any) {
-            toast.error(err.message)
-            setLoading(false)
 
-        }
-        finally {
-            setLoading(false)
-
-        }
-    }
-
-    useEffect(() => {
-        getCategoryList()
-    }, [])
 
 
 
     useEffect(() => {
-        if (resData) {
-            setValue('category_id', resData?.category_id)
-            setCategoryID(resData?.category_id)
-            setValue('order_number', resData?.order_number)
-            setValue('name', resData?.name)
-            setImagePreview(`${IMAGE_URL}${resData?.image}`)
-            setValue('image', resData?.image)
+        if (idd) {
+            getSubCategory()
         }
-    }, [resData])
+    }, [idd])
+
+    useEffect(() => {
+        if (subCategoryList && idd) {
+
+            setValue('order_number', subCategoryList?.order_number)
+            setValue('name', subCategoryList?.name)
+            setImagePreview(`${IMAGE_URL}${subCategoryList?.image}`)
+            setValue('image', subCategoryList?.image)
+            if (subCategoryList?.category_id) {
+                setValue('category_id', subCategoryList?.category_id)
+                setCategoryID(subCategoryList?.category_id)
+            }
+        }
+    }, [subCategoryList, idd])
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         const URL_CREATE = '/admin/subcategory/create'
@@ -146,8 +184,8 @@ const SubCategoryForm = ({ res, view }: props) => {
 
         setLoading(true)
         const formData = new FormData();
-        if (res) {
-            formData.append("id", res?._id);
+        if (subCategoryList) {
+            formData.append("id", subCategoryList?._id);
         }
         formData.append("name", data?.name);
         formData.append("order_number", data?.order_number);
@@ -159,12 +197,12 @@ const SubCategoryForm = ({ res, view }: props) => {
         formData.append("seo_description", data?.name + type);
         formData.append("category_id", data?.category_id);
         try {
-            await postData(res ? URL_EDIT : URL_CREATE, formData)
+            await postData(idd ? URL_EDIT : URL_CREATE, formData)
             setImagePreview(null)
             setCategoryID('')
             reset()
             router.push('/subCategory')
-            toast.success(res ? 'Updated Successfully' : 'Created Successfully')
+            toast.success(idd ? 'Updated Successfully' : 'Created Successfully')
 
         } catch (err: any) {
             toast.error(err?.message)
@@ -173,6 +211,10 @@ const SubCategoryForm = ({ res, view }: props) => {
             setLoading(false)
         }
 
+    }
+
+    if (loader) {
+        return <><CustomLoader /></>
     }
 
     return (
@@ -257,7 +299,7 @@ const SubCategoryForm = ({ res, view }: props) => {
 
                     {view &&
                         <Grid item xs={12} lg={2.5}>
-                            <Avatar variant='square' src={`${IMAGE_URL}${view?.image}`} sx={{ width: '100%', height: 130 }} />
+                            <Avatar variant='square' src={`${IMAGE_URL}${subCategoryList?.image}`} sx={{ width: '100%', height: 130 }} />
                         </Grid>}
                 </Grid>
             </CustomBox>

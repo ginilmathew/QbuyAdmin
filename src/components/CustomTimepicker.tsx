@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
-
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { DesktopTimePicker } from '@mui/x-date-pickers/DesktopTimePicker';
 import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { Controller } from "react-hook-form";
 import { Avatar, Box, FormGroup, styled, Typography } from "@mui/material";
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { MobileDatePicker, MobileTimePicker } from '@mui/x-date-pickers';
+import moment from 'moment';
 
 type props = {
     fieldName: string,
@@ -15,7 +15,7 @@ type props = {
     fieldLabel: string,
     error: any,
     changeValue: (value: any) => void,
-    disabled?:any
+    disabled?: any
 
 }
 
@@ -28,6 +28,7 @@ const CustomTimepicker = ({
     disabled,
     changeValue,
 }: props) => {
+
     return (
         <>
             <FormGroup>
@@ -48,14 +49,16 @@ const CustomTimepicker = ({
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
                         <LocalizationProvider dateAdapter={AdapterMoment}>
-                            <TimePicker
-                            disabled={disabled}
+                            <MobileTimePicker
+                            //disabled={disabled}
                                 sx={{
                                     "& .MuiInputBase-input": {
                                         height: "10px" // Set your height here.
                                     }
                                 }}
+                                // minTime={moment()}
 
+                                // disablePast
                                 value={value}
                                 onChange={changeValue ? (e: any) => changeValue(e) : onChange}
                             />

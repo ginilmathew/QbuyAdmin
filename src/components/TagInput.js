@@ -26,6 +26,7 @@ const TagInput = ({ tagValues , values}) => {
 
     const removeTag = (index) => {
         let tagas = tags.filter((tag, i) => i !== index);
+        tagValues([...tagas])
         setTags(tagas)
     }
 

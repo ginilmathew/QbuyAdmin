@@ -14,6 +14,7 @@ import { fetchData, postData } from '@/CustomAxios';
 import { Message } from '@mui/icons-material';
 import { IMAGE_URL } from '@/Config';
 import { useRouter } from 'next/router';
+import CustomLoader from '@/components/CustomLoader';
 
 type Inputs = {
     name: string,
@@ -42,27 +43,37 @@ type props = {
 
 
 const CategoryForm = ({ resData, view }: props) => {
-  const router = useRouter()
+    const idd = resData ? resData : view;
+
+    const router = useRouter()
 
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [imagePreview, setImagePreview] = useState<any>(null)
     const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
     const [loading, setLoading] = useState<boolean>(false)
+    const [loader, setLoader] = useState<boolean>(false)
+    const [CategoryList, setCategoryList] = useState<any>(null)
 
 
+    const orderValidation = /^(0|[1-9]\d*)$/
     const schema = yup
         .object()
         .shape({
-            name: yup.string().max(30, 'Maximum Character Exceeds').required('Category Name Required'),
+            name: yup.string().max(30, "Name must be less than 30 characters").matches(
+                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+                'Name can only contain Alphabets letters.'
+            )
+                // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
+                .required('Category Name is Required'),
             // type: yup.string().required('Type is Required'),
-            seo_description: yup.string().max(100, 'Maximum Character Exceeds'),
-       
+            // seo_description: yup.string().max(100, 'Maximum Character Exceeds'),
+            order_number: yup.string().matches(orderValidation, 'Order should be number'),
             image: yup
                 .mixed()
                 .required('Image is Required')
         })
-        .required();
+  
 
 
     const { register,
@@ -76,9 +87,33 @@ const CategoryForm = ({ resData, view }: props) => {
             defaultValues: {
                 name: '',
                 seo_description: '',
-                order_number: null
+                order_number: ''
             }
         });
+
+
+
+
+    const getCategory = async () => {
+        try {
+            setLoader(true)
+            const response = await fetchData(`admin/category/show/${idd}`)
+            setCategoryList(response?.data?.data)
+        } catch (err: any) {
+            toast.success(err.message)
+            setLoader(false)
+        } finally {
+            setLoader(false)
+        }
+    }
+
+
+    useEffect(() => {
+        if (idd) {
+            getCategory()
+        }
+    }, [idd])
+
 
 
     const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,8 +150,8 @@ const CategoryForm = ({ resData, view }: props) => {
 
         setLoading(true)
         const formData = new FormData();
-        if (resData) {
-            formData.append("id", resData?._id);
+        if (CategoryList) {
+            formData.append("id", CategoryList?._id);
         }
         formData.append("name", data?.name);
         formData.append("order_number", data?.order_number ? data?.order_number : null);
@@ -127,11 +162,11 @@ const CategoryForm = ({ resData, view }: props) => {
         // formData.append("seo_title", data?.name);
         formData.append("seo_description", data?.seo_description);
         try {
-            await postData(resData ? URL_EDIT : URL_CREATE, formData)
+            await postData(idd ? URL_EDIT : URL_CREATE, formData)
             reset();
             setImagefile(null)
             setImagePreview(null)
-            toast.success(resData ? 'Updated Successfully' : 'Created Successfully')
+            toast.success(idd ? 'Updated Successfully' : 'Created Successfully')
             router.push('/category')
         } catch (err: any) {
             toast.error(err?.message)
@@ -145,17 +180,21 @@ const CategoryForm = ({ resData, view }: props) => {
 
 
     useEffect(() => {
-        if (resData || view) {
-            let data = resData ? resData : view;
-            setValue('name', data?.name)
-            setValue('order_number', data?.order_number)
-            setValue('seo_description', data?.seo_description)
-            setValue('seo_title', data?.seo_title)
-            setValue('image', data?.image)
-            setImagePreview(`${IMAGE_URL}${data?.image}`)
-        }
-    }, [resData || view])
+        if (CategoryList) {
 
+            setValue('name', CategoryList?.name)
+            setValue('order_number', CategoryList?.order_number)
+            setValue('seo_description', CategoryList?.seo_description)
+            setValue('seo_title', CategoryList?.seo_title)
+            setValue('image', CategoryList?.image)
+            setImagePreview(`${IMAGE_URL}${CategoryList?.image}`)
+        }
+    }, [CategoryList])
+
+
+    if (loader) {
+        return <><CustomLoader /></>
+    }
 
     return (
         <Box>
@@ -248,7 +287,7 @@ const CategoryForm = ({ resData, view }: props) => {
                         </Grid>}
                     {view &&
                         <Grid item xs={12} lg={2.5}>
-                            <Avatar variant='square' src={`${IMAGE_URL}${view?.image}`} sx={{ width: '100%', height: 130 }} />
+                            <Avatar variant='square' src={`${IMAGE_URL}${CategoryList?.image}`} sx={{ width: '100%', height: 130 }} />
                         </Grid>}
 
                 </Grid>

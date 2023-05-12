@@ -3,9 +3,10 @@ import React from 'react'
 import CustomInputNormal from '@/components/CustomInputNormal'
 import TagInput from '@/components/TagInput'
 import CustomCheckBox from '@/components/CustomCheckBox';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 
-const Attributes = ({item, index, onChange, enableVariant}) => {
+const Attributes = ({item, index, onChange, enableVariant, removeAttributes}) => {
 
     console.log({item},'ITEM IN ')
 
@@ -33,6 +34,9 @@ const Attributes = ({item, index, onChange, enableVariant}) => {
         <Grid item xs={12} lg={2}>
             <CustomCheckBox isChecked={item.variant} label='' onChange={(e) => enableVariant(e, index)} title='Add Variant' />
         </Grid>
+        {removeAttributes && <Grid item xs={12} lg={2} display={"flex"} alignItems={"center"}>
+            <DeleteOutlineIcon style={{ color: 'red' }} onClick={removeAttributes} />
+        </Grid>}
     </Grid>
   )
 }

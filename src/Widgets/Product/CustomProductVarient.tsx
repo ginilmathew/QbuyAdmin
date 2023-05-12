@@ -13,7 +13,8 @@ type props = {
     state: any,
     deafultCommission: string,
     onChange: any,
-    view?: any
+    view?: any,
+    stock: boolean
 }
 
 type Input = {
@@ -30,7 +31,7 @@ type Input = {
 }
 
 
-const CustomProductVarient = memo(({ content, index, deafultCommission, onChange, state, view }: props) => {
+const CustomProductVarient = memo(({ content, index, deafultCommission, onChange, state, view, stock }: props) => {
 
     console.log({ state })
 
@@ -44,42 +45,8 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
             defaultValues: content
         });
 
+
 console.log({state:state?.[index]?.offer_date_from})
-    // const onChangeSellingPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     state[index].attributs = content.split(" ")
-    //     state[index].regular_price = e.target.value;
-    // }
-
-    // const onChangeOfferPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     state[index].offer_price = e.target.value;
-
-    // }
-
-    // const onChangePurchasePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     state[index].seller_price = e.target.value;
-    // }
-
-    // const onChangeStock = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     state[index].stock_value = e.target.value;
-    // }
-
-    // const onChangeOffer_date_from = (e: any) => {
-    //     setValue('offer_date_from', e)
-    //     state[index].offer_date_from = moment(e, 'DD-MM-YYYY').format('YYYY-MM-DD');
-    // }
-
-    // const onChangeOffer_date_to = (e: any) => {
-    //     setValue('offer_date_to', e)
-    //     state[index].offer_date_to = moment(e, 'DD-MM-YYYY').format('YYYY-MM-DD');
-
-    // }
-    // const onChangeCommision = (e: any) => {
-    //     state[index].commission = e.target.value;
-
-    // }
-    // const onChangefixed_delivery_price = (e: any) => {
-    //     state[index].fixed_delivery_price = e.target.value;
-    // }
 
     return (
         <Box>
@@ -125,7 +92,7 @@ console.log({state:state?.[index]?.offer_date_from})
                         placeholder={''}
                         fieldLabel={"Commission(%)"}
                         view={view ? true : false}
-                        defaultValue={deafultCommission ? deafultCommission : 0}
+                        defaultValue={state[index]?.commission ? state[index]?.commission   : 0}
                     />
                 </Grid>
                 <Grid item lg={1.5} xs={12}>
@@ -159,7 +126,7 @@ console.log({state:state?.[index]?.offer_date_from})
                     < DatePickers
                         defaultvalue={state?.[index]?.offer_date_from}
                         values={getValues('offer_date_from')}
-                        changeValue={(e: any) => onChange(moment(e, 'YYYY-MM-DD').format('YYYY-MM_DD'), 'offer_date_from')}
+                        changeValue={(e: any) => onChange(moment(e, 'YYYY-MM-DD').format('YYYY-MM-DD'), 'offer_date_from')}
                         fieldName='offer_date_from'
                         error={errors.offer_date_from}
                         fieldLabel={'Offer From'}
@@ -177,7 +144,7 @@ console.log({state:state?.[index]?.offer_date_from})
                         fieldLabel={'Offer To'}
                     />
                 </Grid>
-                <Grid item lg={1.5} xs={12}>
+                {stock && <Grid item lg={1.5} xs={12}>
                     <CustomInputNormal
                         onChangeValue={(e: any) => onChange(e.target.value, 'stock_value')}
                         disabled={false}
@@ -189,7 +156,7 @@ console.log({state:state?.[index]?.offer_date_from})
                         view={view ? true : false}
                         defaultValue={state[index]?.stock_value}
                     />
-                </Grid>
+                </Grid>}
             </Grid>
         </Box>
     )

@@ -49,7 +49,9 @@ export const CustomMultipleImageUploader = ({ fieldLabel, onChangeImage, state }
                     dragProps,
                     errors
                 }) => (
+               
                     <Box >
+                        
                         <Box py={1} display={'flex'} justifyContent={'space-between'}>
                             <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
                                 sx={{
@@ -90,6 +92,11 @@ export const CustomMultipleImageUploader = ({ fieldLabel, onChangeImage, state }
                                 ))}
                             </Box>
                         </Box>
+                        {errors && 
+                        <>
+                        {errors?.maxNumber && <span style={{fontSize:'12px',color:'red'}} >Number of selected images exceed maxNumber</span>}
+                          {errors?.maxFileSize && <span style={{fontSize:'12px',color:'red'}} >Selected file size exceed maxFileSize(1MB)</span>}
+                        </>}
                     </Box>
                      
                     
