@@ -34,7 +34,7 @@ export const authOptions = {
 
 				//console.log({ payload })
 
-				const res = await fetch(`https://apiqbuypanda.diginestsolutions.in/public/api/auth/login`, {
+				const res = await fetch(`${process.env.NEXT_BASE_URL}auth/login`, {
 					method: 'POST',
 					body: JSON.stringify(payload),
 					headers: {
