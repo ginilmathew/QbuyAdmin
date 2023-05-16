@@ -1,6 +1,5 @@
 import '@/styles/globals.css'
 import Header from '@/Widgets/Header';
-import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import { Poppins } from 'next/font/google';
 import { StandaloneSearchBox, LoadScript } from "@react-google-maps/api";
@@ -14,23 +13,17 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SessionProvider, useSession } from "next-auth/react"
 import HeaderProvider from '@/helpers/header/HeaderContext';
-import type { NextComponentType  } from 'next'
 
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['200', '600', '700']
 })
+export default function App({ Component, pageProps : { session, ...pageProps } }) {
 
-type CustomAppProps = AppProps & {
-	Component: NextComponentType & {auth?: boolean} // add auth type
-}
+  //const router = useRouter();
+  //const showHeader = (router.pathname === '/login' || router.pathname === "/404") ? false : true;
 
-export default function App({ Component, pageProps : { session, ...pageProps } }: CustomAppProps) {
-
-  const router = useRouter();
-  const showHeader = (router.pathname === '/login' || router.pathname === "/404") ? false : true;
-
-  const [isLoading, setLoading] = React.useState(false);
+  //const [isLoading, setLoading] = React.useState(false);
 
 //   useEffect(() => {
 //     const handleStart = () => setLoading(true);
@@ -50,13 +43,13 @@ export default function App({ Component, pageProps : { session, ...pageProps } }
 
   return <main className={poppins.className}>
 
-    {isLoading && showHeader && (
+    {/* {isLoading && showHeader && (
       <Stack sx={{ width: '100%', color: 'grey.500' }} >
         <LinearProgress color="success" />
       </Stack>
-    )}
+    )} */}
     <SessionProvider session={session}>
-      <UserProvider>
+      
         
           <LoadScript
             id="script-loader"
@@ -81,7 +74,6 @@ export default function App({ Component, pageProps : { session, ...pageProps } }
 			</ProtectedRoute> */}
             <ToastContainer />
           </LoadScript>
-      </UserProvider>
     </SessionProvider>
     {/* </LoadScript> */}
   </main>

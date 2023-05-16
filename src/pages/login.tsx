@@ -161,4 +161,8 @@ const Login = () => {
     )
 }
 
+
+
 export default Login
+
+Login.auth = true

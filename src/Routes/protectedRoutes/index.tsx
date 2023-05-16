@@ -18,7 +18,12 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     const router = useRouter()
     const userContext = useContext(UserContext);
 
-    const { data: session, status } = useSession()
+    const { data: session, status } = useSession({
+        required: true,
+        onUnauthenticated() {
+            router.push('/login')
+        },
+      })
 
     useEffect(() => {
 
@@ -31,10 +36,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
                 getProfile(details?._id)
      
             }
-            // else {
-            //     console.log('CATCH INNN ')
-
-            // }
 
         } catch (err) {
             router.push('/login')
@@ -67,6 +68,15 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     //         setLoading(false)
     //     }
     // }, [])
+
+    if(status === "loading"){
+        return(
+            <div>Loading...</div>
+        )
+    }
+
+    
+
 
     return <>
         {children}
