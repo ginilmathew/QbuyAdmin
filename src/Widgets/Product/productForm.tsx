@@ -1049,6 +1049,19 @@ const ProductForm = ({ res, view }: props) => {
         varientarrayfilter = varientsarray?.length > 0 && varientsarray?.filter((vari: any) => vari.seller_price !== '')
 
 
+
+        let varrientsWithDate = []
+        if (varientsarray) {
+            varrientsWithDate = varientsarray?.map((res: any) => ({
+                ...res,
+                offer_date_from: moment(res?.offer_date_from).format('YYYY-MM-DD'),
+                offer_date_to: moment(res?.offer_date_to).format('YYYY-MM-DD')
+            }))
+        }
+
+
+   
+
         const CREATE_URL = '/admin/product/create'
         const EDIT_URL = 'admin/product/update'
 
@@ -1106,7 +1119,7 @@ const ProductForm = ({ res, view }: props) => {
             offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             variant: varientsarray?.length > 0 ? true : false,
-            variants: varientsarray,
+            variants: varrientsWithDate?.length > 0 ? varrientsWithDate : null,
             approval_status: "approved"
         }
         if (productList) {
