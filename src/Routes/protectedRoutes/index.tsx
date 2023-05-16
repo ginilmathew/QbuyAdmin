@@ -18,18 +18,26 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     const router = useRouter()
     const userContext = useContext(UserContext);
 
-    const { data: session, status } = useSession()
+    const { data: session, status } = useSession({
+        required: true,
+        onUnauthenticated() {
+            router.push('/login')
+        },
+      })
 
     useEffect(() => {
-        if (session) {
-            let details = JSON.parse(JSON.stringify(session.user))
 
-            localStorage.setItem("token", details?.accessToken)
-            getProfile(details?._id)
-            console.log({ details }, 'DETAILS INNN ')
-        }
-        else {
-            console.log('CATCH INNN ')
+
+        try {
+            if (session) {
+                let details = JSON.parse(JSON.stringify(session.user))
+
+                localStorage.setItem("token", details?.accessToken)
+                getProfile(details?._id)
+     
+            }
+
+        } catch (err) {
             router.push('/login')
         }
     }, [session])
@@ -60,6 +68,15 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     //         setLoading(false)
     //     }
     // }, [])
+
+    if(status === "loading"){
+        return(
+            <div>Loading...</div>
+        )
+    }
+
+    
+
 
     return <>
         {children}

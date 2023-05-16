@@ -42,22 +42,22 @@ export async function getServerSideProps({ req, res }: props) {
 
     const data = await resu.json();
 
-    
-   
+
+
     // Pass data to the page via props
-    return { props: { data : data } };
+    return { props: { data: data } };
 }
 
-const Franchise = ({data} : datapr) => {
+const Franchise = ({ data }: datapr) => {
 
     //console.log({user: user})
 
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(false);
-    const [franchiseList, setFranchiseList] = useState<any>([]);
+    const [franchiseList, setFranchiseList] = useState<any>(data ? data?.data : []);
     const [_id, set_id] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);
-    const [serachList, setSearchList] = useState<any>([])
+    const [serachList, setSearchList] = useState<any>(data ? data?.data : [])
     const [pending, startTransition] = useTransition();
 
 
@@ -81,6 +81,8 @@ const Franchise = ({data} : datapr) => {
         router.push(`/franchise/view/${id}`)
 
     }
+
+    console.log({ franchiseList })
 
     const columns: GridColDef[] = [
         {
@@ -114,9 +116,9 @@ const Franchise = ({data} : datapr) => {
             headerAlign: 'center',
             align: 'center',
             renderCell: ({ row }) => (
-            <Typography
-                sx={{ fontFamily: `'Poppins' sans-serif`,fontSize:14 ,color:'#939393'}}
-            >{row?.mobile}</Typography>)
+                <Typography
+                    sx={{ fontFamily: `'Poppins' sans-serif`, fontSize: 14, color: '#939393' }}
+                >{row?.mobile}</Typography>)
 
         },
         {
@@ -127,19 +129,19 @@ const Franchise = ({data} : datapr) => {
             align: 'center',
 
         },
-        {
-            field: 'address',
-            headerName: 'Address',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-            renderCell: ({ row }) => (
-                <Typography
-                    sx={{ fontFamily: `'Poppins' sans-serif`,fontSize:14 ,color:'#939393'}}
-                >{row?.address ? row?.address : '-'}</Typography>)
-    
+        // {
+        //     field: 'address',
+        //     headerName: 'Address',
+        //     flex: 1,
+        //     headerAlign: 'center',
+        //     align: 'center',
+        //     renderCell: ({ row }) => (
+        //         <Typography
+        //             sx={{ fontFamily: `'Poppins' sans-serif`, fontSize: 14, color: '#939393' }}
+        //         >{row?.address ? row?.address : '-'}</Typography>)
 
-        },
+
+        // },
         {
             field: 'Status',
             headerName: 'Status',
@@ -218,13 +220,20 @@ const Franchise = ({data} : datapr) => {
 
     const OnchangeCheck = async (e: any, id: string) => {
 
+        const { checked } = e.target;
+
+ 
+
         let value = {
             id: id,
             status: e.target.checked === true ? "active" : "inactive"
         }
         try {
             setLoading(true)
-            await postData('admin/franchise/status', value)
+            const response = await postData('admin/franchise/status', value)
+
+
+
             getFranchiseList()
         }
         catch (err: any) {
@@ -275,7 +284,7 @@ const Franchise = ({data} : datapr) => {
             <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchfranchise} addbtn={true} imprtBtn={false} Headerlabel='Franchisee' onClick={addvaendor} />
                 <Box py={3}>
-                    <CustomTable dashboard={false} columns={columns} rows={data?.data} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={franchiseList ? franchiseList : [] } id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
 

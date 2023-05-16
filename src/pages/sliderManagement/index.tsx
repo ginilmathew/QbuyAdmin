@@ -192,7 +192,7 @@ const SliderManagement = () => {
             <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchVendor} imprtBtn={false} Headerlabel='Slider Management' onClick={addSlider} addbtn={true} />
                 <Box py={5}>
-                    <CustomTable dashboard={false} columns={columns} rows={sliderList} id={"_id"} bg={"#ffff"} rowheight={80} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={sliderList ? sliderList : []} id={"_id"} bg={"#ffff"} rowheight={80} label='Recent Activity' />
                 </Box>
             </Box>
             {open && <CustomDelete

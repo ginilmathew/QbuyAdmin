@@ -148,7 +148,7 @@ console.log({state:state?.[index]?.offer_date_from})
                     <CustomInputNormal
                         onChangeValue={(e: any) => onChange(e.target.value, 'stock_value')}
                         disabled={false}
-                        type='text'
+                        type='number'
                         error={errors.stock_value}
                         fieldName="stock_value"
                         placeholder={``}

@@ -73,7 +73,8 @@ type Inputs = {
     stock_values: string,
     application_type: string,
     commission: any,
-    fixed_delivery_price: any
+    fixed_delivery_price: any,
+    thumbnail: any
 }
 
 type IFormInput = {
@@ -116,7 +117,8 @@ type IFormInput = {
     stock_values: string,
     application_type: string,
     commission: any,
-    fixed_delivery_price: any
+    fixed_delivery_price: any,
+    thumbnail: any
 }
 
 type props = {
@@ -137,8 +139,10 @@ const ProductForm = ({ res, view }: props) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [loader, setLoader] = useState<boolean>(false)
     const [stock, setStock] = useState<boolean>(false)
-    const [imagePreview, setImagePreview] = useState<any>(null)
+    const [imagePreview, setImagePreview] = useState<any>(null);
+    const [thumbnailPreview, setthumbnailPreview] = useState<any>(null);
     const [imagefile, setImagefile] = useState<null | File>(null)
+    const [thumbnailfile, setThumbnailFile] = useState<null | File>(null)
     const [attributes, setAttributes] = useState<any>([])
     const [metaTag, setMetaTag] = useState<any>([])
     const [attributeTag, setattributeTag] = useState<any>([])
@@ -164,9 +168,9 @@ const ProductForm = ({ res, view }: props) => {
     const [productList, setProductList] = useState<any>(null);
     const [offerDate_from, setOffer_Date_from] = useState<any>(null);
     const [offerDate_to, setOffer_Date_to] = useState<any>(null);
-  
 
-    console.log({ productList })
+
+    console.log({ thumbnailfile })
 
     const orderValidation = /^[0-9]*$/
     const schema = yup
@@ -233,7 +237,7 @@ const ProductForm = ({ res, view }: props) => {
                 product_availability_from: null,
                 product_availability_to: null,
                 fixed_delivery_price: 0,
-                commission:0
+                commission: 0
 
             }
         });
@@ -313,6 +317,37 @@ const ProductForm = ({ res, view }: props) => {
 
 
     }
+
+
+    // const imageUploderThumbnail = async (file: any) => {
+    //     console.log('IMAGE ON CHANGE')
+    //     console.log({ file },'FGOT FILE')
+    //     if (file.size <= 1000000) {
+    //         setThumbnailFile(file)
+    //         setthumbnailPreview(null)
+    //         setValue('thumbnail', file)
+    //         setError('thumbnail', { message: '' })
+    //         // const formData = new FormData();
+    //         // formData.append("image", file);
+    //         // try {
+    //         //     setLoading(true)
+    //         //     const response = await postData('admin/product/uploadimage', formData)
+    //         //     setValue('product_image', response?.data?.data)
+    //         //     setError('product_image', { message: '' })
+    //         // } catch (err: any) {
+    //         //     toast.error(err?.message)
+    //         //     setLoading(false)
+    //         // } finally {
+    //         //     setLoading(false)
+    //         // }
+    //     } else {
+    //         setthumbnailPreview(null)
+    //         setThumbnailFile(null)
+    //         toast.warning('Image should be less than or equal 1MB')
+    //     }
+
+
+    // }
 
     const multipleImageUploder = async (image: any) => {
         setMultipleImage(image)
@@ -495,7 +530,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const onChangeOffer_date_from = (e: any) => {
         setOffer_Date_from(e)
-      
+
         setValue('offer_date_from', e)
     }
 
@@ -571,7 +606,7 @@ const ProductForm = ({ res, view }: props) => {
             })
             setPaths(paths)
             setValue('delivery_locations', productList?.delivery_locations)
-          
+
             setValue('product_availability_from', moment(productList?.product_availability_from,))
             setValue('product_availability_to', moment(productList?.product_availability_to, 'HH:mm'))
             setValue('require_shipping', productList?.require_shipping)
@@ -625,7 +660,7 @@ const ProductForm = ({ res, view }: props) => {
                     setVarientsArray(myvaarientArray)
                 })
             }
-            setValue('commission',productList?.commission)
+            setValue('commission', productList?.commission)
             setValue('regular_price', productList?.regular_price)
             setValue('seller_price', productList?.seller_price)
             setValue('offer_price', productList?.offer_price)
@@ -765,7 +800,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const addvarients = () => {
 
-        console.log({ attributes })
+
 
         if (attributes?.some((res: any) => res?.variant === true)) {
             const output = [];
@@ -902,7 +937,7 @@ const ProductForm = ({ res, view }: props) => {
         else {
             let varicheck = varientsarray?.find((vari: any) => isEmpty(vari?.seller_price) || isNaN(vari?.seller_price) || (isNumber(vari?.seller_price) && vari?.seller_price >= 0))
             if (varicheck) {
-                console.log({ varicheck, varientsarray })
+                // console.log({ varicheck, varientsarray })
                 toast.warning("All variants mush have price. Please update price and continue")
                 return false;
             }
@@ -917,7 +952,10 @@ const ProductForm = ({ res, view }: props) => {
                 }
 
                 if (stock) {
-                    let stockValue = varientsarray?.find((vari: any) => isEmpty(vari?.stock_value) || isNaN(vari?.stock_value) || (isNumber(vari?.stock_value) && parseInt(vari?.stock_value) <= 0))
+                    let stockValue = varientsarray?.find((vari: any) => isEmpty(vari?.stock_value) || isNaN(vari?.stock_value) || parseInt(vari?.stock_value) <= 0) 
+               
+                    //  console.log({stockValue})
+                    //  console.log({varientsarray})
                     if (stockValue) {
                         toast.warning("Stock value required for all variants")
                         return false;
@@ -1014,6 +1052,19 @@ const ProductForm = ({ res, view }: props) => {
         varientarrayfilter = varientsarray?.length > 0 && varientsarray?.filter((vari: any) => vari.seller_price !== '')
 
 
+
+        let varrientsWithDate = []
+        if (varientsarray) {
+            varrientsWithDate = varientsarray?.map((res: any) => ({
+                ...res,
+                offer_date_from: moment(res?.offer_date_from).format('YYYY-MM-DD'),
+                offer_date_to: moment(res?.offer_date_to).format('YYYY-MM-DD')
+            }))
+        }
+
+
+   
+
         const CREATE_URL = '/admin/product/create'
         const EDIT_URL = 'admin/product/update'
 
@@ -1071,7 +1122,7 @@ const ProductForm = ({ res, view }: props) => {
             offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             variant: varientsarray?.length > 0 ? true : false,
-            variants: varientsarray,
+            variants: varrientsWithDate?.length > 0 ? varrientsWithDate : null,
             approval_status: "approved"
         }
         if (productList) {
@@ -1469,6 +1520,26 @@ const ProductForm = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
+                    {/* <Grid item xs={12} lg={3}>
+                        <CustomImageUploader
+                            ICON={""}
+                            viewImage={thumbnailPreview}
+                            error={errors.thumbnail}
+                            fieldName="thumbnail"
+                            placeholder={``}
+                            fieldLabel={"Thumbnail"}
+                            control={control}
+                            height={130}
+                            max={5}
+                            onChangeValue={imageUploderThumbnail}
+                            preview={thumbnailfile}
+                            previewEditimage={""}
+                            type={"file"}
+                            background="#e7f5f7"
+                            myid="contained-button-file"
+                            width={"100%"}
+                        />
+                    </Grid> */}
                     <Grid item xs={12} lg={6}>
 
                         {/* this only in edit image code ************************************** */}

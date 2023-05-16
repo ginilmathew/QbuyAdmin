@@ -85,7 +85,7 @@ const CustomImageUploader = ({
                                     type={'file'}
                                     id={myid}
                                     inputProps={{accept:"image/png, image/jpeg"}}
-                                    onChange={onChangeValue ? (e: any) => onChangeValue(e.target.files[0]) : onChange}
+                                    onChange={onChangeValue ? (e: any) =>  onChangeValue(e.target.files[0]) : onChange}
                                 />
                                 <BackupIcon style={{
                                     color: "#58D36E",

@@ -12,34 +12,39 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { SessionProvider } from "next-auth/react"
+import { SessionProvider, useSession } from "next-auth/react"
 import HeaderProvider from '@/helpers/header/HeaderContext';
+import type { NextComponentType  } from 'next'
+
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['200', '600', '700']
 })
 
+type CustomAppProps = AppProps & {
+	Component: NextComponentType & {auth?: boolean} // add auth type
+}
 
+export default function App({ Component, pageProps : { session, ...pageProps } }: CustomAppProps) {
 
-export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const showHeader = (router.pathname === '/login' || router.pathname === "/404") ? false : true;
 
   const [isLoading, setLoading] = React.useState(false);
 
-  useEffect(() => {
-    const handleStart = () => setLoading(true);
-    const handleComplete = () => setLoading(false);
+//   useEffect(() => {
+//     const handleStart = () => setLoading(true);
+//     const handleComplete = () => setLoading(false);
 
-    Router.events.on('routeChangeStart', handleStart);
-    Router.events.on('routeChangeComplete', handleComplete);
-    Router.events.on('routeChangeError', handleComplete);
-    return () => {
-      Router.events.off('routeChangeStart', handleStart);
-      Router.events.off('routeChangeComplete', handleComplete);
-      Router.events.off('routeChangeError', handleComplete);
-    };
-  }, []);
+//     Router.events.on('routeChangeStart', handleStart);
+//     Router.events.on('routeChangeComplete', handleComplete);
+//     Router.events.on('routeChangeError', handleComplete);
+//     return () => {
+//       Router.events.off('routeChangeStart', handleStart);
+//       Router.events.off('routeChangeComplete', handleComplete);
+//       Router.events.off('routeChangeError', handleComplete);
+//     };
+//   }, []);
 
 
 
@@ -50,9 +55,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <LinearProgress color="success" />
       </Stack>
     )}
-    <SessionProvider session={pageProps.session}>
+    <SessionProvider session={session}>
       <UserProvider>
-        <ProtectedRoute>
+        
           <LoadScript
             id="script-loader"
             googleMapsApiKey={`${process.env.NEXT_PUBLIC_GOOGLEKEY}`}
@@ -60,11 +65,22 @@ export default function App({ Component, pageProps }: AppProps) {
             region="us"
             libraries={["drawing"]}
           >
-            {showHeader && <Header />}
+			{Component.auth ? (
+                <Component {...pageProps} />
+			) : (
+				<ProtectedRoute>
+                    <UserProvider>
+                        <Header />
+                        <Component {...pageProps} />
+                    </UserProvider>
+                </ProtectedRoute>
+			)}
+			{/* <ProtectedRoute>
+            
             <Component {...pageProps} />
+			</ProtectedRoute> */}
             <ToastContainer />
           </LoadScript>
-        </ProtectedRoute>
       </UserProvider>
     </SessionProvider>
     {/* </LoadScript> */}
