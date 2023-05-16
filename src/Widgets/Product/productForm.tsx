@@ -800,7 +800,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const addvarients = () => {
 
-        console.log({ attributes })
+
 
         if (attributes?.some((res: any) => res?.variant === true)) {
             const output = [];
@@ -937,7 +937,7 @@ const ProductForm = ({ res, view }: props) => {
         else {
             let varicheck = varientsarray?.find((vari: any) => isEmpty(vari?.seller_price) || isNaN(vari?.seller_price) || (isNumber(vari?.seller_price) && vari?.seller_price >= 0))
             if (varicheck) {
-                console.log({ varicheck, varientsarray })
+                // console.log({ varicheck, varientsarray })
                 toast.warning("All variants mush have price. Please update price and continue")
                 return false;
             }
@@ -952,7 +952,10 @@ const ProductForm = ({ res, view }: props) => {
                 }
 
                 if (stock) {
-                    let stockValue = varientsarray?.find((vari: any) => isEmpty(vari?.stock_value) || isNaN(vari?.stock_value) || (isNumber(vari?.stock_value) && parseInt(vari?.stock_value) <= 0))
+                    let stockValue = varientsarray?.find((vari: any) => isEmpty(vari?.stock_value) || isNaN(vari?.stock_value) || parseInt(vari?.stock_value) <= 0) 
+               
+                    //  console.log({stockValue})
+                    //  console.log({varientsarray})
                     if (stockValue) {
                         toast.warning("Stock value required for all variants")
                         return false;

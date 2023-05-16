@@ -129,19 +129,19 @@ const Franchise = ({ data }: datapr) => {
             align: 'center',
 
         },
-        {
-            field: 'address',
-            headerName: 'Address',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-            renderCell: ({ row }) => (
-                <Typography
-                    sx={{ fontFamily: `'Poppins' sans-serif`, fontSize: 14, color: '#939393' }}
-                >{row?.address ? row?.address : '-'}</Typography>)
+        // {
+        //     field: 'address',
+        //     headerName: 'Address',
+        //     flex: 1,
+        //     headerAlign: 'center',
+        //     align: 'center',
+        //     renderCell: ({ row }) => (
+        //         <Typography
+        //             sx={{ fontFamily: `'Poppins' sans-serif`, fontSize: 14, color: '#939393' }}
+        //         >{row?.address ? row?.address : '-'}</Typography>)
 
 
-        },
+        // },
         {
             field: 'Status',
             headerName: 'Status',
