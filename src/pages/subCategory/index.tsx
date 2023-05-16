@@ -149,7 +149,7 @@ const SubCategory = () => {
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchProducts} imprtBtn={false} Headerlabel='SubCategory' onClick={addSubCategory} addbtn={true} />
                 <Box py={3}>
-                    <CustomTable dashboard={false} columns={columns} rows={subCategoryList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={subCategoryList ? subCategoryList : []} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
             {open && <CustomDelete

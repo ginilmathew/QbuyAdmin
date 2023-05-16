@@ -232,7 +232,7 @@ const VendorSignup = ({data}: datapr) => {
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchVendor} addbtn={true} imprtBtn={false} Headerlabel='Vendor Signup' onClick={addvaendor} />
                 <Box py={3}>
-                    <CustomTable dashboard={false} columns={columns} rows={vendorList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={vendorList ? vendorList : []} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
             {open && <CustomDelete

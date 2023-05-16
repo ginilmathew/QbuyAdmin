@@ -144,7 +144,7 @@ const CategoryManagement = () => {
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchProducts} imprtBtn={false} Headerlabel='Category Management' onClick={addvaendor} addbtn={true} />
                 <Box py={3}>
-                    <CustomTable dashboard={false} columns={columns} rows={categoryList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={categoryList ? categoryList : []} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
             {open && <CustomDelete

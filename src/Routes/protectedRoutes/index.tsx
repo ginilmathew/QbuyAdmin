@@ -29,7 +29,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
                 localStorage.setItem("token", details?.accessToken)
                 getProfile(details?._id)
-                console.log({ details }, 'DETAILS INNN ')
+     
             }
             // else {
             //     console.log('CATCH INNN ')
@@ -38,7 +38,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
         } catch (err) {
             router.push('/login')
-        } 
+        }
     }, [session])
 
 

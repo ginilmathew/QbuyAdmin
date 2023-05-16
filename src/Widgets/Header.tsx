@@ -91,8 +91,8 @@ const Header = () => {
 
 		await localStorage.clear();
 		userContext.setUser(null)
-		signOut()
-		//router.push('/login')
+		signOut({ callbackUrl: "/login" })
+		// router.push('/login')
 	}, [])
 
 

@@ -284,7 +284,7 @@ const Franchise = ({ data }: datapr) => {
             <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchfranchise} addbtn={true} imprtBtn={false} Headerlabel='Franchisee' onClick={addvaendor} />
                 <Box py={3}>
-                    <CustomTable dashboard={false} columns={columns} rows={franchiseList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={franchiseList ? franchiseList : [] } id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
 
