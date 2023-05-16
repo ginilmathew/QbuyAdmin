@@ -12,7 +12,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { SessionProvider } from "next-auth/react"
+import { SessionProvider, useSession } from "next-auth/react"
 import HeaderProvider from '@/helpers/header/HeaderContext';
 const poppins = Poppins({
   subsets: ['latin'],
@@ -22,6 +22,7 @@ const poppins = Poppins({
 
 
 export default function App({ Component, pageProps }: AppProps) {
+
   const router = useRouter();
   const showHeader = (router.pathname === '/login' || router.pathname === "/404") ? false : true;
 
@@ -60,7 +61,7 @@ export default function App({ Component, pageProps }: AppProps) {
             region="us"
             libraries={["drawing"]}
           >
-            {showHeader && <Header />}
+            {showHeader  && <Header />}
             <Component {...pageProps} />
             <ToastContainer />
           </LoadScript>
