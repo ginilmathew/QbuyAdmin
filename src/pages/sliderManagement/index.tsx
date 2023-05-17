@@ -14,15 +14,55 @@ import moment from 'moment'
 import { fetchData, postData } from '@/CustomAxios';
 import Image from 'next/image';
 import { IMAGE_URL } from '@/Config';
-const SliderManagement = () => {
+import { getServerSession } from "next-auth/next"
+import { authOptions } from '../api/auth/[...nextauth]'
+
+
+type props = {
+    req: any,
+    res: any
+}
+
+type datapr = {
+    data: any
+}
+
+// This gets called on every request
+export async function getServerSideProps({ req, res }: props) {
+    // Fetch data from external API
+    //const res = await fetch(`https://.../data`);
+    //const data = await res.json();
+
+    let session = await getServerSession(req, res, authOptions)
+
+    let token = session?.user?.accessToken
+
+    const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/slider/list/${process.env.NEXT_PUBLIC_TYPE}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+
+    const data = await resu.json();
+
+
+
+    // Pass data to the page via props
+    return { props: { data: data } };
+}
+
+
+const SliderManagement = ({ data }: datapr) => {
     const router = useRouter()
 
 
     const [open, setOpen] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false);
-    const [sliderList, setSliderList] = useState<any>([])
+    const [sliderList, setSliderList] = useState<any>(data ? data?.data : [])
     const [_id, set_id] = useState<string>('');
-    const [serachList, setSearchList] = useState<any>([])
+    const [serachList, setSearchList] = useState<any>(data ? data?.data : [])
     const [pending, startTransition] = useTransition();
 
     console.log({ sliderList })
@@ -180,9 +220,9 @@ const SliderManagement = () => {
         }
     }
 
-    useEffect(() => {
-        getSlider()
-    }, [])
+    // useEffect(() => {
+    //     getSlider()
+    // }, [])
 
 
 
