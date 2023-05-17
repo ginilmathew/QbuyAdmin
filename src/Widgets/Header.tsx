@@ -96,9 +96,6 @@ const Header = () => {
   }, [])
 
 
-  if (!session) {
-    return null;
-  }
 
 
   return (
