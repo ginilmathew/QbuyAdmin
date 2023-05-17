@@ -5,10 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "startgreenlive": "next start -p 3002",
-    "startfashionlive": "next start -p 3001",
-    "startgreendev": "next start -p 3004",
-    "startfashiondev": "next start -p 3003",
+    "start": "next start -p 3003",
     "lint": "next lint"
   },
   "dependencies": {
