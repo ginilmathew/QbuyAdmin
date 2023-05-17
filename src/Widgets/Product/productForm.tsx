@@ -919,11 +919,12 @@ const ProductForm = ({ res, view }: props) => {
                 else if (data?.offer_price <= 0) {
                     setError("offer_price", { type: 'custom', message: 'Offer price must be a greater than 0' })
                     return false;
-                } else if (!data?.offer_date_from || !data?.offer_date_to) {
-                    toast.warning("Offer From date and to date required")
-                    return false;
+                } 
+                // else if (!data?.offer_date_from || !data?.offer_date_to) {
+                //     toast.warning("Offer From date and to date required")
+                //     return false;
 
-                }
+                // }
 
             }
 
@@ -942,14 +943,14 @@ const ProductForm = ({ res, view }: props) => {
                 return false;
             }
             else {
-                let offer = varientsarray?.filter((vari: any) => !isEmpty(vari?.offer_price))
-                if (offer) {
-                    let offerpr = offer?.find((off: any) => !off.offer_date_from || !off?.offer_date_to);
-                    if (offerpr) {
-                        toast.warning("Offer From date and to date required")
-                        return false;
-                    }
-                }
+                // let offer = varientsarray?.filter((vari: any) => !isEmpty(vari?.offer_price))
+                // if (offer) {
+                //     let offerpr = offer?.find((off: any) => !off.offer_date_from || !off?.offer_date_to);
+                //     if (offerpr) {
+                //         toast.warning("Offer From date and to date required")
+                //         return false;
+                //     }
+                // }
 
                 if (stock) {
                     let stockValue = varientsarray?.find((vari: any) => isEmpty(vari?.stock_value) || isNaN(vari?.stock_value) || parseInt(vari?.stock_value) <= 0) 
