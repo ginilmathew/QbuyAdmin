@@ -15,8 +15,8 @@ type props = {
 
 const ShippingTable = ({ res }: props) => {
 
-console.log({res})
-  
+  console.log({ res })
+
   return (
     <Box>
       <TableContainer component={Paper} >
@@ -37,17 +37,19 @@ console.log({res})
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.productdata?.name}
+
+                  
+                  {row.productdata?.name}  {row.variants ? row.variants?.title : '' }
                 </TableCell>
                 <TableCell align="center">{row.productdata?.store?.name}</TableCell>
                 <TableCell align="center">{row.quantity}</TableCell>
                 <TableCell align="center">{row?.unitPrice}</TableCell>
-                <TableCell align="center">{row?.quantity * row?.price}</TableCell>
+                <TableCell align="center">{row?.quantity * row?.unitPrice}</TableCell>
               </TableRow>
             ))}
             <TableRow >
-            <TableCell rowSpan={5} />
-              <TableCell  colSpan={2}></TableCell>
+              <TableCell rowSpan={5} />
+              <TableCell colSpan={2}></TableCell>
               <TableCell align="right">Sub-Total</TableCell>
               <TableCell align="center">₹ {res?.total_amount}</TableCell>
             </TableRow>
