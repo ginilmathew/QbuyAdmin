@@ -953,10 +953,12 @@ const ProductForm = ({ res, view }: props) => {
                 // }
 
                 if (stock) {
-                    let stockValue = varientsarray?.find((vari: any) => isEmpty(vari?.stock_value) || isNaN(vari?.stock_value) || parseInt(vari?.stock_value) <= 0) 
+                    // let stockValue = varientsarray?.every((vari: any) => vari?.stock_value !== '')  
+                    const stockValue = varientsarray.some((product:any) =>  parseInt(product.stock_value) < 0 || product.stock_value === (null || '') || isNaN(product.stock_value));
+                    
                
-                    //  console.log({stockValue})
-                    //  console.log({varientsarray})
+                     console.log({stockValue})
+                     console.log({varientsarray})
                     if (stockValue) {
                         toast.warning("Stock value required for all variants")
                         return false;
@@ -1629,14 +1631,15 @@ const ProductForm = ({ res, view }: props) => {
                     </Grid>
                 </Grid>
             </CustomBox>
-            <CustomBox title='Attributes'>
 
+            <CustomBox title='Attributes'>
                 {!res && !view &&
                     <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
                     <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} removeAttributes={!productList ? () => removeAttributes(i) : null} />
                 )}
             </CustomBox>
+
             {varientsarray?.length === 0 && <CustomBox title='Price'>
                 <Grid container spacing={2}>
                     <Grid item lg={1.71} xs={12}>
