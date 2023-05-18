@@ -150,6 +150,15 @@ const AddProducts = ({ data }: datapr) => {
 
         },
         {
+            field: 'display_order',
+            headerName: 'Display order',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => params.row.display_order ? params.row.display_order : '-'
+
+        },
+        {
             field: 'minimum_qty',
             headerName: 'Minimum Quantity',
             flex: 1,
