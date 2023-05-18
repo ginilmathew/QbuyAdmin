@@ -957,8 +957,8 @@ const ProductForm = ({ res, view }: props) => {
                     const stockValue = varientsarray.some((product:any) =>  parseInt(product.stock_value) < 0 || product.stock_value === (null || '') || isNaN(product.stock_value));
                     
                
-                     console.log({stockValue})
-                     console.log({varientsarray})
+                    //  console.log({stockValue})
+                    //  console.log({varientsarray})
                     if (stockValue) {
                         toast.warning("Stock value required for all variants")
                         return false;
