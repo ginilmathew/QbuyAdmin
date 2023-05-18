@@ -919,7 +919,7 @@ const ProductForm = ({ res, view }: props) => {
                 else if (data?.offer_price <= 0) {
                     setError("offer_price", { type: 'custom', message: 'Offer price must be a greater than 0' })
                     return false;
-                } 
+                }
                 // else if (!data?.offer_date_from || !data?.offer_date_to) {
                 //     toast.warning("Offer From date and to date required")
                 //     return false;
@@ -954,9 +954,9 @@ const ProductForm = ({ res, view }: props) => {
 
                 if (stock) {
                     // let stockValue = varientsarray?.every((vari: any) => vari?.stock_value !== '')  
-                    const stockValue = varientsarray.some((product:any) =>  parseInt(product.stock_value) < 0 || product.stock_value === (null || '') || isNaN(product.stock_value));
-                    
-               
+                    const stockValue = varientsarray.some((product: any) => parseInt(product.stock_value) < 0 || product.stock_value === (null || '') || isNaN(product.stock_value));
+
+
                     //  console.log({stockValue})
                     //  console.log({varientsarray})
                     if (stockValue) {
@@ -1066,7 +1066,7 @@ const ProductForm = ({ res, view }: props) => {
         }
 
 
-   
+
 
         const CREATE_URL = '/admin/product/create'
         const EDIT_URL = 'admin/product/update'
