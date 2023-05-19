@@ -46,7 +46,7 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
         });
 
 
-console.log({state:state?.[index]?.offer_date_from})
+console.log({state:state?.[index]})
 
     return (
         <Box>

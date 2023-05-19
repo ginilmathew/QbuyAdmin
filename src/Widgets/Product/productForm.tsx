@@ -1512,12 +1512,13 @@ const ProductForm = ({ res, view }: props) => {
 
                     <Grid item xs={12} lg={3}>
                         <CustomInput
+
                             type='text'
                             control={control}
                             error={errors.video_link}
                             fieldName="video_link"
-                            placeholder={``}
-                            fieldLabel={"Product Video Link"}
+                            placeholder={`https://www.youtube.com/watch?v=FrSg03rpnkM`}
+                            fieldLabel={"Product Video Link (Only Youtube Video)"}
                             disabled={false}
                             view={view ? true : false}
                             defaultValue={''}
