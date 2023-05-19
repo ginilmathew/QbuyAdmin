@@ -575,7 +575,7 @@ const Vendorform = ({ res, view, data }: props) => {
                             placeholder={``}
                             fieldLabel={"Mobile Number"}
                             disabled={false}
-                            view={view ? true : false}
+                            view={true}
 
                         />
                     </Grid>
