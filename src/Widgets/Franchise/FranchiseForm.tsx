@@ -256,7 +256,7 @@ const FranchiseForm = ({ res, view, data }: props) => {
                             placeholder={``}
                             fieldLabel={"Mobile Number"}
                             disabled={false}
-                            view={idd ? true : false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
