@@ -125,7 +125,7 @@ const FranchiseForm = ({ res, view, data }: props) => {
 
 
         })
-    
+
 
 
     const { register,
@@ -174,7 +174,7 @@ const FranchiseForm = ({ res, view, data }: props) => {
 
     const setDeliveryLocation = (value: any) => {
         if (!view) {
-      
+
             setValue("coordinates", value)
         }
 
@@ -256,7 +256,7 @@ const FranchiseForm = ({ res, view, data }: props) => {
                             placeholder={``}
                             fieldLabel={"Mobile Number"}
                             disabled={false}
-                            view={true}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>

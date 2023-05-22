@@ -184,7 +184,7 @@ const SubCategoryForm = ({ res, view }: props) => {
 
         setLoading(true)
         const formData = new FormData();
-        if (subCategoryList) {
+        if (idd) {
             formData.append("id", subCategoryList?._id);
         }
         formData.append("name", data?.name);
