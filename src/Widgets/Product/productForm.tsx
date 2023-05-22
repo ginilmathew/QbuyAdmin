@@ -145,6 +145,7 @@ const ProductForm = ({ res, view }: props) => {
     const [thumbnailfile, setThumbnailFile] = useState<null | File>(null)
     const [attributes, setAttributes] = useState<any>([])
     const [metaTag, setMetaTag] = useState<any>([])
+    const [searchTag, setSearchTag] = useState<any>([])
     const [attributeTag, setattributeTag] = useState<any>([])
     const [attributeTagValue, setattributeTagValue] = useState<any | null>(null)
     const [index, setIndex] = useState<number>(0)
@@ -168,6 +169,23 @@ const ProductForm = ({ res, view }: props) => {
     const [productList, setProductList] = useState<any>(null);
     const [offerDate_from, setOffer_Date_from] = useState<any>(null);
     const [offerDate_to, setOffer_Date_to] = useState<any>(null);
+    const [productType, setProduct_Type] = useState<any>([
+        {
+            value: 'breakfast',
+            name: 'Breakfast'
+        },
+        {
+            value: 'dinner',
+            name: 'Dinner'
+        },
+        {
+            value: 'lunch',
+            name: 'Lunch'
+        },
+
+    ]);
+
+    const [prdtType_select, setPrdtType_select] = useState<any>(null)
 
 
     console.log({ thumbnailfile })
@@ -541,6 +559,14 @@ const ProductForm = ({ res, view }: props) => {
     }
 
 
+    const onSelectProducttype = (e: any) => {
+        const { value } = e.target;
+        setPrdtType_select(value)
+
+
+    }
+
+
 
 
 
@@ -799,9 +825,6 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const addvarients = () => {
-
-
-
         if (attributes?.some((res: any) => res?.variant === true)) {
             const output = [];
             setValue('seller_price', '')
@@ -863,6 +886,14 @@ const ProductForm = ({ res, view }: props) => {
         varientsarray[i][key] = values
         setVarientsArray([...varientsarray])
 
+    }
+
+
+    //seach_Tag..............................................................................................
+
+    const searchTagvalues = (res: any) => {
+        setSearchTag(res)
+   
     }
 
     //metatag value..........................................................................................
@@ -1262,6 +1293,31 @@ const ProductForm = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
+                    {/* <Grid item xs={12} lg={3}>
+                        <Customselect
+                            type='text'
+                            control={control}
+                            error={errors.category}
+                            fieldName="product_type"
+                            placeholder={``}
+                            fieldLabel={"Product Type"}
+                            selectvalue={""}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={prdtType_select}
+                            options={''}
+                            onChangeValue={onSelectProducttype}
+                            background={'#fff'}
+                            disabled={view ? true : false}
+                        >
+                            <MenuItem value=""></MenuItem>
+                            {productType?.map((res: any) => (
+                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                            ))}
+
+                        </Customselect>
+                    </Grid> */}
 
                     <Grid item xs={12} lg={1.5}>
                         <CustomInput
@@ -1509,6 +1565,10 @@ const ProductForm = ({ res, view }: props) => {
                         <Grid item xs={12} lg={6}>
                             <CustomTagInputValue fieldLabel='Meta Tags' tagValues={(metaTagvalues)} values={metaTag} setState={setMetaTag} />
                         </Grid>}
+                        {/* {!view &&
+                        <Grid item xs={12} lg={3}>
+                            <CustomTagInputValue fieldLabel='Search Tags' tagValues={(searchTagvalues)} values={searchTag} setState={setMetaTag} />
+                        </Grid>} */}
 
                     <Grid item xs={12} lg={3}>
                         <CustomInput
