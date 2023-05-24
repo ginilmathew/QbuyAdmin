@@ -893,7 +893,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const searchTagvalues = (res: any) => {
         setSearchTag(res)
-   
+
     }
 
     //metatag value..........................................................................................
@@ -926,6 +926,7 @@ const ProductForm = ({ res, view }: props) => {
 
 
 
+        console.log({ data })
         //Check All Attributes have values
         let attributeCheck = attributes?.find((att: any) => isEmpty(att?.name) || att?.options?.length === 0);
         console.log({ attributeCheck, attributes })
@@ -956,6 +957,13 @@ const ProductForm = ({ res, view }: props) => {
                 //     return false;
 
                 // }
+                else {
+                    if (data.offer_date_to && data.offer_date_from === ("" || null)) {
+                        toast.warning(" Offer from date is required");
+                        return false;
+                    }
+
+                }
 
             }
 
@@ -976,12 +984,21 @@ const ProductForm = ({ res, view }: props) => {
             else {
                 // let offer = varientsarray?.filter((vari: any) => !isEmpty(vari?.offer_price))
                 // if (offer) {
-                //     let offerpr = offer?.find((off: any) => !off.offer_date_from || !off?.offer_date_to);
+                //     let offerpr = offer?.find((off: any) => !off.¸ || !off?.offer_date_to);
                 //     if (offerpr) {
                 //         toast.warning("Offer From date and to date required")
                 //         return false;
                 //     }
                 // }
+
+                varientsarray.map((item: any) => {
+                    if (item.offer_date_to && item.offer_date_from === "") {
+                        toast.warning(" Offer from date is required");
+                        return false;
+                    }
+                });
+
+
 
                 if (stock) {
                     // let stockValue = varientsarray?.every((vari: any) => vari?.stock_value !== '')  
@@ -1002,6 +1019,11 @@ const ProductForm = ({ res, view }: props) => {
                     toast.warning("Delivery price required for all variants")
                     return false;
                 }
+
+
+
+
+
             }
         }
 
@@ -1192,13 +1214,17 @@ const ProductForm = ({ res, view }: props) => {
     }
 
     const removeAttributes = async (i: any) => {
-        attributes[i].variant = false;
-        setAttributes([...attributes])
-        let attribute = await attributes?.filter((att: any, index: Number) => index !== i)
+        console.log('FUCTION CALLED')
+        if (!res || !view) {
+            attributes[i].variant = false;
+            setAttributes([...attributes])
+            let attribute = await attributes?.filter((att: any, index: Number) => index !== i)
 
-        console.log({ attribute })
-        setAttributes([...attribute])
-        addvarients()
+            console.log({ attribute })
+            setAttributes([...attribute])
+            addvarients()
+        }
+
 
     }
 
@@ -1565,7 +1591,7 @@ const ProductForm = ({ res, view }: props) => {
                         <Grid item xs={12} lg={6}>
                             <CustomTagInputValue fieldLabel='Meta Tags' tagValues={(metaTagvalues)} values={metaTag} setState={setMetaTag} />
                         </Grid>}
-                        {/* {!view &&
+                    {/* {!view &&
                         <Grid item xs={12} lg={3}>
                             <CustomTagInputValue fieldLabel='Search Tags' tagValues={(searchTagvalues)} values={searchTag} setState={setMetaTag} />
                         </Grid>} */}
@@ -1697,7 +1723,8 @@ const ProductForm = ({ res, view }: props) => {
                 {!res && !view &&
                     <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
-                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} removeAttributes={!productList ? () => removeAttributes(i) : null} />
+             
+                        <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant}  closeIcon ={idd ? false : true} removeAttributes={!productList ? () => removeAttributes(i) : null} />
                 )}
             </CustomBox>
 
@@ -1827,6 +1854,13 @@ const ProductForm = ({ res, view }: props) => {
 }
 
 export default ProductForm
+
+
+
+
+
+
+
 
 
 

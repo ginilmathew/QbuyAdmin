@@ -6,7 +6,7 @@ import CustomCheckBox from '@/components/CustomCheckBox';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 
-const Attributes = ({item, index, onChange, enableVariant, removeAttributes}) => {
+const Attributes = ({item, index, onChange, enableVariant, removeAttributes,closeIcon}) => {
 
     console.log({item},'ITEM IN ')
 
@@ -24,11 +24,12 @@ const Attributes = ({item, index, onChange, enableVariant, removeAttributes}) =>
                 placeholder={`Attribute Name`}
                 view={false}
                 defaultValue={item.name}
+
             />
         </Grid>
         <Grid item xs={12} lg={4}>
             
-            <TagInput tagValues={(saveTagValues)} values={item?.options} />
+            <TagInput tagValues={(saveTagValues)} values={item?.options}  close={closeIcon}/>
 
         </Grid>
         <Grid item xs={12} lg={2}>
