@@ -18,7 +18,7 @@ type Inputs = {
 
 
 
-const CustomLoginInput = memo(({ control, fieldName, placeholder, error, Icon, type }: Inputs) => {
+const CustomLoginInput = ({ control, fieldName, placeholder, error, Icon, type }: Inputs) => {
 
     const [show, setShow] = useState<boolean>(true);
     const [textType, setTextType] = useState<any>(null);
@@ -42,16 +42,20 @@ const CustomLoginInput = memo(({ control, fieldName, placeholder, error, Icon, t
                 <Controller
                     name={fieldName}
                     control={control}
-                    render={({ field }) => (
+                    render={({ field: { value, onChange, onBlur } }) => (
                         <>
                             <TextField
-                                {...field}
+                                value={value}
+                                onChange={onChange}
+                                onBlur={onBlur}
+                                // {...field}
                                 aria-invalid={error ? "true" : "false"}
                                 className="form-control"
                                 placeholder={placeholder}
                                 id="exampleInputEmail1"
                                 type={textType ? textType : type}
                                 InputProps={{
+                                    disableUnderline: true,
                                     style: {
                                         opacity: "1",
                                         background: "#ffff",
@@ -91,6 +95,6 @@ const CustomLoginInput = memo(({ control, fieldName, placeholder, error, Icon, t
             </FormGroup>
         </>
     )
-})
+}
 
 export default CustomLoginInput

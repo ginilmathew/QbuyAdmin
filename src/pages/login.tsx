@@ -118,7 +118,7 @@ const Login = () => {
 
 
     return (
-        <BOX>
+        // <BOX>
             <Stack justifyContent={'center'} alignItems={'center'} gap={2}>
 
                 <Image
@@ -157,7 +157,7 @@ const Login = () => {
                     onClick={handleSubmit(onSubmit)}
                     label='login' />
             </Stack>
-        </BOX>
+        // </BOX>
     )
 }
 

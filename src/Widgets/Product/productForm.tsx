@@ -585,6 +585,7 @@ const ProductForm = ({ res, view }: props) => {
                     setRecomendedProductList(result)
                     setVendorList(response?.data?.data)
                     setCategoryList(response?.data?.data?.[0]?.category_id)
+              
                     setValue('franchisee', productList?.franchisee?._id)
                 } catch (err: any) {
                     toast.error(err?.message)
