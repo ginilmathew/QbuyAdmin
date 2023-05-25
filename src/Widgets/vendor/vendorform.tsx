@@ -368,8 +368,8 @@ const Vendorform = ({ res, view, data }: props) => {
             setCategory(vendorList?.category_id)
             setValue('store_logo', vendorList?.store_logo)
             setImagePreview(`${IMAGE_URL}${vendorList?.store_logo}`)
-            setValue('start_time', moment(vendorList?.start_time, 'HH:mm'))
-            setValue('end_time', moment(vendorList?.end_time, 'HH:mm'))
+            setValue('start_time',vendorList?.start_time ? moment(vendorList?.start_time, 'HH:mm') : null)
+            setValue('end_time',vendorList?.end_time ? moment(vendorList?.end_time, 'HH:mm') : null)
             setValue('license_number', vendorList?.kyc_details?.license_number)
             setValue('ffsai_number', vendorList?.kyc_details?.ffsai_number)
             setValue('pan_card_number', vendorList?.kyc_details?.pan_card_number)
@@ -441,6 +441,8 @@ const Vendorform = ({ res, view, data }: props) => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
+        console.log({data})
+
         const URL_CREATE = '/admin/vendor/create'
         const URL_EDIT = '/admin/vendor/update'
         let kyc_details = {
@@ -470,8 +472,8 @@ const Vendorform = ({ res, view, data }: props) => {
         formData.append("store_address", data?.store_address);
         formData.append("franchise_id", data?.franchise_id);
         formData.append("category_id", JSON.stringify(data?.category_id));
-        formData.append("start_time", moment(data?.start_time, 'hh:mm A').format('HH:mm'));
-        formData.append("end_time", moment(data?.end_time, 'hh:mm A').format('HH:mm'));
+        formData.append("start_time", data?.start_time ? moment(data?.start_time, 'hh:mm A').format('HH:mm') : "null");
+        formData.append("end_time", data?.end_time ? moment(data?.end_time, 'hh:mm A').format('HH:mm') : "null");
         formData.append("store_logo", data?.store_logo);
         formData.append("display_order", data?.display_order);
         formData.append("type", type);
