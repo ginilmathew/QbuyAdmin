@@ -46,6 +46,7 @@ const DatePickers = ({
                 <LocalizationProvider dateAdapter={AdapterMoment}>
 
                     <DatePicker
+                        disablePast
                         sx={{
                             "& .MuiInputBase-input": {
                                 height: "8px" // Set your height here.

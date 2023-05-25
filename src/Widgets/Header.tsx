@@ -1,4 +1,4 @@
-import { Avatar, Box, Tooltip, Typography } from '@mui/material'
+import { Avatar, Box, Button, Tooltip, Typography } from '@mui/material'
 import React, { useCallback, useState, useContext } from 'react'
 import KeyIcon from '@mui/icons-material/Key';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -14,7 +14,12 @@ import { useRouter } from 'next/router';
 import UserContext from '@/helpers/user';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { signOut } from "next-auth/react"
-import { useSession } from "next-auth/react"
+import { useSession } from "next-auth/react";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const Header = () => {
 
@@ -30,6 +35,7 @@ const Header = () => {
   const [anchorE2, setAnchorE2] = React.useState<null | HTMLElement>(null);
   const [anchorE3, setAnchorE3] = React.useState<null | HTMLElement>(null);
   const [anchorE4, setAnchorE4] = React.useState<null | HTMLElement>(null);
+  const [openDialog, setOpenDialog] = React.useState(false);
   const [unique, setUique] = useState<string>("")
 
 
@@ -38,6 +44,15 @@ const Header = () => {
   const open2 = Boolean(anchorE2);
   const open3 = Boolean(anchorE3);
   const open4 = Boolean(anchorE4);
+
+
+  const handleClickOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
 
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -92,6 +107,7 @@ const Header = () => {
     await localStorage.clear();
     userContext.setUser(null)
     signOut({ callbackUrl: "/login" })
+    handleClickOpenDialog()
     // router.push('/login')
   }, [])
 
@@ -186,12 +202,32 @@ const Header = () => {
           <NotificationsIcon sx={{ color: "#fff" }} />
         </Box>
         <Box width={50} height={50} borderRadius={12} sx={{ cursor: 'pointer' }} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-          <Tooltip title="Are you sure you want to log out?">
-            <LogoutIcon sx={{ fontWeight: 'bold' }} onClick={LogoutAll} />
+          <Tooltip title="logout here">
+            <LogoutIcon sx={{ fontWeight: 'bold' }} onClick={handleClickOpenDialog} />
           </Tooltip>
 
         </Box>
       </Box>
+
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Are you sure you want to log out ?
+        </DialogTitle>
+        <DialogContent>
+
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Disagree</Button>
+          <Button onClick={LogoutAll} autoFocus>
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   )
 }

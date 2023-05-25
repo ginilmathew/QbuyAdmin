@@ -5,6 +5,8 @@ import { Controller } from "react-hook-form";
 import { Avatar, Box, FormGroup, styled, Typography } from "@mui/material";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import moment from 'moment';
+import dayjs from 'dayjs';
 type props = {
     fieldName: string,
     control: any,
@@ -26,6 +28,7 @@ const CustomDatePicker = ({
     disabled,
     changeValue,
 }: props) => {
+    const tomorrow = dayjs().add(1, 'day');
     return (
         <>
             <FormGroup>
@@ -46,7 +49,6 @@ const CustomDatePicker = ({
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
                         <LocalizationProvider dateAdapter={AdapterMoment}>
-
                             <DatePicker
                                 disablePast
                                 format='DD/MM/YYYY'

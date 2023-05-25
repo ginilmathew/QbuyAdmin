@@ -16,6 +16,7 @@ import { signIn } from 'next-auth/react'
 import { useSession } from "next-auth/react"
 
 
+
 const Login = () => {
 
     const router = useRouter();
@@ -118,7 +119,8 @@ const Login = () => {
 
 
     return (
-        <BOX>
+        // <BOX>
+        <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'100vh',backgroundImage:`url('/images/login.png')`}}>
             <Stack justifyContent={'center'} alignItems={'center'} gap={2}>
 
                 <Image
@@ -157,7 +159,8 @@ const Login = () => {
                     onClick={handleSubmit(onSubmit)}
                     label='login' />
             </Stack>
-        </BOX>
+            </div>
+        // </BOX>
     )
 }
 
