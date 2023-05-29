@@ -82,10 +82,6 @@ const Login = () => {
             if (res?.error) {
                 toast.error(res.error)
             } else {
-                
-                
-    
-        
                 if (res?.url) {
                     //auth.setUser(session?.user)
                     console.log("in")
