@@ -17,7 +17,7 @@ const Dashboard = () => {
 
     const { data: session, status } = useSession()
 
-    console.log({session})
+
 
     useEffect(() => {
         if(session){

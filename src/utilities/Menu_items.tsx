@@ -371,7 +371,7 @@ export const support_item = [
     {
         id:3,
         item: 'Customer Details',
-        path:'/dashboard',
+        path:'/customerDetails',
     },
     {
         id:4,

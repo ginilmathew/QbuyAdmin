@@ -73,7 +73,7 @@ const CategoryForm = ({ resData, view }: props) => {
                 .mixed()
                 .required('Image is Required')
         })
-  
+
 
 
     const { register,

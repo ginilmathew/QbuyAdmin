@@ -26,15 +26,11 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
       })
 
     useEffect(() => {
-
-
         try {
             if (session) {
                 let details = JSON.parse(JSON.stringify(session.user))
-
                 localStorage.setItem("token", details?.accessToken)
                 getProfile(details?._id)
-     
             }
 
         } catch (err) {

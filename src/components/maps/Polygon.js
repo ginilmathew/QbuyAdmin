@@ -38,7 +38,7 @@ const Polygons = ({ onComplete, path }) => {
         zIndex: 1
     }
 
-    const onPolygonComplete = (polygon, destroy=false) => {
+    const onPolygonComplete = (polygon, destroy = false) => {
         let latlongs = []
         let coords = polygon.getPath().getArray()
         coords.map(latlng => {
@@ -47,8 +47,8 @@ const Polygons = ({ onComplete, path }) => {
         onComplete(latlongs)
 
         //console.log({latlongs})
-       //setPolygon(createPolygon(polygon.getPath()));
-    
+        //setPolygon(createPolygon(polygon.getPath()));
+
         // Destroys the polygon that has been drawn by the manager.
         // if(destroy) {
         //   polygon.setMap(null);
@@ -59,13 +59,13 @@ const Polygons = ({ onComplete, path }) => {
         onPolygonComplete(polygonRef)
     }
 
-    
+
 
     //console.log({ polygon: "poly" })
 
 
     const onLoad = (polygon) => {
-        console.log({polygon})
+        console.log({ polygon })
         setPolygonRef(polygon)
     };
 
@@ -73,26 +73,26 @@ const Polygons = ({ onComplete, path }) => {
 
 
 
-        return (
-            <div style={{ padding: 20, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <GoogleMap
-                    mapContainerClassName="App-map"
-                    center={center}
-                    zoom={12}
-                    mapContainerStyle={{ width: 800, height: 400 }}
-                    version="weekly"
-                    on
-                >
-        
-                    <PolygonF
-                        onLoad={onLoad}
-                        paths={path}
-                        options={options}
-                        onMouseUp={endPolygon}
-                    />
-                </GoogleMap>
-            </div>
-        );
+    return (
+        <div style={{ padding: 20, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <GoogleMap
+                mapContainerClassName="App-map"
+                center={center}
+                zoom={12}
+                mapContainerStyle={{ width: 800, height: 400 }}
+                version="weekly"
+                on
+            >
+
+                <PolygonF
+                    onLoad={onLoad}
+                    paths={path}
+                    options={options}
+                    onMouseUp={endPolygon}
+                />
+            </GoogleMap>
+        </div>
+    );
 };
 
 export default Polygons;
