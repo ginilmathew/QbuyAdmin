@@ -198,8 +198,8 @@ const ShippingOrderForm = ({ view, res }: props) => {
     useEffect(() => {
         if (orderviewList) {
             setValue('mobile', orderviewList?.user?.mobile)
-            setValue('payment_address_pickup_address', orderviewList?.billaddress?.area?.address)
-            setValue('shipping_address_delivery_address', orderviewList?.shipaddress?.area?.address)
+            setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name},${orderviewList?.billaddress?.area?.address},${orderviewList?.billaddress?.mobile},${orderviewList?.billaddress?.pincode}`)
+            setValue('shipping_address_delivery_address', `${orderviewList?.shipaddress?.name},${orderviewList?.shipaddress?.area?.address},${orderviewList?.shipaddress?.mobile},${orderviewList?.shipaddress?.pincode}`)
         }
 
     }, [orderviewList])
