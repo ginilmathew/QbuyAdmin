@@ -73,7 +73,7 @@ const CategoryForm = ({ resData, view }: props) => {
                 .mixed()
                 .required('Image is Required')
         })
-  
+
 
 
     const { register,
@@ -268,6 +268,7 @@ const CategoryForm = ({ resData, view }: props) => {
                         <Grid item xs={12} lg={2.5}>
                             <CustomImageUploader
                                 ICON={""}
+                                format={'image/*'}
                                 error={errors.image}
                                 fieldName="image"
                                 placeholder={``}

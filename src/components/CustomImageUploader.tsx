@@ -24,7 +24,8 @@ type props = {
     preview: any,
     previewEditimage: any,
     myid: string,
-    viewImage?: any
+    viewImage?: any,
+    format?: any
 
 }
 
@@ -47,8 +48,9 @@ const CustomImageUploader = ({
     width,
     preview,
     previewEditimage,
-    myid, 
-    viewImage
+    myid,
+    viewImage,
+    format
 }: props) => {
     return (
         <>
@@ -72,11 +74,11 @@ const CustomImageUploader = ({
                     control={control}
                     render={({ field: { onChange, onBlur, value } }) =>
                         <Box sx={{ height: height ? height : 150, border: '1px solid #f5f5f5', width: width ? width : "50%", position: 'relative', fontFamily: `'Poppins' sans-serif`, }} >
-                            <Avatar src={viewImage ? viewImage : preview ? URL?.createObjectURL(preview):''} style={{ width: '100%', height: '100%' }} variant="square"></Avatar>
+                            <Avatar src={viewImage ? viewImage : preview ? URL?.createObjectURL(preview) : ''} style={{ width: '100%', height: '100%' }} variant="square"></Avatar>
 
                             <label htmlFor={myid} >
                                 <Input
-                                     
+
                                     style={{ display: 'none' }}
                                     onBlur={onBlur}
                                     aria-invalid={error ? "true" : "false"}
@@ -84,8 +86,8 @@ const CustomImageUploader = ({
                                     placeholder={placeholder}
                                     type={'file'}
                                     id={myid}
-                                    inputProps={{accept:"image/png, image/jpeg ,image/webp"}}
-                                    onChange={onChangeValue ? (e: any) =>  onChangeValue(e.target.files[0]) : onChange}
+                                    inputProps={{ accept: format ? format : "image/png, image/jpeg ,image/webp" }}
+                                    onChange={onChangeValue ? (e: any) => onChangeValue(e.target.files[0]) : onChange}
                                 />
                                 <BackupIcon style={{
                                     color: "#58D36E",

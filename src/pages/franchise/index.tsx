@@ -274,9 +274,9 @@ const Franchise = ({ data }: datapr) => {
     }
 
 
-    useEffect(() => {
-        //getFranchiseList()
-    }, [])
+    // useEffect(() => {
+    //     //getFranchiseList()
+    // }, [])
 
 
     return (

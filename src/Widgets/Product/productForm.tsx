@@ -1542,7 +1542,7 @@ const ProductForm = ({ res, view }: props) => {
                                 fieldName='product_availability_from'
                                 control={control}
                                 error={errors.product_availability_from}
-                                fieldLabel={'Product Availibility'} />
+                                fieldLabel={'Product Availability'} />
                         </Grid>}
                     {!getValues('require_shipping') &&
                         <Grid item xs={12} lg={2}>
