@@ -1467,10 +1467,10 @@ const ProductForm = ({ res, view }: props) => {
                         <Typography mb={3}></Typography>
                         <CustomCheckBox isChecked={pandaSuggesion} label='' onChange={onCheckPandasuggestion} title='Panda Suggestion' />
                     </Grid>
-                    <Grid item xs={12} lg={1.5}>
-                        <Typography mb={3}></Typography>
-                        <CustomCheckBox isChecked={stock} label='' onChange={StockCheck} title='Enable Stock' />
-                    </Grid>
+                        <Grid item xs={12} lg={1.5}>
+                            <Typography mb={3}></Typography>
+                            <CustomCheckBox isChecked={stock} label='' onChange={StockCheck} title='Enable Stock' />
+                        </Grid>
                     {stock &&
                         varientsarray?.length === 0 &&
                         <Grid item xs={12} lg={3}>
