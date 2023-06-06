@@ -245,7 +245,7 @@ const ProductForm = ({ res, view }: props) => {
                 video_link: '',
                 related_products: null,
                 image: null,
-                regular_price: 0,
+                regular_price:0,
                 offer_price: 0,
                 offer_date_from: null,
                 offer_date_to: null,
@@ -687,10 +687,10 @@ const ProductForm = ({ res, view }: props) => {
                     setVarientsArray(myvaarientArray)
                 })
             }
-            setValue('commission', productList?.commission)
-            setValue('regular_price', productList?.regular_price)
-            setValue('seller_price', productList?.seller_price)
-            setValue('offer_price', productList?.offer_price)
+            setValue('commission', productList?.commission ? productList?.commission : 0)
+            setValue('regular_price', productList?.regular_price ? productList?.regular_price : 0)
+            setValue('seller_price', productList?.seller_price ? productList?.seller_price : 0)
+            setValue('offer_price', productList?.offer_price ? productList?.offer_price : 0)
             // setOffer_Date_from(moment(productList?.offer_date_from, 'YYYY-MM-DD'))
             // setOffer_Date_to(moment(productList?.offer_date_from, 'YYYY-MM-DD'))
             setValue('offer_date_from', productList?.offer_date_from ? moment(productList?.offer_date_from, 'YYYY-MM-DD') : null)
@@ -945,7 +945,8 @@ const ProductForm = ({ res, view }: props) => {
                 return false;
             }
 
-            let regularPrice = parseInt(data?.regular_price)
+            let regularPrice = parseInt(data?.regular_price);
+            console.log({regularPrice})
             if (data?.regular_price !== "") {
                 if (isNaN(regularPrice)) {
                     setError("regular_price", { type: 'custom', message: ' Price must be a number' })
@@ -1087,8 +1088,12 @@ const ProductForm = ({ res, view }: props) => {
             return !recomendedProductEditList.some((obj1: any) => obj._id === obj1._id)
         })
 
-        recomendedProductList.push(...recomendedProduct)
-        recomendedProductList.push(...recomendedProductEditList)
+        
+        if(recomendedProductList?.length > 0){
+            recomendedProductList?.push(...recomendedProduct)
+            recomendedProductList?.push(...recomendedProductEditList)
+        }
+       
 
 
         let imagearray: any = []
