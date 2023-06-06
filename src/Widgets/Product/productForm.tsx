@@ -585,7 +585,7 @@ const ProductForm = ({ res, view }: props) => {
                     setRecomendedProductList(result)
                     setVendorList(response?.data?.data)
                     setCategoryList(response?.data?.data?.[0]?.category_id)
-              
+
                     setValue('franchisee', productList?.franchisee?._id)
                 } catch (err: any) {
                     toast.error(err?.message)
@@ -634,8 +634,8 @@ const ProductForm = ({ res, view }: props) => {
             setPaths(paths)
             setValue('delivery_locations', productList?.delivery_locations)
 
-            setValue('product_availability_from', moment(productList?.product_availability_from,))
-            setValue('product_availability_to', moment(productList?.product_availability_to, 'HH:mm'))
+            setValue('product_availability_from', productList?.product_availability_from ? moment(productList?.product_availability_from, 'HH:mm') : null)
+            setValue('product_availability_to', productList?.product_availability_to ? moment(productList?.product_availability_to, 'HH:mm') : null)
             setValue('require_shipping', productList?.require_shipping)
             setRequireShipping(productList?.require_shipping)
             if (productList?.meta_tags) {
@@ -677,8 +677,8 @@ const ProductForm = ({ res, view }: props) => {
                         seller_price: item?.seller_price,
                         regular_price: item?.regular_price,
                         offer_price: item?.offer_price,
-                        offer_date_from: moment(item?.offer_date_from, 'YYYY-MM-DD'),
-                        offer_date_to: moment(item?.offer_date_to, 'YYYY-MM-DD'),
+                        offer_date_from: item?.offer_date_from ? moment(item?.offer_date_from, 'YYYY-MM-DD') : null,
+                        offer_date_to: item?.offer_date_to ? moment(item?.offer_date_to, 'YYYY-MM-DD') : null,
                         stock: item?.stock,
                         stock_value: item?.stock_value,
                         commission: item?.commission,
@@ -693,8 +693,8 @@ const ProductForm = ({ res, view }: props) => {
             setValue('offer_price', productList?.offer_price)
             // setOffer_Date_from(moment(productList?.offer_date_from, 'YYYY-MM-DD'))
             // setOffer_Date_to(moment(productList?.offer_date_from, 'YYYY-MM-DD'))
-            setValue('offer_date_from', moment(productList?.offer_date_from, 'YYYY-MM-DD'))
-            setValue('offer_date_to', moment(productList?.offer_date_to, 'YYYY-MM-DD'))
+            setValue('offer_date_from', productList?.offer_date_from ? moment(productList?.offer_date_from, 'YYYY-MM-DD') : null)
+            setValue('offer_date_to', productList?.offer_date_to ? moment(productList?.offer_date_to, 'YYYY-MM-DD') : null)
             setValue('fixed_delivery_price', productList?.fixed_delivery_price)
 
         }
@@ -935,7 +935,7 @@ const ProductForm = ({ res, view }: props) => {
             toast.warning("All Attributes must have values")
             return false;
         }
-
+        let pattern = /^[0-9]+$/
         //Check Any Variants
         let variantsChe = attributes?.find((att: any) => att.variant === true);
         console.log({ length: attributes.length, price: isEmpty(data?.seller_price) })
@@ -944,6 +944,16 @@ const ProductForm = ({ res, view }: props) => {
                 setError("seller_price", { type: 'custom', message: 'Purchase price must be greater than 0' })
                 return false;
             }
+
+            let regularPrice = parseInt(data?.regular_price)
+            if (data?.regular_price !== "") {
+                if (isNaN(regularPrice)) {
+                    setError("regular_price", { type: 'custom', message: ' Price must be a number' })
+                    return false;
+                }
+            }
+
+
             if (!isEmpty(data?.offer_price)) {
                 if (isNaN(data?.offer_price)) {
                     setError("offer_price", { type: 'custom', message: 'Offer price must be a number' })
@@ -976,6 +986,8 @@ const ProductForm = ({ res, view }: props) => {
             //console.log({delivery: data?.fixed_delivery_price})
         }
         else {
+
+            console.log({ varientsarray })
             let varicheck = varientsarray?.find((vari: any) => isEmpty(vari?.seller_price) || isNaN(vari?.seller_price) || (isNumber(vari?.seller_price) && vari?.seller_price >= 0))
             if (varicheck) {
                 // console.log({ varicheck, varientsarray })
@@ -1467,10 +1479,10 @@ const ProductForm = ({ res, view }: props) => {
                         <Typography mb={3}></Typography>
                         <CustomCheckBox isChecked={pandaSuggesion} label='' onChange={onCheckPandasuggestion} title='Panda Suggestion' />
                     </Grid>
-                        <Grid item xs={12} lg={1.5}>
-                            <Typography mb={3}></Typography>
-                            <CustomCheckBox isChecked={stock} label='' onChange={StockCheck} title='Enable Stock' />
-                        </Grid>
+                    <Grid item xs={12} lg={1.5}>
+                        <Typography mb={3}></Typography>
+                        <CustomCheckBox isChecked={stock} label='' onChange={StockCheck} title='Enable Stock' />
+                    </Grid>
                     {stock &&
                         varientsarray?.length === 0 &&
                         <Grid item xs={12} lg={3}>
@@ -1724,8 +1736,8 @@ const ProductForm = ({ res, view }: props) => {
                 {!res && !view &&
                     <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
-             
-                        <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant}  closeIcon ={idd ? false : true} removeAttributes={!productList ? () => removeAttributes(i) : null} />
+
+                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} closeIcon={idd ? false : true} removeAttributes={!productList ? () => removeAttributes(i) : null} />
                 )}
             </CustomBox>
 
@@ -1779,7 +1791,7 @@ const ProductForm = ({ res, view }: props) => {
                             error={errors.fixed_delivery_price}
                             fieldName="fixed_delivery_price"
                             placeholder={``}
-                            fieldLabel={"Fixed Delivery Price"}
+                            fieldLabel={"Delivery Price"}
                             view={view ? true : false}
                             defaultValue={''}
                         />
