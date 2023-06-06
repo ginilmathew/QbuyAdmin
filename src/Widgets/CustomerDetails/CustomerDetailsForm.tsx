@@ -112,12 +112,9 @@ const CustomerDetailsForm = () => {
                         </Customselect>
                     </Grid>
                     <Grid item xs={12} lg={2}>
-
                         <Typography mb={3}></Typography>
                         <CustomCheckBox isChecked={true} label='' onChange={CheckBlackList} title='Blacklist Customer' />
-
                     </Grid>
-
                 </Grid>
             </CustomBox>
         </Box>
