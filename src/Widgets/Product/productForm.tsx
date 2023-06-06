@@ -927,7 +927,7 @@ const ProductForm = ({ res, view }: props) => {
 
 
 
-        console.log({ data })
+        // console.log({ data })
         //Check All Attributes have values
         let attributeCheck = attributes?.find((att: any) => isEmpty(att?.name) || att?.options?.length === 0);
         console.log({ attributeCheck, attributes })
