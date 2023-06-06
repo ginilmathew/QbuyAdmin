@@ -188,7 +188,7 @@ const ProductForm = ({ res, view }: props) => {
     const [prdtType_select, setPrdtType_select] = useState<any>(null)
 
 
-    console.log({ thumbnailfile })
+    console.log({ productList })
 
     const orderValidation = /^[0-9]*$/
     const schema = yup
@@ -1571,7 +1571,7 @@ const ProductForm = ({ res, view }: props) => {
                 </Grid>
                 <Box py={2}>
                     <Divider />
-                    {productList ? <Polygon onComplete={onPolygonComplete} path={paths} /> :
+                    {productList && productList?.delivery_locations ? <Polygon onComplete={onPolygonComplete} path={paths} /> :
                         <Maps onPolygonComplete={onPolygonComplete} />}
                     {(errors && errors?.delivery_locations) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.delivery_locations?.message}`}</span>}
                 </Box>

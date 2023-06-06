@@ -6,24 +6,29 @@ const Polygons = ({ onComplete, path }) => {
 
     const [polygonRef, setPolygonRef] = useState(null)
 
-    //console.log({path})
+    console.log({ path })
 
     const [center, setCenter] = useState(null)
 
     useEffect(() => {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const pos = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                };
-                setCenter(pos)
-            },
-            () => {
-                //handleLocationError(true, infoWindow, map.getCenter()!);
-            }
-        );
-    }, [])
+        // navigator.geolocation.getCurrentPosition(
+        //     (position) => {
+        //         const pos = {
+        //             lat: position.coords.latitude,
+        //             lng: position.coords.longitude,
+        //         };
+        //         setCenter(pos)
+        //     },
+        //     () => {
+        //         //handleLocationError(true, infoWindow, map.getCenter()!);
+        //     }
+        // );
+        let pos = {
+            lat: path?.[0].lat,
+            lng: path?.[0]?.lng
+        }
+        setCenter(pos)
+    }, [path])
 
     const options = {
         //fillColor: "lightblue",
