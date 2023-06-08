@@ -47,7 +47,9 @@ type Inputs = {
     offer_description: any,
     tax: any,
     type: any,
-    display_order: any
+    display_order: any,
+    latitude:any,
+    longitude:any
 };
 
 
@@ -75,7 +77,9 @@ type IFormInput = {
     tax: any,
     coordinates: any,
     type: string,
-    display_order: any
+    display_order: any,
+    latitude:any,
+    longitude:any
 };
 
 type props = {
@@ -87,7 +91,7 @@ type props = {
 const Vendorform = ({ res, view, data }: props) => {
     const idd = res ? res : view;
 
-
+    console.log({ data })
 
     const router = useRouter();
 
@@ -368,8 +372,8 @@ const Vendorform = ({ res, view, data }: props) => {
             setCategory(vendorList?.category_id)
             setValue('store_logo', vendorList?.store_logo)
             setImagePreview(`${IMAGE_URL}${vendorList?.store_logo}`)
-            setValue('start_time',vendorList?.start_time ? moment(vendorList?.start_time, 'HH:mm') : null)
-            setValue('end_time',vendorList?.end_time ? moment(vendorList?.end_time, 'HH:mm') : null)
+            setValue('start_time', vendorList?.start_time ? moment(vendorList?.start_time, 'HH:mm') : null)
+            setValue('end_time', vendorList?.end_time ? moment(vendorList?.end_time, 'HH:mm') : null)
             setValue('license_number', vendorList?.kyc_details?.license_number)
             setValue('ffsai_number', vendorList?.kyc_details?.ffsai_number)
             setValue('pan_card_number', vendorList?.kyc_details?.pan_card_number)
@@ -441,7 +445,7 @@ const Vendorform = ({ res, view, data }: props) => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
-        console.log({data})
+        console.log({ data })
 
         const URL_CREATE = '/admin/vendor/create'
         const URL_EDIT = '/admin/vendor/update'
@@ -748,11 +752,41 @@ const Vendorform = ({ res, view, data }: props) => {
                     <Divider />
                     {/* {isLoaded && */}
                     <Box py={1}>
-                        {idd ? <Polygon onComplete={polygonComplete} path={paths} /> : <Maps onPolygonComplete={polygonComplete} />}
+                        {idd && data?.delivery_location ? <Polygon onComplete={polygonComplete} path={paths} /> : <Maps onPolygonComplete={polygonComplete} />}
                         {(errors && errors?.coordinates) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates?.message}`}</span>}
                     </Box>
                 </Box>
             </CustomBox>
+            {/* <CustomBox title='Location'>
+            <Grid container spacing={2}>
+            <Grid item xs={12} lg={2.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.latitude}
+                            fieldName="latitude"
+                            placeholder={``}
+                            fieldLabel={"Latitude"}
+                            disabled={false}
+                            view={view ? true : false}
+
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={2.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.longitude}
+                            fieldName="longitude"
+                            placeholder={``}
+                            fieldLabel={"Longitude"}
+                            disabled={false}
+                            view={view ? true : false}
+
+                        />
+                    </Grid>
+            </Grid>
+            </CustomBox> */}
             <CustomBox title='KYC Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>

@@ -95,7 +95,7 @@ const MerchantMarketingForm = () => {
                
             </CustomBox>
             <Box py={3}>
-                <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'Add Details'} onClick={() => null} />
+                <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={'tails'} onClick={() => null} />
             </Box>
             
 

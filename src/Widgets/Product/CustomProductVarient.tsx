@@ -103,7 +103,7 @@ console.log({state:state?.[index]})
                         error={errors.fixed_delivery_price}
                         fieldName=" fixed_delivery_price"
                         placeholder={``}
-                        fieldLabel={"Fixed Delivery Price"}
+                        fieldLabel={"Delivery Price"}
                         view={view ? true : false}
                         defaultValue={state[index]?.fixed_delivery_price}
                     />

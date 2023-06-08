@@ -227,7 +227,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
 
     return (
         <Box>
-           {!idd && <CustomBox title='Customer Details'>
+          <CustomBox title='Customer Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput
@@ -293,7 +293,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                         </Customselect>
                     </Grid>
                 </Grid>
-            </CustomBox>}
+            </CustomBox>
             <CustomBox title='Customer Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
