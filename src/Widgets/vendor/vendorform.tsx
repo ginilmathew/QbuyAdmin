@@ -757,7 +757,7 @@ const Vendorform = ({ res, view, data }: props) => {
                     </Box>
                 </Box>
             </CustomBox>
-            <CustomBox title='Location'>
+            {/* <CustomBox title='Location'>
             <Grid container spacing={2}>
             <Grid item xs={12} lg={2.5}>
                         <CustomInput
@@ -786,7 +786,7 @@ const Vendorform = ({ res, view, data }: props) => {
                         />
                     </Grid>
             </Grid>
-            </CustomBox>
+            </CustomBox> */}
             <CustomBox title='KYC Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
