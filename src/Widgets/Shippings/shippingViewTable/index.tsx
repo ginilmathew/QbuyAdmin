@@ -14,9 +14,6 @@ type props = {
 
 
 const ShippingTable = ({ res }: props) => {
-
-  console.log({ res })
-
   return (
     <Box>
       <TableContainer component={Paper} >

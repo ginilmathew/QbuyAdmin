@@ -133,8 +133,7 @@ const ProductForm = ({ res, view }: props) => {
     const router = useRouter()
 
 
-    const [multipleImage, setMultipleImage] = useState<any>([])
-
+    const [multipleImage, setMultipleImage] = useState<any>([])     
     const [defaultImage, setdefaultImage] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [loader, setLoader] = useState<boolean>(false)

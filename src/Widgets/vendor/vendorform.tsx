@@ -47,7 +47,9 @@ type Inputs = {
     offer_description: any,
     tax: any,
     type: any,
-    display_order: any
+    display_order: any,
+    latitude:any,
+    longitude:any
 };
 
 
@@ -75,7 +77,9 @@ type IFormInput = {
     tax: any,
     coordinates: any,
     type: string,
-    display_order: any
+    display_order: any,
+    latitude:any,
+    longitude:any
 };
 
 type props = {
@@ -752,6 +756,36 @@ const Vendorform = ({ res, view, data }: props) => {
                         {(errors && errors?.coordinates) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates?.message}`}</span>}
                     </Box>
                 </Box>
+            </CustomBox>
+            <CustomBox title='Location'>
+            <Grid container spacing={2}>
+            <Grid item xs={12} lg={2.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.latitude}
+                            fieldName="latitude"
+                            placeholder={``}
+                            fieldLabel={"Latitude"}
+                            disabled={false}
+                            view={view ? true : false}
+
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={2.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.longitude}
+                            fieldName="longitude"
+                            placeholder={``}
+                            fieldLabel={"Longitude"}
+                            disabled={false}
+                            view={view ? true : false}
+
+                        />
+                    </Grid>
+            </Grid>
             </CustomBox>
             <CustomBox title='KYC Details'>
                 <Grid container spacing={2}>
