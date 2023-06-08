@@ -48,8 +48,8 @@ type Inputs = {
     tax: any,
     type: any,
     display_order: any,
-    latitude:any,
-    longitude:any
+    latitude: any,
+    longitude: any
 };
 
 
@@ -78,8 +78,8 @@ type IFormInput = {
     coordinates: any,
     type: string,
     display_order: any,
-    latitude:any,
-    longitude:any
+    latitude: any,
+    longitude: any
 };
 
 type props = {
@@ -118,6 +118,7 @@ const Vendorform = ({ res, view, data }: props) => {
     const orderValidation = /^[0-9]*$/
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+    const location = /^[0-9.]*$/
     const commissionvalidation = /^\d*\.?\d*$/
     const schema = yup
         .object()
@@ -151,7 +152,9 @@ const Vendorform = ({ res, view, data }: props) => {
                     "Commission is Required", // error message
                     (value) => typeof value === "number" && !/[eE+-]/.test(value.toString())
                 ),
-            display_order: yup.string().matches(orderValidation, 'Accept only positive number').nullable()
+            display_order: yup.string().matches(orderValidation, 'Accept only positive number').nullable(),
+            latitude: yup.string().matches(location, 'Please enter Valid format').required('Latitude is Required'),
+            longitude: yup.string().matches(location, 'please enter valid format').required('Longitude is required')
 
         })
 
@@ -372,8 +375,8 @@ const Vendorform = ({ res, view, data }: props) => {
             setCategory(vendorList?.category_id)
             setValue('store_logo', vendorList?.store_logo)
             setImagePreview(`${IMAGE_URL}${vendorList?.store_logo}`)
-            setValue('start_time', vendorList?.start_time ? moment(vendorList?.start_time, 'HH:mm') : null)
-            setValue('end_time', vendorList?.end_time ? moment(vendorList?.end_time, 'HH:mm') : null)
+            setValue('start_time', vendorList?.start_time !== 'null' ? moment(vendorList?.start_time, 'HH:mm') : "null")
+            setValue('end_time', vendorList?.end_time !== 'null' ? moment(vendorList?.end_time, 'HH:mm') : 'null')
             setValue('license_number', vendorList?.kyc_details?.license_number)
             setValue('ffsai_number', vendorList?.kyc_details?.ffsai_number)
             setValue('pan_card_number', vendorList?.kyc_details?.pan_card_number)
@@ -393,6 +396,8 @@ const Vendorform = ({ res, view, data }: props) => {
                     lng: parseFloat(loc[1])
                 }
             })
+            setValue('latitude', vendorList?.vendor_location?.[0]?.lat)
+            setValue('longitude', vendorList?.vendor_location?.[0]?.lng)
             setPaths(paths)
             setValue('coordinates', vendorList?.delivery_location)
         }
@@ -466,6 +471,11 @@ const Vendorform = ({ res, view, data }: props) => {
             tax: data?.tax ? data?.tax : null
         }
 
+        let location: any = [{
+            lat: data?.latitude,
+            lng: data?.longitude
+        }]
+
         setLoading(true)
         const formData = new FormData();
         const type: any = process.env.NEXT_PUBLIC_TYPE;
@@ -476,10 +486,12 @@ const Vendorform = ({ res, view, data }: props) => {
         formData.append("store_address", data?.store_address);
         formData.append("franchise_id", data?.franchise_id);
         formData.append("category_id", JSON.stringify(data?.category_id));
-        formData.append("start_time", data?.start_time ? moment(data?.start_time, 'hh:mm A').format('HH:mm') : "null");
-        formData.append("end_time", data?.end_time ? moment(data?.end_time, 'hh:mm A').format('HH:mm') : "null");
+        formData.append("start_time", data?.start_time !== "null" ? moment(data?.start_time, 'hh:mm A').format('HH:mm') : "null");
+        formData.append("end_time", data?.end_time !== "null" ? moment(data?.end_time, 'hh:mm A').format('HH:mm') : "null");
         formData.append("store_logo", data?.store_logo);
         formData.append("display_order", data?.display_order);
+        formData.append("vendor_location", JSON.stringify(location));
+
         formData.append("type", type);
         if (idd) {
             formData.append("id", vendorList?._id);
@@ -757,9 +769,9 @@ const Vendorform = ({ res, view, data }: props) => {
                     </Box>
                 </Box>
             </CustomBox>
-            {/* <CustomBox title='Location'>
-            <Grid container spacing={2}>
-            <Grid item xs={12} lg={2.5}>
+            <CustomBox title='Location'>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -785,8 +797,8 @@ const Vendorform = ({ res, view, data }: props) => {
 
                         />
                     </Grid>
-            </Grid>
-            </CustomBox> */}
+                </Grid>
+            </CustomBox>
             <CustomBox title='KYC Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
