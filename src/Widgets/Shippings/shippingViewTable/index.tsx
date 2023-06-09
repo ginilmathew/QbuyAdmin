@@ -21,7 +21,7 @@ const ShippingTable = ({ res }: props) => {
           <TableHead>
             <TableRow>
               <TableCell>Product</TableCell>
-              <TableCell align="center">Restaurant</TableCell>
+              <TableCell align="center">Store</TableCell>
               <TableCell align="center">Quantity</TableCell>
               <TableCell align="center">Unit Price</TableCell>
               <TableCell align="center">Total Price</TableCell>

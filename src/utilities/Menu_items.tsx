@@ -19,7 +19,7 @@ export const Admin_item = [
         list: [
             {
                 id: 3.1,
-                item: "Franchis",
+                item: "Franchisee",
                 path:'/franchiseAccounts',
             },
             {
