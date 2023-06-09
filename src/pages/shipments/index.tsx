@@ -76,10 +76,28 @@ const Shipments = () => {
 
         },
 
+        {
+            field: 'mobile',
+            headerName: 'Mobile',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => params.row.franchisee?.mobile ? params.row.franchisee?.mobile : '-'
+
+        },
+
 
         {
             field: 'payment_status',
             headerName: 'payment Status',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+        {
+            field: 'payment_type',
+            headerName: 'payment Method',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
