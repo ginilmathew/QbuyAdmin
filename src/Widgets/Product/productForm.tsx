@@ -133,7 +133,7 @@ const ProductForm = ({ res, view }: props) => {
     const router = useRouter()
 
 
-    const [multipleImage, setMultipleImage] = useState<any>([])     
+    const [multipleImage, setMultipleImage] = useState<any>([])
     const [defaultImage, setdefaultImage] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [loader, setLoader] = useState<boolean>(false)
@@ -244,7 +244,7 @@ const ProductForm = ({ res, view }: props) => {
                 video_link: '',
                 related_products: null,
                 image: null,
-                regular_price:0,
+                regular_price: 0,
                 offer_price: 0,
                 offer_date_from: null,
                 offer_date_to: null,
@@ -396,6 +396,7 @@ const ProductForm = ({ res, view }: props) => {
     const onselectFranchise = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
         setValue('franchisee', e.target?.value)
+        setValue('store', null)
         setError('franchisee', { message: '' })
         setFranchiseSelect(e.target.value)
         try {
@@ -945,7 +946,7 @@ const ProductForm = ({ res, view }: props) => {
             }
 
             let regularPrice = parseInt(data?.regular_price);
-            console.log({regularPrice})
+            console.log({ regularPrice })
             if (data?.regular_price !== "") {
                 if (isNaN(regularPrice)) {
                     setError("regular_price", { type: 'custom', message: ' Price must be a number' })
@@ -1087,12 +1088,12 @@ const ProductForm = ({ res, view }: props) => {
             return !recomendedProductEditList.some((obj1: any) => obj._id === obj1._id)
         })
 
-        
-        if(recomendedProductList?.length > 0){
+
+        if (recomendedProductList?.length > 0) {
             recomendedProductList?.push(...recomendedProduct)
             recomendedProductList?.push(...recomendedProductEditList)
         }
-       
+
 
 
         let imagearray: any = []

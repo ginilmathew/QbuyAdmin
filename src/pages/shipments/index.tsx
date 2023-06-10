@@ -31,7 +31,9 @@ const Shipments = () => {
 
     const columns: GridColDef[] = [
         {
-            field: 'order_id', headerName: 'Order ID', flex: 1, headerAlign: 'center',
+            field: 'order_id', 
+            headerName: 'Order ID',
+            headerAlign: 'center',
             align: 'center',
             width: matches ? 180 : 200,
         },
