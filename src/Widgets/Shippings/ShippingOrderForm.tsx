@@ -197,9 +197,11 @@ const ShippingOrderForm = ({ view, res }: props) => {
 
     useEffect(() => {
         if (orderviewList) {
+            setValue('name', orderviewList?.user?.name)
             setValue('mobile', orderviewList?.user?.mobile)
-            setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name ? orderviewList?.billaddress?.name : '' },${orderviewList?.billaddress?.area?.address ? orderviewList?.billaddress?.area?.address : ''},${orderviewList?.billaddress?.mobile ? orderviewList?.billaddress?.mobile : ''},${orderviewList?.billaddress?.pincode ? orderviewList?.billaddress?.pincode : ''}`)
-            setValue('shipping_address_delivery_address', `${orderviewList?.shipaddress?.name ? orderviewList?.shipaddress?.name : ''},${orderviewList?.shipaddress?.area?.address ? orderviewList?.shipaddress?.area?.address : ''},${orderviewList?.shipaddress?.mobile ? orderviewList?.shipaddress?.mobile :''},${orderviewList?.shipaddress?.pincode ? orderviewList?.shipaddress?.pincode : ''}`)
+            setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name ? orderviewList?.billaddress?.name : ''},${orderviewList?.billaddress?.area?.address ? orderviewList?.billaddress?.area?.address : ''},${orderviewList?.billaddress?.pincode ? orderviewList?.billaddress?.pincode : ''},${orderviewList?.billaddress?.mobile ? `${'Mob:'}${orderviewList?.billaddress?.mobile}` : ''}`)
+            setValue('shipping_address_delivery_address', `${orderviewList?.shipaddress?.name ? orderviewList?.shipaddress?.name : ''},${orderviewList?.shipaddress?.area?.address ? orderviewList?.shipaddress?.area?.address : ''},${orderviewList?.shipaddress?.pincode ? orderviewList?.shipaddress?.pincode : ''},
+            ${orderviewList?.shipaddress?.mobile ? `${'Mob:'}${orderviewList?.shipaddress?.mobile}` : ''}`)
         }
 
     }, [orderviewList])
@@ -227,7 +229,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
 
     return (
         <Box>
-          <CustomBox title='Customer Details'>
+            <CustomBox title='Customer Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput
@@ -344,7 +346,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                     </Grid>
                 </Grid>
 
-            </CustomBox> 
+            </CustomBox>
             <CustomBox title='Payment Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
@@ -427,7 +429,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                 {orderviewList &&
                     <ShippingTable res={orderviewList} />}
             </CustomBox>
-             {idd && <HistoryTable res={orderviewList?.order_history}/>}
+            {idd && <HistoryTable res={orderviewList?.order_history} />}
 
             {idd &&
                 <CustomBox title='Add Order History'>
@@ -474,7 +476,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                         </Grid>
 
                     </Grid>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' ,py:1}}>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', py: 1 }}>
                         <Custombutton
                             btncolor=''
                             IconEnd={''}
