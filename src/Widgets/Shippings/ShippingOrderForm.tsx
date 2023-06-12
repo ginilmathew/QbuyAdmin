@@ -199,7 +199,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
         if (orderviewList) {
             setValue('name', orderviewList?.user?.name)
             setValue('mobile', orderviewList?.user?.mobile)
-            setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name ? orderviewList?.billaddress?.name : ''},${orderviewList?.billaddress?.area?.address ? orderviewList?.billaddress?.area?.address : ''},${orderviewList?.billaddress?.pincode ? orderviewList?.billaddress?.pincode : ''},${orderviewList?.billaddress?.mobile ? `${'Mob:'}${orderviewList?.billaddress?.mobile}` : ''}`)
+            // setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name ? orderviewList?.billaddress?.name : ''},${orderviewList?.billaddress?.area?.address ? orderviewList?.billaddress?.area?.address : ''},${orderviewList?.billaddress?.pincode ? orderviewList?.billaddress?.pincode : ''},${orderviewList?.billaddress?.mobile ? `${'Mob:'}${orderviewList?.billaddress?.mobile}` : ''}`)
             setValue('shipping_address_delivery_address', `${orderviewList?.shipaddress?.name ? orderviewList?.shipaddress?.name : ''},${orderviewList?.shipaddress?.area?.address ? orderviewList?.shipaddress?.area?.address : ''},${orderviewList?.shipaddress?.pincode ? orderviewList?.shipaddress?.pincode : ''},
             ${orderviewList?.shipaddress?.mobile ? `${'Mob:'}${orderviewList?.shipaddress?.mobile}` : ''}`)
         }
@@ -320,7 +320,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             </MenuItem>
                         </Customselect>
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
+                    {/* <Grid item xs={12} lg={2.5}>
                         <CustomTextarea
                             control={control}
                             error={errors.payment_address_pickup_address}
@@ -331,7 +331,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             view={view ? true : false}
                             defaultValue={''}
                         />
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} lg={2.5}>
                         <CustomTextarea
                             control={control}
