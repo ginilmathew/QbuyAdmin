@@ -37,7 +37,7 @@ const ShippingTable = ({ res }: props) => {
                 <TableCell component="th" scope="row">
                   {row.productdata?.name}  {row.variants ? row.variants?.title : ''}
                 </TableCell>
-                <TableCell align="center">{row.productdata?.vendors?.store?.name}</TableCell>
+                <TableCell align="center">{row.productdata?.vendors?.store_name},{row?.productdata?.vendors?.store_address},{row.productdata?.vendors?.vendor_mobile}{}</TableCell>
                 <TableCell align="center">{row.quantity}</TableCell>
                 <TableCell align="center">{row?.unitPrice}</TableCell>
                 <TableCell align="center">{row?.quantity * row?.unitPrice}</TableCell>
