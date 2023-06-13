@@ -17,21 +17,21 @@ import { useRouter } from 'next/router';
 import CustomLoader from '@/components/CustomLoader';
 
 type Inputs = {
-    name: string,
-    type: string,
+    name: any,
+    type: any,
     order_number: any,
     image: any,
-    seo_title: string,
-    seo_description: string
+    seo_title: any,
+    seo_description: any
 }
 
 type IFormInput = {
-    name: string,
-    type: string,
+    name: any,
+    type: any,
     order_number: any,
     image: any,
-    seo_title: string,
-    seo_description: string
+    seo_title: any,
+    seo_description: any
 
 }
 
@@ -87,7 +87,7 @@ const CategoryForm = ({ resData, view }: props) => {
             defaultValues: {
                 name: '',
                 seo_description: '',
-                order_number: ''
+                order_number: '',
             }
         });
 
