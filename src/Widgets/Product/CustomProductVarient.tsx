@@ -90,7 +90,7 @@ const CustomProductVarient = ({ content, index, deafultCommission, onChange, sta
                         value={state[index]?.commission ? state[index]?.commission : 0}
                         onChangeValue={(e: any) => onChange(e.target.value, 'commission')}
                         disabled={false}
-                        type='text'
+                        type='number'
                         error={errors.commission}
                         fieldName="commission"
                         placeholder={''}

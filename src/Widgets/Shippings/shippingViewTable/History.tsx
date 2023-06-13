@@ -38,11 +38,7 @@ const HistoryTable = ({ res }: props) => {
                             </TableCell>
                             <TableCell align="center">{res?.comments}</TableCell>
                             <TableCell align="center">{res?.status}</TableCell>
-
                         </TableRow>)}
-
-
-
                     </TableBody>
                 </Table>
             </TableContainer>
