@@ -82,7 +82,7 @@ const CategoryForm = ({ resData, view }: props) => {
         setError,
         formState: { errors },
         reset,
-        setValue, } = useForm<Inputs>({
+        setValue, } = useForm<any>({
             resolver: yupResolver(schema),
             defaultValues: {
                 name: '',
