@@ -31,9 +31,10 @@ type Input = {
 }
 
 
-const CustomProductVarient = memo(({ content, index, deafultCommission, onChange, state, view, stock }: props) => {
+const CustomProductVarient = ({ content, index, deafultCommission, onChange, state, view, stock }: props) => {
 
     console.log({ state })
+    console.log({ content })
 
     const { register,
         handleSubmit,
@@ -42,11 +43,11 @@ const CustomProductVarient = memo(({ content, index, deafultCommission, onChange
         formState: { errors },
         reset,
         setValue, } = useForm<Input>({
-            defaultValues: content
+            defaultValues: {}
         });
 
 
-console.log({state:state?.[index]})
+    console.log({ state: state?.[index] })
 
     return (
         <Box>
@@ -54,7 +55,7 @@ console.log({state:state?.[index]})
             <Grid container spacing={2}>
                 <Grid item lg={1.5} xs={12}>
                     <CustomInputNormal
-
+                        value={state[index]?.seller_price}
                         onChangeValue={(e: any) => onChange(e.target.value, 'seller_price')}
                         disabled={false}
                         type='text'
@@ -63,12 +64,14 @@ console.log({state:state?.[index]})
                         placeholder={``}
                         fieldLabel={"Purchase Price"}
                         view={view ? true : false}
-                        defaultValue={state[index]?.seller_price}
+                        defaultValue={''}
+
                     />
                 </Grid>
 
                 <Grid item lg={1.5} xs={12}>
                     <CustomInputNormal
+                        value={state[index]?.regular_price}
                         disabled={false}
                         type='text'
                         error={errors.regular_price}
@@ -84,6 +87,7 @@ console.log({state:state?.[index]})
 
                 <Grid item lg={1.5} xs={12}>
                     <CustomInputNormal
+                        value={state[index]?.commission ? state[index]?.commission : 0}
                         onChangeValue={(e: any) => onChange(e.target.value, 'commission')}
                         disabled={false}
                         type='text'
@@ -92,11 +96,12 @@ console.log({state:state?.[index]})
                         placeholder={''}
                         fieldLabel={"Commission(%)"}
                         view={view ? true : false}
-                        defaultValue={state[index]?.commission ? state[index]?.commission   : 0}
+                        defaultValue={state[index]?.commission ? state[index]?.commission : 0}
                     />
                 </Grid>
                 <Grid item lg={1.5} xs={12}>
                     <CustomInputNormal
+                        value={state[index]?.fixed_delivery_price}
                         onChangeValue={(e: any) => onChange(e.target.value, 'fixed_delivery_price')}
                         disabled={false}
                         type='number'
@@ -110,6 +115,7 @@ console.log({state:state?.[index]})
                 </Grid>
                 <Grid item lg={1.5} xs={12}>
                     <CustomInputNormal
+                        value={state[index]?.offer_price}
                         onChangeValue={(e: any) => onChange(e.target.value, 'offer_price')}
                         disabled={false}
                         type='text'
@@ -146,6 +152,7 @@ console.log({state:state?.[index]})
                 </Grid>
                 {stock && <Grid item lg={1.5} xs={12}>
                     <CustomInputNormal
+                        value={state[index]?.stock_value}
                         onChangeValue={(e: any) => onChange(e.target.value, 'stock_value')}
                         disabled={false}
                         type='number'
@@ -160,6 +167,6 @@ console.log({state:state?.[index]})
             </Grid>
         </Box>
     )
-})
+}
 
 export default CustomProductVarient

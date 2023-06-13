@@ -8,7 +8,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 const Attributes = ({item, index, onChange, enableVariant, removeAttributes,closeIcon}) => {
 
-    console.log({item},'ITEM IN ')
+    // console.log({item},'ITEM IN ')
 
     const saveTagValues = (value) => {
         onChange(value, index, 'options')
