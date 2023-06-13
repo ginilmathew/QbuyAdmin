@@ -57,15 +57,11 @@ const CategoryForm = ({ resData, view }: props) => {
 
 
     const orderValidation = /^(0|[1-9]\d*)$/
-    const schema = yup
-        .object()
-        .shape({
+    const schema = yup.object().shape({
             name: yup.string().max(30, "Name must be less than 30 characters").matches(
                 /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
                 'Name can only contain Alphabets letters.'
-            )
-                // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
-                .required('Category Name is Required'),
+            ).required('Category Name is Required'),
             // type: yup.string().required('Type is Required'),
             // seo_description: yup.string().max(100, 'Maximum Character Exceeds'),
             order_number: yup.string().matches(orderValidation, 'Order should be number'),
@@ -82,7 +78,7 @@ const CategoryForm = ({ resData, view }: props) => {
         setError,
         formState: { errors },
         reset,
-        setValue, } = useForm<any>({
+        setValue,} = useForm<any>({
             resolver: yupResolver(schema),
             defaultValues: {
                 name: '',
