@@ -187,7 +187,7 @@ const ProductForm = ({ res, view }: props) => {
     const [prdtType_select, setPrdtType_select] = useState<any>(null)
 
 
-    console.log({ productList })
+    // console.log({ productList })
 
     const orderValidation = /^[0-9]*$/
     const schema = yup
@@ -372,7 +372,7 @@ const ProductForm = ({ res, view }: props) => {
     }
 
 
-    console.log({ errors })
+    // console.log({ errors })
 
 
 
@@ -439,7 +439,7 @@ const ProductForm = ({ res, view }: props) => {
 
         let findresult = vendorList?.filter((res: any) => res?._id === e.target.value)
         setVendorListDirection(findresult)
-        setValue('commission', result[0]?.commision)
+        // setValue('commission', result[0]?.commision)
         setValue('store', e.target.value)
         setError('store', { message: '' })
     }
@@ -499,9 +499,10 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
-
+      
+        console.log({e})
         //if (!res && !view) {
-        console.log({ attributes })
+        // console.log({ attributes })
         attributes[i][key] = e;
         if (key === "options") {
             let result = attributes[i].variant === true;
@@ -780,7 +781,7 @@ const ProductForm = ({ res, view }: props) => {
 
             let combines = combine(attributesArray);
 
-            console.log({ combines, varientsarray })
+            // console.log({ combines, varientsarray })
 
             let attri = combines.map((val: any) => {
                 return {
@@ -798,7 +799,7 @@ const ProductForm = ({ res, view }: props) => {
                 }
             })
 
-            console.log({ varientsarray, attri })
+            // console.log({ varientsarray, attri })
 
 
             let varia = varientsarray?.filter((obj: any) => {
@@ -813,7 +814,7 @@ const ProductForm = ({ res, view }: props) => {
 
 
             setVarientsArray([...varia, ...result])
-            console.log({ varientsarray })
+            // console.log({ varientsarray })
 
         } else {
             setVarientsArray([])
@@ -854,7 +855,7 @@ const ProductForm = ({ res, view }: props) => {
                     offer_date_to: '',
                     stock: stock,
                     stock_value: '',
-                    commission: getValues('commission'),
+                    commission: '',
                     fixed_delivery_price: 0
                 }
             })
@@ -886,7 +887,7 @@ const ProductForm = ({ res, view }: props) => {
     const changeAttributeValues = (i: number, key: string, values: any) => {
         varientsarray[i][key] = values
         setVarientsArray([...varientsarray])
-
+        console.log({varientsarray})
     }
 
 
@@ -900,6 +901,8 @@ const ProductForm = ({ res, view }: props) => {
     //metatag value..........................................................................................
 
     const metaTagvalues = (res: any) => {
+
+          console.log({res})
         setMetaTag(res)
         setValue('meta_tags', res)
     }
@@ -930,7 +933,7 @@ const ProductForm = ({ res, view }: props) => {
         // console.log({ data })
         //Check All Attributes have values
         let attributeCheck = attributes?.find((att: any) => isEmpty(att?.name) || att?.options?.length === 0);
-        console.log({ attributeCheck, attributes })
+        // console.log({ attributeCheck, attributes })
         if (attributeCheck) {
             toast.warning("All Attributes must have values")
             return false;
@@ -938,7 +941,7 @@ const ProductForm = ({ res, view }: props) => {
         let pattern = /^[0-9]+$/
         //Check Any Variants
         let variantsChe = attributes?.find((att: any) => att.variant === true);
-        console.log({ length: attributes.length, price: isEmpty(data?.seller_price) })
+        // console.log({ length: attributes.length, price: isEmpty(data?.seller_price) })
         if (!variantsChe) {
             if (isNaN(data?.seller_price) || data?.seller_price <= 0) {
                 setError("seller_price", { type: 'custom', message: 'Purchase price must be greater than 0' })
@@ -946,7 +949,7 @@ const ProductForm = ({ res, view }: props) => {
             }
 
             let regularPrice = parseInt(data?.regular_price);
-            console.log({ regularPrice })
+            // console.log({ regularPrice })
             if (data?.regular_price !== "") {
                 if (isNaN(regularPrice)) {
                     setError("regular_price", { type: 'custom', message: ' Price must be a number' })
@@ -988,7 +991,7 @@ const ProductForm = ({ res, view }: props) => {
         }
         else {
 
-            console.log({ varientsarray })
+            // console.log({ varientsarray })
             let varicheck = varientsarray?.find((vari: any) => isEmpty(vari?.seller_price) || isNaN(vari?.seller_price) || (isNumber(vari?.seller_price) && vari?.seller_price >= 0))
             if (varicheck) {
                 // console.log({ varicheck, varientsarray })
@@ -1028,7 +1031,7 @@ const ProductForm = ({ res, view }: props) => {
                 }
 
                 let delivery = varientsarray?.find((vari: any) => isNaN(vari?.fixed_delivery_price) || vari?.fixed_delivery_price < 0 || isEmpty(vari?.fixed_delivery_price))
-                console.log({ delivery })
+                // console.log({ delivery })
                 if (delivery) {
                     toast.warning("Delivery price required for all variants")
                     return false;
@@ -1089,7 +1092,7 @@ const ProductForm = ({ res, view }: props) => {
         })
 
 
-        if (recomendedProductList?.length > 0) {
+        if (recomendedProduct?.length > 0) {
             recomendedProductList?.push(...recomendedProduct)
             recomendedProductList?.push(...recomendedProductEditList)
         }
@@ -1232,13 +1235,13 @@ const ProductForm = ({ res, view }: props) => {
     }
 
     const removeAttributes = async (i: any) => {
-        console.log('FUCTION CALLED')
+        // console.log('FUCTION CALLED')
         if (!res || !view) {
             attributes[i].variant = false;
             setAttributes([...attributes])
             let attribute = await attributes?.filter((att: any, index: Number) => index !== i)
 
-            console.log({ attribute })
+            // console.log({ attribute })
             setAttributes([...attribute])
             addvarients()
         }

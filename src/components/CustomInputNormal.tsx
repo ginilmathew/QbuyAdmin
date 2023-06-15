@@ -14,7 +14,8 @@ type props = {
     disabled: boolean,
     defaultValue: any
     type: string
-    onChangeValue?:any
+    onChangeValue?: any,
+    value: any
 }
 
 
@@ -29,6 +30,8 @@ const CustomInputNormal = (
         defaultValue,
         onChangeValue,
         type,
+        value
+
     }: props
 ) => {
     return (
@@ -50,28 +53,28 @@ const CustomInputNormal = (
                 </Typography>
 
                 <TextField
-                        
-                            type={type}
-                            defaultValue={defaultValue}
-                            onChange={onChangeValue}
-                            aria-invalid={error ? "true" : "false"}
-                            className="form-control"
-                            placeholder={placeholder}
-                            id="exampleInputEmail1"
-                            InputProps={{
-                                disableUnderline: true,
-                                readOnly: view ? true : false,
-                                style: {
-                                    opacity: "1",
-                                    background: '#ffff',
-                                    height: "40px",
-                                    letterSpacing: "1px",
-                                    fontWeight: '700px',
-                                    border: 'none',
-                                    fontFamily: `'Poppins' sans-serif`,
-                                },
-                            }}
-                        />
+                    value={value}
+                    type={type}
+                    defaultValue={defaultValue}
+                    onChange={onChangeValue}
+                    aria-invalid={error ? "true" : "false"}
+                    className="form-control"
+                    placeholder={placeholder}
+                    id="exampleInputEmail1"
+                    InputProps={{
+                        disableUnderline: true,
+                        readOnly: view ? true : false,
+                        style: {
+                            opacity: "1",
+                            background: '#ffff',
+                            height: "40px",
+                            letterSpacing: "1px",
+                            fontWeight: '700px',
+                            border: 'none',
+                            fontFamily: `'Poppins' sans-serif`,
+                        },
+                    }}
+                />
                 {error && (
                     <p
                         role="alert"

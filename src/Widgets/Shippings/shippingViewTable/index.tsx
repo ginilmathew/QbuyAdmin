@@ -39,8 +39,8 @@ const ShippingTable = ({ res }: props) => {
                 </TableCell>
                 <TableCell align="center">{row.productdata?.vendors?.store_name},{row?.productdata?.vendors?.store_address},{row.productdata?.vendors?.vendor_mobile}{}</TableCell>
                 <TableCell align="center">{row.quantity}</TableCell>
-                <TableCell align="center">{row?.unitPrice}</TableCell>
-                <TableCell align="center">{row?.quantity * row?.unitPrice}</TableCell>
+                <TableCell align="center">{(row?.unitPrice).toFixed(2)}</TableCell>
+                <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
               </TableRow>
             ))}
             <TableRow >

@@ -91,7 +91,6 @@ type props = {
 const Vendorform = ({ res, view, data }: props) => {
     const idd = res ? res : view;
 
-    console.log({ data })
 
     const router = useRouter();
 
