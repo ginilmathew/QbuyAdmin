@@ -49,7 +49,9 @@ type Inputs = {
     type: any,
     display_order: any,
     latitude: any,
-    longitude: any
+    longitude: any,
+    order_status: any,
+    approval_status: any
 };
 
 
@@ -79,7 +81,9 @@ type IFormInput = {
     type: string,
     display_order: any,
     latitude: any,
-    longitude: any
+    longitude: any,
+    order_status: any,
+    approval_status: any
 };
 
 type props = {
@@ -109,10 +113,12 @@ const Vendorform = ({ res, view, data }: props) => {
     const [imagePreview, setImagePreview] = useState<any>(null)
     const [paths, setPaths] = useState<any>(null)
     const [vendorList, setVendorList] = useState<any>(data)
+    const [statusList, setStatusList] = useState<any>([]);
+    const [statusSelect, setStatusSelect] = useState<any>(null)
 
 
 
-
+    console.log({ statusList })
 
     const orderValidation = /^[0-9]*$/
 
@@ -362,7 +368,10 @@ const Vendorform = ({ res, view, data }: props) => {
     useEffect(() => {
 
         let array = vendorList?.category_id?.map((res: any) => res?.id)
+
+        console.log({ array })
         if (vendorList && array) {
+            setValue('approval_status',vendorList?.approval_status)
             setValue('vendor_name', vendorList?.vendor_name)
             setValue('vendor_mobile', vendorList?.vendor_mobile)
             setValue('vendor_email', vendorList?.vendor_email)
@@ -399,6 +408,7 @@ const Vendorform = ({ res, view, data }: props) => {
             setValue('longitude', vendorList?.vendor_location?.[0]?.lng)
             setPaths(paths)
             setValue('coordinates', vendorList?.delivery_location)
+            setStatusSelect(vendorList?.approval_status)
         }
     }, [vendorList])
 
@@ -447,10 +457,28 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
 
+    async function getStatuslist() {
+        try {
+            const res = await fetchData('common/vendor-status-list')
+            setStatusList(res?.data?.data)
+        } catch (err: any) {
+
+        }
+    }
+
+
+    const changeOrderStatus = useCallback((e: any) => {
+        const { value } = e.target;
+
+        setStatusSelect(value)
+        setValue('order_status', value)
+
+    }, [])
+
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
         console.log({ data })
-
+        
         const URL_CREATE = '/admin/vendor/create'
         const URL_EDIT = '/admin/vendor/update'
         let kyc_details = {
@@ -479,6 +507,7 @@ const Vendorform = ({ res, view, data }: props) => {
         const formData = new FormData();
         const type: any = process.env.NEXT_PUBLIC_TYPE;
         formData.append("vendor_name", data?.vendor_name);
+        formData.append("approval_status", data?.approval_status);
         formData.append("vendor_email", data?.vendor_email);
         formData.append("vendor_mobile", data?.vendor_mobile);
         formData.append("store_name", data?.store_name);
@@ -538,6 +567,13 @@ const Vendorform = ({ res, view, data }: props) => {
     const polygonComplete = (value: any) => {
         setValue("coordinates", value)
     }
+
+    useEffect(() => {
+        if (idd) {
+            getStatuslist()
+        }
+    }, [idd])
+
 
 
 
@@ -953,8 +989,41 @@ const Vendorform = ({ res, view, data }: props) => {
                         />
                     </Grid>
 
+
                 </Grid>
             </CustomBox>
+            {vendorList?.approval_status !== "Approved" &&
+                <CustomBox title='Status'>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} lg={2.5}>
+                            <Customselect
+                                disabled={view ? true : false}
+                                type='text'
+                                control={control}
+                                error={errors.approval_status}
+                                fieldName="approval_status"
+                                placeholder={``}
+                                fieldLabel={"Change Status"}
+                                selectvalue={""}
+                                height={40}
+                                label={''}
+                                size={16}
+                                value={statusSelect}
+                                options={''}
+                                onChangeValue={changeOrderStatus}
+                                background={'#fff'}
+                            >
+                                <MenuItem value="" disabled >
+                                    <>Select Status</>
+                                </MenuItem>
+                                {statusList && statusList?.map((res: any) => (
+                                    <MenuItem key={res?._id} value={res?.status_name}>{res?.status_name}</MenuItem>
+                                ))}
+                            </Customselect>
+                        </Grid>
+
+                    </Grid>
+                </CustomBox>}
             {!view &&
                 <Box py={3}>
                     <Custombutton

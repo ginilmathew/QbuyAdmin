@@ -184,6 +184,8 @@ const ProductForm = ({ res, view }: props) => {
 
     ]);
 
+    console.log({ recomendedProductEditList })
+
     const [prdtType_select, setPrdtType_select] = useState<any>(null)
 
 
@@ -499,8 +501,8 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
-      
-        console.log({e})
+
+        console.log({ e })
         //if (!res && !view) {
         // console.log({ attributes })
         attributes[i][key] = e;
@@ -887,7 +889,7 @@ const ProductForm = ({ res, view }: props) => {
     const changeAttributeValues = (i: number, key: string, values: any) => {
         varientsarray[i][key] = values
         setVarientsArray([...varientsarray])
-        console.log({varientsarray})
+        console.log({ varientsarray })
     }
 
 
@@ -902,7 +904,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const metaTagvalues = (res: any) => {
 
-          console.log({res})
+        console.log({ res })
         setMetaTag(res)
         setValue('meta_tags', res)
     }
@@ -1092,6 +1094,7 @@ const ProductForm = ({ res, view }: props) => {
         })
 
 
+
         if (recomendedProduct?.length > 0) {
             recomendedProductList?.push(...recomendedProduct)
             recomendedProductList?.push(...recomendedProductEditList)
@@ -1189,7 +1192,7 @@ const ProductForm = ({ res, view }: props) => {
             coupon_details: null,
             meta_tags: metaTag,
             video_link: data?.video_link,
-            related_products: recomendedProductList,
+            related_products: recomendedProductList?.length > 0 ? recomendedProductList : recomendedProductEditList,
             attributess: attributes,
             regular_price: data?.regular_price,
             seller_price: data?.seller_price,

@@ -52,6 +52,7 @@ type props = {
 }
 
 const ShippingOrderForm = ({ view, res }: props) => {
+    const router = useRouter()
 
     const idd = view ? view : res;
 
@@ -181,6 +182,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
             setLoading(true)
             await postData('admin/order/status', value)
             toast.success('Order Updated Successfully')
+            router.push('/shipments')
             setLoading(false)
         } catch (err: any) {
             toast.error(err?.message)
