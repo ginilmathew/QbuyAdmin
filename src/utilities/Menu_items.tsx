@@ -263,43 +263,49 @@ export const sales_item = [
     },
     {
         id: 4,
+        item: "Vendor Register",
+        path:"/vendorRegister"
+    },
+    
+    {
+        id: 5,
         item: "Marketing",
         path:null,
         list:[
             {
-                id:4.1,
+                id:5.1,
                 item:"Merchant Marketing",
                 path:'/merchantMarketing',
             },
             {
-                id:4.2,
+                id:5.2,
                 item:"Franchisee Marketing",
                 path:'/franchiseMarketing',
             },
         ]
     },
     {
-        id: 5,
+        id:6,
         item: "Referred Restaurants",
         path:'/restaurantReferral',
     },
     {
-        id: 6,
+        id: 7,
         item: "Franchisee Enquires",
         path:'/franchiseEnquires',
     },
     {
-        id: 7,
+        id: 8,
         item: "Category Management",
         path:'/category',
     },
     {
-        id: 8,
+        id: 9,
         item: "SubCategory",
         path:'/subCategory',
     },
     {
-        id: 9,
+        id: 10,
         item: "Product Adding",
         path:'/products',
     },

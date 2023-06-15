@@ -10,11 +10,13 @@ const TagInput = ({ tagValues , values,close}) => {
     // console.log({tags})
 
     const submitvalues = (e) => {
+
+        let modifiedString = e.target.value.replace(' ', '_');
         if(e?.target?.value?.length >= 1){
             if (e.key === 'Enter') {
                 setTags((prev) => {
-                    tagValues([...prev, e.target.value])
-                    return [...prev, e.target.value]
+                    tagValues([...prev, modifiedString])
+                    return [...prev, modifiedString]
                 })
                 setValue('')
     

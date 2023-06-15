@@ -11,6 +11,7 @@ const Attributes = ({item, index, onChange, enableVariant, removeAttributes,clos
     // console.log({item},'ITEM IN ')
 
     const saveTagValues = (value) => {
+       
         onChange(value, index, 'options')
     }
 

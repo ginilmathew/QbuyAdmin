@@ -499,7 +499,8 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
-
+      
+        console.log({e})
         //if (!res && !view) {
         // console.log({ attributes })
         attributes[i][key] = e;
@@ -900,6 +901,8 @@ const ProductForm = ({ res, view }: props) => {
     //metatag value..........................................................................................
 
     const metaTagvalues = (res: any) => {
+
+          console.log({res})
         setMetaTag(res)
         setValue('meta_tags', res)
     }
@@ -1089,7 +1092,7 @@ const ProductForm = ({ res, view }: props) => {
         })
 
 
-        if (recomendedProductList?.length > 0) {
+        if (recomendedProduct?.length > 0) {
             recomendedProductList?.push(...recomendedProduct)
             recomendedProductList?.push(...recomendedProductEditList)
         }
