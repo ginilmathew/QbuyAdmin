@@ -20,7 +20,6 @@ interface SimpleDialogProps {
     _id: string,
     heading?:string,
     paragraph?:string
-
 }
 
 const CustomDelete = ({ open, onClose, url, setData, data, _id ,heading,paragraph}: SimpleDialogProps) => {
