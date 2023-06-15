@@ -8,6 +8,7 @@ import { getServerSession } from "next-auth/next"
 import { fetchData } from '@/CustomAxios';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import { useRouter } from 'next/router';
+import moment from 'moment';
 
 // type props = {
 //     req: any,
@@ -67,6 +68,15 @@ const VendorRegister = () => {
             align: 'center',
         },
         {
+            field: 'CREATED',
+            headerName: 'Vendor Create',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => moment(params.row.created_at).format("DD/MM/YYYY HH:MM A"),
+        },
+    
+        {
             field: 'vendor_name',
             headerName: 'Vendor Name',
             flex: 1,
@@ -76,6 +86,13 @@ const VendorRegister = () => {
         {
             field: 'store_name',
             headerName: 'Store Name',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
+            field: 'vendor_email',
+            headerName: 'Email',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
@@ -130,7 +147,7 @@ const VendorRegister = () => {
     }
 
     const searchVendor = useCallback((value: any) => {
-        let Result = serachList?.filter((com: any) => com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_name.toString().toLowerCase().includes(value.toLowerCase()) ||  com?.store_name?.toString().toLowerCase().includes(value.toLowerCase()))
+        let Result = serachList?.filter((com: any) => com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.store_name?.toString().toLowerCase().includes(value.toLowerCase()))
         startTransition(() => {
             setVendorRegList(Result)
         })
