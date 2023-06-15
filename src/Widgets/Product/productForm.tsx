@@ -439,7 +439,7 @@ const ProductForm = ({ res, view }: props) => {
 
         let findresult = vendorList?.filter((res: any) => res?._id === e.target.value)
         setVendorListDirection(findresult)
-        setValue('commission', result[0]?.commision)
+        // setValue('commission', result[0]?.commision)
         setValue('store', e.target.value)
         setError('store', { message: '' })
     }
@@ -855,7 +855,7 @@ const ProductForm = ({ res, view }: props) => {
                     offer_date_to: '',
                     stock: stock,
                     stock_value: '',
-                    commission: getValues('commission'),
+                    commission: '',
                     fixed_delivery_price: 0
                 }
             })
