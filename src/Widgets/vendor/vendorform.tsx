@@ -507,7 +507,7 @@ const Vendorform = ({ res, view, data }: props) => {
         const formData = new FormData();
         const type: any = process.env.NEXT_PUBLIC_TYPE;
         formData.append("vendor_name", data?.vendor_name);
-        formData.append("approval_status",statusSelect);
+        formData.append("approval_status", statusSelect);
         formData.append("vendor_email", data?.vendor_email);
         formData.append("vendor_mobile", data?.vendor_mobile);
         formData.append("store_name", data?.store_name);
@@ -541,8 +541,13 @@ const Vendorform = ({ res, view, data }: props) => {
         try {
             await postData(vendorList ? URL_EDIT : URL_CREATE, formData)
             toast.success(vendorList ? 'Updated Successfully' : 'Created Successfully')
+            if (statusSelect === "Approved") {
+                router.push('/vendor')
+            } else {
+                router.push('/vendorRegister')
+            }
 
-            router.push('/vendor')
+
             reset()
             setVendorList(null)
             setFranchise('')

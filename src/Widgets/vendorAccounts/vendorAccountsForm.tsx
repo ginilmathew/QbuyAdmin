@@ -104,9 +104,11 @@ const VendorAccountsForm = ({ idd }: props) => {
             setValue('vendor_mobile', vendorSingleList?.vendor_mobile);
             setValue('store_name', vendorSingleList?.store_name);
             setValue('category_id', vendorSingleList?.category_id)
-            setMultipleArray(array)
-            setValue('store_address', vendorSingleList?.store_address)
-            setValue('franchise', vendorSingleList?.franchise?.franchise_name)
+            setMultipleArray(array);
+            setValue('store_address', vendorSingleList?.store_address);
+            setValue('franchise', vendorSingleList?.franchise?.franchise_name);
+            setValue('start_time',vendorSingleList?.start_time)
+            setValue('end_time',vendorSingleList?.start_time)
 
         }
     }, [vendorSingleList])
