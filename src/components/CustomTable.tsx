@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import { Box, Button, Typography } from '@mui/material';
 import Custombutton from './Custombutton';
 
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
 type props = {
     label: string
     columns: any,
@@ -17,11 +17,19 @@ type props = {
     id: string,
     bg: string,
     dashboard: boolean,
-    rowheight?:number
+    rowheight?:number,
+    checked?:boolean,
+    selectCheck?:any
+
 }
-const CustomTable = ({ columns, rows, id, bg, label, dashboard,rowheight }: props) => {
+const CustomTable = ({ columns, rows, id, bg, label, dashboard,rowheight,checked }: props) => {
     let texttruncate = label.slice(0, 3);
     let custtext = label.slice(3)
+
+    function selectCheck(itm: GridRowSelectionModel): void {
+       
+        console.log({itm})
+    }
 
     return (
         <>
@@ -57,6 +65,8 @@ const CustomTable = ({ columns, rows, id, bg, label, dashboard,rowheight }: prop
                             },
                         },
                     }}
+                    checkboxSelection={checked ? checked : false}
+                    onRowSelectionModelChange={itm => selectCheck(itm)}
                     pageSizeOptions={[10]}
                     getRowId={row => row[id]}
                 />

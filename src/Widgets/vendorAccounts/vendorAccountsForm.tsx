@@ -10,6 +10,10 @@ import CustomInput from '@/components/CustomInput';
 import CustomMultiselect from '@/components/CustomMultiselect';
 import { IMAGE_URL } from '@/Config';
 import CustomTimepicker from '@/components/CustomTimepicker';
+import moment from 'moment';
+import CustomTable from '@/components/CustomTable';
+import { GridColDef } from '@mui/x-data-grid';
+import CustomViewInput from '@/components/CustomViewInput';
 
 
 type Inputs = {
@@ -36,6 +40,73 @@ const VendorAccountsForm = ({ idd }: props) => {
     const [multpleArray, setMultipleArray] = useState<any>([]);
     const [getcategory, setGetCategory] = useState<any>([])
     console.log({ vendorSingleList })
+
+
+
+    const columns: GridColDef[] = [
+        {
+            field: 'Date',
+            headerName: 'Date',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
+            field: 'Total Sales',
+            headerName: 'Total Sales',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+        {
+            field: 'Sales Amount',
+            headerName: 'Sales Amount',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+        {
+            field: 'Promotion Amount',
+            headerName: 'Promotion Amount',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+        {
+            field: 'Payout',
+            headerName: 'Payout',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+        {
+            field: 'Status',
+            headerName: 'Status',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+
+
+
+    ];
+
+    const rows = [
+        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
+        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
+        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
+        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
+        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
+        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
+        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
+        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
+        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+    ];
 
 
     const schema = yup
@@ -107,8 +178,8 @@ const VendorAccountsForm = ({ idd }: props) => {
             setMultipleArray(array);
             setValue('store_address', vendorSingleList?.store_address);
             setValue('franchise', vendorSingleList?.franchise?.franchise_name);
-            setValue('start_time',vendorSingleList?.start_time)
-            setValue('end_time',vendorSingleList?.start_time)
+            setValue('start_time', vendorSingleList?.start_time);
+            setValue('end_time', vendorSingleList?.end_time)
 
         }
     }, [vendorSingleList])
@@ -238,33 +309,114 @@ const VendorAccountsForm = ({ idd }: props) => {
 
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomTimepicker
-                            disabled={true}
-                            changeValue={() => null}
-                            fieldName='start_time'
+                        <CustomInput
+                            type='text'
                             control={control}
                             error={errors.start_time}
-                            fieldLabel={'Store Time'} />
+                            fieldName="start_time"
+                            placeholder={``}
+                            fieldLabel={"Store Time"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
 
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
                         <Typography mb={3}></Typography>
-                        <CustomTimepicker
-                            disabled={true}
-                            changeValue={() => null}
-                            fieldName='end_time'
+                        <CustomInput
+                            type='text'
                             control={control}
-                            error={errors.start_time}
-                            fieldLabel={''} />
+                            error={errors.end_time}
+                            fieldName="end_time"
+                            placeholder={``}
+                            fieldLabel={""}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
 
                     </Grid>
-               
+
                     <Grid item xs={12} lg={3}>
                         <Typography>Store Logo/Image</Typography>
                         <Avatar variant='square' src={`${IMAGE_URL}${vendorSingleList?.original_store_logo}`} sx={{ width: '100%', height: 130 }} />
                     </Grid>
                 </Grid>
 
+            </CustomBox>
+            <CustomBox title='Vendor  Earnings'>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} lg={1.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.store_name}
+                            fieldName="store_name"
+                            placeholder={``}
+                            fieldLabel={"Total Orders"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={1.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.store_name}
+                            fieldName="store_name"
+                            placeholder={``}
+                            fieldLabel={"Total Orders"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={1.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.store_name}
+                            fieldName="store_name"
+                            placeholder={``}
+                            fieldLabel={"Promotion Coast"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={1.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.store_name}
+                            fieldName="store_name"
+                            placeholder={``}
+                            fieldLabel={"Total Payable"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                </Grid>
+                <Box py={3}>
+                    <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' checked={true}  />
+                </Box>
+            </CustomBox>
+            <CustomBox title="Settlements">
+                <Grid container spacing={2}>
+                    <Grid item xs={12} lg={1.5}>
+                
+                         <CustomViewInput fieldLabel='Total Earnings' text='text'/>
+                    </Grid>
+                    <Grid item xs={12} lg={1.5}>
+                        <CustomViewInput fieldLabel='Totr' text='text'/>
+                    </Grid>
+                </Grid>
+                <Box py={2}>
+                    <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                </Box>
             </CustomBox>
         </Box>
     )

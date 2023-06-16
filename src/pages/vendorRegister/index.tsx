@@ -163,7 +163,7 @@ const VendorRegister = () => {
     useEffect(() => {
         getRegisterList()
     }, [])
-
+    
 
 
     return (
