@@ -3,13 +3,10 @@ import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useT
 import CustomBox from '../CustomBox'
 import CustomInput from '@/components/CustomInput'
 import { useForm, SubmitHandler } from "react-hook-form";
-import { FormInputs } from '@/utilities/types';
 import Customselect from '@/components/Customselect';
 import CustomCheckBox from '@/components/CustomCheckBox';
 import CustomImageUploader from '@/components/CustomImageUploader';
-import CustomAutoComplete from '@/components/CustomAutocompleteBox';
 import CustomTimepicker from '@/components/CustomTimepicker';
-import { GoogleMap, useJsApiLoader, LoadScript, Marker, DrawingManager } from "@react-google-maps/api";
 import { CustomMultipleImageUploader } from '@/components/CustomMultipleImageUploder';
 import Custombutton from '@/components/Custombutton';
 import AddIcon from '@mui/icons-material/Add';
@@ -21,12 +18,10 @@ import * as yup from 'yup';
 import moment from 'moment'
 import CustomDatePicker from '@/components/CustomDatePicker';
 import Maps from '../../components/maps/maps'
-import { type } from 'os';
 import { isEmpty, isNull, isNumber } from 'lodash';
 import Polygon from '@/components/maps/Polygon';
 import { IMAGE_URL } from '../../Config/index';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import TagInput from '@/components/TagInput'
 import Attributes from './Attributes'
 import { useRouter } from 'next/router';
 import CustomTagInputValue from '@/components/CustomTagInputValue';
@@ -184,7 +179,7 @@ const ProductForm = ({ res, view }: props) => {
 
     ]);
 
-    console.log({ recomendedProductEditList })
+
 
     const [prdtType_select, setPrdtType_select] = useState<any>(null)
 

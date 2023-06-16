@@ -84,6 +84,13 @@ const VendorRegister = () => {
             align: 'center',
         },
         {
+            field: 'vendor_mobile',
+            headerName: 'Contact No.',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
             field: 'store_name',
             headerName: 'Store Name',
             flex: 1,

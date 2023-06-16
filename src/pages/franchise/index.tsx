@@ -82,7 +82,7 @@ const Franchise = ({ data }: datapr) => {
 
     }
 
-    console.log({ franchiseList })
+
 
     const columns: GridColDef[] = [
         {
