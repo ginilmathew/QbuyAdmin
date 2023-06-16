@@ -1,13 +1,12 @@
 import { Box, Grid, MenuItem } from '@mui/material'
 import React, { useState } from 'react'
 import CustomBox from '../CustomBox'
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { FormInputs } from '@/utilities/types';
 import CustomInput from '@/components/CustomInput';
-import Customselect from '@/components/Customselect';
-import CustomImageUploader from '@/components/CustomImageUploader';
+
 import Custombutton from '@/components/Custombutton';
-import CustomDatePicker from '@/components/CustomDatePicker';
+
 import CustomTextarea from '@/components/CustomTextarea';
 import CustomTimepicker from '@/components/CustomTimepicker';
 
@@ -57,6 +56,9 @@ const RushHourForm = () => {
                             view={false}
                             defaultValue={''}
                         />
+                    </Grid>
+                    <Grid item xs={12} letterSpacing={.5}>
+
                     </Grid>
                 </Grid>
             </CustomBox>

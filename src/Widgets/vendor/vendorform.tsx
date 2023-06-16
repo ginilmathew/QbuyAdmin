@@ -371,7 +371,7 @@ const Vendorform = ({ res, view, data }: props) => {
 
         console.log({ array })
         if (vendorList && array) {
-            setValue('approval_status',vendorList?.approval_status)
+            setValue('approval_status', vendorList?.approval_status)
             setValue('vendor_name', vendorList?.vendor_name)
             setValue('vendor_mobile', vendorList?.vendor_mobile)
             setValue('vendor_email', vendorList?.vendor_email)
@@ -469,16 +469,16 @@ const Vendorform = ({ res, view, data }: props) => {
 
     const changeOrderStatus = useCallback((e: any) => {
         const { value } = e.target;
-
+        console.log({ value })
         setStatusSelect(value)
-        setValue('order_status', value)
+        setValue('approval_status', value)
 
-    }, [])
+    }, [statusSelect])
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
         console.log({ data })
-        
+
         const URL_CREATE = '/admin/vendor/create'
         const URL_EDIT = '/admin/vendor/update'
         let kyc_details = {
@@ -507,7 +507,7 @@ const Vendorform = ({ res, view, data }: props) => {
         const formData = new FormData();
         const type: any = process.env.NEXT_PUBLIC_TYPE;
         formData.append("vendor_name", data?.vendor_name);
-        formData.append("approval_status", data?.approval_status);
+        formData.append("approval_status", statusSelect);
         formData.append("vendor_email", data?.vendor_email);
         formData.append("vendor_mobile", data?.vendor_mobile);
         formData.append("store_name", data?.store_name);
@@ -541,8 +541,13 @@ const Vendorform = ({ res, view, data }: props) => {
         try {
             await postData(vendorList ? URL_EDIT : URL_CREATE, formData)
             toast.success(vendorList ? 'Updated Successfully' : 'Created Successfully')
+            if (statusSelect === "Approved") {
+                router.push('/vendor')
+            } else {
+                router.push('/vendorRegister')
+            }
 
-            router.push('/vendor')
+
             reset()
             setVendorList(null)
             setFranchise('')
