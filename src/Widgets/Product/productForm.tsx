@@ -69,7 +69,8 @@ type Inputs = {
     application_type: string,
     commission: any,
     fixed_delivery_price: any,
-    thumbnail: any
+    thumbnail: any,
+    approval_status: string
 }
 
 type IFormInput = {
@@ -113,7 +114,8 @@ type IFormInput = {
     application_type: string,
     commission: any,
     fixed_delivery_price: any,
-    thumbnail: any
+    thumbnail: any,
+    approval_status: string
 }
 
 type props = {
@@ -126,7 +128,6 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const router = useRouter()
-
 
     const [multipleImage, setMultipleImage] = useState<any>([])
     const [defaultImage, setdefaultImage] = useState<any>([])
@@ -163,6 +164,13 @@ const ProductForm = ({ res, view }: props) => {
     const [productList, setProductList] = useState<any>(null);
     const [offerDate_from, setOffer_Date_from] = useState<any>(null);
     const [offerDate_to, setOffer_Date_to] = useState<any>(null);
+    const [statusSelect, setStatusSelect] = useState<any>(null)
+    const [statusChange, setStatusChange] = useState<any>(
+        [
+            { value: 'Pending', name: 'pending' }
+            , { value: 'approved', name: 'Approved' },
+            { value: 'rejected', name: 'Rejected' }
+        ])
     const [productType, setProduct_Type] = useState<any>([
         {
             value: 'breakfast',
@@ -184,7 +192,7 @@ const ProductForm = ({ res, view }: props) => {
     const [prdtType_select, setPrdtType_select] = useState<any>(null)
 
 
-    // console.log({ productList })
+    console.log({ statusSelect })
 
     const orderValidation = /^[0-9]*$/
     const schema = yup
@@ -566,7 +574,7 @@ const ProductForm = ({ res, view }: props) => {
 
 
 
-
+    console.log({ productList })
 
     useEffect(() => {
         if (productList) {
@@ -600,6 +608,7 @@ const ProductForm = ({ res, view }: props) => {
             }
             getSubcategory()
             getvendorlist()
+            setStatusSelect(productList?.approval_status)
             setRecomendedProductEditList(productList?.related_products)
             setValue('name', productList?.name)
             setValue('franchisee', productList?.franchisee?._id)
@@ -1198,7 +1207,7 @@ const ProductForm = ({ res, view }: props) => {
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             variant: varientsarray?.length > 0 ? true : false,
             variants: varrientsWithDate?.length > 0 ? varrientsWithDate : null,
-            approval_status: "approved"
+            approval_status: statusSelect ? statusSelect : 'approved'
         }
         if (productList) {
             value["id"] = productList?._id;
@@ -1246,6 +1255,15 @@ const ProductForm = ({ res, view }: props) => {
 
 
     }
+
+
+
+    const ChangeStatus = useCallback((e: any) => {
+        const { value } = e.target;
+        setStatusSelect(value)
+    }, [])
+
+
 
     if (loader) {
         return <><CustomLoader /></>
@@ -1855,6 +1873,41 @@ const ProductForm = ({ res, view }: props) => {
                         </Box>
                     }
                 </CustomBox>} */}
+
+
+            {productList?.approval_status !== 'approved' && idd && <CustomBox title='Change Status'>
+                <Grid container spacing={2}>
+                    <Grid item lg={2} md={2} xs={12}>
+                        <Customselect
+                            disabled={view ? true : false}
+                            type='text'
+                            control={control}
+                            error={errors.approval_status}
+                            fieldName="approval_status"
+                            placeholder={``}
+                            fieldLabel={"Status Change"}
+                            selectvalue={""}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={statusSelect}
+                            options={''}
+                            onChangeValue={ChangeStatus}
+                            background={'#fff'}
+                        >
+                            <MenuItem value="" disabled >
+                                <em>Change Status</em>
+                            </MenuItem>
+                            {statusChange.map((res: any) => (
+                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                            ))}
+                        </Customselect>
+                    </Grid>
+                </Grid>
+
+
+
+            </CustomBox>}
             {!view &&
                 <Box py={3}>
                     <Custombutton

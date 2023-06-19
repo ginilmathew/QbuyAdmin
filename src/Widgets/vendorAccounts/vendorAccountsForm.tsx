@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid, MenuItem, Typography } from '@mui/material'
+import { Avatar, Box, Grid, MenuItem, Typography, Stack } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,8 +12,11 @@ import { IMAGE_URL } from '@/Config';
 import CustomTimepicker from '@/components/CustomTimepicker';
 import moment from 'moment';
 import CustomTable from '@/components/CustomTable';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { GridColDef } from '@mui/x-data-grid';
 import CustomViewInput from '@/components/CustomViewInput';
+import Custombutton from '@/components/Custombutton';
+import AmountSettlementModal from './AmountSettlementModal';
 
 
 type Inputs = {
@@ -38,7 +41,8 @@ const VendorAccountsForm = ({ idd }: props) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [vendorSingleList, setVendorSinglelist] = useState<any>(null);
     const [multpleArray, setMultipleArray] = useState<any>([]);
-    const [getcategory, setGetCategory] = useState<any>([])
+    const [getcategory, setGetCategory] = useState<any>([]);
+    const [open, setOpen] = useState<boolean>(false)
     console.log({ vendorSingleList })
 
 
@@ -91,6 +95,24 @@ const VendorAccountsForm = ({ idd }: props) => {
             align: 'center',
 
         },
+        {
+            field: 'Order Log',
+            headerName: 'Order Log',
+            width: 200,
+            headerAlign: 'center',
+            align: 'center',
+            renderCell: ({ row }) => (
+                <Stack alignItems={'center'} gap={1} direction={'row'}>
+                    <RemoveRedEyeIcon
+                        onClick={() => null}
+                        style={{
+                            color: '#58D36E',
+                            cursor: 'pointer'
+                        }} />
+
+                </Stack>
+            )
+        }
 
 
 
@@ -135,6 +157,15 @@ const VendorAccountsForm = ({ idd }: props) => {
             }
         });
 
+
+    const onClose =useCallback(()=>{
+       setOpen(false)
+    },[open])
+
+
+    const OpenAccountModal = useCallback(()=>{
+        setOpen(true)
+    },[open])
 
     const viewVendor = useCallback(async () => {
         try {
@@ -348,76 +379,41 @@ const VendorAccountsForm = ({ idd }: props) => {
             <CustomBox title='Vendor  Earnings'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.store_name}
-                            fieldName="store_name"
-                            placeholder={``}
-                            fieldLabel={"Total Orders"}
-                            disabled={false}
-                            view={true}
-                            defaultValue={''}
-                        />
+                        <CustomViewInput fieldLabel='Total Orders' text={vendorSingleList?.order_count} color='#1675C8' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.store_name}
-                            fieldName="store_name"
-                            placeholder={``}
-                            fieldLabel={"Total Orders"}
-                            disabled={false}
-                            view={true}
-                            defaultValue={''}
-                        />
+                        <CustomViewInput fieldLabel='Total Earnings' text={vendorSingleList?.total_earnings} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.store_name}
-                            fieldName="store_name"
-                            placeholder={``}
-                            fieldLabel={"Promotion Coast"}
-                            disabled={false}
-                            view={true}
-                            defaultValue={''}
-                        />
+                        <CustomViewInput fieldLabel='Promotion Coast' text={vendorSingleList?.promotion_cost} color='#FF7B7B' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.store_name}
-                            fieldName="store_name"
-                            placeholder={``}
-                            fieldLabel={"Total Payable"}
-                            disabled={false}
-                            view={true}
-                            defaultValue={''}
-                        />
+                        <CustomViewInput fieldLabel='Total Payable' text={vendorSingleList?.total_payable} color='#2EA10C' />
+                    </Grid>
+                    <Grid item xs={12} lg={1.5}>
+                        <Typography mb={3}></Typography>
+                        <Custombutton label='Settle Payment' btncolor='#F71C1C' onClick={OpenAccountModal} endIcon={false} startIcon={false} IconStart={undefined} IconEnd={undefined} height={undefined} />
                     </Grid>
                 </Grid>
                 <Box py={3}>
-                    <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' checked={true}  />
+                    <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' checked={true} />
                 </Box>
             </CustomBox>
             <CustomBox title="Settlements">
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={1.5}>
-                
-                         <CustomViewInput fieldLabel='Total Earnings' text='text'/>
+                        <CustomViewInput fieldLabel='Total Earnings' text={vendorSingleList?.total_earnings} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Totr' text='text'/>
+                        <CustomViewInput fieldLabel='Total Outstanding' text={vendorSingleList?.total_outstanding} color='#FF7B7B' />
                     </Grid>
                 </Grid>
                 <Box py={2}>
                     <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </CustomBox>
+
+            <AmountSettlementModal onClose={onClose} open={open} selectedValue=''/>
         </Box>
     )
 }

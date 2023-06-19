@@ -31,8 +31,9 @@ const CustomViewInput = ({ fieldLabel, text,color }: Props) => {
                     paddingLeft: 1,
                     width: '100%',
                     height: 40,
+                    fontWeight:'bold',
                     alignItems: 'center',
-                    border: '1px solid #f5f5f5',
+                    border: '1px solid #e0e0e0',
                     color:color ? color : '#000',
                     fontSize: {
                         lg: 16,
