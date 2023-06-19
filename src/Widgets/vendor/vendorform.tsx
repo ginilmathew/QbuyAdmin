@@ -541,11 +541,17 @@ const Vendorform = ({ res, view, data }: props) => {
         try {
             await postData(vendorList ? URL_EDIT : URL_CREATE, formData)
             toast.success(vendorList ? 'Updated Successfully' : 'Created Successfully')
-            if (statusSelect === "Approved") {
-                router.push('/vendor')
+
+            if (idd) {
+                if (statusSelect === "Approved") {
+                    router.push('/vendor')
+                } else {
+                    router.push('/vendorRegister')
+                }
             } else {
-                router.push('/vendorRegister')
+                router.push('/vendor')
             }
+
 
 
             reset()
@@ -997,7 +1003,7 @@ const Vendorform = ({ res, view, data }: props) => {
 
                 </Grid>
             </CustomBox>
-            {vendorList?.approval_status !== "Approved" &&
+            {vendorList?.approval_status !== "Approved" && idd &&
                 <CustomBox title='Status'>
                     <Grid container spacing={2}>
                         <Grid item xs={12} lg={2.5}>

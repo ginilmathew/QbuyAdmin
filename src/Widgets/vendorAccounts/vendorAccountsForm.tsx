@@ -17,6 +17,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import CustomViewInput from '@/components/CustomViewInput';
 import Custombutton from '@/components/Custombutton';
 import AmountSettlementModal from './AmountSettlementModal';
+import VendorLogsModal from './VendorLogsModal';
 
 
 type Inputs = {
@@ -42,7 +43,8 @@ const VendorAccountsForm = ({ idd }: props) => {
     const [vendorSingleList, setVendorSinglelist] = useState<any>(null);
     const [multpleArray, setMultipleArray] = useState<any>([]);
     const [getcategory, setGetCategory] = useState<any>([]);
-    const [open, setOpen] = useState<boolean>(false)
+    const [open, setOpen] = useState<boolean>(false);
+    const [openLog, setOpenLog] = useState<boolean>(false)
     console.log({ vendorSingleList })
 
 
@@ -104,7 +106,7 @@ const VendorAccountsForm = ({ idd }: props) => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-                        onClick={() => null}
+                        onClick={openLogView}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -113,10 +115,12 @@ const VendorAccountsForm = ({ idd }: props) => {
                 </Stack>
             )
         }
-
-
-
     ];
+
+
+
+
+  
 
     const rows = [
         { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
@@ -130,6 +134,10 @@ const VendorAccountsForm = ({ idd }: props) => {
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
     ];
 
+    
+    const openLogView = useCallback(() => {
+        setOpenLog(true)
+    }, [])
 
     const schema = yup
         .object()
@@ -158,14 +166,24 @@ const VendorAccountsForm = ({ idd }: props) => {
         });
 
 
-    const onClose =useCallback(()=>{
-       setOpen(false)
-    },[open])
+    const onCloseAccount = useCallback(() => {
+        setOpen(false)
+    }, [open])
 
 
-    const OpenAccountModal = useCallback(()=>{
+    const OpenAccountModal = useCallback(() => {
         setOpen(true)
-    },[open])
+    }, [open])
+
+    const onCloseLogModal = useCallback(() => {
+        setOpenLog(false)
+    }, [openLog])
+
+
+    const OpenLogModal = useCallback(() => {
+        setOpenLog(true)
+    }, [openLog])
+
 
     const viewVendor = useCallback(async () => {
         try {
@@ -413,7 +431,8 @@ const VendorAccountsForm = ({ idd }: props) => {
                 </Box>
             </CustomBox>
 
-            <AmountSettlementModal onClose={onClose} open={open} selectedValue=''/>
+            <AmountSettlementModal onClose={onCloseAccount} open={open} selectedValue='' />
+            <VendorLogsModal onClose={onCloseLogModal} open={openLog} />
         </Box>
     )
 }
