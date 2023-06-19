@@ -675,6 +675,7 @@ const ProductForm = ({ res, view }: props) => {
             setStatusSelect(productList?.approval_status)
             setRecomendedProductEditList(productList?.related_products)
             setMultipleArrayFoodType(productList?.food_type)
+            setMultipleArrayProductTag(productList?.product_type)
             setValue('name', productList?.name)
             setValue('franchisee', productList?.franchisee?._id)
             setFranchiseSelect(productList?.franchisee?._id)
