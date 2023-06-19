@@ -16,7 +16,7 @@ export interface SimpleDialogProps {
 const VendorLogsModal = (props: SimpleDialogProps) => {
     const { onClose, open, date, id } = props;
 
-
+    console.log({ date })
 
     const [listLog, setListLog] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(false)
@@ -26,14 +26,14 @@ const VendorLogsModal = (props: SimpleDialogProps) => {
 
     const columns: GridColDef[] = [
         {
-            field: 'Date',
+            field: 'order_id',
             headerName: 'Order ID',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
         },
         {
-            field: 'Total Sales',
+            field: 'date',
             headerName: 'Order Date & Time',
             flex: 1,
             headerAlign: 'center',
@@ -41,7 +41,7 @@ const VendorLogsModal = (props: SimpleDialogProps) => {
 
         },
         {
-            field: 'Sales Amount',
+            field: 'sales_amount',
             headerName: 'Order Total',
             flex: 1,
             headerAlign: 'center',
@@ -85,34 +85,43 @@ const VendorLogsModal = (props: SimpleDialogProps) => {
         }
         let result: any = []
 
-        console.log({result})
+
 
         try {
             setLoading(true)
             let response = await postData('admin/account/vendors-order-log/list', value);
-            result = response;
-            let results = result?.map((res: any, i: boolean) => ({
+            let results = response?.data?.data?.map((res: any, i: boolean) => ({
                 _id: i,
                 ...res
             }))
             setListLog(results)
             setLoading(false)
+
         } catch (err: any) {
             setLoading(false)
         }
 
-    }, [])
+    }, [date, id])
 
 
 
 
 
     useEffect(() => {
-        orderList()
-    }, [])
+        if (id && date) {
+            orderList()
+        }
+    }, [id, date])
+
+
+    const clearData = () => {
+        setListLog([])
+        onClose()
+    }
+    
     return (
         <Box>
-            <Dialog onClose={onClose} open={open} fullWidth={true}
+            <Dialog onClose={clearData} open={open} fullWidth={true}
                 maxWidth={'xl'} >
                 <Box p={2} >
                     <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
@@ -150,7 +159,7 @@ const VendorLogsModal = (props: SimpleDialogProps) => {
                     </Box>
                     <DialogContent>
                         <Box py={3}>
-                            <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' checked={false} />
+                            <CustomTable dashboard={false} columns={columns} rows={listLog ? listLog : []} id={"_id"} bg={"#ffff"} label='Recent Activity' checked={false} />
                         </Box>
                     </DialogContent>
                 </Box>

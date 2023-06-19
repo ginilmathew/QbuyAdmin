@@ -64,7 +64,7 @@ const CustomDateTimePicker = ({
                                     }
                                 }}
 
-                                value={value}
+                                value={ values ? values : value}
                                 onChange={changeValue ? (e: any) => changeValue(e) : onChange}
                             />
 

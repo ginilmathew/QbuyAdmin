@@ -10,6 +10,9 @@ import CustomInput from '@/components/CustomInput';
 import CustomDateTimePicker from '@/components/CustomDateTimePicker';
 import CustomMultiselect from '@/components/CustomMultiselect';
 import Customselect from '@/components/Customselect';
+import Custombutton from '@/components/Custombutton';
+import moment from 'moment';
+import { postData } from '@/CustomAxios';
 
 
 type Inputs = {
@@ -22,19 +25,23 @@ type Inputs = {
 
 export interface SimpleDialogProps {
     open: boolean;
-
     onClose: any;
     data: any,
-    price: any
+    price: any,
+    id: string
 }
 
 
 const AmountSettlementModal = (props: SimpleDialogProps) => {
-    const { onClose, data, open, price } = props;
+    const { onClose, data, open, price, id } = props;
 
-    console.log({price})
-    const [payment, setPayment] = useState<any>([{ value: 'online', name: 'Online' }, { value: 'offline', name: 'Offline' }]);
-    const [paymentSelect, setPaymentSelect] = useState<any>(null)
+    console.log({ price })
+
+
+    const [payment, setPayment] = useState<any>([{ value: 'UPI', name: 'UPI' }, { value: 'cash', name: 'Cash' }]);
+    const [paymentSelect, setPaymentSelect] = useState<any>(null);
+    const [time, setTime] = useState<any>(null);
+    const [loading, setLoading] = useState<any>(false)
     const schema = yup
         .object()
         .shape({
@@ -62,16 +69,54 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
         });
 
 
-        useEffect(()=>{
-            if(open){
-                setValue('amount',price)
-            }
-        },[open])
+    useEffect(() => {
+        if (open) {
+            setValue('amount', price)
+        }
+    }, [open])
+
+
+
 
 
     const ChangepaymentMode = useCallback((e: any) => {
         const { value } = e.target;
         setPaymentSelect(value)
+    }, [])
+
+
+    const OnChangeDate = (value: any) => {
+        console.log({ value })
+        setTime(value)
+    }
+
+
+    const submitData = useCallback(async (item: any) => {
+
+        const allChildren = data?.reduce((acc: any, obj: any) => acc.concat(obj.order_id_array), []);
+        let value = {
+            order_ids: allChildren,
+            vendor_id: id,
+            transaction_date: moment(time).format('YYYY-MM-DD'),
+            amount: price?.toString(),
+            payment_mode: paymentSelect,
+            transaction_id: item?.transaction_id,
+
+        }
+
+        try {
+            setLoading(true)
+            await postData('admin/account/vendors-settlement/create', value)
+            setLoading(false)
+            onClose()
+
+        } catch (err: any) {
+            setLoading(false)
+        }
+
+
+
+
     }, [])
 
     return (
@@ -116,8 +161,8 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
                         <Grid container spacing={2} >
                             <Grid item xs={12} lg={6}>
                                 <CustomDateTimePicker
-                                    values={''}
-                                    changeValue={() => null}
+                                    values={time}
+                                    changeValue={(value: any) => OnChangeDate(value)}
                                     fieldName='transaction_date_time'
                                     control={control}
                                     error={errors.transaction_date_time}
@@ -178,6 +223,18 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
                             </Grid>
 
                         </Grid>
+                        <Box display={'flex'} justifyContent={'center'} py={3}>
+                            <Custombutton
+                                disabled={loading}
+                                label='ADD'
+                                btncolor='#F71C1C'
+                                onClick={handleSubmit(submitData)}
+                                endIcon={false}
+                                startIcon={false}
+                                IconStart={undefined}
+
+                                IconEnd={undefined} height={undefined} />
+                        </Box>
                     </DialogContent>
                 </Box>
 

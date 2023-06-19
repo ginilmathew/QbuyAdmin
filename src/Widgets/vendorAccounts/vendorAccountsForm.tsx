@@ -186,6 +186,7 @@ const VendorAccountsForm = ({ idd }: props) => {
 
     const onCloseLogModal = useCallback(() => {
         setOpenLog(false)
+        setdateSelect('')
     }, [openLog])
 
 
@@ -473,7 +474,7 @@ const VendorAccountsForm = ({ idd }: props) => {
                 </Box>
             </CustomBox>
 
-            <AmountSettlementModal onClose={onCloseAccount} open={open} price={total} data={selectChecked} />
+            <AmountSettlementModal onClose={onCloseAccount} open={open} price={total} data={selectChecked} id={idd}/>
             <VendorLogsModal onClose={onCloseLogModal} open={openLog} id={idd} date={dateSelect} />
         </Box>
     )
