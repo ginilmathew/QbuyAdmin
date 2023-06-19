@@ -675,6 +675,7 @@ const ProductForm = ({ res, view }: props) => {
             setStatusSelect(productList?.approval_status)
             setRecomendedProductEditList(productList?.related_products)
             setMultipleArrayFoodType(productList?.food_type)
+            setMultipleArrayProductTag(productList?.product_tags)
             setValue('name', productList?.name)
             setValue('franchisee', productList?.franchisee?._id)
             setFranchiseSelect(productList?.franchisee?._id)
@@ -1241,6 +1242,7 @@ const ProductForm = ({ res, view }: props) => {
             food_type: multpleArrayFoodType,
             type: process.env.NEXT_PUBLIC_TYPE,
             product_tags: multpleArrayProductTag,
+            product_type:null,
             image: imagearray?.length > 0 ? imagearray : defaultImage,
             product_image: data?.product_image,
             category: {
