@@ -1,5 +1,5 @@
-import { Box, DialogContent, Grid, Typography } from '@mui/material'
-import React from 'react'
+import { Box, DialogContent, Grid, MenuItem, Typography } from '@mui/material'
+import React, { useCallback, useEffect, useState } from 'react'
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import CloseIcon from '@mui/icons-material/Close';
@@ -8,27 +8,33 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import CustomInput from '@/components/CustomInput';
 import CustomDateTimePicker from '@/components/CustomDateTimePicker';
+import CustomMultiselect from '@/components/CustomMultiselect';
+import Customselect from '@/components/Customselect';
 
 
 type Inputs = {
     amount: string,
     payment_mode: string,
     transaction_id: string,
-    transaction_date_time:any
+    transaction_date_time: any
 }
 
 
 export interface SimpleDialogProps {
     open: boolean;
-    selectedValue: string;
+
     onClose: any;
+    data: any,
+    price: any
 }
 
 
 const AmountSettlementModal = (props: SimpleDialogProps) => {
-    const { onClose, selectedValue, open } = props;
+    const { onClose, data, open, price } = props;
 
-
+    console.log({price})
+    const [payment, setPayment] = useState<any>([{ value: 'online', name: 'Online' }, { value: 'offline', name: 'Offline' }]);
+    const [paymentSelect, setPaymentSelect] = useState<any>(null)
     const schema = yup
         .object()
         .shape({
@@ -54,6 +60,19 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
 
             }
         });
+
+
+        useEffect(()=>{
+            if(open){
+                setValue('amount',price)
+            }
+        },[open])
+
+
+    const ChangepaymentMode = useCallback((e: any) => {
+        const { value } = e.target;
+        setPaymentSelect(value)
+    }, [])
 
     return (
         <Box>
@@ -119,17 +138,30 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
                                 />
                             </Grid>
                             <Grid item xs={12} lg={6}>
-                                <CustomInput
+                                <Customselect
+                                    disabled={false}
                                     type='text'
                                     control={control}
                                     error={errors.payment_mode}
                                     fieldName="payment_mode"
                                     placeholder={``}
-                                    fieldLabel={"Payment Mode"}
-                                    disabled={false}
-                                    view={true}
-                                    defaultValue={''}
-                                />
+                                    fieldLabel={"PaymentMode"}
+                                    selectvalue={""}
+                                    height={40}
+                                    label={''}
+                                    size={16}
+                                    value={paymentSelect}
+                                    options={''}
+                                    onChangeValue={ChangepaymentMode}
+                                    background={'#fff'}
+                                >
+                                    <MenuItem value="" disabled >
+                                        <em>change PaymentMode</em>
+                                    </MenuItem>
+                                    {payment.map((res: any) => (
+                                        <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                                    ))}
+                                </Customselect>
                             </Grid>
                             <Grid item xs={12} lg={6}>
                                 <CustomInput
@@ -140,7 +172,7 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
                                     placeholder={``}
                                     fieldLabel={"Transaction ID"}
                                     disabled={false}
-                                    view={true}
+                                    view={false}
                                     defaultValue={''}
                                 />
                             </Grid>

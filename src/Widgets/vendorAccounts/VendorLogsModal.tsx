@@ -1,19 +1,28 @@
+import { postData } from '@/CustomAxios';
 import CustomTable from '@/components/CustomTable';
 import { Box, Dialog, DialogContent, Typography } from '@mui/material'
 import { DialogProps } from '@mui/material/Dialog';
+import useEnhancedEffect from '@mui/material/utils/useEnhancedEffect';
 import { GridCloseIcon, GridColDef } from '@mui/x-data-grid';
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 export interface SimpleDialogProps {
     open: boolean;
-
+    id: string;
+    date: any;
     onClose: any;
 }
 
 const VendorLogsModal = (props: SimpleDialogProps) => {
-    const { onClose, open } = props;
+    const { onClose, open, date, id } = props;
 
 
+
+    const [listLog, setListLog] = useState<any>([]);
+    const [loading, setLoading] = useState<boolean>(false)
+
+
+    console.log({ listLog }, 'APIICALLED')
 
     const columns: GridColDef[] = [
         {
@@ -42,12 +51,12 @@ const VendorLogsModal = (props: SimpleDialogProps) => {
         {
             field: 'Promotion Amount',
             headerName: 'Order Completed Date & Time',
-            width:300,
+            width: 300,
             headerAlign: 'center',
             align: 'center',
 
         },
-       
+
     ];
 
 
@@ -68,6 +77,39 @@ const VendorLogsModal = (props: SimpleDialogProps) => {
     ];
 
 
+    const orderList = useCallback(async () => {
+
+        let value = {
+            "order_date": date,
+            "vendor_id": id
+        }
+        let result: any = []
+
+        console.log({result})
+
+        try {
+            setLoading(true)
+            let response = await postData('admin/account/vendors-order-log/list', value);
+            result = response;
+            let results = result?.map((res: any, i: boolean) => ({
+                _id: i,
+                ...res
+            }))
+            setListLog(results)
+            setLoading(false)
+        } catch (err: any) {
+            setLoading(false)
+        }
+
+    }, [])
+
+
+
+
+
+    useEffect(() => {
+        orderList()
+    }, [])
     return (
         <Box>
             <Dialog onClose={onClose} open={open} fullWidth={true}

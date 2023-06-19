@@ -45,20 +45,28 @@ const VendorAccountsForm = ({ idd }: props) => {
     const [getcategory, setGetCategory] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [openLog, setOpenLog] = useState<boolean>(false)
+    const [vendorEarningList, setvendorEarningList] = useState<any>([])
+    const [selectChecked, setSelectChecked] = useState<any>([])
+    const [total, setTotal] = useState<any>(null);
+    const [dateSelect,setdateSelect]=useState<string>('')
+
+
+    console.log({ selectChecked })
     console.log({ vendorSingleList })
 
 
 
     const columns: GridColDef[] = [
         {
-            field: 'Date',
+            field: 'date',
             headerName: 'Date',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+
         },
         {
-            field: 'Total Sales',
+            field: 'total_sales',
             headerName: 'Total Sales',
             flex: 1,
             headerAlign: 'center',
@@ -66,11 +74,12 @@ const VendorAccountsForm = ({ idd }: props) => {
 
         },
         {
-            field: 'Sales Amount',
+            field: 'total_sales_amount',
             headerName: 'Sales Amount',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+
 
         },
         {
@@ -82,7 +91,7 @@ const VendorAccountsForm = ({ idd }: props) => {
 
         },
         {
-            field: 'Payout',
+            field: 'payout',
             headerName: 'Payout',
             flex: 1,
             headerAlign: 'center',
@@ -90,7 +99,7 @@ const VendorAccountsForm = ({ idd }: props) => {
 
         },
         {
-            field: 'Status',
+            field: 'status',
             headerName: 'Status',
             flex: 1,
             headerAlign: 'center',
@@ -106,7 +115,7 @@ const VendorAccountsForm = ({ idd }: props) => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-                        onClick={openLogView}
+                        onClick={() => OpenLogModal(row?.date)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -120,7 +129,7 @@ const VendorAccountsForm = ({ idd }: props) => {
 
 
 
-  
+
 
     const rows = [
         { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
@@ -134,7 +143,7 @@ const VendorAccountsForm = ({ idd }: props) => {
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
     ];
 
-    
+
     const openLogView = useCallback(() => {
         setOpenLog(true)
     }, [])
@@ -180,7 +189,8 @@ const VendorAccountsForm = ({ idd }: props) => {
     }, [openLog])
 
 
-    const OpenLogModal = useCallback(() => {
+    const OpenLogModal = useCallback((data: any) => {
+        setdateSelect(data)
         setOpenLog(true)
     }, [openLog])
 
@@ -242,6 +252,29 @@ const VendorAccountsForm = ({ idd }: props) => {
             getCategoryList();
         }
     }, [idd])
+
+
+
+    useEffect(() => {
+        if (vendorSingleList) {
+            let result = vendorSingleList?.vendor_earning_list?.map((res: any, i: number) => ({
+                _id: i,
+                ...res
+            }))
+            setvendorEarningList(result);
+        }
+
+    }, [vendorSingleList])
+
+
+
+    const vendorEarningSelect = (item: any) => {
+        let result = vendorEarningList?.filter((res: any) => item?.includes(res?._id))
+        let totalPrice = result.reduce((accumulator: any, total: any) => accumulator + parseInt(total.payout), 0);
+        setSelectChecked(result)
+        setTotal(totalPrice)
+    }
+
 
     if (!vendorSingleList) {
         return <>Loading...</>
@@ -414,7 +447,16 @@ const VendorAccountsForm = ({ idd }: props) => {
                     </Grid>
                 </Grid>
                 <Box py={3}>
-                    <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' checked={true} />
+                    <CustomTable
+                        dashboard={false}
+                        columns={columns}
+                        rows={vendorEarningList ? vendorEarningList : []}
+                        id={"_id"}
+                        bg={"#ffff"}
+                        label='Recent Activity'
+                        checked={true}
+                        selectCheck={(itm: any) => vendorEarningSelect(itm)}
+                    />
                 </Box>
             </CustomBox>
             <CustomBox title="Settlements">
@@ -431,8 +473,8 @@ const VendorAccountsForm = ({ idd }: props) => {
                 </Box>
             </CustomBox>
 
-            <AmountSettlementModal onClose={onCloseAccount} open={open} selectedValue='' />
-            <VendorLogsModal onClose={onCloseLogModal} open={openLog} />
+            <AmountSettlementModal onClose={onCloseAccount} open={open} price={total} data={selectChecked} />
+            <VendorLogsModal onClose={onCloseLogModal} open={openLog} id={idd} date={dateSelect} />
         </Box>
     )
 }

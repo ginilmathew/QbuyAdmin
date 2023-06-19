@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -17,25 +17,24 @@ type props = {
     id: string,
     bg: string,
     dashboard: boolean,
-    rowheight?:number,
-    checked?:boolean,
-    selectCheck?:any
+    rowheight?: number,
+    checked?: boolean,
+    selectCheck?: any
 
 }
-const CustomTable = ({ columns, rows, id, bg, label, dashboard,rowheight,checked }: props) => {
+const CustomTable = ({ columns, rows, id, bg, label, dashboard, rowheight, checked, selectCheck }: props) => {
     let texttruncate = label.slice(0, 3);
     let custtext = label.slice(3)
 
-    function selectCheck(itm: GridRowSelectionModel): void {
-       
-        console.log({itm})
+    const selectCheckItem = (item: any) => {
+        selectCheck(item)
     }
 
     return (
         <>
             {dashboard &&
-                <Box  display={'flex'} justifyContent={'space-between'} alignItems={'center'} bgcolor={'#fff'} px={2} py={1} borderRadius={'5px 5px 0px 0px'}>
-                    <Typography> <span style={{ borderBottom: '3px solid #58d36e', paddingBottom: 2 ,fontFamily:`'Poppins' sans-serif`,}}>{texttruncate}</span>{custtext}</Typography>
+                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} bgcolor={'#fff'} px={2} py={1} borderRadius={'5px 5px 0px 0px'}>
+                    <Typography> <span style={{ borderBottom: '3px solid #58d36e', paddingBottom: 2, fontFamily: `'Poppins' sans-serif`, }}>{texttruncate}</span>{custtext}</Typography>
                     <Custombutton
                         btncolor=''
                         height={""}
@@ -51,7 +50,7 @@ const CustomTable = ({ columns, rows, id, bg, label, dashboard,rowheight,checked
                         background: "#ffff",
                         borderRadius: '0px 0px 5px 5px',
                         opacity: 1,
-                        fontFamily:`'Poppins' sans-serif`,
+                        fontFamily: `'Poppins' sans-serif`,
                         fontWeight: '200',
                         letterSpacing: '.5px'
                     }}
@@ -66,7 +65,7 @@ const CustomTable = ({ columns, rows, id, bg, label, dashboard,rowheight,checked
                         },
                     }}
                     checkboxSelection={checked ? checked : false}
-                    onRowSelectionModelChange={itm => selectCheck(itm)}
+                    onRowSelectionModelChange={checked ? (itm) => selectCheckItem(itm) : () => null}
                     pageSizeOptions={[10]}
                     getRowId={row => row[id]}
                 />
@@ -77,3 +76,7 @@ const CustomTable = ({ columns, rows, id, bg, label, dashboard,rowheight,checked
 }
 
 export default CustomTable
+
+function selectCheck(itm: any) {
+    throw new Error('Function not implemented.');
+}
