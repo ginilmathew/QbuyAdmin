@@ -1240,7 +1240,7 @@ const ProductForm = ({ res, view }: props) => {
             category_type: productCategorySelect,
             food_type: multpleArrayFoodType,
             type: process.env.NEXT_PUBLIC_TYPE,
-            product_type: multpleArrayProductTag,
+            product_tags: multpleArrayProductTag,
             image: imagearray?.length > 0 ? imagearray : defaultImage,
             product_image: data?.product_image,
             category: {
