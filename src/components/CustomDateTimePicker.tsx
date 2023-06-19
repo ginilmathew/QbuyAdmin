@@ -7,6 +7,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment from 'moment';
 import dayjs from 'dayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { DateTimePicker } from '@mui/x-date-pickers';
 type props = {
     fieldName: string,
@@ -49,19 +50,21 @@ const CustomDateTimePicker = ({
                     name={fieldName}
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
-                        <LocalizationProvider dateAdapter={AdapterMoment}>
-                            <DateTimePicker
-                                // disablePast
-                         
-                                // disabled={disabled}
-                                // sx={{
-                                //     "& .MuiInputBase-input": {
-                                //         height: "8px" // Set your height here.
-                                //     }
-                                // }}
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
 
-                                // value={values ? values : value}
-                                // onChange={changeValue ? (e: any) => changeValue(e) : onChange}
+                            <DateTimePicker
+
+                                views={['year', 'month', 'day', 'hours', 'minutes', 'seconds']}
+
+
+                                sx={{
+                                    "& .MuiInputBase-input": {
+                                        height: "8px" // Set your height here.
+                                    }
+                                }}
+
+                                value={values ? values : value}
+                                onChange={changeValue ? (e: any) => changeValue(e) : onChange}
                             />
 
 
