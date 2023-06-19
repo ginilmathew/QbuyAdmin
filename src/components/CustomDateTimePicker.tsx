@@ -8,7 +8,9 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment from 'moment';
 import dayjs from 'dayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { DateTimePicker } from '@mui/x-date-pickers';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { MobileDateTimePicker } from '@mui/x-date-pickers';
+
 type props = {
     fieldName: string,
     control: any,
@@ -50,9 +52,8 @@ const CustomDateTimePicker = ({
                     name={fieldName}
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-
-                            <DateTimePicker
+                        <LocalizationProvider dateAdapter={AdapterMoment}>
+                            <MobileDateTimePicker
 
                                 views={['year', 'month', 'day', 'hours', 'minutes', 'seconds']}
 
@@ -63,7 +64,7 @@ const CustomDateTimePicker = ({
                                     }
                                 }}
 
-                                value={values ? values : value}
+                                value={value}
                                 onChange={changeValue ? (e: any) => changeValue(e) : onChange}
                             />
 

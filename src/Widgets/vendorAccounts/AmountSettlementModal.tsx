@@ -28,13 +28,6 @@ export interface SimpleDialogProps {
 const AmountSettlementModal = (props: SimpleDialogProps) => {
     const { onClose, selectedValue, open } = props;
 
-    const handleClose = () => {
-        onClose();
-    };
-
-    const handleListItemClick = (value: string) => {
-        onClose(value);
-    };
 
     const schema = yup
         .object()
