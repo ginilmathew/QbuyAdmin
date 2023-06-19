@@ -70,7 +70,11 @@ type Inputs = {
     commission: any,
     fixed_delivery_price: any,
     thumbnail: any,
-    approval_status: string
+    approval_status: string,
+    food_type: string,
+    product_tags: any,
+    category_type: string,
+    search_tags: any
 }
 
 type IFormInput = {
@@ -115,7 +119,11 @@ type IFormInput = {
     commission: any,
     fixed_delivery_price: any,
     thumbnail: any,
-    approval_status: string
+    approval_status: string,
+    food_type: string,
+    product_tags: any,
+    category_type: string,
+    search_tags: any
 }
 
 type props = {
@@ -187,9 +195,21 @@ const ProductForm = ({ res, view }: props) => {
 
     ]);
 
+    const [product_category, setProductCategory] = useState<any>([
+        {
+            value: 'non-veg',
+            name: 'Non Veg'
+        },
+        {
+            value: 'veg',
+            name: 'Veg'
+        },
+
+    ]);
 
 
-    const [prdtType_select, setPrdtType_select] = useState<any>(null)
+
+    const [foodType, setFoodType] = useState<any>(null)
 
 
     console.log({ statusSelect })
@@ -567,7 +587,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const onSelectProducttype = (e: any) => {
         const { value } = e.target;
-        setPrdtType_select(value)
+        setFoodType(value)
 
 
     }
@@ -1356,19 +1376,19 @@ const ProductForm = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    {/* <Grid item xs={12} lg={3}>
+                    <Grid item xs={12} lg={3}>
                         <Customselect
                             type='text'
                             control={control}
-                            error={errors.category}
-                            fieldName="product_type"
+                            error={errors.food_type}
+                            fieldName="food_type"
                             placeholder={``}
-                            fieldLabel={"Product Type"}
+                            fieldLabel={"Food Type"}
                             selectvalue={""}
                             height={40}
                             label={''}
                             size={16}
-                            value={prdtType_select}
+                            value={foodType}
                             options={''}
                             onChangeValue={onSelectProducttype}
                             background={'#fff'}
@@ -1380,7 +1400,32 @@ const ProductForm = ({ res, view }: props) => {
                             ))}
 
                         </Customselect>
-                    </Grid> */}
+                    </Grid>
+                    <Grid item xs={12} lg={3}>
+                        <Customselect
+                            type='text'
+                            control={control}
+                            error={errors.product_tags}
+                            fieldName="product_tags"
+                            placeholder={``}
+                            fieldLabel={"Product Tags"}
+                            selectvalue={""}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={foodType}
+                            options={''}
+                            onChangeValue={onSelectProducttype}
+                            background={'#fff'}
+                            disabled={view ? true : false}
+                        >
+                            <MenuItem value=""></MenuItem>
+                            {productType?.map((res: any) => (
+                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                            ))}
+
+                        </Customselect>
+                    </Grid>
 
                     <Grid item xs={12} lg={1.5}>
                         <CustomInput
