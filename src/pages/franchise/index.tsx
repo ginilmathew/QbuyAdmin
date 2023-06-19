@@ -82,7 +82,7 @@ const Franchise = ({ data }: datapr) => {
 
     }
 
-    console.log({ franchiseList })
+
 
     const columns: GridColDef[] = [
         {
@@ -274,9 +274,9 @@ const Franchise = ({ data }: datapr) => {
     }
 
 
-    useEffect(() => {
-        //getFranchiseList()
-    }, [])
+    // useEffect(() => {
+    //     //getFranchiseList()
+    // }, [])
 
 
     return (

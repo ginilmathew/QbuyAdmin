@@ -30,6 +30,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import ShippingTable from './shippingViewTable';
+import HistoryTable from './shippingViewTable/History';
 
 
 type Inputs = {
@@ -51,6 +52,7 @@ type props = {
 }
 
 const ShippingOrderForm = ({ view, res }: props) => {
+    const router = useRouter()
 
     const idd = view ? view : res;
 
@@ -58,8 +60,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
 
 
 
-    const [customerGroupList, setCustomerGroupList] = useState<any>([])
-
+    const [orderhistory, setOrderhistory] = useState<any>()
     const [customerGroupSelect, setCustomerGroupSelect] = useState<string>('')
     const [paymentMethodList, setPaymentMethodList] = useState<any>([])
     const [paymentMethodSelect, setPaymentMethodSelect] = useState<string>('')
@@ -72,15 +73,32 @@ const ShippingOrderForm = ({ view, res }: props) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [loader, setLoader] = useState<boolean>(false)
     const [orderviewList, setOrderViewList] = useState<any>(null)
+    const [orderStatusSelect, setOrderStatus] = useState<any>([
+        {
+            value: "active",
+            name: "Active"
+        },
+        {
+            value: "completed",
+            name: "Completed"
+        },
+        {
+            value: "canceled",
+            name: "Canceled"
+        },
+    ]
+    )
+    const [OrderStatusList, setOrderStatusList] = useState([])
 
 
 
-    console.log({ orderviewList })
+
 
 
     const schema = yup
         .object()
         .shape({
+            comment: yup.string().max(60, 'Maximum Character Exceeds').required('Comment is Required'),
         })
         .required();
 
@@ -90,6 +108,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
         control,
         formState: { errors },
         reset,
+        getValues,
         setError,
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
@@ -113,6 +132,8 @@ const ShippingOrderForm = ({ view, res }: props) => {
     }
 
     const orderStatusChange = (e: any) => {
+        const { value } = e.target;
+        setOrderSelect(value);
 
     }
 
@@ -135,13 +156,55 @@ const ShippingOrderForm = ({ view, res }: props) => {
 
     }
 
+    const orderStatusList = async () => {
+        try {
+            setLoader(true)
+            const response = await fetchData('common/order-status-list')
+            setOrderList(response?.data?.data)
+            setLoader(false)
+
+        } catch (err: any) {
+            toast.error(err?.message)
+            setLoader(false)
+        } finally {
+            setLoader(false)
+        }
+    }
+
+    const ChangeOrderStatus = async () => {
+        console.log(idd)
+        let value = {
+            order_id: idd,
+            status: orderSelect,
+            comments: getValues('comment')
+        }
+        try {
+            setLoading(true)
+            await postData('admin/order/status', value)
+            toast.success('Order Updated Successfully')
+            router.push('/shipments')
+            setLoading(false)
+        } catch (err: any) {
+            toast.error(err?.message)
+            setLoader(false)
+        } finally {
+            setLoading(false)
+        }
+
+    }
+
+
+
 
 
     useEffect(() => {
         if (orderviewList) {
+            setValue('name', orderviewList?.user?.name)
             setValue('mobile', orderviewList?.user?.mobile)
-            setValue('payment_address_pickup_address',orderviewList?.billaddress?.area?.address)
-            setValue('shipping_address_delivery_address',orderviewList?.shipaddress?.area?.address)
+            setValue('email', orderviewList?.user?.email)
+            // setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name ? orderviewList?.billaddress?.name : ''},${orderviewList?.billaddress?.area?.address ? orderviewList?.billaddress?.area?.address : ''},${orderviewList?.billaddress?.pincode ? orderviewList?.billaddress?.pincode : ''},${orderviewList?.billaddress?.mobile ? `${'Mob:'}${orderviewList?.billaddress?.mobile}` : ''}`)
+            setValue('shipping_address_delivery_address', `${orderviewList?.shipaddress?.name ? orderviewList?.shipaddress?.name : ''},${orderviewList?.shipaddress?.area?.address ? orderviewList?.shipaddress?.area?.address : ''},${orderviewList?.shipaddress?.pincode ? orderviewList?.shipaddress?.pincode : ''},
+            ${orderviewList?.shipaddress?.mobile ? `${'Mob:'}${orderviewList?.shipaddress?.mobile}` : ''}`)
         }
 
     }, [orderviewList])
@@ -152,13 +215,15 @@ const ShippingOrderForm = ({ view, res }: props) => {
     useEffect(() => {
         if (idd) {
             getVenderListShow()
+
         }
     }, [idd])
 
+    useEffect(() => {
+        orderStatusList()
+    }, [])
 
-    const rows = [
-        { 'name': 'ginil', 'tyson': '200', q: 1, v: 2, r: 4 }
-    ];
+
 
 
     if (loader) {
@@ -258,7 +323,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             </MenuItem>
                         </Customselect>
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
+                    {/* <Grid item xs={12} lg={2.5}>
                         <CustomTextarea
                             control={control}
                             error={errors.payment_address_pickup_address}
@@ -269,7 +334,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             view={view ? true : false}
                             defaultValue={''}
                         />
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} lg={2.5}>
                         <CustomTextarea
                             control={control}
@@ -365,51 +430,68 @@ const ShippingOrderForm = ({ view, res }: props) => {
             </CustomBox>
             <CustomBox title='Product Details'>
                 {orderviewList &&
-                <ShippingTable res={orderviewList}/> }
+                    <ShippingTable res={orderviewList} />}
             </CustomBox>
-            <CustomBox title='Add Order History'>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} lg={2.5}>
-                        <Customselect
-                            type='text'
-                            control={control}
-                            error={errors.order_status}
-                            fieldName="order_status"
-                            placeholder={``}
-                            fieldLabel={"Order Status"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={orderSelect}
-                            options={''}
-                            onChangeValue={orderStatusChange}
-                            background={'#fff'}
-                        >
-                            <MenuItem value="" disabled >
-                                <>Select OrderStatus</>
-                            </MenuItem>
+            {idd && <HistoryTable res={orderviewList?.order_history} />}
 
-                        </Customselect>
+            {(idd && !orderviewList?.order_history?.some((res: any) => res?.status === 'cancelled' || res?.status === 'completed')) &&
+                <CustomBox title='Add Order History'>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} lg={2.5}>
+                            <Customselect
+                                type='text'
+                                control={control}
+                                error={errors.order_status}
+                                fieldName="order_status"
+                                placeholder={``}
+                                fieldLabel={"Order Status"}
+                                selectvalue={""}
+                                height={40}
+                                label={''}
+                                size={16}
+                                value={orderSelect}
+                                options={''}
+                                onChangeValue={orderStatusChange}
+                                background={'#fff'}
+                            >
+                                <MenuItem value="" disabled >
+                                    <>Select OrderStatus</>
+                                </MenuItem>
+                                {orderList?.map((res: any) => (
+                                    <MenuItem value={res?.status_name}>{res?.status_name}</MenuItem>
+                                ))}
+
+                            </Customselect>
+                        </Grid>
+                        <Grid item xs={12} lg={5}>
+                            <CustomInput
+                                type='text'
+                                control={control}
+                                error={errors.comment}
+                                fieldName="comment"
+                                placeholder={``}
+                                fieldLabel={"comment"}
+                                disabled={false}
+                                view={false}
+                                defaultValue={''}
+                            />
+
+                        </Grid>
+
                     </Grid>
-                    <Grid item xs={12} lg={5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.comment}
-                            fieldName="comment"
-                            placeholder={``}
-                            fieldLabel={"comment"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-
-                    </Grid>
-
-                </Grid>
-
-            </CustomBox>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', py: 1 }}>
+                        <Custombutton
+                            btncolor=''
+                            IconEnd={''}
+                            IconStart={''}
+                            endIcon={false}
+                            startIcon={false}
+                            height={''}
+                            label={'Update Status'}
+                            disabled={loading}
+                            onClick={ChangeOrderStatus} />
+                    </Box>
+                </CustomBox>}
             {/* <Box py={3}>
                 <Custombutton
                     btncolor=''

@@ -22,6 +22,7 @@ const FranchiseAccounts = () => {
       flex: 1,
       headerAlign: 'center',
       align: 'center',
+      valueGetter: (params) => params?.row?.franchise?.franchise_name,
     },
     {
       field: 'Owner Name',

@@ -14,9 +14,7 @@ type props = {
 
 
 const ShippingTable = ({ res }: props) => {
-
-  console.log({ res })
-
+  console.log({res})
   return (
     <Box>
       <TableContainer component={Paper} >
@@ -24,7 +22,7 @@ const ShippingTable = ({ res }: props) => {
           <TableHead>
             <TableRow>
               <TableCell>Product</TableCell>
-              <TableCell align="center">Restaurant</TableCell>
+              <TableCell align="center">Store/Pickup Address</TableCell>
               <TableCell align="center">Quantity</TableCell>
               <TableCell align="center">Unit Price</TableCell>
               <TableCell align="center">Total Price</TableCell>
@@ -37,14 +35,12 @@ const ShippingTable = ({ res }: props) => {
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-
-                  
-                  {row.productdata?.name}  {row.variants ? row.variants?.title : '' }
+                  {row.productdata?.name}  {row.variants ? row.variants?.title : ''}
                 </TableCell>
-                <TableCell align="center">{row.productdata?.store?.name}</TableCell>
+                <TableCell align="center">{row.productdata?.vendors?.store_name},{row?.productdata?.vendors?.store_address},{row.productdata?.vendors?.vendor_mobile}{}</TableCell>
                 <TableCell align="center">{row.quantity}</TableCell>
-                <TableCell align="center">{row?.unitPrice}</TableCell>
-                <TableCell align="center">{row?.quantity * row?.unitPrice}</TableCell>
+                <TableCell align="center">{(row?.unitPrice).toFixed(2)}</TableCell>
+                <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
               </TableRow>
             ))}
             <TableRow >

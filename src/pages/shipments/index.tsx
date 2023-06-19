@@ -5,15 +5,17 @@ import { Box, Stack } from '@mui/material';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
 import CustomTable from '@/components/CustomTable';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
-import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
-import CustomSwitch from '@/components/CustomSwitch';
-import CustomDelete from '@/Widgets/CustomDelete';
+import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
 import { toast } from 'react-toastify';
 import { fetchData } from '@/CustomAxios';
 import moment from 'moment';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const Shipments = () => {
+    const theme = useTheme();
+    const matches = useMediaQuery(theme.breakpoints.up('md'));
+
+ 
     const router = useRouter()
 
 
@@ -29,13 +31,16 @@ const Shipments = () => {
 
     const columns: GridColDef[] = [
         {
-            field: 'order_id', headerName: 'Order ID', flex: 1, headerAlign: 'center',
+            field: 'order_id', 
+            headerName: 'Order ID',
+            headerAlign: 'center',
             align: 'center',
+            width: matches ? 180 : 200,
         },
         {
             field: 'Date & Time',
             headerName: 'Date & Time',
-            flex: 1,
+            width: matches ? 180 : 200,
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => (moment(params.row.created_at).format('DD/MM/YYYY hh:mm A')),
@@ -44,24 +49,25 @@ const Shipments = () => {
         {
             field: 'Customer Name ',
             headerName: 'Customer Name',
-            flex: 1,
+            width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params.row.user?.name ? params.row.user?.name : '-'
 
         },
         {
             field: 'grand_total',
             headerName: 'Order Total',
-            flex: 1,
+            width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
 
         },
-     
+
         {
             field: 'Franchisee',
             headerName: 'Franchisee',
-            flex: 1,
+            width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => params.row.franchisee?.franchise_name ? params.row.franchisee?.franchise_name : '-'
@@ -70,9 +76,19 @@ const Shipments = () => {
         {
             field: 'delivery_type',
             headerName: 'Order Type',
-            flex: 1,
+            width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
+
+        },
+
+        {
+            field: 'mobile',
+            headerName: 'Mobile',
+            width: matches ? 150 : 200,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => params.row.user?.mobile ? params.row.user?.mobile : '-'
 
         },
 
@@ -80,7 +96,15 @@ const Shipments = () => {
         {
             field: 'payment_status',
             headerName: 'payment Status',
-            flex: 1,
+            width: matches ? 150 : 200,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+        {
+            field: 'payment_type',
+            headerName: 'payment Method',
+            width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
 
@@ -88,7 +112,7 @@ const Shipments = () => {
         {
             field: 'status',
             headerName: 'Status',
-            flex: 1,
+            width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
 
@@ -165,7 +189,7 @@ const Shipments = () => {
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
                 <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='Orders' onClick={addOrderShipmets} addbtn={false} />
                 <Box py={5}>
-                    <CustomTable dashboard={false} columns={columns} rows={shippingList ?  shippingList : []} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={shippingList ? shippingList : []} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
 

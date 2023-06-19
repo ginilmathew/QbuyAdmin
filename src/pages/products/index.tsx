@@ -130,7 +130,7 @@ const AddProducts = ({ data }: datapr) => {
                 else if (moment(params?.row?.offer_date_from) < moment(params?.row?.to)) {
                     return ` ₹${params?.row?.offer_price ? params?.row?.offer_price : 0}`
                 } else {
-                    if (params?.row?.seller_price > 0 ) {
+                    if (params?.row?.seller_price > 0) {
                         return `₹${params?.row?.seller_price ? params?.row?.seller_price : 0}`
                     } else {
                         return `₹${params?.row?.regular_price ? params?.row?.regular_price : 0}`
@@ -275,12 +275,7 @@ const AddProducts = ({ data }: datapr) => {
         })
     }, [productList])
 
-    // useEffect(() => {
-
-
-    // fetchproduct()
-    // }, [])
-
+    console.log({ productList })
 
 
     return (
@@ -288,7 +283,7 @@ const AddProducts = ({ data }: datapr) => {
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchProducts} imprtBtn={true} Headerlabel='Products' onClick={addproductItems} addbtn={true} />
                 <Box py={3}>
-                    <CustomTable dashboard={false} columns={columns} rows={productList ? productList : [] } id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={productList ? productList : []} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
             {open && <CustomDelete

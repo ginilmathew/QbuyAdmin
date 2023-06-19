@@ -2,22 +2,27 @@ import React, { useState } from 'react'
 
 const TagInput = ({ tagValues , values,close}) => {
 
-    console.log({close})
+    // console.log({close})
 
     const [tags, setTags] = useState( values ? [...values] : [])
     const [value, setValue] = useState('')
   
-    console.log({tags})
+    // console.log({tags})
 
     const submitvalues = (e) => {
-        if (e.key === 'Enter') {
-            setTags((prev) => {
-                tagValues([...prev, e.target.value])
-                return [...prev, e.target.value]
-            })
-            setValue('')
 
+        let modifiedString = e.target.value.replace(' ', '_');
+        if(e?.target?.value?.length >= 1){
+            if (e.key === 'Enter') {
+                setTags((prev) => {
+                    tagValues([...prev, modifiedString])
+                    return [...prev, modifiedString]
+                })
+                setValue('')
+    
+            }
         }
+       
     }
 
     const changeValues = (e) => {
