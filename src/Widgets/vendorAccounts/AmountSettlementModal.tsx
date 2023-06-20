@@ -13,6 +13,7 @@ import Customselect from '@/components/Customselect';
 import Custombutton from '@/components/Custombutton';
 import moment from 'moment';
 import { postData } from '@/CustomAxios';
+import { toast } from 'react-toastify';
 
 
 type Inputs = {
@@ -36,12 +37,12 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
     const { onClose, data, open, price, id } = props;
 
 
+    console.log({data})
+
     const [payment, setPayment] = useState<any>([{ value: 'UPI', name: 'UPI' }, { value: 'cash', name: 'Cash' }]);
     const [paymentSelect, setPaymentSelect] = useState<any>(null);
     const [time, setTime] = useState<any>(null);
     const [loading, setLoading] = useState<any>(false)
-    const [orderId, setOrderId] = useState<any>(null);
-
 
 
     const schema = yup
@@ -95,25 +96,19 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
         setTime(value)
     }
 
-    useEffect(() => {
-        if (data) {
-            let result = data?.reduce((acc: any, obj: any) => acc.concat(obj.order_id_array), []);
-            setOrderId(result)
-        }
-
-    }, [data])
+ 
 
 
 
     const submitData = useCallback(async (item: any) => {
-
+        let orderId = data?.reduce((acc: any, obj: any) => acc.concat(obj.order_id_array), []);
       
         let value = {
             order_ids: orderId,
             vendor_id: id,
-            transaction_date: moment(time).format('YYYY-MM-DD'),
+            transaction_date: moment(time).format('YYYY-MM-DD HH:mm A'),
             amount: price?.toString(),
-            payment_mode: paymentSelect,
+            payment_mode:paymentSelect,
             transaction_id: item?.transaction_id,
 
         }
@@ -125,10 +120,11 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
             closeModal()
 
         } catch (err: any) {
+            toast.error(err?.message)
             setLoading(false)
         }
 
-    }, [])
+    }, [data,paymentSelect,time])
 
     const closeModal = () => {
         reset()

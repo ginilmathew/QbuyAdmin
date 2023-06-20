@@ -77,7 +77,7 @@ const VendorAccountsForm = ({ idd }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-
+            valueGetter: (params) => (params.row.total_sales_amount).toFixed(2)
 
         },
         {
@@ -127,7 +127,7 @@ const VendorAccountsForm = ({ idd }: props) => {
 
     const columns2: GridColDef[] = [
         {
-            field: 'date',
+            field: 'transaction_date',
             headerName: 'Date and Time of Transaction',
             flex: 1,
             headerAlign: 'center',
@@ -135,7 +135,7 @@ const VendorAccountsForm = ({ idd }: props) => {
 
         },
         {
-            field: 'total_sales',
+            field: 'amount',
             headerName: 'Amount Settled',
             flex: 1,
             headerAlign: 'center',
@@ -144,7 +144,7 @@ const VendorAccountsForm = ({ idd }: props) => {
         },
 
         {
-            field: 'payout',
+            field: 'payment_mode',
             headerName: 'Payment Mode',
             flex: 1,
             headerAlign: 'center',
@@ -152,7 +152,7 @@ const VendorAccountsForm = ({ idd }: props) => {
 
         },
         {
-            field: 'status',
+            field: 'transaction_id',
             headerName: 'Transaction ID',
             flex: 1,
             headerAlign: 'center',
@@ -510,8 +510,8 @@ const VendorAccountsForm = ({ idd }: props) => {
                 </Box>
             </CustomBox>
 
-            <AmountSettlementModal onClose={onCloseAccount} open={open} price={total} data={selectChecked} id={idd} />
-            <VendorLogsModal onClose={onCloseLogModal} open={openLog} id={idd} date={dateSelect} />
+            {open && <AmountSettlementModal onClose={onCloseAccount} open={open} price={total} data={selectChecked} id={idd} />}
+            {openLog && <VendorLogsModal onClose={onCloseLogModal} open={openLog} id={idd} date={dateSelect} />}
         </Box>
     )
 }
