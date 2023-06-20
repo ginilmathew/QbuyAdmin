@@ -46,13 +46,11 @@ const VendorAccountsForm = ({ idd }: props) => {
     const [open, setOpen] = useState<boolean>(false);
     const [openLog, setOpenLog] = useState<boolean>(false)
     const [vendorEarningList, setvendorEarningList] = useState<any>([])
+    const [vendorSettlementList, setVendorsettlementlist] = useState<any>([])
     const [selectChecked, setSelectChecked] = useState<any>([])
     const [total, setTotal] = useState<any>(null);
-    const [dateSelect,setdateSelect]=useState<string>('')
+    const [dateSelect, setdateSelect] = useState<string>('')
 
-
-    console.log({ selectChecked })
-    console.log({ vendorSingleList })
 
 
 
@@ -127,21 +125,43 @@ const VendorAccountsForm = ({ idd }: props) => {
     ];
 
 
+    const columns2: GridColDef[] = [
+        {
+            field: 'date',
+            headerName: 'Date and Time of Transaction',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
 
+        },
+        {
+            field: 'total_sales',
+            headerName: 'Amount Settled',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
 
+        },
 
+        {
+            field: 'payout',
+            headerName: 'Payment Mode',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
 
-    const rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+        },
+        {
+            field: 'status',
+            headerName: 'Transaction ID',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+
     ];
+
 
 
     const openLogView = useCallback(() => {
@@ -177,6 +197,7 @@ const VendorAccountsForm = ({ idd }: props) => {
 
     const onCloseAccount = useCallback(() => {
         setOpen(false)
+        viewVendor()
     }, [open])
 
 
@@ -268,11 +289,26 @@ const VendorAccountsForm = ({ idd }: props) => {
     }, [vendorSingleList])
 
 
+    useEffect(() => {
+        if (vendorSingleList) {
+            let result = vendorSingleList?.settlement_list?.map((res: any, i: number) => ({
+                _id: i,
+                ...res
+            }))
+            setVendorsettlementlist(result)
+        }
+
+    }, [vendorSingleList])
+
+
 
     const vendorEarningSelect = (item: any) => {
+        console.log({ item })
         let result = vendorEarningList?.filter((res: any) => item?.includes(res?._id))
         let totalPrice = result.reduce((accumulator: any, total: any) => accumulator + parseInt(total.payout), 0);
         setSelectChecked(result)
+
+        // console.log({ result })
         setTotal(totalPrice)
     }
 
@@ -470,11 +506,11 @@ const VendorAccountsForm = ({ idd }: props) => {
                     </Grid>
                 </Grid>
                 <Box py={2}>
-                    <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns2} rows={vendorSettlementList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </CustomBox>
 
-            <AmountSettlementModal onClose={onCloseAccount} open={open} price={total} data={selectChecked} id={idd}/>
+            <AmountSettlementModal onClose={onCloseAccount} open={open} price={total} data={selectChecked} id={idd} />
             <VendorLogsModal onClose={onCloseLogModal} open={openLog} id={idd} date={dateSelect} />
         </Box>
     )

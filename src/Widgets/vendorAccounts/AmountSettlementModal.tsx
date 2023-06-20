@@ -35,18 +35,20 @@ export interface SimpleDialogProps {
 const AmountSettlementModal = (props: SimpleDialogProps) => {
     const { onClose, data, open, price, id } = props;
 
-    console.log({ price })
-
 
     const [payment, setPayment] = useState<any>([{ value: 'UPI', name: 'UPI' }, { value: 'cash', name: 'Cash' }]);
     const [paymentSelect, setPaymentSelect] = useState<any>(null);
     const [time, setTime] = useState<any>(null);
     const [loading, setLoading] = useState<any>(false)
+    const [orderId, setOrderId] = useState<any>(null);
+
+
+
     const schema = yup
         .object()
         .shape({
-
-
+            transaction_id: yup.string().required('Required'),
+            payment_mode: yup.string().required('Required')
         })
         .required();
 
@@ -62,7 +64,8 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
             defaultValues: {
-
+                transaction_id: '',
+                payment_mode: ''
 
 
             }
@@ -79,10 +82,12 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
 
 
 
-    const ChangepaymentMode = useCallback((e: any) => {
+    const ChangepaymentMode = (e: any) => {
         const { value } = e.target;
         setPaymentSelect(value)
-    }, [])
+        setValue('payment_mode', value)
+        setError('payment_mode', { message: '' })
+    }
 
 
     const OnChangeDate = (value: any) => {
@@ -90,12 +95,21 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
         setTime(value)
     }
 
+    useEffect(() => {
+        if (data) {
+            let result = data?.reduce((acc: any, obj: any) => acc.concat(obj.order_id_array), []);
+            setOrderId(result)
+        }
+
+    }, [data])
+
+
 
     const submitData = useCallback(async (item: any) => {
 
-        const allChildren = data?.reduce((acc: any, obj: any) => acc.concat(obj.order_id_array), []);
+      
         let value = {
-            order_ids: allChildren,
+            order_ids: orderId,
             vendor_id: id,
             transaction_date: moment(time).format('YYYY-MM-DD'),
             amount: price?.toString(),
@@ -108,20 +122,24 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
             setLoading(true)
             await postData('admin/account/vendors-settlement/create', value)
             setLoading(false)
-            onClose()
+            closeModal()
 
         } catch (err: any) {
             setLoading(false)
         }
 
-
-
-
     }, [])
+
+    const closeModal = () => {
+        reset()
+        setPaymentSelect(null)
+        setTime(null)
+        onClose()
+    }
 
     return (
         <Box>
-            <Dialog onClose={onClose} open={open}>
+            <Dialog onClose={closeModal} open={open}>
                 <Box p={2} >
                     <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
                         <Box>
@@ -140,7 +158,7 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
                                 fontFamily: `'Poppins' sans-serif`,
                             }}>Amount Settlement</Typography>
                         </Box>
-                        <Box onClick={onClose}>
+                        <Box onClick={closeModal}>
                             <Box
                                 width={25}
                                 height={25}
@@ -227,7 +245,7 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
                             <Custombutton
                                 disabled={loading}
                                 label='ADD'
-                                btncolor='#F71C1C'
+                                btncolor='#58d36e'
                                 onClick={handleSubmit(submitData)}
                                 endIcon={false}
                                 startIcon={false}
