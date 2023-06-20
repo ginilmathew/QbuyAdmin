@@ -671,7 +671,7 @@ const ProductForm = ({ res, view }: props) => {
             }
             getSubcategory()
             getvendorlist()
-            setCategorySelect
+            setCategorySelect(productList?.category?._id)
             setStatusSelect(productList?.approval_status)
             setRecomendedProductEditList(productList?.related_products)
             setMultipleArrayFoodType(productList?.food_type ? productList?.food_type : [])
