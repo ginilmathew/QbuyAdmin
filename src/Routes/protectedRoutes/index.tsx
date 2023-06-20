@@ -23,7 +23,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
         onUnauthenticated() {
             router.push('/login')
         },
-      })
+    })
 
     useEffect(() => {
         try {
@@ -65,13 +65,13 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     //     }
     // }, [])
 
-    if(status === "loading"){
-        return(
+    if (status === "loading") {
+        return (
             <div>Loading...</div>
         )
     }
 
-    
+
 
 
     return <>
