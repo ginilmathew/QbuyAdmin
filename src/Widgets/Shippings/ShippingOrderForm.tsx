@@ -43,7 +43,8 @@ type Inputs = {
     shipping_address_delivery_address: string,
     payment_method: string,
     order_status: string,
-    comment: string
+    comment: string;
+    order_id:string;
 };
 
 type props = {
@@ -91,7 +92,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
     const [OrderStatusList, setOrderStatusList] = useState([])
 
 
-
+    console.log({ orderviewList })
 
 
 
@@ -202,6 +203,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
             setValue('name', orderviewList?.user?.name)
             setValue('mobile', orderviewList?.user?.mobile)
             setValue('email', orderviewList?.user?.email)
+            setValue('order_id',orderviewList?.order_id)
             // setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name ? orderviewList?.billaddress?.name : ''},${orderviewList?.billaddress?.area?.address ? orderviewList?.billaddress?.area?.address : ''},${orderviewList?.billaddress?.pincode ? orderviewList?.billaddress?.pincode : ''},${orderviewList?.billaddress?.mobile ? `${'Mob:'}${orderviewList?.billaddress?.mobile}` : ''}`)
             setValue('shipping_address_delivery_address', `${orderviewList?.shipaddress?.name ? orderviewList?.shipaddress?.name : ''},${orderviewList?.shipaddress?.area?.address ? orderviewList?.shipaddress?.area?.address : ''},${orderviewList?.shipaddress?.pincode ? orderviewList?.shipaddress?.pincode : ''},
             ${orderviewList?.shipaddress?.mobile ? `${'Mob:'}${orderviewList?.shipaddress?.mobile}` : ''}`)
@@ -301,6 +303,19 @@ const ShippingOrderForm = ({ view, res }: props) => {
             </CustomBox>
             <CustomBox title='Customer Details'>
                 <Grid container spacing={2}>
+                <Grid item xs={12} lg={2.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.order_id}
+                            fieldName="order_id"
+                            placeholder={``}
+                            fieldLabel={"Order ID"}
+                            disabled={false}
+                            view={false}
+                            defaultValue={''}
+                        />
+                    </Grid>
                     <Grid item xs={12} lg={2.5}>
                         <Customselect
                             type='text'

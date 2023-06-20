@@ -605,11 +605,7 @@ const ProductForm = ({ res, view }: props) => {
     const onChangeMultipleFoodType = (event: any) => {
 
 
-        const values = event.target.value
-
-
-
-
+        const values = event.target.value;
 
         setMultipleArrayFoodType(
             values
@@ -673,7 +669,7 @@ const ProductForm = ({ res, view }: props) => {
             getvendorlist()
             setCategorySelect(productList?.category?._id)
             setStatusSelect(productList?.approval_status)
-            setRecomendedProductEditList(productList?.related_products)
+            setRecomendedProductEditList(productList?.related_products ? productList?.related_products : [])
             setMultipleArrayFoodType(productList?.food_type ? productList?.food_type : [])
             setMultipleArrayProductTag(productList?.product_tags ? productList?.product_tags : [])
             setProductCategorySelect(productList?.category_type)
@@ -1161,8 +1157,10 @@ const ProductForm = ({ res, view }: props) => {
 
         let recomendedProductList: any = []
 
+
+
         const recomendedProduct = recomendedProductArray?.filter((obj: any) => {
-            return !recomendedProductEditList.some((obj1: any) => obj._id === obj1._id)
+            return !recomendedProductEditList?.some((obj1: any) => obj._id === obj1._id)
         })
 
 
