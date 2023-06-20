@@ -620,7 +620,7 @@ const ProductForm = ({ res, view }: props) => {
 
 
         const values = event.target.value
-        let find = productTagList?.filter((res: any, I: number) => event.target.value.includes(res._id))
+        // let find = productTagList?.filter((res: any, I: number) => event.target.value.includes(res._id))
         // let data = find?.map((res: any) => res?._id)
 
 
@@ -674,8 +674,9 @@ const ProductForm = ({ res, view }: props) => {
             setCategorySelect
             setStatusSelect(productList?.approval_status)
             setRecomendedProductEditList(productList?.related_products)
-            setMultipleArrayFoodType(productList?.food_type)
-            setMultipleArrayProductTag(productList?.product_tags)
+            setMultipleArrayFoodType(productList?.food_type ? productList?.food_type : [])
+            setMultipleArrayProductTag(productList?.product_tags ? productList?.product_tags : [])
+            setProductCategorySelect(productList?.category_type)
             setValue('name', productList?.name)
             setValue('franchisee', productList?.franchisee?._id)
             setFranchiseSelect(productList?.franchisee?._id)
@@ -687,7 +688,7 @@ const ProductForm = ({ res, view }: props) => {
             setValue('width', productList?.dimensions?.width)
             setValue('height', productList?.dimensions?.height)
             setValue('category', productList?.category?._id)
-            setProductCategorySelect(productList?.category_type)
+     
             setValue('sub_category', productList?.sub_category?._id)
             setSubCategorySelect(productList?.sub_category?._id)
             setValue('display_order', productList?.display_order)
