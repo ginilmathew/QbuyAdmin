@@ -39,7 +39,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     }, [session])
 
 
-
     const getProfile = async (id: any) => {
         try {
             setLoading(false)
