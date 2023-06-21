@@ -33,6 +33,5 @@ const key = {
 
 export const BASE_URL = URLS[env]
 export const IMAGE_URL = IMG_URL[env]
-
 export const API_URL = `${url[env]}`
 export const API_KEY = `${key[env]}`
