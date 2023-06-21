@@ -684,7 +684,7 @@ const ProductForm = ({ res, view }: props) => {
             setValue('width', productList?.dimensions?.width)
             setValue('height', productList?.dimensions?.height)
             setValue('category', productList?.category?._id)
-     
+
             setValue('sub_category', productList?.sub_category?._id)
             setSubCategorySelect(productList?.sub_category?._id)
             setValue('display_order', productList?.display_order)
@@ -1241,7 +1241,7 @@ const ProductForm = ({ res, view }: props) => {
             food_type: multpleArrayFoodType,
             type: process.env.NEXT_PUBLIC_TYPE,
             product_tags: multpleArrayProductTag,
-            product_type:null,
+            product_type: null,
             image: imagearray?.length > 0 ? imagearray : defaultImage,
             product_image: data?.product_image,
             category: {
@@ -1270,7 +1270,7 @@ const ProductForm = ({ res, view }: props) => {
             regular_price: data?.regular_price,
             seller_price: data?.seller_price,
             offer_price: data?.offer_price,
-            commission: data?.commission,
+            commission: data?.commission ? data?.commission : 0,
             fixed_delivery_price: data?.fixed_delivery_price,
             offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
@@ -1280,7 +1280,11 @@ const ProductForm = ({ res, view }: props) => {
         }
         if (productList) {
             value["id"] = productList?._id;
+
+
+
         }
+
         try {
             setLoading(true)
             await postData(idd ? EDIT_URL : CREATE_URL, value)
@@ -1916,7 +1920,7 @@ const ProductForm = ({ res, view }: props) => {
                             fieldName="commission"
                             placeholder={''}
                             fieldLabel={"Commission(%)"}
-                            view={getValues('regular_price') ? true : false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>

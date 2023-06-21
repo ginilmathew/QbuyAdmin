@@ -485,7 +485,7 @@ console.log({open})
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
                         <Typography mb={3}></Typography>
-                        <Custombutton label='Settle Payment' btncolor='#F71C1C' onClick={OpenAccountModal} endIcon={false} startIcon={false} IconStart={undefined} IconEnd={undefined} height={undefined} />
+                        <Custombutton label='Settle Payment' btncolor='#F71C1C' onClick={OpenAccountModal} endIcon={false} startIcon={false} IconStart={undefined} IconEnd={undefined} height={undefined} disabled={vendorEarningList?.length <= 0 ? true : false} />
                     </Grid>
                 </Grid>
                 <Box py={3}>
