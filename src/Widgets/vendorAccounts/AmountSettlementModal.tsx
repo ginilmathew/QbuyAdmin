@@ -14,6 +14,7 @@ import Custombutton from '@/components/Custombutton';
 import moment from 'moment';
 import { postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
 
 type Inputs = {
@@ -36,8 +37,8 @@ export interface SimpleDialogProps {
 const AmountSettlementModal = (props: SimpleDialogProps) => {
     const { onClose, data, open, price, id } = props;
 
+    const router = useRouter()
 
-    console.log({data})
 
     const [payment, setPayment] = useState<any>([{ value: 'UPI', name: 'UPI' }, { value: 'cash', name: 'Cash' }]);
     const [paymentSelect, setPaymentSelect] = useState<any>(null);
@@ -96,19 +97,19 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
         setTime(value)
     }
 
- 
+
 
 
 
     const submitData = useCallback(async (item: any) => {
         let orderId = data?.reduce((acc: any, obj: any) => acc.concat(obj.order_id_array), []);
-      
+
         let value = {
             order_ids: orderId,
             vendor_id: id,
             transaction_date: moment(time).format('YYYY-MM-DD HH:mm A'),
             amount: price?.toString(),
-            payment_mode:paymentSelect,
+            payment_mode: paymentSelect,
             transaction_id: item?.transaction_id,
 
         }
@@ -118,13 +119,13 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
             await postData('admin/account/vendors-settlement/create', value)
             setLoading(false)
             closeModal()
-
+            router.reload()
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)
         }
 
-    }, [data,paymentSelect,time])
+    }, [data, paymentSelect, time])
 
     const closeModal = () => {
         reset()

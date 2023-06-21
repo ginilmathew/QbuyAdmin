@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import { Box, Button, Typography } from '@mui/material';
 import Custombutton from './Custombutton';
 
-import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
+import { DataGrid, GridRowParams, GridRowSelectionModel } from '@mui/x-data-grid';
 type props = {
     label: string
     columns: any,
@@ -19,16 +19,30 @@ type props = {
     dashboard: boolean,
     rowheight?: number,
     checked?: boolean,
-    selectCheck?: any
+    selectCheck?: any,
+    isCheckd?: boolean
+
 
 }
-const CustomTable = ({ columns, rows, id, bg, label, dashboard, rowheight, checked, selectCheck }: props) => {
+const CustomTable = ({ columns, rows, id, bg, label, dashboard, rowheight, checked, selectCheck, isCheckd }: props) => {
+
+    console.log({ isCheckd })
+
+    // const [isValid, setIsValid] = useState<any>(null)
+    // console.log({ isValid }, 'IIIIIIIII')
     let texttruncate = label.slice(0, 3);
     let custtext = label.slice(3)
 
     const selectCheckItem = (item: any) => {
         selectCheck(item)
+   
+
+      
     }
+
+
+ 
+
 
     return (
         <>
@@ -64,10 +78,13 @@ const CustomTable = ({ columns, rows, id, bg, label, dashboard, rowheight, check
                             },
                         },
                     }}
+                    disableRowSelectionOnClick
                     checkboxSelection={checked ? checked : false}
                     onRowSelectionModelChange={checked ? (itm) => selectCheckItem(itm) : () => null}
                     pageSizeOptions={[10]}
                     getRowId={row => row[id]}
+                    
+
                 />
             </Box>
 

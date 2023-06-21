@@ -18,6 +18,8 @@ import CustomViewInput from '@/components/CustomViewInput';
 import Custombutton from '@/components/Custombutton';
 import AmountSettlementModal from './AmountSettlementModal';
 import VendorLogsModal from './VendorLogsModal';
+import { useRouter } from 'next/router';
+import Spinner from '@/components/Spinner';
 
 
 type Inputs = {
@@ -39,6 +41,8 @@ type props = {
 
 const VendorAccountsForm = ({ idd }: props) => {
 
+    const router = useRouter()
+
     const [loading, setLoading] = useState<boolean>(false);
     const [vendorSingleList, setVendorSinglelist] = useState<any>(null);
     const [multpleArray, setMultipleArray] = useState<any>([]);
@@ -50,8 +54,10 @@ const VendorAccountsForm = ({ idd }: props) => {
     const [selectChecked, setSelectChecked] = useState<any>([])
     const [total, setTotal] = useState<any>(null);
     const [dateSelect, setdateSelect] = useState<string>('')
+    const [checkedValue,setcheckedvalue]=useState<any>(false)
 
-
+console.log({vendorSingleList})
+console.log({open})
 
 
     const columns: GridColDef[] = [
@@ -61,6 +67,7 @@ const VendorAccountsForm = ({ idd }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => moment(params.row.date).format('DD-MM-YYYY')
 
         },
         {
@@ -132,7 +139,7 @@ const VendorAccountsForm = ({ idd }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-
+            // valueGetter: (params) => moment(params.row.transaction_date,'YYYY-MM-DD  HH:mm A').format('MM-DD-YYYY HH:mm A')
         },
         {
             field: 'amount',
@@ -197,6 +204,7 @@ const VendorAccountsForm = ({ idd }: props) => {
 
     const onCloseAccount = useCallback(() => {
         setOpen(false)
+      
         viewVendor()
     }, [open])
 
@@ -259,8 +267,8 @@ const VendorAccountsForm = ({ idd }: props) => {
             setMultipleArray(array);
             setValue('store_address', vendorSingleList?.store_address);
             setValue('franchise', vendorSingleList?.franchise?.franchise_name);
-            setValue('start_time', vendorSingleList?.start_time);
-            setValue('end_time', vendorSingleList?.end_time)
+            setValue('start_time', vendorSingleList?.start_time  ? vendorSingleList?.start_time : '');
+            setValue('end_time', vendorSingleList?.end_time ? vendorSingleList?.end_time : '')
 
         }
     }, [vendorSingleList])
@@ -286,7 +294,7 @@ const VendorAccountsForm = ({ idd }: props) => {
             setvendorEarningList(result);
         }
 
-    }, [vendorSingleList])
+    }, [vendorSingleList,open])
 
 
     useEffect(() => {
@@ -303,18 +311,15 @@ const VendorAccountsForm = ({ idd }: props) => {
 
 
     const vendorEarningSelect = (item: any) => {
-        console.log({ item })
         let result = vendorEarningList?.filter((res: any) => item?.includes(res?._id))
         let totalPrice = result.reduce((accumulator: any, total: any) => accumulator + parseInt(total.payout), 0);
         setSelectChecked(result)
-
-        // console.log({ result })
         setTotal(totalPrice)
     }
 
 
     if (!vendorSingleList) {
-        return <>Loading...</>
+        return <><Spinner/></>
     }
 
     return (
@@ -492,6 +497,7 @@ const VendorAccountsForm = ({ idd }: props) => {
                         bg={"#ffff"}
                         label='Recent Activity'
                         checked={true}
+                        isCheckd={checkedValue}
                         selectCheck={(itm: any) => vendorEarningSelect(itm)}
                     />
                 </Box>

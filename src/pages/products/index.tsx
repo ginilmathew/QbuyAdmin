@@ -66,6 +66,8 @@ const AddProducts = ({ data }: datapr) => {
     const [_id, set_id] = useState<string>('');
 
 
+    console.log({ productList })
+
     const handleClose = () => {
         setOpen(false)
     }
@@ -268,14 +270,14 @@ const AddProducts = ({ data }: datapr) => {
 
     const searchProducts = useCallback((value: any) => {
         let competitiions = setSerachList?.filter((com: any) => com?.name.toString().toLowerCase().includes(value.toLowerCase()) ||
-            com?.product_id.toString().toLowerCase().includes(value.toLowerCase())
+            com?.product_id.toString().toLowerCase().includes(value.toLowerCase()) || com?.store?.name.toString().toLowerCase().includes(value.toLowerCase())
         )
         startTransition(() => {
             setProductList(competitiions)
         })
     }, [productList])
 
-    console.log({ productList })
+
 
 
     return (
