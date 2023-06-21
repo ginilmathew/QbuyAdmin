@@ -285,7 +285,6 @@ const ProductForm = ({ res, view }: props) => {
                 product_availability_to: null,
                 fixed_delivery_price: 0,
                 commission: 0
-
             }
         });
 
