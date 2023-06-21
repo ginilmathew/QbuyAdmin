@@ -56,8 +56,7 @@ const VendorAccountsForm = ({ idd }: props) => {
     const [dateSelect, setdateSelect] = useState<string>('')
     const [checkedValue,setcheckedvalue]=useState<any>(false)
 
-console.log({vendorSingleList})
-console.log({open})
+
 
 
     const columns: GridColDef[] = [

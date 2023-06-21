@@ -16,13 +16,11 @@ export interface SimpleDialogProps {
 const VendorLogsModal = (props: SimpleDialogProps) => {
     const { onClose, open, date, id } = props;
 
-    console.log({ date })
 
     const [listLog, setListLog] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(false)
 
 
-    console.log({ listLog }, 'APIICALLED')
 
     const columns: GridColDef[] = [
         {
