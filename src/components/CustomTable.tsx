@@ -20,13 +20,13 @@ type props = {
     rowheight?: number,
     checked?: boolean,
     selectCheck?: any,
-    isCheckd?: boolean
+
 
 
 }
-const CustomTable = ({ columns, rows, id, bg, label, dashboard, rowheight, checked, selectCheck, isCheckd }: props) => {
+const CustomTable = ({ columns, rows, id, bg, label, dashboard, rowheight, checked, selectCheck }: props) => {
 
-    console.log({ isCheckd })
+ 
 
     // const [isValid, setIsValid] = useState<any>(null)
     // console.log({ isValid }, 'IIIIIIIII')
@@ -35,9 +35,6 @@ const CustomTable = ({ columns, rows, id, bg, label, dashboard, rowheight, check
 
     const selectCheckItem = (item: any) => {
         selectCheck(item)
-   
-
-      
     }
 
 

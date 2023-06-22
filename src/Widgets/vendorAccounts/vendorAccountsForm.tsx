@@ -496,7 +496,6 @@ const VendorAccountsForm = ({ idd }: props) => {
                         bg={"#ffff"}
                         label='Recent Activity'
                         checked={true}
-                        isCheckd={checkedValue}
                         selectCheck={(itm: any) => vendorEarningSelect(itm)}
                     />
                 </Box>
