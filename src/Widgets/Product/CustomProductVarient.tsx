@@ -131,7 +131,7 @@ const CustomProductVarient = ({ content, index, deafultCommission, onChange, sta
                 <Grid item lg={1.5} xs={12}>
                     <DatePickers
                         defaultvalue={state?.[index]?.offer_date_from}
-                        values={getValues('offer_date_from')}
+                        values={state?.[index]?.offer_date_from}
                         changeValue={(e: any) => onChange(moment(e, 'YYYY-MM-DD').format('YYYY-MM-DD'), 'offer_date_from')}
                         fieldName='offer_date_from'
                         error={errors.offer_date_from}
@@ -143,7 +143,7 @@ const CustomProductVarient = ({ content, index, deafultCommission, onChange, sta
                 <Grid item lg={1.5} xs={12}>
                     <DatePickers
                         defaultvalue={state?.[index]?.offer_date_to}
-                        values={getValues('offer_date_to')}
+                        values={state?.[index]?.offer_date_to}
                         changeValue={(e: any) => onChange(moment(e, 'YYYY-MM-DD').format('YYYY-MM-DD'), 'offer_date_to')}
                         fieldName='offer_date_to'
                         error={errors.offer_date_to}
