@@ -5,7 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { FormInputs } from '@/utilities/types';
 import CustomInputNormal from '@/components/CustomInputNormal';
 import DatePickers from '@/components/DatePickers';
-import moment from 'moment'
+import moment from 'moment';
 type props = {
     content: any,
     index: number,
@@ -33,6 +33,7 @@ type Input = {
 
 const CustomProductVarient = ({ content, index, deafultCommission, onChange, state, view, stock }: props) => {
 
+    console.log("VARIENNNN")
    
 
     const { register,
@@ -128,7 +129,7 @@ const CustomProductVarient = ({ content, index, deafultCommission, onChange, sta
                 </Grid>
 
                 <Grid item lg={1.5} xs={12}>
-                    < DatePickers
+                    <DatePickers
                         defaultvalue={state?.[index]?.offer_date_from}
                         values={getValues('offer_date_from')}
                         changeValue={(e: any) => onChange(moment(e, 'YYYY-MM-DD').format('YYYY-MM-DD'), 'offer_date_from')}
