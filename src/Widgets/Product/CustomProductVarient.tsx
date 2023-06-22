@@ -128,7 +128,7 @@ const CustomProductVarient = ({ content, index, deafultCommission, onChange, sta
                     />
                 </Grid>
 
-                <Grid item lg={1.5} xs={12}>
+                {/* <Grid item lg={1.5} xs={12}>
                     <DatePickers
                         defaultvalue={state?.[index]?.offer_date_from}
                         values={state?.[index]?.offer_date_from}
@@ -149,7 +149,7 @@ const CustomProductVarient = ({ content, index, deafultCommission, onChange, sta
                         error={errors.offer_date_to}
                         fieldLabel={'Offer To'}
                     />
-                </Grid>
+                </Grid> */}
                 {stock && <Grid item lg={1.5} xs={12}>
                     <CustomInputNormal
                         value={state[index]?.stock_value}
