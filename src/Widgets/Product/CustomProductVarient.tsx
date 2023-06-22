@@ -33,8 +33,7 @@ type Input = {
 
 const CustomProductVarient = ({ content, index, deafultCommission, onChange, state, view, stock }: props) => {
 
-    console.log({ state })
-    console.log({ content })
+   
 
     const { register,
         handleSubmit,
@@ -47,7 +46,7 @@ const CustomProductVarient = ({ content, index, deafultCommission, onChange, sta
         });
 
 
-    console.log({ state: state?.[index] })
+
 
     return (
         <Box>
@@ -87,7 +86,7 @@ const CustomProductVarient = ({ content, index, deafultCommission, onChange, sta
 
                 <Grid item lg={1.5} xs={12}>
                     <CustomInputNormal
-                        value={state[index]?.commission ? state[index]?.commission : 0}
+                        value={state[index]?.commission ? state[index]?.commission : null}
                         onChangeValue={(e: any) => onChange(e.target.value, 'commission')}
                         disabled={false}
                         type='number'

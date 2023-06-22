@@ -908,7 +908,7 @@ const ProductPandaForm = ({ res, view }: props) => {
 
     const metaTagvalues = (res: any) => {
 
-        console.log({ res })
+    
         setMetaTag(res)
         setValue('meta_tags', res)
     }
