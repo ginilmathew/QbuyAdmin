@@ -212,13 +212,7 @@ const ProductForm = ({ res, view }: props) => {
     const [productTagList, setProductTagList] = useState<any>([])
     const [multpleArrayProductTag, setMultipleArrayProductTag] = useState<any>([]);
     const [multpleArrayFoodType, setMultipleArrayFoodType] = useState<any>([]);
-
-
-
-
-
-
-
+    
     const orderValidation = /^[0-9]*$/
     const schema = yup
         .object()
@@ -737,7 +731,7 @@ const ProductForm = ({ res, view }: props) => {
             }
 
             let myvaarientArray: { title: any; variant_id: string; attributs: any; seller_price: any; regular_price: string; offer_price: string; offer_date_from: any; offer_date_to: any; stock: boolean; stock_value: string; commission: number; fixed_delivery_price: number; }[] = []
-            
+
             if (productList?.variants?.length > 0) {
                 productList?.variants?.map((item: any) => {
                     myvaarientArray.push({
