@@ -30,12 +30,15 @@ export interface SimpleDialogProps {
     onClose: any;
     data: any,
     price: any,
-    id: string
+    id: string,
+    setVendorSinglelist: any,
+    viewVendor: any
+
 }
 
 
 const AmountSettlementModal = (props: SimpleDialogProps) => {
-    const { onClose, data, open, price, id } = props;
+    const { onClose, data, open, price, id, setVendorSinglelist, viewVendor } = props;
 
     const router = useRouter()
 
@@ -118,8 +121,10 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
             setLoading(true)
             await postData('admin/account/vendors-settlement/create', value)
             setLoading(false)
+            setVendorSinglelist(null)
+            viewVendor()
             closeModal()
-            router.reload()
+            // router.reload()
         } catch (err: any) {
             toast.error(err?.message)
             setLoading(false)

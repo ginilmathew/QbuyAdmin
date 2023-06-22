@@ -496,6 +496,7 @@ const VendorAccountsForm = ({ idd }: props) => {
                         bg={"#ffff"}
                         label='Recent Activity'
                         checked={true}
+                      
                         selectCheck={(itm: any) => vendorEarningSelect(itm)}
                     />
                 </Box>
@@ -514,7 +515,7 @@ const VendorAccountsForm = ({ idd }: props) => {
                 </Box>
             </CustomBox>
 
-            {open && <AmountSettlementModal onClose={onCloseAccount} open={open} price={total} data={selectChecked} id={idd} />}
+            {open && <AmountSettlementModal onClose={onCloseAccount} open={open} price={total} data={selectChecked} id={idd}  setVendorSinglelist={setVendorSinglelist} viewVendor={viewVendor} />}
             {openLog && <VendorLogsModal onClose={onCloseLogModal} open={openLog} id={idd} date={dateSelect} />}
         </Box>
     )
