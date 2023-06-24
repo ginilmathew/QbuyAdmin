@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid, MenuItem, Typography } from '@mui/material'
+import { Avatar, Box, Grid, MenuItem, Typography, Stack } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,8 +12,14 @@ import { IMAGE_URL } from '@/Config';
 import CustomTimepicker from '@/components/CustomTimepicker';
 import moment from 'moment';
 import CustomTable from '@/components/CustomTable';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { GridColDef } from '@mui/x-data-grid';
 import CustomViewInput from '@/components/CustomViewInput';
+import Custombutton from '@/components/Custombutton';
+import AmountSettlementModal from './AmountSettlementModal';
+import VendorLogsModal from './VendorLogsModal';
+import { useRouter } from 'next/router';
+import Spinner from '@/components/Spinner';
 
 
 type Inputs = {
@@ -35,24 +41,36 @@ type props = {
 
 const VendorAccountsForm = ({ idd }: props) => {
 
+    const router = useRouter()
+
     const [loading, setLoading] = useState<boolean>(false);
     const [vendorSingleList, setVendorSinglelist] = useState<any>(null);
     const [multpleArray, setMultipleArray] = useState<any>([]);
-    const [getcategory, setGetCategory] = useState<any>([])
-    console.log({ vendorSingleList })
+    const [getcategory, setGetCategory] = useState<any>([]);
+    const [open, setOpen] = useState<boolean>(false);
+    const [openLog, setOpenLog] = useState<boolean>(false)
+    const [vendorEarningList, setvendorEarningList] = useState<any>([])
+    const [vendorSettlementList, setVendorsettlementlist] = useState<any>([])
+    const [selectChecked, setSelectChecked] = useState<any>([])
+    const [total, setTotal] = useState<any>(null);
+    const [dateSelect, setdateSelect] = useState<string>('')
+    const [checkedValue,setcheckedvalue]=useState<any>(false)
+
 
 
 
     const columns: GridColDef[] = [
         {
-            field: 'Date',
+            field: 'date',
             headerName: 'Date',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => moment(params.row.date).format('DD-MM-YYYY')
+
         },
         {
-            field: 'Total Sales',
+            field: 'total_sales',
             headerName: 'Total Sales',
             flex: 1,
             headerAlign: 'center',
@@ -60,11 +78,12 @@ const VendorAccountsForm = ({ idd }: props) => {
 
         },
         {
-            field: 'Sales Amount',
+            field: 'total_sales_amount',
             headerName: 'Sales Amount',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => (params.row.total_sales_amount).toFixed(2)
 
         },
         {
@@ -76,7 +95,7 @@ const VendorAccountsForm = ({ idd }: props) => {
 
         },
         {
-            field: 'Payout',
+            field: 'payout',
             headerName: 'Payout',
             flex: 1,
             headerAlign: 'center',
@@ -84,30 +103,76 @@ const VendorAccountsForm = ({ idd }: props) => {
 
         },
         {
-            field: 'Status',
+            field: 'status',
             headerName: 'Status',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
 
         },
+        {
+            field: 'Order Log',
+            headerName: 'Order Log',
+            width: 200,
+            headerAlign: 'center',
+            align: 'center',
+            renderCell: ({ row }) => (
+                <Stack alignItems={'center'} gap={1} direction={'row'}>
+                    <RemoveRedEyeIcon
+                        onClick={() => OpenLogModal(row?.date)}
+                        style={{
+                            color: '#58D36E',
+                            cursor: 'pointer'
+                        }} />
+
+                </Stack>
+            )
+        }
+    ];
 
 
+    const columns2: GridColDef[] = [
+        {
+            field: 'transaction_date',
+            headerName: 'Date and Time of Transaction',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            // valueGetter: (params) => moment(params.row.transaction_date,'YYYY-MM-DD  HH:mm A').format('MM-DD-YYYY HH:mm A')
+        },
+        {
+            field: 'amount',
+            headerName: 'Amount Settled',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+
+        {
+            field: 'payment_mode',
+            headerName: 'Payment Mode',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+        {
+            field: 'transaction_id',
+            headerName: 'Transaction ID',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
 
     ];
 
-    const rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-    ];
 
+
+    const openLogView = useCallback(() => {
+        setOpenLog(true)
+    }, [])
 
     const schema = yup
         .object()
@@ -134,6 +199,29 @@ const VendorAccountsForm = ({ idd }: props) => {
 
             }
         });
+
+
+    const onCloseAccount = useCallback(() => {
+        setOpen(false)
+      
+        viewVendor()
+    }, [open])
+
+
+    const OpenAccountModal = useCallback(() => {
+        setOpen(true)
+    }, [open])
+
+    const onCloseLogModal = useCallback(() => {
+        setOpenLog(false)
+        setdateSelect('')
+    }, [openLog])
+
+
+    const OpenLogModal = useCallback((data: any) => {
+        setdateSelect(data)
+        setOpenLog(true)
+    }, [openLog])
 
 
     const viewVendor = useCallback(async () => {
@@ -178,8 +266,8 @@ const VendorAccountsForm = ({ idd }: props) => {
             setMultipleArray(array);
             setValue('store_address', vendorSingleList?.store_address);
             setValue('franchise', vendorSingleList?.franchise?.franchise_name);
-            setValue('start_time', vendorSingleList?.start_time);
-            setValue('end_time', vendorSingleList?.end_time)
+            setValue('start_time', vendorSingleList?.start_time  ? vendorSingleList?.start_time : '');
+            setValue('end_time', vendorSingleList?.end_time ? vendorSingleList?.end_time : '')
 
         }
     }, [vendorSingleList])
@@ -194,8 +282,43 @@ const VendorAccountsForm = ({ idd }: props) => {
         }
     }, [idd])
 
+
+
+    useEffect(() => {
+        if (vendorSingleList) {
+            let result = vendorSingleList?.vendor_earning_list?.map((res: any, i: number) => ({
+                _id: i,
+                ...res
+            }))
+            setvendorEarningList(result);
+        }
+
+    }, [vendorSingleList,open])
+
+
+    useEffect(() => {
+        if (vendorSingleList) {
+            let result = vendorSingleList?.settlement_list?.map((res: any, i: number) => ({
+                _id: i,
+                ...res
+            }))
+            setVendorsettlementlist(result)
+        }
+
+    }, [vendorSingleList])
+
+
+
+    const vendorEarningSelect = (item: any) => {
+        let result = vendorEarningList?.filter((res: any) => item?.includes(res?._id))
+        let totalPrice = result.reduce((accumulator: any, total: any) => accumulator + parseInt(total.payout), 0);
+        setSelectChecked(result)
+        setTotal(totalPrice)
+    }
+
+
     if (!vendorSingleList) {
-        return <>Loading...</>
+        return <><Spinner/></>
     }
 
     return (
@@ -348,76 +471,52 @@ const VendorAccountsForm = ({ idd }: props) => {
             <CustomBox title='Vendor  Earnings'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.store_name}
-                            fieldName="store_name"
-                            placeholder={``}
-                            fieldLabel={"Total Orders"}
-                            disabled={false}
-                            view={true}
-                            defaultValue={''}
-                        />
+                        <CustomViewInput fieldLabel='Total Orders' text={vendorSingleList?.order_count} color='#1675C8' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.store_name}
-                            fieldName="store_name"
-                            placeholder={``}
-                            fieldLabel={"Total Orders"}
-                            disabled={false}
-                            view={true}
-                            defaultValue={''}
-                        />
+                        <CustomViewInput fieldLabel='Total Earnings' text={vendorSingleList?.total_earnings} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.store_name}
-                            fieldName="store_name"
-                            placeholder={``}
-                            fieldLabel={"Promotion Coast"}
-                            disabled={false}
-                            view={true}
-                            defaultValue={''}
-                        />
+                        <CustomViewInput fieldLabel='Promotion Coast' text={vendorSingleList?.promotion_cost} color='#FF7B7B' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.store_name}
-                            fieldName="store_name"
-                            placeholder={``}
-                            fieldLabel={"Total Payable"}
-                            disabled={false}
-                            view={true}
-                            defaultValue={''}
-                        />
+                        <CustomViewInput fieldLabel='Total Payable' text={vendorSingleList?.total_payable} color='#2EA10C' />
+                    </Grid>
+                    <Grid item xs={12} lg={1.5}>
+                        <Typography mb={3}></Typography>
+                        <Custombutton label='Settle Payment' btncolor='#F71C1C' onClick={OpenAccountModal} endIcon={false} startIcon={false} IconStart={undefined} IconEnd={undefined} height={undefined} disabled={vendorEarningList?.length <= 0 ? true : false} />
                     </Grid>
                 </Grid>
                 <Box py={3}>
-                    <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' checked={true}  />
+                    <CustomTable
+                        dashboard={false}
+                        columns={columns}
+                        rows={vendorEarningList ? vendorEarningList : []}
+                        id={"_id"}
+                        bg={"#ffff"}
+                        label='Recent Activity'
+                        checked={true}
+                      
+                        selectCheck={(itm: any) => vendorEarningSelect(itm)}
+                    />
                 </Box>
             </CustomBox>
             <CustomBox title="Settlements">
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={1.5}>
-                
-                         <CustomViewInput fieldLabel='Total Earnings' text='text'/>
+                        <CustomViewInput fieldLabel='Total Earnings' text={vendorSingleList?.total_earnings} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Totr' text='text'/>
+                        <CustomViewInput fieldLabel='Total Outstanding' text={vendorSingleList?.total_outstanding} color='#FF7B7B' />
                     </Grid>
                 </Grid>
                 <Box py={2}>
-                    <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns2} rows={vendorSettlementList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </CustomBox>
+
+            {open && <AmountSettlementModal onClose={onCloseAccount} open={open} price={total} data={selectChecked} id={idd}  setVendorSinglelist={setVendorSinglelist} viewVendor={viewVendor} />}
+            {openLog && <VendorLogsModal onClose={onCloseLogModal} open={openLog} id={idd} date={dateSelect} />}
         </Box>
     )
 }

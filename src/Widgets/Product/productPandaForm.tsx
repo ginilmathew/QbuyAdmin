@@ -28,7 +28,6 @@ import CustomTagInputValue from '@/components/CustomTagInputValue';
 import CustomAutoCompleteSearch from '@/components/CustomAutoCompleteSearch';
 import ClearIcon from '@mui/icons-material/Clear';
 import CustomLoader from '@/components/CustomLoader';
-import CustomMultiselect from '@/components/CustomMultiselect';
 type Inputs = {
     name: string,
     description: string,
@@ -71,11 +70,7 @@ type Inputs = {
     commission: any,
     fixed_delivery_price: any,
     thumbnail: any,
-    approval_status: string,
-    food_type: string,
-    product_tags: any,
-    category_type: string,
-    search_tags: any
+    approval_status: string
 }
 
 type IFormInput = {
@@ -120,11 +115,7 @@ type IFormInput = {
     commission: any,
     fixed_delivery_price: any,
     thumbnail: any,
-    approval_status: string,
-    food_type: string,
-    product_tags: any,
-    category_type: string,
-    search_tags: any
+    approval_status: string
 }
 
 type props = {
@@ -132,7 +123,7 @@ type props = {
     view?: any
 }
 
-const ProductForm = ({ res, view }: props) => {
+const ProductPandaForm = ({ res, view }: props) => {
     let idd = res ? res : view;
 
 
@@ -196,23 +187,13 @@ const ProductForm = ({ res, view }: props) => {
 
     ]);
 
-    const [product_category, setProductCategory] = useState<any>([
-        {
-            value: 'non-veg',
-            name: 'Non Veg'
-        },
-        {
-            value: 'veg',
-            name: 'Veg'
-        },
 
-    ]);
 
-    const [productCategorySelect, setProductCategorySelect] = useState<string>('')
-    const [productTagList, setProductTagList] = useState<any>([])
-    const [multpleArrayProductTag, setMultipleArrayProductTag] = useState<any>([]);
-    const [multpleArrayFoodType, setMultipleArrayFoodType] = useState<any>([]);
-    
+    const [prdtType_select, setPrdtType_select] = useState<any>(null)
+
+
+    console.log({ statusSelect })
+
     const orderValidation = /^[0-9]*$/
     const schema = yup
         .object()
@@ -279,6 +260,7 @@ const ProductForm = ({ res, view }: props) => {
                 product_availability_to: null,
                 fixed_delivery_price: 0,
                 commission: 0
+
             }
         });
 
@@ -300,18 +282,6 @@ const ProductForm = ({ res, view }: props) => {
     }
 
 
-
-    const getProductTags = async () => {
-        try {
-            setLoader(true)
-            const response = await fetchData(`admin/tag/list`)
-            setProductTagList(response?.data?.data)
-            setLoader(false)
-        } catch (err: any) {
-            toast.success(err.message)
-            setLoader(false)
-        }
-    }
 
 
     useEffect(() => {
@@ -535,7 +505,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const onChangeAttributes = (e: React.ChangeEvent<HTMLInputElement>, i: number, key: string) => {
 
-   
+        console.log({ e })
         //if (!res && !view) {
         // console.log({ attributes })
         attributes[i][key] = e;
@@ -595,33 +565,11 @@ const ProductForm = ({ res, view }: props) => {
     }
 
 
-    const onChangeMultipleFoodType = (event: any) => {
-
-
-        const values = event.target.value;
-
-        setMultipleArrayFoodType(
-            values
-        );
-    }
-
-    const onChangeMultipleProductTag = (event: any) => {
-
-
-        const values = event.target.value
-        // let find = productTagList?.filter((res: any, I: number) => event.target.value.includes(res._id))
-        // let data = find?.map((res: any) => res?._id)
-
-
-
-        setMultipleArrayProductTag(
-            values
-        );
-    }
-
-    const onSelectCategoryType = (e: any) => {
+    const onSelectProducttype = (e: any) => {
         const { value } = e.target;
-        setProductCategorySelect(value)
+        setPrdtType_select(value)
+
+
     }
 
 
@@ -660,12 +608,8 @@ const ProductForm = ({ res, view }: props) => {
             }
             getSubcategory()
             getvendorlist()
-            setCategorySelect(productList?.category?._id)
             setStatusSelect(productList?.approval_status)
-            setRecomendedProductEditList(productList?.related_products ? productList?.related_products : [])
-            setMultipleArrayFoodType(productList?.food_type ? productList?.food_type : [])
-            setMultipleArrayProductTag(productList?.product_tags ? productList?.product_tags : [])
-            setProductCategorySelect(productList?.category_type)
+            setRecomendedProductEditList(productList?.related_products)
             setValue('name', productList?.name)
             setValue('franchisee', productList?.franchisee?._id)
             setFranchiseSelect(productList?.franchisee?._id)
@@ -677,7 +621,7 @@ const ProductForm = ({ res, view }: props) => {
             setValue('width', productList?.dimensions?.width)
             setValue('height', productList?.dimensions?.height)
             setValue('category', productList?.category?._id)
-
+            setCategorySelect(productList?.category?._id)
             setValue('sub_category', productList?.sub_category?._id)
             setSubCategorySelect(productList?.sub_category?._id)
             setValue('display_order', productList?.display_order)
@@ -731,7 +675,6 @@ const ProductForm = ({ res, view }: props) => {
             }
 
             let myvaarientArray: { title: any; variant_id: string; attributs: any; seller_price: any; regular_price: string; offer_price: string; offer_date_from: any; offer_date_to: any; stock: boolean; stock_value: string; commission: number; fixed_delivery_price: number; }[] = []
-
             if (productList?.variants?.length > 0) {
                 productList?.variants?.map((item: any) => {
                     myvaarientArray.push({
@@ -769,7 +712,6 @@ const ProductForm = ({ res, view }: props) => {
     useEffect(() => {
         getFranchiseList()
         // fetchCategoryList()
-        getProductTags()
     }, [])
 
 
@@ -966,7 +908,7 @@ const ProductForm = ({ res, view }: props) => {
 
     const metaTagvalues = (res: any) => {
 
-        console.log({ res })
+    
         setMetaTag(res)
         setValue('meta_tags', res)
     }
@@ -1151,10 +1093,8 @@ const ProductForm = ({ res, view }: props) => {
 
         let recomendedProductList: any = []
 
-
-
         const recomendedProduct = recomendedProductArray?.filter((obj: any) => {
-            return !recomendedProductEditList?.some((obj1: any) => obj._id === obj1._id)
+            return !recomendedProductEditList.some((obj1: any) => obj._id === obj1._id)
         })
 
 
@@ -1231,10 +1171,7 @@ const ProductForm = ({ res, view }: props) => {
                 height: data?.height
             },
             model: data?.model,
-            category_type: productCategorySelect,
-            food_type: multpleArrayFoodType,
             type: process.env.NEXT_PUBLIC_TYPE,
-            product_tags: multpleArrayProductTag,
             product_type: null,
             image: imagearray?.length > 0 ? imagearray : defaultImage,
             product_image: data?.product_image,
@@ -1264,7 +1201,7 @@ const ProductForm = ({ res, view }: props) => {
             regular_price: data?.regular_price,
             seller_price: data?.seller_price,
             offer_price: data?.offer_price,
-            commission: data?.commission ? data?.commission : 0,
+            commission: data?.commission,
             fixed_delivery_price: data?.fixed_delivery_price,
             offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
@@ -1274,11 +1211,7 @@ const ProductForm = ({ res, view }: props) => {
         }
         if (productList) {
             value["id"] = productList?._id;
-
-
-
         }
-
         try {
             setLoading(true)
             await postData(idd ? EDIT_URL : CREATE_URL, value)
@@ -1423,75 +1356,31 @@ const ProductForm = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={3}>
-                        <CustomMultiselect
-
-                            multiple={true}
-                            control={control}
-                            error={errors.food_type}
-                            fieldName="food_type"
-                            placeholder={``}
-                            fieldLabel={"Food Type"}
-                            readOnly={view ? true : false}
-                            value={multpleArrayFoodType}
-                            onChangeValue={onChangeMultipleFoodType}
-                            type=''
-                        >
-                            <MenuItem value="" disabled >
-                                <>Select Category</>
-                            </MenuItem>
-                            {productType && productType.map((res: any) => (
-                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
-                            ))}
-                        </CustomMultiselect>
-                    </Grid>
-                    <Grid item xs={12} lg={3}>
-                        <CustomMultiselect
-
-                            multiple={true}
-                            control={control}
-                            error={errors.product_tags}
-                            fieldName="product_tags"
-                            placeholder={``}
-                            fieldLabel={"Product Tags"}
-                            readOnly={view ? true : false}
-                            value={multpleArrayProductTag}
-                            onChangeValue={onChangeMultipleProductTag}
-                            type=''
-                        >
-                            <MenuItem value="" disabled >
-                                <>Select Category</>
-                            </MenuItem>
-                            {productTagList && productTagList.map((res: any) => (
-                                <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
-                            ))}
-                        </CustomMultiselect>
-                    </Grid>
-                    <Grid item xs={12} lg={3}>
+                    {/* <Grid item xs={12} lg={3}>
                         <Customselect
                             type='text'
                             control={control}
-                            error={errors.category_type}
-                            fieldName="category_type"
+                            error={errors.category}
+                            fieldName="product_type"
                             placeholder={``}
-                            fieldLabel={"Category Type"}
+                            fieldLabel={"Product Type"}
                             selectvalue={""}
                             height={40}
                             label={''}
                             size={16}
-                            value={productCategorySelect}
+                            value={prdtType_select}
                             options={''}
-                            onChangeValue={onSelectCategoryType}
+                            onChangeValue={onSelectProducttype}
                             background={'#fff'}
                             disabled={view ? true : false}
                         >
-                            <MenuItem value="">select Category Type</MenuItem>
-                            {product_category?.map((res: any) => (
+                            <MenuItem value=""></MenuItem>
+                            {productType?.map((res: any) => (
                                 <MenuItem value={res?.value}>{res?.name}</MenuItem>
                             ))}
 
                         </Customselect>
-                    </Grid>
+                    </Grid> */}
 
                     <Grid item xs={12} lg={1.5}>
                         <CustomInput
@@ -1519,32 +1408,7 @@ const ProductForm = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={1.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.width}
-                            fieldName="width"
-                            placeholder={`width`}
-                            fieldLabel={"Dimensions"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={1.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.height}
-                            fieldName="height"
-                            placeholder={`Height`}
-                            fieldLabel={"*"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={''}
-                        />
-                    </Grid>
+            
 
                     {vendorSelect &&
                         <Grid item xs={12} lg={3}>
@@ -1914,7 +1778,7 @@ const ProductForm = ({ res, view }: props) => {
                             fieldName="commission"
                             placeholder={''}
                             fieldLabel={"Commission(%)"}
-                            view={view ? true : false}
+                            view={getValues('regular_price') ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -2036,7 +1900,7 @@ const ProductForm = ({ res, view }: props) => {
     )
 }
 
-export default ProductForm
+export default ProductPandaForm
 
 
 

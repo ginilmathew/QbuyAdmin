@@ -5,38 +5,38 @@ export const Admin_item = [
     {
         id: 1,
         item: "Dashboard",
-        path:'/dashboard'
+        path: '/dashboard'
     },
     {
         id: 2,
         item: "Shipments",
-        path:'/shipments'
+        path: '/shipments'
     },
     {
         id: 3,
         item: "Accounts",
-        path:null,
+        path: null,
         list: [
             {
                 id: 3.1,
                 item: "Franchisee",
-                path:'/franchiseAccounts',
+                path: '/franchiseAccounts',
             },
             {
                 id: 3.2,
                 item: "vendors",
-                path:'/vendorAccounts',
+                path: '/vendorAccounts',
             },
             {
                 id: 3.3,
                 item: "Riders",
-                path:'/riderAccounts',
+                path: '/riderAccounts',
             },
-            
+
             {
                 id: 3.4,
                 item: "cusomers",
-                path:'/customerAccounts',
+                path: '/customerAccounts',
             },
         ]
 
@@ -44,198 +44,203 @@ export const Admin_item = [
     {
         id: 4,
         item: "Revenue",
-        path:'/revenue',
+        path: '/revenue',
     },
     {
         id: 5,
         item: "Panda Tools",
-        path:null,
-        list:[
+        path: null,
+        list: [
             {
                 id: 5.1,
                 item: "OTP View",
-                path:'/otpView',
+                path: '/otpView',
             },
             {
                 id: 5.2,
                 item: "Abandoned Cart",
-                path:'/abandonedCart',
+                path: '/abandonedCart',
             },
             {
                 id: 5.3,
                 item: "Panda Config",
-                path:'/pandaConfig',
+                path: '/pandaConfig',
             },
         ]
     },
     {
         id: 6,
         item: "Multivendor",
-        path:'/multivendor',
+        path: '/multivendor',
     },
     {
         id: 7,
         item: "Pick Up & Drop",
-        path:"/pickupAndDrop",
+        path: "/pickupAndDrop",
     },
     {
         id: 8,
         item: "Reports",
-        path:"",
+        path: "",
         list: [
             {
                 id: 8.1,
                 item: "Customer Transaction",
-                path:'/customerTransactions',
+                path: '/customerTransactions',
             },
             {
                 id: 8.2,
                 item: "Customer Activity",
-                path:'/customerActivityReport',
+                path: '/customerActivityReport',
 
             },
             {
                 id: 8.3,
                 item: "Customer Orders",
-                path:'/customerOrderReport',
+                path: '/customerOrderReport',
             },
             {
                 id: 8.4,
                 item: "Reward Points",
-                path:'customerRewardReport',
+                path: 'customerRewardReport',
             },
             {
                 id: 8.5,
                 item: "Search Report",
-                path:'/customerSearchReport',
+                path: '/customerSearchReport',
             },
             {
                 id: 8.6,
                 item: "Tax Report",
-                path:'/taxReport',
+                path: '/taxReport',
             },
             {
                 id: 8.7,
                 item: "Shipping Report",
-                path:'/shippingReport',
+                path: '/shippingReport',
             },
             {
                 id: 8.8,
                 item: "Return Report",
-                path:'/returnReport',
+                path: '/returnReport',
             },
             {
                 id: 8.9,
                 item: "Sales Report",
-                path:'/salesReport',
+                path: '/salesReport',
             },
             {
                 id: 8.10,
                 item: "Coupons Report",
-                path:'/couponsReports',
+                path: '/couponsReports',
             },
             {
                 id: 8.11,
                 item: "Products Viewed",
-                path:'/dashboard',
+                path: '/dashboard',
             },
             {
                 id: 8.12,
                 item: "Product Purchased",
-                path:'/productPurchasedReport',
+                path: '/productPurchasedReport',
             },
         ]
     },
     {
         id: 9,
         item: "User Management",
-        path:'/userManagement',
-        
+        path: '/userManagement',
+
     },
     {
         id: 10,
         item: "Settings",
-        path:null,
-        list:[
+        path: null,
+        list: [
             {
-              id:10.1,
-              item:'Slider Management',
-              path:'/sliderManagement',
+                id: 10.1,
+                item: 'Slider Management',
+                path: '/sliderManagement',
             },
             {
-                id:10.2,
-                item:'Feedbacks',
-                path:'/feedbacks',
-              },
-              {
-                id:10.3,
-                item:'Message Banner',
-                path:'/messageBanner',
-              },
-              {
-                id:10.4,
-                item:'Rush Hour',
-                path:'/rushHour',
-              },
-              {
-                id:10.5,
-                item:'Attendance',
-                path:'/attendance',
-              },
-              {
-                id:10.6,
-                item:'Rate Card',
-                path:'/rateCard',
-              },
-              {
-                id:10.7,
-                item:'Pickup & Drop Charges',
-                path:'/pickupAndDropCharges',
-              },
-              {
-                id:10.8,
-                item:'Delivery Charges',
-                path:'/deliveryCharges',
-              },
-              {
-                id:10.9,
-                item:'Extra Charges',
-                path:'/extraCharges',
-              },
-              {
-                id:10.9,
-                item:'Order Assign Criteria',
-                path:'/orderAssignCriteria',
-              },
+                id: 10.2,
+                item: 'Feedbacks',
+                path: '/feedbacks',
+            },
+            {
+                id: 10.3,
+                item: 'Message Banner',
+                path: '/messageBanner',
+            },
+            {
+                id: 10.4,
+                item: 'Rush Hour',
+                path: '/rushHour',
+            },
+            {
+                id: 10.5,
+                item: 'Attendance',
+                path: '/attendance',
+            },
+            {
+                id: 10.6,
+                item: 'Rate Card',
+                path: '/rateCard',
+            },
+            {
+                id: 10.7,
+                item: 'Pickup & Drop Charges',
+                path: '/pickupAndDropCharges',
+            },
+            {
+                id: 10.8,
+                item: 'Delivery Charges',
+                path: '/deliveryCharges',
+            },
+            {
+                id: 10.9,
+                item: 'Extra Charges',
+                path: '/extraCharges',
+            },
+            {
+                id: 10.10,
+                item: 'Order Assign Criteria',
+                path: '/orderAssignCriteria',
+            },
+            {
+                id: 10.11,
+                item: 'Product Tags',
+                path: '/producttags',
+            },
         ]
     },
     {
-        id:11,
-        item:'Smart Suggest',
-        path:'/dashboard',
+        id: 11,
+        item: 'Smart Suggest',
+        path: '/dashboard',
     },
     {
-        id:12,
-        item:'Promotion',
-        path:null,
-        list:[
+        id: 12,
+        item: 'Promotion',
+        path: null,
+        list: [
             {
-                id:12.1,
-                item:'Coupons',
-                path:'/coupons',
+                id: 12.1,
+                item: 'Coupons',
+                path: '/coupons',
             },
             {
-                id:12.2,
-                item:'Panda Coins',
-                path:'/pandaCoins',
+                id: 12.2,
+                item: 'Panda Coins',
+                path: '/pandaCoins',
             },
-            
+
             {
-                id:12.3,
-                item:'Offers',
-                path:'/offers',
+                id: 12.3,
+                item: 'Offers',
+                path: '/offers',
             },
-            
+
 
         ]
     }
@@ -244,70 +249,69 @@ export const Admin_item = [
 
 
 //sales
-
 export const sales_item = [
     {
         id: 1,
         item: "Franchisee",
-        path:'/franchise',
+        path: '/franchise',
     },
     {
         id: 2,
         item: "Vendor Profile",
-        path:'/vendorProfile'
+        path: '/vendorProfile'
     },
     {
         id: 3,
         item: "Vendor Signup",
-        path:"/vendor"
+        path: "/vendor"
     },
     {
         id: 4,
         item: "Vendor Register",
-        path:"/vendorRegister"
+        path: "/vendorRegister"
     },
-    
+
     {
         id: 5,
         item: "Marketing",
-        path:null,
-        list:[
+        path: null,
+        list: [
             {
-                id:5.1,
-                item:"Merchant Marketing",
-                path:'/merchantMarketing',
+                id: 5.1,
+                item: "Merchant Marketing",
+                path: '/merchantMarketing',
             },
             {
-                id:5.2,
-                item:"Franchisee Marketing",
-                path:'/franchiseMarketing',
+                id: 5.2,
+                item: "Franchisee Marketing",
+                path: '/franchiseMarketing',
             },
         ]
     },
     {
-        id:6,
+        id: 6,
         item: "Referred Restaurants",
-        path:'/restaurantReferral',
+        path: '/restaurantReferral',
     },
     {
         id: 7,
         item: "Franchisee Enquires",
-        path:'/franchiseEnquires',
+        path: '/franchiseEnquires',
     },
     {
         id: 8,
         item: "Category Management",
-        path:'/category',
+        path: '/category',
     },
     {
         id: 9,
         item: "SubCategory",
-        path:'/subCategory',
+        path: '/subCategory',
     },
     {
         id: 10,
         item: "Product Adding",
-        path:'/products',
+        path: '/products',
     },
 
 ]
@@ -321,42 +325,42 @@ export const Logs_item = [
     {
         id: 1,
         item: "Smart Suggest List",
-        path:'/smartSuggestList',
+        path: '/smartSuggestList',
     },
     {
         id: 2,
         item: "Rider Onboarding",
-        path:'/riderOnboarding',
+        path: '/riderOnboarding',
     },
     {
         id: 3,
         item: "Onboarding List",
-        path:'/onboardingList',
+        path: '/onboardingList',
     },
     {
         id: 4,
         item: "Delivery Riders",
-        path:'/deliveryRiders',
+        path: '/deliveryRiders',
     },
     {
         id: 5,
         item: "Rider Lifecycle",
-        path:'/riderLifecycle',
+        path: '/riderLifecycle',
     },
     {
         id: 6,
         item: "Rider Support",
-        path:'/riderSupport',
+        path: '/riderSupport',
     },
     {
         id: 7,
         item: "Rider Summary",
-        path:'/riderSummary',
+        path: '/riderSummary',
     },
     {
         id: 8,
         item: "Rider Referrals",
-        path:'/riderRefferal',
+        path: '/riderRefferal',
     },
 
 
@@ -365,54 +369,54 @@ export const Logs_item = [
 
 export const support_item = [
     {
-        id:1,
+        id: 1,
         item: 'Customer Complaints',
-        path:'/dashboard',
+        path: '/dashboard',
     },
-    {   
-        id:2,
+    {
+        id: 2,
         item: 'Rider Tickets',
-        path:'/dashboard',
+        path: '/dashboard',
     },
     {
-        id:3,
+        id: 3,
         item: 'Customer Details',
-        path:'/customerDetails',
+        path: '/customerDetails',
     },
     {
-        id:4,
+        id: 4,
         item: 'Customer Group',
-        path:'/dashboard',
+        path: '/dashboard',
     },
     {
-        id:5,
+        id: 5,
         item: 'Push Notification',
-        path:'/dashboard',
+        path: '/dashboard',
     },
     {
-        id:6,
+        id: 6,
         item: 'Latest Order Reviews',
-        path:'/dashboard',
+        path: '/dashboard',
     },
     {
-        id:7,
+        id: 7,
         item: 'Affiliate Onboarding',
-        path:'/dashboard',
+        path: '/dashboard',
     },
     {
-        id:8,
+        id: 8,
         item: 'Customer Referral',
-        path:'/dashboard',
+        path: '/dashboard',
     },
     {
-        id:9,
+        id: 9,
         item: 'Customer Chat History',
-        path:'/dashboard',
+        path: '/dashboard',
     },
     {
-        id:10,
+        id: 10,
         item: 'Order Summary',
-        path:'/dashboard',
+        path: '/dashboard',
     },
 
 ]

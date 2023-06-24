@@ -23,7 +23,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
         onUnauthenticated() {
             router.push('/login')
         },
-      })
+    })
 
     useEffect(() => {
         try {
@@ -37,7 +37,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
             router.push('/login')
         }
     }, [session])
-
 
 
     const getProfile = async (id: any) => {
@@ -65,14 +64,11 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     //     }
     // }, [])
 
-    if(status === "loading"){
-        return(
+    if (status === "loading") {
+        return (
             <div>Loading...</div>
         )
     }
-
-    
-
 
     return <>
         {children}

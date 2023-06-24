@@ -118,7 +118,7 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
 
-    console.log({ statusList })
+    console.log({ vendorList })
 
     const orderValidation = /^[0-9]*$/
 
@@ -369,7 +369,6 @@ const Vendorform = ({ res, view, data }: props) => {
 
         let array = vendorList?.category_id?.map((res: any) => res?.id)
 
-        console.log({ array })
         if (vendorList && array) {
             setValue('approval_status', vendorList?.approval_status)
             setValue('vendor_name', vendorList?.vendor_name)
@@ -485,7 +484,7 @@ const Vendorform = ({ res, view, data }: props) => {
             license_number: data?.license_number ? data?.license_number : null,
             ffsai_number: data?.ffsai_number ? data?.ffsai_number : null,
             pan_card_number: data?.pan_card_number ? data?.pan_card_number : null,
-            aadhar_card_number: data?.pan_card_number ? data?.pan_card_number : null,
+            aadhar_card_number: data?.aadhar_card_number ? data?.aadhar_card_number : null,
             account_number: data?.account_number ? data?.account_number : null,
             branch: data?.branch ? data?.branch : null,
             recipient_name: data?.recipient_name ? data?.recipient_name : null,
@@ -541,11 +540,17 @@ const Vendorform = ({ res, view, data }: props) => {
         try {
             await postData(vendorList ? URL_EDIT : URL_CREATE, formData)
             toast.success(vendorList ? 'Updated Successfully' : 'Created Successfully')
-            if (statusSelect === "Approved") {
-                router.push('/vendor')
+
+            if (idd) {
+                if (statusSelect === "Approved") {
+                    router.push('/vendor')
+                } else {
+                    router.push('/vendorRegister')
+                }
             } else {
-                router.push('/vendorRegister')
+                router.push('/vendor')
             }
+
 
 
             reset()
@@ -997,7 +1002,7 @@ const Vendorform = ({ res, view, data }: props) => {
 
                 </Grid>
             </CustomBox>
-            {vendorList?.approval_status !== "Approved" &&
+            {vendorList?.approval_status !== "Approved" && idd &&
                 <CustomBox title='Status'>
                     <Grid container spacing={2}>
                         <Grid item xs={12} lg={2.5}>

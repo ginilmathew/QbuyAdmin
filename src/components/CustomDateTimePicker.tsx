@@ -5,29 +5,34 @@ import { Controller } from "react-hook-form";
 import { Avatar, Box, FormGroup, styled, Typography } from "@mui/material";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import moment from 'moment';
+import dayjs from 'dayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { MobileDateTimePicker } from '@mui/x-date-pickers';
+
 type props = {
     fieldName: string,
+    control: any,
     fieldLabel: string,
     error: any,
     changeValue: (value: any) => void,
     values: any,
-    defaultvalue?: any
+    disabled?: boolean
 
 }
 
 
-const DatePickers = ({
+const CustomDateTimePicker = ({
     fieldName,
+    control,
     fieldLabel,
     error,
     values,
+    disabled,
     changeValue,
-    defaultvalue
 }: props) => {
-
-
-    const [value, setValue] = useState(null)
-
+    const tomorrow = dayjs().add(1, 'day');
     return (
         <>
             <FormGroup>
@@ -43,27 +48,27 @@ const DatePickers = ({
                     }}
                 >{fieldLabel}
                 </Typography>
-                <LocalizationProvider dateAdapter={AdapterMoment}>
-
-                    <DatePicker
-                        disablePast
-                        sx={{
-                            "& .MuiInputBase-input": {
-                                height: "8px" // Set your height here.
-                            }
-                        }}
-
-                        defaultValue={defaultvalue}
-                        value={value ? value : null || values}
-                        onChange={(e: any) => {
-                         
-                            setValue(e)
-                            changeValue(e)
-                        }}
-                    />
+                <Controller
+                    name={fieldName}
+                    control={control}
+                    render={({ field: { value, onChange, onBlur } }) => (
+                        <LocalizationProvider dateAdapter={AdapterMoment}>
+                            <MobileDateTimePicker
+                                disablePast={true}
+                                views={['year', 'month', 'day', 'hours', 'minutes', 'seconds']}
+                                sx={{
+                                    "& .MuiInputBase-input": {
+                                        height: "8px" // Set your height here.
+                                    }
+                                }}
+                                value={values ? values : value}
+                                onChange={changeValue ? (e: any) => changeValue(e) : onChange}
+                            />
 
 
-                </LocalizationProvider>
+                        </LocalizationProvider>
+                    )}
+                />
                 {error && (
                     <p
                         role="alert"
@@ -85,4 +90,4 @@ const DatePickers = ({
     )
 }
 
-export default DatePickers
+export default CustomDateTimePicker

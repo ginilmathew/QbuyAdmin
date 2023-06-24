@@ -21,7 +21,6 @@ interface idprops {
 
 export const ListItems = ({ res, handleOpen, open, handleClose }: props) => {
     const router = useRouter()
-
     const [openc, setOpenC] = useState<string>("")
 
 

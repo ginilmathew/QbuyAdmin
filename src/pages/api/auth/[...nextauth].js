@@ -23,7 +23,7 @@ export const authOptions = {
 				// } else {
 				//   // If you return null then an error will be displayed advising the user to check their details.
 				//   return null
-		  
+
 				//   // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
 				// }
 
@@ -69,28 +69,28 @@ export const authOptions = {
 		async jwt({ token, user, account }) {
 			//console.log({ token, user, account })
 			if (account && user) {
-			    //console.log({account, user})
-			    token._id = user?.user?._id;
-			    token.role = user?.user?.role
-			    token.name = user?.user?.name;
-			    token.email = user?.user?.email;
-			    token.accessToken = user.access_token;
+				//console.log({account, user})
+				token._id = user?.user?._id;
+				token.role = user?.user?.role
+				token.name = user?.user?.name;
+				token.email = user?.user?.email;
+				token.accessToken = user.access_token;
 				token.accessTokenExpires = user.expires_in;
 				//console.log({token})
-			    return {
-			        ...token,
-			        accessToken: user.access_token,
-			        refreshToken: user.refreshToken,
-			    };
+				return {
+					...token,
+					accessToken: user.access_token,
+					refreshToken: user.refreshToken,
+				};
 
 			}
-			else{
+			else {
 				//console.log({token})
 				return token;
 			}
 			//console.log({token})
 
-			
+
 		},
 		async session({ session, token }) {
 			//console.log({session, token})

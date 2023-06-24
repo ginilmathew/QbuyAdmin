@@ -9,7 +9,6 @@ import { useRouter } from 'next/router';
 const AbandonedCart = () => {
     
     const columns: GridColDef[] = [
-     
         {
             field: 'Customer ID',
             headerName: 'Customer ID',

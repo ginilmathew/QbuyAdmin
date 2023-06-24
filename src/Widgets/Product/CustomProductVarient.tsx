@@ -5,7 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { FormInputs } from '@/utilities/types';
 import CustomInputNormal from '@/components/CustomInputNormal';
 import DatePickers from '@/components/DatePickers';
-import moment from 'moment'
+import moment from 'moment';
 type props = {
     content: any,
     index: number,
@@ -33,8 +33,8 @@ type Input = {
 
 const CustomProductVarient = ({ content, index, deafultCommission, onChange, state, view, stock }: props) => {
 
-    console.log({ state })
-    console.log({ content })
+    console.log("VARIENNNN")
+   
 
     const { register,
         handleSubmit,
@@ -47,7 +47,7 @@ const CustomProductVarient = ({ content, index, deafultCommission, onChange, sta
         });
 
 
-    console.log({ state: state?.[index] })
+
 
     return (
         <Box>
@@ -87,7 +87,7 @@ const CustomProductVarient = ({ content, index, deafultCommission, onChange, sta
 
                 <Grid item lg={1.5} xs={12}>
                     <CustomInputNormal
-                        value={state[index]?.commission ? state[index]?.commission : 0}
+                        value={state[index]?.commission ? state[index]?.commission : null}
                         onChangeValue={(e: any) => onChange(e.target.value, 'commission')}
                         disabled={false}
                         type='number'
@@ -129,21 +129,18 @@ const CustomProductVarient = ({ content, index, deafultCommission, onChange, sta
                 </Grid>
 
                 <Grid item lg={1.5} xs={12}>
-                    < DatePickers
-                        defaultvalue={state?.[index]?.offer_date_from}
-                        values={getValues('offer_date_from')}
+                    <DatePickers
+                        values={state?.[index]?.offer_date_from ? state?.[index]?.offer_date_from : null}
                         changeValue={(e: any) => onChange(moment(e, 'YYYY-MM-DD').format('YYYY-MM-DD'), 'offer_date_from')}
                         fieldName='offer_date_from'
                         error={errors.offer_date_from}
                         fieldLabel={'Offer From'}
                     // defaultvalue={state[index]?.}
-
                     />
                 </Grid>
                 <Grid item lg={1.5} xs={12}>
                     <DatePickers
-                        defaultvalue={state?.[index]?.offer_date_to}
-                        values={getValues('offer_date_to')}
+                        values={state?.[index]?.offer_date_to ? state?.[index]?.offer_date_to : null}
                         changeValue={(e: any) => onChange(moment(e, 'YYYY-MM-DD').format('YYYY-MM-DD'), 'offer_date_to')}
                         fieldName='offer_date_to'
                         error={errors.offer_date_to}
