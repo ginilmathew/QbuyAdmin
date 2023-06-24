@@ -476,7 +476,6 @@ const Vendorform = ({ res, view, data }: props) => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
-        console.log({ data })
 
         const URL_CREATE = '/admin/vendor/create'
         const URL_EDIT = '/admin/vendor/update'
@@ -866,7 +865,7 @@ const Vendorform = ({ res, view, data }: props) => {
                             error={errors.ffsai_number}
                             fieldName="ffsai_number"
                             placeholder={``}
-                            fieldLabel={"FFSAI Number"}
+                            fieldLabel={"FSSAI Number"}
                             disabled={false}
                             view={view ? true : false}
 

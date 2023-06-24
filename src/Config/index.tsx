@@ -4,7 +4,7 @@
 
 // 1- corporate, 2-ta, 3-customer, 4 -supplier
 
-export const env = "dev"
+export const env = "live"
 
 const URLS = {
     live: "https://apiqbuygreen.diginestsolutions.in/public/api/",
@@ -31,7 +31,6 @@ const key = {
 
 //'https://apidev.myfutton.com' //Dev mode= http://apidev.myfutton.com //Live Mode='http://api.myfutton.com';
 //Dev mode= http://apidev.myfutton.com/api/v1/student //Live Mode=http://api.myfutton.com/api/v1/student';
-
 export const BASE_URL = URLS[env]
 export const IMAGE_URL = IMG_URL[env]
 export const API_URL = `${url[env]}`
