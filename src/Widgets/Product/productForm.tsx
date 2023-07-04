@@ -1109,10 +1109,6 @@ const ProductForm = ({ res, view }: props) => {
                     return false;
                 }
 
-
-
-
-
             }
         }
 

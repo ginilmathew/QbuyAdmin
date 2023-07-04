@@ -49,15 +49,15 @@ const VendorAccountsForm = ({ idd }: props) => {
     const [getcategory, setGetCategory] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [openLog, setOpenLog] = useState<boolean>(false)
-    const [vendorEarningList, setvendorEarningList] = useState<any>([])
+    const [vendorEarningList, setvendorEarningList] = useState<any>(null)
     const [vendorSettlementList, setVendorsettlementlist] = useState<any>([])
     const [selectChecked, setSelectChecked] = useState<any>([])
     const [total, setTotal] = useState<any>(null);
     const [dateSelect, setdateSelect] = useState<string>('')
-    const [checkedValue,setcheckedvalue]=useState<any>(false)
+    const [checkedValue, setcheckedvalue] = useState<any>(false)
 
 
-
+    console.log({ total })
 
     const columns: GridColDef[] = [
         {
@@ -203,7 +203,7 @@ const VendorAccountsForm = ({ idd }: props) => {
 
     const onCloseAccount = useCallback(() => {
         setOpen(false)
-      
+
         viewVendor()
     }, [open])
 
@@ -266,7 +266,7 @@ const VendorAccountsForm = ({ idd }: props) => {
             setMultipleArray(array);
             setValue('store_address', vendorSingleList?.store_address);
             setValue('franchise', vendorSingleList?.franchise?.franchise_name);
-            setValue('start_time', vendorSingleList?.start_time  ? vendorSingleList?.start_time : '');
+            setValue('start_time', vendorSingleList?.start_time ? vendorSingleList?.start_time : '');
             setValue('end_time', vendorSingleList?.end_time ? vendorSingleList?.end_time : '')
 
         }
@@ -293,7 +293,7 @@ const VendorAccountsForm = ({ idd }: props) => {
             setvendorEarningList(result);
         }
 
-    }, [vendorSingleList,open])
+    }, [vendorSingleList, open])
 
 
     useEffect(() => {
@@ -318,7 +318,7 @@ const VendorAccountsForm = ({ idd }: props) => {
 
 
     if (!vendorSingleList) {
-        return <><Spinner/></>
+        return <><Spinner /></>
     }
 
     return (
@@ -484,7 +484,17 @@ const VendorAccountsForm = ({ idd }: props) => {
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
                         <Typography mb={3}></Typography>
-                        <Custombutton label='Settle Payment' btncolor='#F71C1C' onClick={OpenAccountModal} endIcon={false} startIcon={false} IconStart={undefined} IconEnd={undefined} height={undefined} disabled={vendorEarningList?.length <= 0 ? true : false} />
+                        <Custombutton label='Settle Payment'
+                            btncolor='#F71C1C'
+                            onClick={OpenAccountModal}
+                            endIcon={false}
+                            startIcon={false}
+                            IconStart={undefined}
+                            IconEnd={undefined}
+                            height={undefined}
+                            disabled={(vendorEarningList && total) ? false : true}
+
+                        />
                     </Grid>
                 </Grid>
                 <Box py={3}>
@@ -496,7 +506,7 @@ const VendorAccountsForm = ({ idd }: props) => {
                         bg={"#ffff"}
                         label='Recent Activity'
                         checked={true}
-                      
+
                         selectCheck={(itm: any) => vendorEarningSelect(itm)}
                     />
                 </Box>
@@ -515,7 +525,18 @@ const VendorAccountsForm = ({ idd }: props) => {
                 </Box>
             </CustomBox>
 
-            {open && <AmountSettlementModal onClose={onCloseAccount} open={open} price={total} data={selectChecked} id={idd}  setVendorSinglelist={setVendorSinglelist} viewVendor={viewVendor} />}
+            {open && <AmountSettlementModal
+                onClose={onCloseAccount}
+                open={open}
+                price={total}
+                data={selectChecked}
+                id={idd}
+                setVendorSinglelist={setVendorSinglelist}
+                viewVendor={viewVendor}
+                setTotal={setTotal}
+                
+
+            />}
             {openLog && <VendorLogsModal onClose={onCloseLogModal} open={openLog} id={idd} date={dateSelect} />}
         </Box>
     )

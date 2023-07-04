@@ -54,7 +54,8 @@ const CustomDateTimePicker = ({
                     render={({ field: { value, onChange, onBlur } }) => (
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                             <MobileDateTimePicker
-                                disablePast={true}
+                                // disablePast={true}
+                                maxDate={moment()}
                                 views={['year', 'month', 'day', 'hours', 'minutes', 'seconds']}
                                 sx={{
                                     "& .MuiInputBase-input": {
