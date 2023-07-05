@@ -35,7 +35,7 @@ export const Admin_item = [
 
             {
                 id: 3.4,
-                item: "cusomers",
+                item: "Customers",
                 path: '/customerAccounts',
             },
         ]

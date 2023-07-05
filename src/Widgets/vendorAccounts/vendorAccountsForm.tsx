@@ -57,7 +57,7 @@ const VendorAccountsForm = ({ idd }: props) => {
     const [checkedValue, setcheckedvalue] = useState<any>(false)
 
 
-    console.log({ total })
+   
 
     const columns: GridColDef[] = [
         {
