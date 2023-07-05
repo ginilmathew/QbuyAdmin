@@ -636,7 +636,7 @@ const ProductForm = ({ res, view }: props) => {
 
     useEffect(() => {
         if (productList) {
-            const getvendorlist = async () => {
+            const getvendorlist = async (vendorId: any) => {
                 try {
                     const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
                     const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${productList?.franchisee?._id}`)
@@ -648,7 +648,11 @@ const ProductForm = ({ res, view }: props) => {
                     }))
                     setRecomendedProductList(result)
                     setVendorList(response?.data?.data)
-                    setCategoryList(response?.data?.data?.[0]?.category_id)
+                    let vendor = response?.data?.data?.find((ven: any) => ven?._id === vendorId)
+                    if(vendor){
+                        setCategoryList(vendor?.category_id)
+                    }
+                    
 
                     setValue('franchisee', productList?.franchisee?._id)
                 } catch (err: any) {
@@ -665,8 +669,10 @@ const ProductForm = ({ res, view }: props) => {
 
             }
             getSubcategory()
-            getvendorlist()
+            getvendorlist(productList?.store?._id)
             setCategorySelect(productList?.category?._id)
+
+
             setStatusSelect(productList?.approval_status)
             setRecomendedProductEditList(productList?.related_products ? productList?.related_products : [])
             setMultipleArrayFoodType(productList?.food_type ? productList?.food_type : [])
