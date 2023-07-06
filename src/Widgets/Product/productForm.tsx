@@ -1326,8 +1326,6 @@ const ProductForm = ({ res, view }: props) => {
 
     }
 
-
-
     const ChangeStatus = useCallback((e: any) => {
         const { value } = e.target;
         setStatusSelect(value)
@@ -1338,9 +1336,6 @@ const ProductForm = ({ res, view }: props) => {
     if (loader) {
         return <><CustomLoader /></>
     }
-
-
-
 
     return (
         <Box>
