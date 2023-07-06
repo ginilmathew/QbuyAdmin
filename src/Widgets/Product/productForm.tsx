@@ -1426,7 +1426,7 @@ const ProductForm = ({ res, view }: props) => {
                     </Grid>
 
 
-                    {/* <Grid item xs={12} lg={3}>
+                    <Grid item xs={12} lg={3}>
                         <CustomMultiselect
 
                             multiple={true}
@@ -1447,9 +1447,9 @@ const ProductForm = ({ res, view }: props) => {
                                 <MenuItem value={res?.value}>{res?.name}</MenuItem>
                             ))}
                         </CustomMultiselect>
-                    </Grid> */}
+                    </Grid>
 
-                    {/* <Grid item xs={12} lg={3}>
+                    <Grid item xs={12} lg={3}>
                         <CustomMultiselect
 
                             multiple={true}
@@ -1470,8 +1470,8 @@ const ProductForm = ({ res, view }: props) => {
                                 <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
                             ))}
                         </CustomMultiselect>
-                    </Grid> */}
-{/* 
+                    </Grid>
+
                     <Grid item xs={12} lg={3}>
                         <Customselect
                             type='text'
@@ -1496,7 +1496,7 @@ const ProductForm = ({ res, view }: props) => {
                             ))}
 
                         </Customselect>
-                    </Grid> */}
+                    </Grid>
 
 
                     <Grid item xs={12} lg={1.5}>
