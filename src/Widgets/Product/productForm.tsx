@@ -657,7 +657,7 @@ const ProductForm = ({ res, view }: props) => {
             }
             const getSubcategory = async () => {
                 try {
-                    const response = await fetchData(`admin/subcategory-list/${productList?.category?._id}`)
+                    const response = await fetchData(`admin/subcategory-list/${categorySelect}`)
                     setSubCategoryList(response?.data?.data)
                 } catch (err: any) {
                     toast.error(err?.message)
@@ -1424,80 +1424,80 @@ const ProductForm = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    
-                
-                        <Grid item xs={12} lg={3}>
-                            <CustomMultiselect
 
-                                multiple={true}
-                                control={control}
-                                error={errors.food_type}
-                                fieldName="food_type"
-                                placeholder={``}
-                                fieldLabel={"Food Type"}
-                                readOnly={view ? true : false}
-                                value={multpleArrayFoodType}
-                                onChangeValue={onChangeMultipleFoodType}
-                                type=''
-                            >
-                                <MenuItem value="" disabled >
-                                    <>Select Category</>
-                                </MenuItem>
-                                {productType && productType.map((res: any) => (
-                                    <MenuItem value={res?.value}>{res?.name}</MenuItem>
-                                ))}
-                            </CustomMultiselect>
-                        </Grid>
-              
-                        <Grid item xs={12} lg={3}>
-                            <CustomMultiselect
 
-                                multiple={true}
-                                control={control}
-                                error={errors.product_tags}
-                                fieldName="product_tags"
-                                placeholder={``}
-                                fieldLabel={"Product Tags"}
-                                readOnly={view ? true : false}
-                                value={multpleArrayProductTag}
-                                onChangeValue={onChangeMultipleProductTag}
-                                type=''
-                            >
-                                <MenuItem value="" disabled >
-                                    <>Select Category</>
-                                </MenuItem>
-                                {productTagList && productTagList.map((res: any) => (
-                                    <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
-                                ))}
-                            </CustomMultiselect>
-                        </Grid>
-               
-                        <Grid item xs={12} lg={3}>
-                            <Customselect
-                                type='text'
-                                control={control}
-                                error={errors.category_type}
-                                fieldName="category_type"
-                                placeholder={``}
-                                fieldLabel={"Category Type"}
-                                selectvalue={""}
-                                height={40}
-                                label={''}
-                                size={16}
-                                value={productCategorySelect}
-                                options={''}
-                                onChangeValue={onSelectCategoryType}
-                                background={'#fff'}
-                                disabled={view ? true : false}
-                            >
-                                <MenuItem value="">select Category Type</MenuItem>
-                                {product_category?.map((res: any) => (
-                                    <MenuItem value={res?.value}>{res?.name}</MenuItem>
-                                ))}
+                    {/* <Grid item xs={12} lg={3}>
+                        <CustomMultiselect
 
-                            </Customselect>
-                        </Grid>
-                    
+                            multiple={true}
+                            control={control}
+                            error={errors.food_type}
+                            fieldName="food_type"
+                            placeholder={``}
+                            fieldLabel={"Food Type"}
+                            readOnly={view ? true : false}
+                            value={multpleArrayFoodType}
+                            onChangeValue={onChangeMultipleFoodType}
+                            type=''
+                        >
+                            <MenuItem value="" disabled >
+                                <>Select Category</>
+                            </MenuItem>
+                            {productType && productType.map((res: any) => (
+                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                            ))}
+                        </CustomMultiselect>
+                    </Grid> */}
+
+                    {/* <Grid item xs={12} lg={3}>
+                        <CustomMultiselect
+
+                            multiple={true}
+                            control={control}
+                            error={errors.product_tags}
+                            fieldName="product_tags"
+                            placeholder={``}
+                            fieldLabel={"Product Tags"}
+                            readOnly={view ? true : false}
+                            value={multpleArrayProductTag}
+                            onChangeValue={onChangeMultipleProductTag}
+                            type=''
+                        >
+                            <MenuItem value="" disabled >
+                                <>Select Category</>
+                            </MenuItem>
+                            {productTagList && productTagList.map((res: any) => (
+                                <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
+                            ))}
+                        </CustomMultiselect>
+                    </Grid> */}
+{/* 
+                    <Grid item xs={12} lg={3}>
+                        <Customselect
+                            type='text'
+                            control={control}
+                            error={errors.category_type}
+                            fieldName="category_type"
+                            placeholder={``}
+                            fieldLabel={"Category Type"}
+                            selectvalue={""}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={productCategorySelect}
+                            options={''}
+                            onChangeValue={onSelectCategoryType}
+                            background={'#fff'}
+                            disabled={view ? true : false}
+                        >
+                            <MenuItem value="">select Category Type</MenuItem>
+                            {product_category?.map((res: any) => (
+                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                            ))}
+
+                        </Customselect>
+                    </Grid> */}
+
 
                     <Grid item xs={12} lg={1.5}>
                         <CustomInput
