@@ -1,6 +1,6 @@
 import { DeleteOutlineOutlined } from '@mui/icons-material';
 import { Box, Grid, Stack } from '@mui/material'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, startTransition } from 'react'
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
 import CustomTable from '@/components/CustomTable';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -19,11 +19,11 @@ import CustomDelete from '@/Widgets/CustomDelete';
 
 const ProductTags = () => {
 
-    const [ loading, setLoading ] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false)
     const [id, setId] = useState('')
     const [datas, setDatas] = useState([])
-
+    const [setSerachList, setSearchList] = useState([])
 
 
     useEffect(() => {
@@ -31,14 +31,15 @@ const ProductTags = () => {
     }, [])
 
 
-    const getAllTags = async() => {
+    const getAllTags = async () => {
         setLoading(true)
         try {
             setLoading(true)
             const response = await fetchData('admin/tag/list')
             let { data } = response?.data
             setDatas(data)
-            
+            setSearchList(data)
+
         } catch (err) {
             toast.error(err?.message)
             setLoading(false)
@@ -47,7 +48,7 @@ const ProductTags = () => {
             setLoading(false)
         }
     }
-    
+
 
     const schema = yup
         .object()
@@ -77,14 +78,14 @@ const ProductTags = () => {
         setOpen(true)
     }
 
-    const onSubmit = async(data) => {
+    const onSubmit = async (data) => {
         setLoading(true)
         try {
             setLoading(true)
             const response = await postData('admin/tag/create', data)
             getAllTags()
             reset()
-            
+
         } catch (err) {
             toast.error(err?.message)
             setLoading(false)
@@ -132,11 +133,22 @@ const ProductTags = () => {
         }
     ];
 
+    const searchProducts = useCallback((value) => {
+        let competitiions = setSerachList?.filter((com) => com?.name.toString().toLowerCase().includes(value.toLowerCase())
+        )
+        startTransition(() => {
+            setDatas(competitiions)
+        })
+    }, [datas])
+
+
+
+
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
-                <CustomTableHeader Headerlabel='Product Tags' />
+                <CustomTableHeader setState={searchProducts} Headerlabel='Product Tags' />
                 <Box py={3}>
                     <Grid container gap={4}>
                         <Grid xs={12} md={4}>
@@ -160,12 +172,12 @@ const ProductTags = () => {
                                     startIcon={false}
                                     height={''}
                                     label={"SAVE"}
-                                    onClick={handleSubmit(onSubmit)} 
+                                    onClick={handleSubmit(onSubmit)}
                                 />
                             </Box>
                         </Grid>
                     </Grid>
-                    
+
                     <CustomTable dashboard={false} columns={columns} rows={datas} id={"_id"} bg={"#ffff"} label='Product Tags' />
                     {open && <CustomDelete
                         heading='tag?'
@@ -175,7 +187,7 @@ const ProductTags = () => {
                         data={datas}
                         url={`admin/tag/delete/${id}`}
                         onClose={handleClose}
-                        open={open} 
+                        open={open}
                     />}
                 </Box>
             </Box>

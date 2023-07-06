@@ -32,13 +32,14 @@ export interface SimpleDialogProps {
     price: any,
     id: string,
     setVendorSinglelist: any,
-    viewVendor: any
+    viewVendor: any,
+    setTotal: any
 
 }
 
 
 const AmountSettlementModal = (props: SimpleDialogProps) => {
-    const { onClose, data, open, price, id, setVendorSinglelist, viewVendor } = props;
+    const { onClose, data, open, price, id, setVendorSinglelist, viewVendor, setTotal } = props;
 
     const router = useRouter()
 
@@ -48,12 +49,14 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
     const [time, setTime] = useState<any>(null);
     const [loading, setLoading] = useState<any>(false)
 
+    const matchTransaaction = /^[a-zA-Z0-9\s\S]+$/
 
     const schema = yup
         .object()
         .shape({
-            transaction_id: yup.string().required('Required'),
-            payment_mode: yup.string().required('Required')
+            transaction_id: yup.string().required('Transaction Id Required').matches(/^[0-9-a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ\s\-\/]+$/, 'Not Valid').nullable(),
+            payment_mode: yup.string().required('Payment Mode is Required'),
+            transaction_date_time: yup.string().required('Date & Time is Required')
         })
         .required();
 
@@ -96,8 +99,9 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
 
 
     const OnChangeDate = (value: any) => {
-        console.log({ value })
+        setValue('transaction_date_time', value)
         setTime(value)
+        setError('transaction_date_time', { message: "" })
     }
 
 
@@ -123,6 +127,7 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
             setLoading(false)
             setVendorSinglelist(null)
             viewVendor()
+            setTotal(null)
             closeModal()
             // router.reload()
         } catch (err: any) {

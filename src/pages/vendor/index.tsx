@@ -147,7 +147,7 @@ const VendorSignup = ({data}: datapr) => {
             align: 'center',
             renderCell: ({ row }) => (
                 <Stack>
-                    <Typography variant="body1" sx={{ color: '#58D36E' }} fontSize={14} letterSpacing={.5} >{row?.status === 'active' ? "ONLINE" : ''}</Typography>
+                    <Typography variant="body1" sx={{ color:row?.status === 'active' ? '#58D36E' : '#FF0000'}} fontSize={14} letterSpacing={.5} >{row?.status === 'active' ? "ONLINE" : 'OFFLINE'}</Typography>
                 </Stack>
             )
         },
