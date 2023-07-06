@@ -650,7 +650,7 @@ const ProductForm = ({ res, view }: props) => {
                     setVendorList(response?.data?.data)
                     let vendor = response?.data?.data?.find((ven: any) => ven?._id === vendorId)
                     if(vendor){
-                        setCategoryList(vendor?.category_id)
+                        setCategoryList(vendor?.category_id);
                     }
                     
 
