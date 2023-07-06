@@ -630,10 +630,6 @@ const ProductForm = ({ res, view }: props) => {
         setProductCategorySelect(value)
     }
 
-
-
-    console.log({ productList })
-
     useEffect(() => {
         if (productList) {
             const getvendorlist = async () => {
