@@ -10,12 +10,13 @@ import { toast } from 'react-toastify';
 import { fetchData } from '@/CustomAxios';
 import moment from 'moment';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 
 const Shipments = () => {
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('md'));
 
- 
+
     const router = useRouter()
 
 
@@ -28,10 +29,15 @@ const Shipments = () => {
         router.push(`/shipments/view/${id}`)
     }
 
+    const ShippmentEdit = (id: string) => {
+        router.push(`/shipments/edit/${id}`)
+    }
+
+
 
     const columns: GridColDef[] = [
         {
-            field: 'order_id', 
+            field: 'order_id',
             headerName: 'Order ID',
             headerAlign: 'center',
             align: 'center',
@@ -131,19 +137,19 @@ const Shipments = () => {
                             color: '#58D36E',
                             cursor: 'pointer'
                         }} />
-                    {/* <BorderColorTwoToneIcon
-
+                    <BorderColorTwoToneIcon
+                        onClick={() => ShippmentEdit(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
                         }}
                     />
-                    <DeleteOutlineTwoToneIcon
+                    {/* <DeleteOutlineTwoToneIcon
 
                         sx={{
                             color: '#58D36E',
                             cursor: 'pointer',
-                        }} /> */}
+                        }} />  */}
                 </Stack>
             )
         }

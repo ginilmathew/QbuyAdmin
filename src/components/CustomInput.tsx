@@ -16,7 +16,9 @@ type props = {
     disabled: boolean,
     defaultValue?: any
     type: string
-    onChangeValue?:any
+    onChangeValue?: any
+    Values?:any
+
 }
 
 
@@ -32,6 +34,7 @@ const CustomInput = (
         defaultValue,
         onChangeValue,
         type,
+        Values
     }: props
 ) => {
     return (
@@ -57,14 +60,14 @@ const CustomInput = (
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
                         <TextField
-                        
+
                             type={type}
                             //defaultValue={defaultValue}
-                            value={value}
-                            onChange={(e) => {
-                                onChangeValue ? onChangeValue(e) :
-                                onChange(e)
-                            }}
+                            value={Values ? Values : value}
+                            onChange={
+                                onChangeValue ? onChangeValue :
+                                    onChange
+                            }
                             onBlur={onBlur}
                             aria-invalid={error ? "true" : "false"}
                             className="form-control"

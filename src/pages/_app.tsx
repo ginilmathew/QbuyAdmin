@@ -16,6 +16,8 @@ import { SessionProvider, useSession } from "next-auth/react"
 import HeaderProvider from '@/helpers/header/HeaderContext';
 import type { NextComponentType } from 'next'
 
+import PushNotificationLayout from '@/components/PushNotificationLayout';
+
 const poppins = Poppins({
 	subsets: ['latin'],
 	weight: ['200', '600', '700']
@@ -48,6 +50,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 
 
 
+
 	return <main className={poppins.className}>
 
 		{isLoading && showHeader && (
@@ -69,10 +72,14 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 						<Component {...pageProps} />
 					) : (
 						<ProtectedRoute>
+
 							<UserProvider>
-								<Header />
-								<Component {...pageProps} />
+								<PushNotificationLayout>
+									<Header />
+									<Component {...pageProps} />
+								</PushNotificationLayout>
 							</UserProvider>
+
 						</ProtectedRoute>
 					)}
 					<ToastContainer />

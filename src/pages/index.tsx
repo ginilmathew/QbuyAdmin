@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react"
 import ProtectedRoute from '@/Routes/protectedRoutes'
 import Login from './login'
 import Shipments from './shipments'
+import PushNotificationLayout from "../components/PushNotificationLayout";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,7 +27,9 @@ export default function Home() {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<main>
-				{ session ? <Shipments /> : <Login /> }
+
+				{session ? <Shipments /> : <Login />}
+
 			</main>
 		</>
 	)

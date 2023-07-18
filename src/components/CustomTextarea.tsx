@@ -52,7 +52,8 @@ const CustomTextarea = ({
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
                         <TextareaAutosize
-                        minRows={6}
+                            readOnly={view}
+                            minRows={6}
                             defaultValue={defaultValue}
                             value={value}
                             onChange={(e) => {
@@ -64,7 +65,7 @@ const CustomTextarea = ({
                             className="form-control"
                             placeholder={placeholder}
                             id="exampleInputEmail1"
-                           
+
                         />
                     )}
                 />

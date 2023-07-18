@@ -8,7 +8,6 @@ const addSubCategory = () => {
         <Box px={5} py={2} pt={10} mt={0} >
             <CustomHeaderBack backlabel='Add SubCategory' />
              <SubCategoryForm/>
-           
         </Box>
     )
 }
