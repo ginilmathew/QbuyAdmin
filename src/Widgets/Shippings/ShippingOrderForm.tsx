@@ -96,10 +96,10 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
         },
     ]
     )
-    const [OrderStatusList, setOrderStatusList] = useState([])
+    const [deliveryCharge, SetDeliveryCharge] = useState(null)
 
 
-    console.log({ paymentStatusList }, 'PAYMENT STAUS')
+    console.log({ orderviewList }, 'PAYMENT STAUS')
 
 
 
@@ -212,8 +212,6 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
         try {
             const response = await fetchData('common/payment-status-list');
             setPaymentStatusList(response?.data?.data)
-
-
         } catch (err) {
 
         }
@@ -233,10 +231,10 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             setValue('shipping_address_delivery_address', `${orderviewList?.shipaddress?.name ? orderviewList?.shipaddress?.name : ''},${orderviewList?.shipaddress?.area?.address ? orderviewList?.shipaddress?.area?.address : ''},${orderviewList?.shipaddress?.pincode ? orderviewList?.shipaddress?.pincode : ''},
             ${orderviewList?.shipaddress?.mobile ? `${'Mob:'}${orderviewList?.shipaddress?.mobile}` : ''}`)
             setPaymentMethodSelect(orderviewList?.payment_type);
-            setPaymentStatusSelect(orderviewList?.payment_status)
-            setValue("payment_method",orderviewList.payment_type)
-            setValue("payment_status",orderviewList?.payment_status)
-
+            setPaymentStatusSelect(orderviewList?.payment_status);
+            setValue("payment_method", orderviewList.payment_type);
+            setValue("payment_status", orderviewList?.payment_status);
+            SetDeliveryCharge(orderviewList?.delivery_charge)
         }
 
     }, [orderviewList])
@@ -247,9 +245,9 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     useEffect(() => {
         if (idd) {
             getVenderListShow()
-
         }
     }, [idd])
+    
 
     useEffect(() => {
         orderStatusList()
@@ -257,9 +255,27 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     }, [])
 
 
-     const SubmitOrder = (data:any)=>{
-   console.log({data})
-     }
+    const SubmitOrder = async (data: any) => {
+        console.log({ data })
+        let result = {
+            id: idd,
+            delivery_charge: deliveryCharge,
+            ...data,
+
+        }
+        try {
+
+            const response = await postData('admin/order/update', result);
+            toast.success('Order Updated Successfully')
+
+        } catch (err) {
+            let message = 'Unknown Error'
+            if (err instanceof Error) message = err.message
+            reportError({ message })
+            toast.error(message)
+        }
+
+    }
 
 
 
@@ -435,7 +451,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                     <Grid item xs={12} lg={2.5}>
                         <Customselect
                             type='text'
-                            disabled={view ? true : false}
+                            disabled={view || (orderviewList?.payment_status === "completed" || orderviewList?.payment_status === "cancelled") ? true : false}
                             control={control}
                             error={errors.payment_status}
                             fieldName="payment_status"
@@ -494,7 +510,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             </CustomBox>
             <CustomBox title='Product Details'>
                 {orderviewList &&
-                    <ShippingTable res={orderviewList} readonly={res} id={idd} />}
+                    <ShippingTable res={orderviewList} readonly={res} id={idd} SetDeliveryCharge={SetDeliveryCharge} />}
             </CustomBox>
             {idd && <HistoryTable res={orderviewList?.order_history} />}
 

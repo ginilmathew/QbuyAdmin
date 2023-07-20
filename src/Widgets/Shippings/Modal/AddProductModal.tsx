@@ -13,35 +13,50 @@ import Customselect from '@/components/Customselect';
 import { toast } from 'react-toastify';
 import { fetchData, postData } from '@/CustomAxios';
 import CustomSingleSearch from '@/components/CustomSingleSearch';
-
+import { getProduct } from '../../../helpers/productHelper/productHelper';
+import { loadGetInitialProps } from 'next/dist/shared/lib/utils';
 
 
 
 type props = {
     handleClose: any;
     open: boolean;
-
-
+    allProduct: any;
+    setaddProductList: any,
+    SetDeliveryCharge?: any
 }
 type Inputs = {
     name: string;
     franchisee: any;
-    store: any
+    store: any;
+    price: any;
+    quantity: any;
+    total: any;
+    seller: string | number;
 
 };
 
-const AddProductModal = ({ handleClose, open }: props) => {
+const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge }: props) => {
+
+
+    console.log({ allProduct })
 
     const [productList, setProductList] = useState<any>([]);
     const [productListRes, setProductListRes] = useState<any>([]);
     const [franchise, setFranchise] = useState<any>([])
     const [vendor, setVendor] = useState<any>([]);
     const [franchiseList, setFranchiseList] = useState<any>([]);
-    const [franchiseSelect, setFranchiseSelect] = useState<string>(" ")
-    const [vendorSelect, setVendorSelect] = useState<string>(" ")
-    const [loading, setLoading] = useState<boolean>(false)
+    const [franchiseSelect, setFranchiseSelect] = useState<string>(" ");
+    const [vendorSelect, setVendorSelect] = useState<string>(" ");
+    const [loading, setLoading] = useState<boolean>(false);
+    const [productData, setProductData] = useState<any>([]);
+    const [varientSelect, setVarientSelect] = useState<any>([]);
+    const [selectProduct, setSelectProduct] = useState<any>([]);
+    const [attributeSelect, setAttributeSelect] = useState<any>([])
+    const [vendorDetails, setVendorDetails] = useState<any>(null)
 
-    console.log({ productList })
+
+    console.log({ vendorDetails })
     const schema = yup
         .object()
         .shape({
@@ -100,9 +115,11 @@ const AddProductModal = ({ handleClose, open }: props) => {
             }
 
         ))
+        let vendorDetails = vendor?.filter((res: any) => res?._id === e.target.value);
+        setVendorDetails(vendorDetails)
+
         try {
-            const response = await postData('admin/product/vendorproducts', { id: result?.[0]?.id });
-            console.log({ RESPONSE: response?.data?.data })
+            const response = await postData('admin/product/vendorproducts', { id: result?.[0]?.id, type: "green" });
             const Filter = response?.data?.data?.map((res: any) => ({
                 label: res?.name,
                 id: res?._id
@@ -116,9 +133,28 @@ const AddProductModal = ({ handleClose, open }: props) => {
         setError('store', { message: '' })
     }
 
-    const OnChangeProduct = useCallback((value: any) => {
-       let data =  productListRes?.filter((res:any)=>res?._id === value?.id)
-       console.log({data})
+    const OnChangeProduct = useCallback(async (value: any) => {
+
+        setValue("total", "")
+        setValue("quantity", "")
+        setValue("price", "")
+
+        let data = productListRes?.filter((res: any) => res?._id === value?.id);
+        let prdctlist: any = await getProduct(data?.[0] || []);
+        setSelectProduct(prdctlist)
+        let filter = prdctlist || [].filter((res: any) => res?.id === value?.id)
+        if (filter?.variant === false) {
+            setValue('price', filter?.price);
+            setValue("total", filter?.price)
+            setValue("seller", filter?.seller)
+            setValue("quantity", 1)
+        } else {
+            setValue("quantity", 0)
+            setVarientSelect([])
+            setValue('price', "")
+        }
+        setProductData(prdctlist)
+
     }, [productListRes])
 
     const getFranchiseList = async () => {
@@ -134,6 +170,123 @@ const AddProductModal = ({ handleClose, open }: props) => {
             setLoading(false)
         }
     }
+
+    const varientOncheck = (e: any, i: number) => {
+        const { value } = e.target;
+
+        let newArray: any[]
+        setVarientSelect((prevArray: any) => {
+            newArray = [...prevArray];
+            newArray[i] = value;
+            return newArray;
+        });
+        const matchedObjects = productData?.variants?.filter((item: any) => newArray.every((attr) => item.attributs.includes(attr)));
+        setAttributeSelect(matchedObjects);
+        setValue("quantity", 1)
+        setValue("seller", matchedObjects[0]?.seller);
+        setValue("total", matchedObjects[0]?.price);
+        setValue('price', matchedObjects[0]?.price);
+
+    }
+
+    const OnChangeQuantity = (e: any) => {
+        const { value } = e.target;
+        setValue("quantity", value)
+        let stock = selectProduct?.stock;
+        if (selectProduct?.available) {
+            if (selectProduct?.variant === false) {
+
+                let minQty = selectProduct?.minQty
+                let stockValue = selectProduct?.stockValue;
+                if (stock) {
+                    if (parseFloat(value) > stockValue) {
+                        toast.warning("Stock Value excedded")
+                    } else {
+                        let total = parseFloat(value) * selectProduct?.price;
+                        setValue("total", total)
+                    }
+                } else {
+                    let total = 0;
+                    total = parseFloat(value) * selectProduct?.price;
+                    setValue("total", total)
+                }
+            } else {
+                let stockValue = attributeSelect?.[0]?.stockValue;
+                if (stock) {
+                    console.log('IN STOCK')
+                    if (parseFloat(value) > stockValue) {
+                        toast.warning("Stock Value excedded")
+                    } else {
+                        let total = (parseFloat(value) * attributeSelect?.[0]?.price?.price);
+                        setValue("total", total)
+                    }
+
+                } else {
+                    let result = (parseInt(attributeSelect?.[0]?.price) * parseFloat(value));
+                    setValue("total", result)
+                    console.log({ result })
+                    console.log('NOT STOCK')
+                }
+
+
+
+            }
+
+        } else {
+            toast.warning("Product Not Available")
+            setValue("quantity", "")
+        }
+    }
+
+
+
+    const Submit = (data: any) => {
+
+
+        console.log({ allProduct }, 'ATTRIBUTE SELECT')
+        console.log({ selectProduct }, 'selectProduct')
+
+        let AllProducts: any = []
+        AllProducts = structuredClone(allProduct);
+        let duplicateProduct = AllProducts?.productDetails?.some((res: any) => res?.product_id === selectProduct?._id);
+        if (duplicateProduct) {
+            toast.warning('Product already exits');
+            return false;
+        }
+
+        AllProducts['total_amount'] = parseInt(data?.total) + parseInt(allProduct?.total_amount);
+        AllProducts['grand_total'] = (parseInt(data?.total) + parseInt(allProduct?.total_amount)) + parseInt(allProduct?.delivery_charge);
+        let value: any = {
+            image: selectProduct?.product_image,
+            name: selectProduct?.name,
+            price: data?.total,
+            product_id: selectProduct?._id,
+            quantity: data?.quantity,
+            seller_price: data?.seller,
+            store_address: vendorDetails?.[0]?.store_address,
+            store_name: vendorDetails?.[0]?.store_name,
+            type: null,
+            unitPrice: data?.price,
+            variant_id: null,
+            vendor_mobile: vendorDetails?.[0]?.vendor_mobile,
+        }
+
+        if (selectProduct?.variant === true) {
+            value['type'] = "varient";
+        } else {
+            value['type'] = "single";
+        }
+
+        AllProducts.productDetails.push(value)
+        console.log({ AllProducts }, 'ALL PRODUCT')
+        setaddProductList(AllProducts)
+        handleClose()
+        AllProducts = [];
+
+
+    }
+
+
 
     useEffect(() => {
         getFranchiseList()
@@ -238,46 +391,78 @@ const AddProductModal = ({ handleClose, open }: props) => {
                             <CustomSingleSearch list={productList} onChangeValue={OnChangeProduct} fieldLabel='Products' />
                         </Grid>
 
+                        {(productData && productData?.variant) && productData?.attributes?.map((res: any, i: number) => (
+                            <Grid item xs={12} lg={1.5}>
+                                <Customselect
+                                    disabled={false}
+                                    type='text'
+                                    control={control}
+                                    error={errors.franchisee}
+                                    fieldName="franchisee"
+                                    placeholder={``}
+                                    fieldLabel={res?.name}
+                                    selectvalue={""}
+                                    height={40}
+                                    label={''}
+                                    size={16}
+                                    value={varientSelect[i]}
+                                    options={''}
+                                    onChangeValue={(e: any) => varientOncheck(e, i)}
+                                    background={'#fff'}
+                                >
+                                    <MenuItem value="" disabled >
+                                        <em>select Attributes</em>
+                                    </MenuItem>
+                                    {res?.options.map((res: any) => (
+                                        <MenuItem value={res}>{res}</MenuItem>
+                                    ))}
+                                </Customselect>
+                            </Grid>
+                        ))
+                        }
+                        <Grid item xs={12} lg={3}>
+                            <CustomInput
+                                onChangeValue={OnChangeQuantity}
+                                type='text'
+                                control={control}
+                                error={errors.quantity}
+                                fieldName="quantity"
+                                placeholder={``}
+                                fieldLabel={"Quantity"}
+                                disabled={false}
+                                view={false}
+                                defaultValue={''}
+                            />
+                        </Grid>
                         <Grid item xs={12} lg={3}>
                             <CustomInput
                                 type='text'
                                 control={control}
-                                error={errors.name}
-                                fieldName="name"
+                                error={errors.price}
+                                fieldName="price"
                                 placeholder={``}
-                                fieldLabel={"Product name"}
+                                fieldLabel={"Price"}
+                                disabled={false}
+                                view={true}
+                                defaultValue={''}
+                            />
+                        </Grid>
+                        <Grid item xs={12} lg={3}>
+                            <CustomInput
+                                type='text'
+                                control={control}
+                                error={errors.total}
+                                fieldName="total"
+                                placeholder={``}
+                                fieldLabel={"Total"}
                                 disabled={false}
                                 view={true}
                                 defaultValue={''}
                             />
                         </Grid>
 
-                        <Grid item xs={12} lg={3}>
-                            <CustomInput
-                                type='text'
-                                control={control}
-                                error={errors.name}
-                                fieldName="name"
-                                placeholder={``}
-                                fieldLabel={"Product name"}
-                                disabled={false}
-                                view={true}
-                                defaultValue={''}
-                            />
-                        </Grid>
-                        <Grid item xs={12} lg={3}>
-                            <CustomInput
-                                type='text'
-                                control={control}
-                                error={errors.name}
-                                fieldName="name"
-                                placeholder={``}
-                                fieldLabel={"Product name"}
-                                disabled={false}
-                                view={true}
-                                defaultValue={''}
-                            />
-                        </Grid>
+
+
                     </Grid>
                     <Box py={1} display={'flex'} justifyContent={'center'}>
                         <Custombutton
@@ -289,7 +474,7 @@ const AddProductModal = ({ handleClose, open }: props) => {
                             height={''}
                             label={'Add'}
                             disabled={false}
-                            onClick={handleClose} />
+                            onClick={handleSubmit(Submit)} />
                     </Box>
 
                 </DialogContent>

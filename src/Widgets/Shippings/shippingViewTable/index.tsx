@@ -18,11 +18,12 @@ import { toast } from "react-toastify";
 type props = {
     res: any,
     readonly: any,
-    id: any
+    id: any,
+    SetDeliveryCharge: any
 }
 
 
-const ShippingTable = ({ res, readonly, id }: props) => {
+const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
 
 
 
@@ -224,6 +225,7 @@ const ShippingTable = ({ res, readonly, id }: props) => {
                         </TableRow>
 
                         <TableRow>
+
                             <TableCell colSpan={2}></TableCell>
                             <TableCell align="right" >Delivery Charge (SlotBased)</TableCell>
                             <TableCell align="center">₹ {productList?.delivery_charge}</TableCell>
@@ -245,6 +247,7 @@ const ShippingTable = ({ res, readonly, id }: props) => {
             </TableContainer>
             {modalOpen &&
                 <ProductDetailEditModal
+                    SetDeliveryCharge={SetDeliveryCharge}
                     order_iD={id}
                     allProduct={productList}
                     open={modalOpen}
@@ -254,6 +257,9 @@ const ShippingTable = ({ res, readonly, id }: props) => {
                     setProductList={setProductList}
                 />}
             {addOpen && <AddProductModal
+                SetDeliveryCharge={SetDeliveryCharge}
+                allProduct={productList}
+                setaddProductList={setProductList}
                 open={addOpen}
                 handleClose={handleCloseAddModal}
 

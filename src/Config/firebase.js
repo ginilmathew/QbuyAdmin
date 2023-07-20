@@ -44,7 +44,7 @@ export const requestForToken = (user) => {
           if (currentToken) {
             let data = {
               id: user?._id,
-              token: currentToken
+              token: currentToken 
             }
             try {
               await postData('auth/update-webtoken', data)
