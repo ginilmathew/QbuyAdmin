@@ -99,14 +99,14 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     const [deliveryCharge, SetDeliveryCharge] = useState(null)
 
 
-    console.log({ orderviewList }, 'PAYMENT STAUS')
+
 
 
 
     const schema = yup
         .object()
         .shape({
-            comment: yup.string().max(60, 'Maximum Character Exceeds').required('Comment is Required'),
+            comment: yup.string().max(60, 'Maximum Character Exceeds').nullable(),
         })
         .required();
 
@@ -247,7 +247,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             getVenderListShow()
         }
     }, [idd])
-    
+
 
     useEffect(() => {
         orderStatusList()
@@ -256,16 +256,16 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
 
     const SubmitOrder = async (data: any) => {
-        console.log({ data })
+
         let result = {
             id: idd,
             delivery_charge: deliveryCharge,
             ...data,
-
         }
         try {
 
             const response = await postData('admin/order/update', result);
+            router.push('/shipments')
             toast.success('Order Updated Successfully')
 
         } catch (err) {

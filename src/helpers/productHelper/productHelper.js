@@ -6,7 +6,7 @@ export function getProduct(product) {
 
 
 
-    let { _id, product_id, name, description, store, franchisee, weight, type, image, stock, minimum_qty, product_image, order_count, is_wishlist, viewCount, attributes, video_link, status,seller } = product
+    let { _id, product_id, name, description, store, franchisee, weight, type, image, stock, minimum_qty, product_image, order_count, is_wishlist, viewCount, attributes, video_link, status,seller,delivery } = product
 
     let variant = product?.variants?.length > 0 ? true : false
     let minQty = minimum_qty ? parseFloat(minimum_qty) : 1
@@ -34,7 +34,8 @@ export function getProduct(product) {
         attributes: attributes,
         video_link,
         status: status,
-        seller
+        seller,
+        delivery
 
     }
 
@@ -114,7 +115,8 @@ export function getProduct(product) {
                         stockValue,
                         delivery,
                         available: true,
-                        seller:vari?.seller_price ? parseFloat(vari?.seller_price) : 0
+                        seller:vari?.seller_price ? parseFloat(vari?.seller_price) : 0,
+                        delivery:vari?.fixed_delivery_price ? parseFloat(vari?.fixed_delivery_price) : 0
                     })
                 }
                 else {
@@ -128,7 +130,8 @@ export function getProduct(product) {
                         stockValue,
                         delivery,
                         available: false,
-                        seller:vari?.seller_price ? parseFloat(vari?.seller_price) : 0  
+                        seller:vari?.seller_price ? parseFloat(vari?.seller_price) : 0 ,
+                        delivery:vari?.fixed_delivery_price ? parseFloat(vari?.fixed_delivery_price) : 0 
                     })
                 }
             }
@@ -354,6 +357,7 @@ export function getProduct(product) {
         newProduct['stockValue'] = stockValue;
         newProduct['delivery'] = delivery;
         newProduct['seller'] =seller;
+        newProduct['delivery']=delivery;
     }
 
     return newProduct;

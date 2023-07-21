@@ -20,7 +20,7 @@ type props = {
     allProduct: any;
     order_iD: string;
     setProductList: any,
-    SetDeliveryCharge?:any
+    SetDeliveryCharge?: any
 }
 type Inputs = {
     name: string,
@@ -36,22 +36,18 @@ type Inputs = {
     store_address: string,
     store_name: string,
     vendor_mobile: string,
- 
+    delivery: any
+
 
 
 
 
 };
 
-const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList,SetDeliveryCharge }: props) => {
+const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge }: props) => {
 
-    console.log({ allProduct }, 'GOT DATA')
-    console.log({ data }, 'SINGLE PRODUCT')
 
-    const [allProducts, setAllProducts] = useState<any>([]);
-    const [finalValue, setFinalValue] = useState<any>(null);
-    const [quantity, setQuantity] = useState<any>(null)
-
+    console.log({ allProduct }, 'EDIT PAGE')
 
     const schema = yup
         .object()
@@ -83,7 +79,8 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                 variant_id: data?.variant_id,
                 store_address: data?.store_address,
                 store_name: data?.store_name,
-                vendor_mobile: data?.vendor_mobile
+                vendor_mobile: data?.vendor_mobile,
+                delivery: data?.delivery
             }
 
         });
@@ -127,11 +124,10 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     const onChangeQuantity = (e: any) => {
         const { value } = e.target;
         setValue('quantity', value)
-        console.log({ value })
+
         let unitprice = getValues('unitPrice');
         let purchaseprice = getValues('seller_price');
-        console.log({ unitprice })
-        console.log({ purchaseprice })
+
         if (parseInt(value) <= 0 || value === "") {
             setValue('unitPrice', data?.quantity * data?.unitPrice)
             setValue('seller_price', data?.seller_price)
@@ -140,6 +136,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
             setError('quantity', { message: '' })
             let purchsePrz = (parseInt(purchaseprice) * parseFloat(value))
             let unitprz = (parseInt(unitprice) * parseFloat(value))
+            console.log({ unitprz }, 'UNIT PRICE')
             setValue('unitPrice', unitprz)
             setValue('seller_price', purchsePrz)
             setValue('total', unitprz)
@@ -156,25 +153,27 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
 
     const SubmitButton = async (data: any) => {
-        let product = []
-        if (mode === "product") {
-            product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== data?.product_id).map((itm: any) => (
-                {
-                    ...itm
-                }))
 
-            data.price = data?.unitPrice;
-            const { total, deliveryPrice, ...alldata } = data;
-            product.push(alldata)
-        } else {
-            product.push(...allProduct?.productDetails)
-        }
+
+
+        let product = []
+
+        product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== data?.product_id).map((itm: any) => (
+            {
+                ...itm
+            }))
+
+        data.price = (data?.unitPrice * parseFloat(data?.quantity));
+        const { total, deliveryPrice, ...alldata } = data;
+
+        product.push(alldata)
+
         try {
             let publishValue = {
                 id: order_iD,
                 productDetails: product
             }
-        
+
             const response = await postData('admin/order/edit', publishValue);
             const rate = response?.data?.data?.productDetails?.reduce((inital: any, price: any) => inital + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0)
 
@@ -192,6 +191,13 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
             toast.error(err)
         }
 
+    }
+
+    const DeliverySubmit = () => {
+
+        allProduct['delivery_charge'] = getValues('deliveryPrice');
+        allProduct['grand_total'] = parseInt(allProduct?.delivery_charge) + parseInt(allProduct?.total_amount);
+        handleClose()
     }
 
     return (
@@ -255,7 +261,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                             <Grid item xs={12} lg={6}>
                                 <CustomInput
                                     onChangeValue={onChangePurchaseValue}
-                                    type='text'
+                                    type='number'
                                     control={control}
                                     error={errors.seller_price}
                                     fieldName="seller_price"
@@ -270,7 +276,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                                 <CustomInput
                                     onChangeValue={(e: any) => onChangeRegularValue(e)}
                                     // Values={regularValue}
-                                    type='text'
+                                    type='number'
                                     control={control}
                                     error={errors.unitPrice}
                                     fieldName="unitPrice"
@@ -284,7 +290,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                             <Grid item xs={12} lg={6}>
                                 <CustomInput
                                     onChangeValue={(e: any) => onChangeQuantity(e)}
-                                    type='text'
+                                    type='number~'
                                     control={control}
                                     error={errors.quantity}
                                     fieldName="quantity"
@@ -309,7 +315,6 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
                                 />
                             </Grid>
-
 
                         </Grid> :
                         <Grid item xs={12} lg={6}>
@@ -337,7 +342,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                             height={''}
                             label={'Update'}
                             disabled={false}
-                            onClick={handleSubmit(SubmitButton)} />
+                            onClick={mode === "product" ? handleSubmit(SubmitButton) : DeliverySubmit} />
                     </Box>
                 </DialogContent>
 

@@ -23,7 +23,8 @@ type props = {
     open: boolean;
     allProduct: any;
     setaddProductList: any,
-    SetDeliveryCharge?: any
+    SetDeliveryCharge?: any,
+    order_id: string
 }
 type Inputs = {
     name: string;
@@ -36,10 +37,10 @@ type Inputs = {
 
 };
 
-const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge }: props) => {
+const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id }: props) => {
 
 
-    console.log({ allProduct })
+
 
     const [productList, setProductList] = useState<any>([]);
     const [productListRes, setProductListRes] = useState<any>([]);
@@ -240,11 +241,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
 
 
 
-    const Submit = (data: any) => {
-
-
-        console.log({ allProduct }, 'ATTRIBUTE SELECT')
-        console.log({ selectProduct }, 'selectProduct')
+    const Submit = async (data: any) => {
 
         let AllProducts: any = []
         AllProducts = structuredClone(allProduct);
@@ -254,8 +251,6 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             return false;
         }
 
-        AllProducts['total_amount'] = parseInt(data?.total) + parseInt(allProduct?.total_amount);
-        AllProducts['grand_total'] = (parseInt(data?.total) + parseInt(allProduct?.total_amount)) + parseInt(allProduct?.delivery_charge);
         let value: any = {
             image: selectProduct?.product_image,
             name: selectProduct?.name,
@@ -269,20 +264,45 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             unitPrice: data?.price,
             variant_id: null,
             vendor_mobile: vendorDetails?.[0]?.vendor_mobile,
+            delivery: null
         }
 
         if (selectProduct?.variant === true) {
             value['type'] = "varient";
+            value['delivery'] = attributeSelect?.[0]?.delivery;
         } else {
             value['type'] = "single";
+            value['delivery'] = selectProduct?.delivery;
         }
+        AllProducts.productDetails.push(value);
 
-        AllProducts.productDetails.push(value)
-        console.log({ AllProducts }, 'ALL PRODUCT')
-        setaddProductList(AllProducts)
-        handleClose()
-        AllProducts = [];
+        //find highest delivery Charge
+        const highestDelivery = AllProducts.productDetails.reduce((highest: any, delivery: any) => {
+            return Math.max(highest, delivery.delivery);
+        }, 0);
+        AllProducts['delivery_charge'] = highestDelivery;
+        AllProducts['total_amount'] = parseInt(data?.total) + parseInt(allProduct?.total_amount);
+        AllProducts['grand_total'] = (parseInt(data?.total) + parseInt(allProduct?.total_amount)) + parseInt(highestDelivery);
 
+        try {
+            setLoading(true)
+            let publishValue = {
+                id: order_id,
+                productDetails: [...AllProducts.productDetails]
+            }
+            await postData('admin/order/edit', publishValue);
+            toast.success('Product Added Successfully')
+            setLoading(false)
+            setaddProductList(AllProducts)
+            handleClose()
+            AllProducts = [];
+        } catch (err) {
+            let message = 'Unknown Error'
+            if (err instanceof Error) message = err.message
+            reportError({ message })
+            toast.error(message)
+            setLoading(false)
+        }
 
     }
 
@@ -473,7 +493,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                             startIcon={false}
                             height={''}
                             label={'Add'}
-                            disabled={false}
+                            disabled={loading}
                             onClick={handleSubmit(Submit)} />
                     </Box>
 

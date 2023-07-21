@@ -36,8 +36,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [productList, setProductList] = useState<any>(null);
 
 
-
-    console.log({ productList })
+   console.log({productList},'PRODUCTLIST')
 
     const handleClose = useCallback(() => {
         setModalOpen(false);
@@ -71,7 +70,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     useEffect(() => {
         if (res) {
             let pricedata = {
-                delivery_charge: res?.delivery_charge,
+                delivery_charge: parseInt(res?.delivery_charge),
                 grand_total: res?.grand_total,
                 total_amount: res?.total_amount
             }
@@ -88,7 +87,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 store_name: itm?.productdata?.vendors?.store_name,
                 store_address: itm?.productdata?.vendors?.store_address,
                 vendor_mobile: itm?.productdata?.vendors?.vendor_mobile,
-                seller_price: itm?.productdata?.seller_price
+                seller_price: itm?.productdata?.seller_price,
+                delivery: itm?.deliveryPrice
 
             }))
             let Combine = {
@@ -126,12 +126,18 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const removeProduct = async (row: any) => {
         let product: any[] = []
         product = productList?.productDetails?.filter((res: any) => res?.product_id !== row?.product_id);
+        const highestDelivery = product.reduce((highest: any, delivery: any) => {
+            return Math.max(highest, delivery.delivery);
+        }, 0);
+
+        console.log({highestDelivery})
+
         const res = await removeItemApi(row?.product_id);
         if (res?.data?.message === "Success") {
             if (product?.length > 0) {
                 const rate = product?.reduce((inital: any, price: any) => inital + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0);
                 let pricedata = {
-                    delivery_charge: productList?.delivery_charge,
+                    delivery_charge: highestDelivery,
                     grand_total: (parseInt(productList?.delivery_charge) + rate),
                     total_amount: rate
                 }
@@ -256,15 +262,17 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                     mode={mode}
                     setProductList={setProductList}
                 />}
-            {addOpen && <AddProductModal
-                SetDeliveryCharge={SetDeliveryCharge}
-                allProduct={productList}
-                setaddProductList={setProductList}
-                open={addOpen}
-                handleClose={handleCloseAddModal}
+            {addOpen &&
+                <AddProductModal
+                    order_id={id}
+                    SetDeliveryCharge={SetDeliveryCharge}
+                    allProduct={productList}
+                    setaddProductList={setProductList}
+                    open={addOpen}
+                    handleClose={handleCloseAddModal}
 
 
-            />}
+                />}
 
             {/*   
            {modalOpen && <Dialog
