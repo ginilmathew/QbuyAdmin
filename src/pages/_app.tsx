@@ -74,10 +74,10 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 						<ProtectedRoute>
 
 							<UserProvider>
-								<PushNotificationLayout>
+								{/* <PushNotificationLayout> */}
 									<Header />
 									<Component {...pageProps} />
-								</PushNotificationLayout>
+								{/* </PushNotificationLayout> */}
 							</UserProvider>
 
 						</ProtectedRoute>
