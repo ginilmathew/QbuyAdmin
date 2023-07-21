@@ -35,8 +35,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [mode, setMode] = useState<any>(null)
     const [productList, setProductList] = useState<any>(null);
 
-
-    console.log({ productList:productList?.productDetails.length }, 'PRODUCTLIST')
+    console.log({ res }, 'RES LIST')
+    console.log({ productList }, 'TABLE LIST')
 
     const handleClose = useCallback(() => {
         setModalOpen(false);
@@ -82,13 +82,14 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 unitPrice: itm?.unitPrice,
                 image: itm?.image,
                 type: itm?.type,
-                variant_id: itm?.variant_id,
+                variant_id: itm.variant_id,
                 product_id: itm?.product_id,
                 store_name: itm?.productdata?.vendors?.store_name,
                 store_address: itm?.productdata?.vendors?.store_address,
                 vendor_mobile: itm?.productdata?.vendors?.vendor_mobile,
-                seller_price: itm?.productdata?.seller_price,
-                delivery: itm?.deliveryPrice
+                seller_price: itm?.type === "single" ? itm?.productdata?.seller_price : itm?.variants?.seller_price,
+                delivery: itm?.deliveryPrice,
+
 
             }))
             let Combine = {
@@ -124,12 +125,20 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
 
 
     const removeProduct = async (row: any) => {
-        if(productList?.productDetails?.length < 2) {
+
+        console.log({ row }, 'RESPONSE')
+        if (productList?.productDetails?.length < 2) {
             toast.warning('You have to add atleast Two Product !..')
             return false;
         }
         let product: any[] = []
-        product = productList?.productDetails?.filter((res: any) => res?.product_id !== row?.product_id);
+        if (!row?.variant_id) {
+            product = productList?.productDetails?.filter((res: any) => res?.product_id !== row?.product_id);
+        } else {
+            product = productList?.productDetails?.filter((res: any) => res?.variant_id !== row?.variant_id);
+        }
+
+
         // const highestDelivery = product.reduce((highest: any, delivery: any) => {
         //     return Math.max(highest, delivery.delivery);
         // }, 0);

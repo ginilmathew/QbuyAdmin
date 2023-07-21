@@ -72,7 +72,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                 quantity: data?.quantity || "",
                 total: (data?.quantity * data?.unitPrice),
                 seller_price: data?.seller_price,
-                unitPrice: data?.quantity * data?.unitPrice,
+                unitPrice: data?.unitPrice,
                 deliveryPrice: allProduct?.delivery_charge,
                 image: data?.image,
                 type: data?.type,
@@ -134,11 +134,11 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
             setError('quantity', { message: 'Minimum Qunatity Required' })
         } else {
             setError('quantity', { message: '' })
-            let purchsePrz = (parseInt(data?.seller_price) * parseFloat(value))
-            let unitprz = (parseInt(data?.unitPrice) * parseFloat(value))
-            setValue('unitPrice', data?.unitPrice)
-            setValue('seller_price', purchsePrz)
-            setValue('total', unitprz)
+            // let purchsePrz = (parseInt(data?.seller_price) * parseFloat(value));
+            let unitprz = (parseInt(data?.unitPrice) * parseFloat(value));
+            setValue('unitPrice', data?.unitPrice);
+            setValue('seller_price', data?.seller_price);
+            setValue('total', unitprz);
         }
 
     }
@@ -152,15 +152,25 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
 
     const SubmitButton = async (data: any) => {
-
-
+        console.log({ data }, "DATA")
 
         let product = []
 
-        product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== data?.product_id).map((itm: any) => (
-            {
-                ...itm
-            }))
+        if (!data?.variant_id) {
+            console.log('API CALLED')
+            product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== data?.product_id).map((itm: any) => (
+                {
+                    ...itm
+                }))
+        } else {
+            console.log('API CALLED SE')
+            product = allProduct?.productDetails?.filter((res: any) => res?.variant_id !== data?.variant_id).map((itm: any) => (
+                {
+                    ...itm
+                }))
+        }
+
+
 
         data.price = (data?.unitPrice * parseFloat(data?.quantity));
         const { total, deliveryPrice, ...alldata } = data;

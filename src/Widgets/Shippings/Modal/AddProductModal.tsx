@@ -57,7 +57,9 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const [vendorDetails, setVendorDetails] = useState<any>(null)
 
 
-    console.log({ vendorDetails })
+    
+console.log({allProduct})
+
     const schema = yup
         .object()
         .shape({
@@ -214,7 +216,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             } else {
                 let stockValue = attributeSelect?.[0]?.stockValue;
                 if (stock) {
-            
+
                     if (parseFloat(value) > stockValue) {
                         toast.warning("Stock Value excedded")
                     } else {
@@ -242,14 +244,20 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
 
 
     const Submit = async (data: any) => {
-
+        console.log({ data }, 'DATA')
         let AllProducts: any = []
         AllProducts = structuredClone(allProduct);
-        let duplicateProduct = AllProducts?.productDetails?.some((res: any) => res?.product_id === selectProduct?._id);
-        if (duplicateProduct) {
-            toast.warning('Product already exits');
-            return false;
+
+        console.log({AllProducts},'ALLPRODUCTS')
+        if (!productData?.variant) {
+            let duplicateProduct = AllProducts?.productDetails?.some((res: any) => res?.product_id === selectProduct?._id);
+            if (duplicateProduct) {
+                toast.warning('Product already exits');
+                return false;
+            }
+
         }
+
 
         let value: any = {
             image: selectProduct?.product_image,
