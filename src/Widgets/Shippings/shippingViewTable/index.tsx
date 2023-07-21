@@ -36,7 +36,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [productList, setProductList] = useState<any>(null);
 
 
-   console.log({productList},'PRODUCTLIST')
+    console.log({ productList:productList?.productDetails.length }, 'PRODUCTLIST')
 
     const handleClose = useCallback(() => {
         setModalOpen(false);
@@ -124,20 +124,22 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
 
 
     const removeProduct = async (row: any) => {
+        if(productList?.productDetails?.length < 2) {
+            toast.warning('You have to add atleast Two Product !..')
+            return false;
+        }
         let product: any[] = []
         product = productList?.productDetails?.filter((res: any) => res?.product_id !== row?.product_id);
-        const highestDelivery = product.reduce((highest: any, delivery: any) => {
-            return Math.max(highest, delivery.delivery);
-        }, 0);
-
-        console.log({highestDelivery})
+        // const highestDelivery = product.reduce((highest: any, delivery: any) => {
+        //     return Math.max(highest, delivery.delivery);
+        // }, 0);
 
         const res = await removeItemApi(row?.product_id);
         if (res?.data?.message === "Success") {
             if (product?.length > 0) {
                 const rate = product?.reduce((inital: any, price: any) => inital + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0);
                 let pricedata = {
-                    delivery_charge: highestDelivery,
+                    delivery_charge: productList?.delivery_charge,
                     grand_total: (parseInt(productList?.delivery_charge) + rate),
                     total_amount: rate
                 }

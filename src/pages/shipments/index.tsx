@@ -137,13 +137,15 @@ const Shipments = () => {
                             color: '#58D36E',
                             cursor: 'pointer'
                         }} />
-                    <BorderColorTwoToneIcon
-                        onClick={() => ShippmentEdit(row?._id)}
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }}
-                    />
+
+                    {row?.status == "created" &&
+                        <BorderColorTwoToneIcon
+                            onClick={() => ShippmentEdit(row?._id)}
+                            style={{
+                                color: '#58D36E',
+                                cursor: 'pointer'
+                            }}
+                        />}
                     {/* <DeleteOutlineTwoToneIcon
 
                         sx={{

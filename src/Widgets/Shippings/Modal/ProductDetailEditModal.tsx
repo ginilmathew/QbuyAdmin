@@ -47,7 +47,7 @@ type Inputs = {
 const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge }: props) => {
 
 
-    console.log({ allProduct }, 'EDIT PAGE')
+    console.log({ data }, 'EDIT PAGE')
 
     const schema = yup
         .object()
@@ -125,8 +125,8 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
         const { value } = e.target;
         setValue('quantity', value)
 
-        let unitprice = getValues('unitPrice');
-        let purchaseprice = getValues('seller_price');
+        // let unitprice = getValues('unitPrice');
+        // let purchaseprice = getValues('seller_price');
 
         if (parseInt(value) <= 0 || value === "") {
             setValue('unitPrice', data?.quantity * data?.unitPrice)
@@ -134,10 +134,9 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
             setError('quantity', { message: 'Minimum Qunatity Required' })
         } else {
             setError('quantity', { message: '' })
-            let purchsePrz = (parseInt(purchaseprice) * parseFloat(value))
-            let unitprz = (parseInt(unitprice) * parseFloat(value))
-            console.log({ unitprz }, 'UNIT PRICE')
-            setValue('unitPrice', unitprz)
+            let purchsePrz = (parseInt(data?.seller_price) * parseFloat(value))
+            let unitprz = (parseInt(data?.unitPrice) * parseFloat(value))
+            setValue('unitPrice', data?.unitPrice)
             setValue('seller_price', purchsePrz)
             setValue('total', unitprz)
         }
@@ -194,7 +193,6 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     }
 
     const DeliverySubmit = () => {
-
         allProduct['delivery_charge'] = getValues('deliveryPrice');
         allProduct['grand_total'] = parseInt(allProduct?.delivery_charge) + parseInt(allProduct?.total_amount);
         handleClose()

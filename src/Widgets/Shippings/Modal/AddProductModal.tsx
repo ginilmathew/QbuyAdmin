@@ -214,7 +214,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             } else {
                 let stockValue = attributeSelect?.[0]?.stockValue;
                 if (stock) {
-                    console.log('IN STOCK')
+            
                     if (parseFloat(value) > stockValue) {
                         toast.warning("Stock Value excedded")
                     } else {
