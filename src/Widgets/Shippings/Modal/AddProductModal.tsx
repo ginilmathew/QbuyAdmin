@@ -56,9 +56,9 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const [attributeSelect, setAttributeSelect] = useState<any>([])
     const [vendorDetails, setVendorDetails] = useState<any>(null)
 
-
-    
-console.log({allProduct})
+    console.log({productData},'PRODUCT DATA')
+    console.log({selectProduct},'SELECTED PRODUCT')
+    console.log({ allProduct })
 
     const schema = yup
         .object()
@@ -230,9 +230,6 @@ console.log({allProduct})
                     console.log({ result })
                     console.log('NOT STOCK')
                 }
-
-
-
             }
 
         } else {
@@ -248,7 +245,6 @@ console.log({allProduct})
         let AllProducts: any = []
         AllProducts = structuredClone(allProduct);
 
-        console.log({AllProducts},'ALLPRODUCTS')
         if (!productData?.variant) {
             let duplicateProduct = AllProducts?.productDetails?.some((res: any) => res?.product_id === selectProduct?._id);
             if (duplicateProduct) {
@@ -257,7 +253,6 @@ console.log({allProduct})
             }
 
         }
-
 
         let value: any = {
             image: selectProduct?.product_image,
@@ -285,13 +280,12 @@ console.log({allProduct})
         AllProducts.productDetails.push(value);
 
         //find highest delivery Charge
-        const highestDelivery = AllProducts.productDetails.reduce((highest: any, delivery: any) => {
-            return Math.max(highest, delivery.delivery);
-        }, 0);
-        AllProducts['delivery_charge'] = highestDelivery;
+        // const highestDelivery = AllProducts.productDetails.reduce((highest: any, delivery: any) => {
+        //     return Math.max(highest, delivery.delivery);
+        // }, 0);
+        AllProducts['delivery_charge'] = allProduct?.delivery_charge;
         AllProducts['total_amount'] = parseInt(data?.total) + parseInt(allProduct?.total_amount);
-        AllProducts['grand_total'] = (parseInt(data?.total) + parseInt(allProduct?.total_amount)) + parseInt(highestDelivery);
-
+        AllProducts['grand_total'] = (parseInt(data?.total) + parseInt(allProduct?.total_amount)) + parseInt(allProduct?.delivery_charge);
         try {
             setLoading(true)
             let publishValue = {
