@@ -10,7 +10,7 @@ import CustomInput from '@/components/CustomInput';
 import Custombutton from '@/components/Custombutton';
 import { toast } from 'react-toastify';
 import { postData } from '@/CustomAxios';
-import { values } from 'lodash';
+
 
 type props = {
     handleClose: any;
@@ -131,7 +131,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
         if (parseInt(value) <= 0 || value === "") {
             setValue('unitPrice', data?.quantity * data?.unitPrice)
             setValue('seller_price', data?.seller_price)
-            setError('quantity', { message: 'Minimum Qunatity Required' })
+            setError('quantity', { message: 'Minimum Quantity Required' })
         } else {
             setError('quantity', { message: '' })
             // let purchsePrz = (parseInt(data?.seller_price) * parseFloat(value));
@@ -157,7 +157,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
         let product = []
 
         if (data?.variant_id) {
-        
+
             product = allProduct?.productDetails?.filter((res: any) => res?.variant_id !== data?.variant_id).map((itm: any) => (
                 {
                     ...itm
@@ -165,7 +165,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
 
         } else {
-         
+
 
             product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== data?.product_id).map((itm: any) => (
                 {

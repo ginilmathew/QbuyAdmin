@@ -52,6 +52,7 @@ const CustomTextarea = ({
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
                         <TextareaAutosize
+                           style={{background:view ? "#f2f5f2" : "#fff"}}
                             readOnly={view}
                             minRows={6}
                             defaultValue={defaultValue}

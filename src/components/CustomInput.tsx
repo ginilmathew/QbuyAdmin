@@ -78,7 +78,7 @@ const CustomInput = (
                                 readOnly: view ? true : false,
                                 style: {
                                     opacity: "1",
-                                    background: '#ffff',
+                                    background: view ? "#f2f5f2" :'#ffff',
                                     height: "40px",
                                     letterSpacing: "1px",
                                     fontWeight: '700px',

@@ -1,4 +1,4 @@
-import React, { useTransition,useState,useEffect } from 'react'
+import React, { useTransition, useState, useEffect } from 'react'
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
@@ -11,7 +11,7 @@ import { fetchData } from '@/CustomAxios';
 
 const ShippingReport = () => {
 
-  
+
   const [loading, setLoading] = useState<boolean>(false);
   const [reportList, setReportList] = useState<any>([])
   const [pending, startTransition] = useTransition();
@@ -41,7 +41,7 @@ const ShippingReport = () => {
       headerAlign: 'center',
       align: 'center',
     },
- 
+
     {
       field: 'Order ID',
       headerName: 'Order ID',
@@ -95,7 +95,7 @@ const ShippingReport = () => {
       setSearchList(response?.data?.data)
     } catch (err: any) {
       toast.error(err.message)
-      setLoading(false) 
+      setLoading(false)
     } finally {
       setLoading(false)
     }

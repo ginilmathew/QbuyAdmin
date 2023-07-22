@@ -36,7 +36,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [productList, setProductList] = useState<any>(null);
 
 
-    console.log({ productList }, 'TABLE LIST')
+    console.log({productList},'RESPONSE')
 
     const handleClose = useCallback(() => {
         setModalOpen(false);
@@ -89,6 +89,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 vendor_mobile: itm?.productdata?.vendors?.vendor_mobile,
                 seller_price: itm?.type === "single" ? itm?.productdata?.seller_price : itm?.variants?.seller_price,
                 delivery: itm?.deliveryPrice,
+                title : itm?.type === "single" ? null : itm?.variants?.title,
 
 
             }))
@@ -126,7 +127,6 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 productDetails: [...productList.productDetails]
             }
             InitialPost(value)
-
         }
 
     }, [productList])
@@ -205,7 +205,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
         <Box>
             <Box>
 
-                <Box py={1} display={'flex'} justifyContent={'flex-end'}>
+                {readonly && <Box py={1} display={'flex'} justifyContent={'flex-end'}>
                     <Custombutton
                         btncolor=''
                         IconEnd={''}
@@ -216,7 +216,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                         label={'Add'}
                         disabled={false}
                         onClick={handleOpenAddModal} />
-                </Box>
+                </Box>}
             </Box>
             <TableContainer component={Paper} >
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -238,7 +238,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
-                                    {row?.name}  {row.variants ? row.variants?.title : ''}
+                                    {row?.name}  {row.title ?( row.title) : ''}
                                 </TableCell>
                                 <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor_mobile}{ }</TableCell>
                                 <TableCell align="center">{row.quantity}</TableCell>
@@ -264,7 +264,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                             <TableCell rowSpan={5} />
                             <TableCell colSpan={2}></TableCell>
                             <TableCell align="right">Sub-Total</TableCell>
-                            <TableCell align="center">₹ {productList?.total_amount}</TableCell>
+                            <TableCell align="center">₹ {productList?.total_amount?.toFixed(2)}</TableCell>
                             {readonly && <TableCell align="center"></TableCell>}
                             {readonly && <TableCell align="center"></TableCell>}
                         </TableRow>
@@ -285,7 +285,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                         <TableRow>
                             <TableCell colSpan={2}></TableCell>
                             <TableCell align="right">Total</TableCell>
-                            <TableCell align="center">₹ {productList?.grand_total}</TableCell>
+                            <TableCell align="center">₹ {productList?.grand_total?.toFixed(2)}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>

@@ -410,7 +410,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                             placeholder={``}
                             fieldLabel={"Shipping Address or Delivery Address"}
                             disabled={false}
-                            view={view ? true : false}
+                            view={idd ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
