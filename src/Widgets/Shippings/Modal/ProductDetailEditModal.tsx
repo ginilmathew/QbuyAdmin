@@ -156,19 +156,23 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
         let product = []
 
-        if (!data?.variant_id) {
-            console.log('API CALLED')
-            product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== data?.product_id).map((itm: any) => (
-                {
-                    ...itm
-                }))
-        } else {
-            console.log('API CALLED SE')
+        if (data?.variant_id) {
+        
             product = allProduct?.productDetails?.filter((res: any) => res?.variant_id !== data?.variant_id).map((itm: any) => (
                 {
                     ...itm
                 }))
+
+
+        } else {
+         
+
+            product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== data?.product_id).map((itm: any) => (
+                {
+                    ...itm
+                }))
         }
+
 
 
 

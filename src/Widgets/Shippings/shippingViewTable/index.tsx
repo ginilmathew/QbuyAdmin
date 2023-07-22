@@ -35,7 +35,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [mode, setMode] = useState<any>(null)
     const [productList, setProductList] = useState<any>(null);
 
-    console.log({ res }, 'RES LIST')
+
     console.log({ productList }, 'TABLE LIST')
 
     const handleClose = useCallback(() => {
@@ -102,6 +102,34 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
 
     }, [res])
 
+
+
+    const InitialPost = useCallback(async (data: any) => {
+        try {
+            await postData('admin/order/edit', data);
+        } catch (err) {
+            let message = 'Unknown Error'
+            if (err instanceof Error) message = err.message
+            reportError({ message })
+            toast.error(message)
+        }
+
+
+    }, [productList])
+
+
+
+    useEffect(() => {
+        if (productList) {
+            let value = {
+                id: id,
+                productDetails: [...productList.productDetails]
+            }
+            InitialPost(value)
+
+        }
+
+    }, [productList])
 
 
 
