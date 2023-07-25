@@ -44,7 +44,7 @@ type IFormInput = {
 
 const SliderManagementForm = ({ res }: Props) => {
 
-    console.log({ res })
+
 
     const router = useRouter()
 
@@ -272,6 +272,12 @@ const SliderManagementForm = ({ res }: Props) => {
 
     const onChangeType = useCallback((e: any) => {
         const { value } = e.target;
+        if (value === "store") {
+            setSingleProduct([])
+            setValue("product_id", "")
+            setSelectProduct(null)
+            setProductData(null)
+        }
         setSelectType(value)
         setValue("screentype", value)
     }, [])
@@ -322,6 +328,7 @@ const SliderManagementForm = ({ res }: Props) => {
             setImagePreview(`${IMAGE_URL}${sliderList?.image}`)
             setSelectType(sliderList?.screentype)
             setValue('product_id', sliderList?.product_id)
+            setValue('screentype', sliderList?.screentype)
 
         }
 
@@ -357,62 +364,6 @@ const SliderManagementForm = ({ res }: Props) => {
                             disabled={false}
                             type='text'
                             control={control}
-                            error={errors.franchise_id}
-                            fieldName="franchise_id"
-                            placeholder={``}
-                            fieldLabel={"Franchise"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={franchise}
-                            options={''}
-                            onChangeValue={onChangeSelectFranchise}
-                            background={'#fff'}
-                        >
-                            <MenuItem value="" disabled >
-                                <>Select Franchise</>
-                            </MenuItem>
-                            {getfranchise && getfranchise?.filter((act: any) => act?.status !== 'inactive').map((res: any) => (
-                                <MenuItem key={res?._id} value={res?._id}>{res?.franchise_name}</MenuItem>
-                            ))}
-                        </Customselect>
-                    </Grid>
-                    <Grid item xs={12} lg={2}>
-                        <Customselect
-                            disabled={false}
-                            type='text'
-                            control={control}
-                            error={errors.store}
-                            fieldName="store"
-                            placeholder={``}
-                            fieldLabel={"Store Name"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={vendorSelect}
-                            options={''}
-                            onChangeValue={onSelectStore}
-                            background={'#fff'}
-                        >
-                            <MenuItem value="" disabled >
-                                <>Select Store</>
-                            </MenuItem>
-                            {vendor && vendor?.map((res: any) => (
-                                <MenuItem value={res?._id}>{res?.store_name}</MenuItem>
-                            ))}
-                        </Customselect>
-                    </Grid>
-
-                    <Grid item xs={12} lg={2}>
-                        <CustomSingleSearch list={productList} value={singleProduct ? singleProduct : selectedProduct} onChangeValue={OnChangeProduct} fieldLabel='Products' />
-                    </Grid>
-                    <Grid item xs={12} lg={2}>
-                        <Customselect
-                            disabled={false}
-                            type='text'
-                            control={control}
                             error={errors.screentype}
                             fieldName="screentype"
                             placeholder={``}
@@ -434,6 +385,65 @@ const SliderManagementForm = ({ res }: Props) => {
                             ))}
                         </Customselect>
                     </Grid>
+                    <Grid item xs={12} lg={2}>
+                        <Customselect
+                            disabled={false}
+                            type='text'
+                            control={control}
+                            error={errors.franchise_id}
+                            fieldName="franchise_id"
+                            placeholder={``}
+                            fieldLabel={"Franchise"}
+                            selectvalue={""}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={franchise}
+                            options={''}
+                            onChangeValue={onChangeSelectFranchise}
+                            background={'#fff'}
+                        >
+                            <MenuItem value="" disabled >
+                                <>Select Franchise</>
+                            </MenuItem>
+                            {getfranchise && getfranchise?.filter((act: any) => act?.status !== 'inactive').map((res: any) => (
+                                <MenuItem key={res?._id} value={res?._id}>{res?.franchise_name}</MenuItem>
+                            ))}
+                        </Customselect>
+                    </Grid>
+
+                    {(selectType === "store" || selectType === "product") &&
+                        <Grid item xs={12} lg={2}>
+                            <Customselect
+                                disabled={false}
+                                type='text'
+                                control={control}
+                                error={errors.store}
+                                fieldName="store"
+                                placeholder={``}
+                                fieldLabel={"Store Name"}
+                                selectvalue={""}
+                                height={40}
+                                label={''}
+                                size={16}
+                                value={vendorSelect}
+                                options={''}
+                                onChangeValue={onSelectStore}
+                                background={'#fff'}
+                            >
+                                <MenuItem value="" disabled >
+                                    <>Select Store</>
+                                </MenuItem>
+                                {vendor && vendor?.map((res: any) => (
+                                    <MenuItem value={res?._id}>{res?.store_name}</MenuItem>
+                                ))}
+                            </Customselect>
+                        </Grid>}
+                    {selectType === "product" &&
+                        <Grid item xs={12} lg={2}>
+                            <CustomSingleSearch list={productList} value={singleProduct ? singleProduct : selectedProduct} onChangeValue={OnChangeProduct} fieldLabel='Products' />
+                        </Grid>
+                    }
                     <Grid item xs={12} lg={2}>
                         <CustomInput
                             type='text'

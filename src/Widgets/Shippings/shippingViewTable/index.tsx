@@ -36,7 +36,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [productList, setProductList] = useState<any>(null);
 
 
-    console.log({productList},'RESPONSE')
+    console.log({ productList }, 'RESPONSE')
 
     const handleClose = useCallback(() => {
         setModalOpen(false);
@@ -89,7 +89,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 vendor_mobile: itm?.productdata?.vendors?.vendor_mobile,
                 seller_price: itm?.type === "single" ? itm?.productdata?.seller_price : itm?.variants?.seller_price,
                 delivery: itm?.deliveryPrice,
-                title : itm?.type === "single" ? null : itm?.variants?.title,
+                title: itm?.type === "single" ? null : itm?.variants?.title,
 
 
             }))
@@ -238,7 +238,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
-                                    {row?.name}  {row.title ?( row.title) : ''}
+                                    {row?.name}  {row.title ? (row.title) : ''}
                                 </TableCell>
                                 <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor_mobile}{ }</TableCell>
                                 <TableCell align="center">{row.quantity}</TableCell>
