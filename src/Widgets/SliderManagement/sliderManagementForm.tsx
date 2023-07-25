@@ -14,6 +14,8 @@ import { useRouter } from 'next/router';
 import { type } from 'os';
 import { IMAGE_URL } from '@/Config';
 import CustomLoader from '@/components/CustomLoader';
+import CustomSingleSearch from '@/components/CustomSingleSearch';
+import { getProduct } from '@/helpers/productHelper/productHelper';
 
 type Props = {
     res?: any
@@ -23,6 +25,10 @@ type Inputs = {
     order_number: any,
     image: any,
     franchise_id: string,
+    store: any,
+    vendor_id: any,
+    product_id: any,
+    screentype: any
 
 }
 
@@ -30,7 +36,10 @@ type IFormInput = {
     order_number: any,
     image: any,
     franchise_id: string,
-
+    store: any,
+    vendor_id: any,
+    product_id: any,
+    screentype: any
 }
 
 const SliderManagementForm = ({ res }: Props) => {
@@ -39,7 +48,10 @@ const SliderManagementForm = ({ res }: Props) => {
 
     const router = useRouter()
 
+
     const [imagefile, setImagefile] = useState<null | File>(null)
+    const [productList, setProductList] = useState<any>([]);
+    const [productListRes, setProductListRes] = useState<any>([]);
     const [imagePreview, setImagePreview] = useState<any>(null)
     const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
     const [getfranchise, setGetFranchise] = useState<any>([]);
@@ -47,7 +59,16 @@ const SliderManagementForm = ({ res }: Props) => {
     const [franchise, setFranchise] = useState<string>('')
     const [sliderList, setSliderList] = useState<any>(null);
     const [loader, setLoader] = useState<boolean>(false)
+    const [vendor, setVendor] = useState<any>([]);
+    const [productData, setProductData] = useState<any>([]);
+    const [vendorDetails, setVendorDetails] = useState<any>(null)
+    const [vendorSelect, setVendorSelect] = useState<string>(" ");
+    const [selectProduct, setSelectProduct] = useState<any>([]);
+    const [selectType, setSelectType] = useState<any>(null);
+    const [selectedProduct, setSelectedProduct] = useState<any>(null)
 
+
+    console.log({ sliderList }, 'Slider VENDOR')
     const orderValidation = /^(0|[1-9]\d*)$/
     const schema = yup
         .object()
@@ -72,15 +93,38 @@ const SliderManagementForm = ({ res }: Props) => {
             resolver: yupResolver(schema),
             defaultValues: {
                 franchise_id: '',
-                order_number: ''
+                order_number: '',
+                vendor_id: null,
+                product_id: null
             }
         });
 
 
-    const onChangeSelectFranchise = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log({ vendor }, 'VENDOR SELECT')
+
+    const onChangeSelectFranchise = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setFranchise(e.target.value)
+
+        setSelectedProduct(null)
+        setProductListRes([])
+        setProductList([])
+        setVendorSelect('')
+
         setValue('franchise_id', e.target.value)
         setError('franchise_id', { message: '' })
+        try {
+            setLoading(true)
+            const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
+
+            setVendor(response?.data?.data)
+
+        } catch (err: any) {
+            toast.error(err.message)
+            setLoading(false)
+        } finally {
+            setLoading(false)
+
+        }
     }
 
 
@@ -129,13 +173,38 @@ const SliderManagementForm = ({ res }: Props) => {
 
     }
 
+    const getVendortList = (async () => {
+        if (sliderList?.vendor_id && sliderList?.franchise_id) {
+            const response = await fetchData(`admin/vendor-list/${sliderList?.franchise_id}/${process.env.NEXT_PUBLIC_TYPE}`)
+            setVendor(response?.data?.data)
+            const responseProduct = await postData('admin/product/vendorproducts', { id: sliderList?.vendor_id, type: process.env.NEXT_PUBLIC_TYPE });
+            const Filter = responseProduct?.data?.data?.map((res: any) => ({
+                label: res?.name,
+                id: res?._id
+            }))
+            const selectedProduct = Filter.find((res: any) => res?.id === sliderList.product_id)
+
+            setSelectedProduct(selectedProduct)
+            setProductListRes(responseProduct?.data?.data)
+            setProductList(Filter)
+        }
+
+    })
+
+
     useEffect(() => {
+
         if (sliderList) {
+            getVendortList()
+            setVendorSelect(sliderList?.vendor_id)
+            setValue("vendor_id", sliderList?.vendor_id)
             setValue('franchise_id', sliderList?.franchise_id)
             setFranchise(sliderList?.franchise_id)
             setValue('order_number', sliderList?.order_number)
             setValue('image', sliderList?.image)
             setImagePreview(`${IMAGE_URL}${sliderList?.image}`)
+            setSelectType(sliderList?.screentype)
+
         }
 
     }, [sliderList])
@@ -152,7 +221,85 @@ const SliderManagementForm = ({ res }: Props) => {
     }, [res])
 
 
+
+
+    interface ScreenTypeItem {
+        name: string;
+        id: number;
+        value: string;
+    }
+
+    const ScreenType: any = [
+        {
+            name: "Store",
+            id: 1,
+            value: "store"
+
+        },
+        {
+            name: "Product",
+            id: 2,
+            value: "product"
+
+        }
+    ]
+
+
+    const onSelectStore = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setVendorSelect(e.target.value)
+        setValue("vendor_id", e.target.value)
+        let result = vendor?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
+            {
+                commision: get?.additional_details ? get?.additional_details.commission : 0,
+                id: get?._id,
+                name: get?.store_name,
+                category: get?.category_id
+            }
+
+        ))
+        let vendorDetails = vendor?.filter((res: any) => res?._id === e.target.value);
+        setVendorDetails(vendorDetails)
+
+        try {
+            const response = await postData('admin/product/vendorproducts', { id: result?.[0]?.id, type: process.env.NEXT_PUBLIC_TYPE });
+            const Filter = response?.data?.data?.map((res: any) => ({
+                label: res?.name,
+                id: res?._id
+            }))
+            setProductListRes(response?.data?.data)
+            setProductList(Filter)
+        } catch (err: any) {
+            toast.error(err)
+        }
+        setValue('store', e.target.value)
+        setError('store', { message: '' })
+    }
+
+
+
+
+
+    const OnChangeProduct = useCallback(async (value: any) => {
+
+        let data = productListRes?.filter((res: any) => res?._id === value?.id);
+        let prdctlist: any = await getProduct(data?.[0] || []);
+        setValue("product_id", prdctlist?._id)
+        setSelectProduct(prdctlist)
+        setProductData(prdctlist)
+
+    }, [productListRes])
+
+
+    const onChangeType = useCallback((e: any) => {
+        const { value } = e.target;
+        setSelectType(value)
+        setValue("screentype", value)
+    }, [])
+
+
+
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+
 
         const CREATE_URL = 'admin/slider/create';
         const UPDATE_URL = 'admin/slider/update';
@@ -165,9 +312,11 @@ const SliderManagementForm = ({ res }: Props) => {
         if (sliderList) {
             formData.append("id", sliderList?._id);
         }
-
         formData.append("type", type);
         formData.append("order_number", data?.order_number);
+        formData.append("product_id", data?.product_id);
+        formData.append("vendor_id", data?.vendor_id);
+        formData.append("screentype", data?.screentype)
         try {
             setLoading(true)
             await postData(res ? UPDATE_URL : CREATE_URL, formData)
@@ -181,6 +330,12 @@ const SliderManagementForm = ({ res }: Props) => {
             setLoading(false)
         }
     }
+
+
+
+
+
+
     if (loader) {
         return <>
             <CustomLoader />
@@ -191,7 +346,7 @@ const SliderManagementForm = ({ res }: Props) => {
         <Box>
             <CustomBox title='Slider Details'>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} lg={2.5}>
+                    <Grid item xs={12} lg={2}>
                         <Customselect
                             disabled={false}
                             type='text'
@@ -217,7 +372,63 @@ const SliderManagementForm = ({ res }: Props) => {
                             ))}
                         </Customselect>
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
+                    <Grid item xs={12} lg={2}>
+                        <Customselect
+                            disabled={false}
+                            type='text'
+                            control={control}
+                            error={errors.store}
+                            fieldName="store"
+                            placeholder={``}
+                            fieldLabel={"Store Name"}
+                            selectvalue={""}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={vendorSelect}
+                            options={''}
+                            onChangeValue={onSelectStore}
+                            background={'#fff'}
+                        >
+                            <MenuItem value="" disabled >
+                                <>Select Store</>
+                            </MenuItem>
+                            {vendor && vendor?.map((res: any) => (
+                                <MenuItem value={res?._id}>{res?.store_name}</MenuItem>
+                            ))}
+                        </Customselect>
+                    </Grid>
+
+                    <Grid item xs={12} lg={2}>
+                        <CustomSingleSearch list={productList} value={selectedProduct} onChangeValue={OnChangeProduct} fieldLabel='Products' />
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
+                        <Customselect
+                            disabled={false}
+                            type='text'
+                            control={control}
+                            error={errors.screentype}
+                            fieldName="screentype"
+                            placeholder={``}
+                            fieldLabel={"Screen Type"}
+                            selectvalue={""}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={selectType}
+                            options={''}
+                            onChangeValue={onChangeType}
+                            background={'#fff'}
+                        >
+                            <MenuItem value="" disabled >
+                                <>Select Store</>
+                            </MenuItem>
+                            {ScreenType && ScreenType.map((res: any) => (
+                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                            ))}
+                        </Customselect>
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -229,7 +440,7 @@ const SliderManagementForm = ({ res }: Props) => {
                             view={false}
                             defaultValue={''}
                         /></Grid>
-                    <Grid item xs={12} lg={2.5}>
+                    <Grid item xs={12} lg={2}>
                         <CustomImageUploader
                             ICON={""}
                             error={errors.image}

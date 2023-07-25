@@ -56,9 +56,9 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const [attributeSelect, setAttributeSelect] = useState<any>([])
     const [vendorDetails, setVendorDetails] = useState<any>(null)
 
-    console.log({productData},'PRODUCT DATA')
+    console.log({allProduct},'PRODUCT DATA')
     console.log({selectProduct},'SELECTED PRODUCT')
-    console.log({ allProduct })
+    console.log({ attributeSelect },'VARIENT SELECT')
 
     const schema = yup
         .object()
@@ -122,7 +122,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         setVendorDetails(vendorDetails)
 
         try {
-            const response = await postData('admin/product/vendorproducts', { id: result?.[0]?.id, type: "green" });
+            const response = await postData('admin/product/vendorproducts', { id: result?.[0]?.id, type: process.env.NEXT_PUBLIC_TYPE });
             const Filter = response?.data?.data?.map((res: any) => ({
                 label: res?.name,
                 id: res?._id
@@ -252,6 +252,12 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                 return false;
             }
 
+        }else{
+            let duplicateVarient = AllProducts?.productDetails?.some((res: any) => res?.variant_id === attributeSelect?.[0]?.id);
+            if (duplicateVarient) {
+                toast.warning('Product already exits');
+                return false;
+            }
         }
 
         let value: any = {
@@ -410,7 +416,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                             </Customselect>
                         </Grid>
                         <Grid item xs={12} lg={3}>
-                            <CustomSingleSearch list={productList} onChangeValue={OnChangeProduct} fieldLabel='Products' />
+                            <CustomSingleSearch list={productList}  onChangeValue={OnChangeProduct} fieldLabel='Products' />
                         </Grid>
 
                         {(productData && productData?.variant) && productData?.attributes?.map((res: any, i: number) => (

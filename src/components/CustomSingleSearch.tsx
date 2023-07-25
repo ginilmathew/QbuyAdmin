@@ -6,10 +6,12 @@ import { Typography } from '@mui/material';
 type props = {
     list: any,
     onChangeValue: any;
-    fieldLabel: string
+    fieldLabel: string;
+    value?:any
 }
 
-export default function CustomSingleSearch({ list, onChangeValue, fieldLabel }: props) {
+export default function CustomSingleSearch({ list, onChangeValue, fieldLabel,value }: props) {
+    console.log({list})
     return (
         <>
             <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
@@ -27,6 +29,7 @@ export default function CustomSingleSearch({ list, onChangeValue, fieldLabel }: 
 
             </Typography>
             <Autocomplete
+             value={value ? value : ''}
                 disablePortal
                 id="combo-box-demo"
                 options={list}
