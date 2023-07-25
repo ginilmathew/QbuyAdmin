@@ -285,6 +285,9 @@ const SliderManagementForm = ({ res }: Props) => {
 
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+
+
+
         const CREATE_URL = 'admin/slider/create';
         const UPDATE_URL = 'admin/slider/update';
 
@@ -301,18 +304,18 @@ const SliderManagementForm = ({ res }: Props) => {
         formData.append("product_id", data?.product_id);
         formData.append("vendor_id", data?.vendor_id);
         formData.append("screentype", data?.screentype)
-        try {
-            setLoading(true)
-            await postData(res ? UPDATE_URL : CREATE_URL, formData)
-            reset()
-            toast.success(res ? 'Update Successfully' : 'Created Successfully')
-            router.push('/sliderManagement')
-        } catch (err: any) {
-            toast.error(err?.message)
-            setLoading(false)
-        } finally {
-            setLoading(false)
-        }
+        // try {
+        //     setLoading(true)
+        //     await postData(res ? UPDATE_URL : CREATE_URL, formData)
+        //     reset()
+        //     toast.success(res ? 'Update Successfully' : 'Created Successfully')
+        //     router.push('/sliderManagement')
+        // } catch (err: any) {
+        //     toast.error(err?.message)
+        //     setLoading(false)
+        // } finally {
+        //     setLoading(false)
+        // }
     }
 
     useEffect(() => {
