@@ -65,10 +65,11 @@ const SliderManagementForm = ({ res }: Props) => {
     const [vendorSelect, setVendorSelect] = useState<string>(" ");
     const [selectProduct, setSelectProduct] = useState<any>([]);
     const [selectType, setSelectType] = useState<any>(null);
-    const [selectedProduct, setSelectedProduct] = useState<any>(null)
+    const [selectedProduct, setSelectedProduct] = useState<any>(null);
+    const [singleProduct, setSingleProduct] = useState<any>(null)
 
 
-    console.log({ sliderList }, 'Slider VENDOR')
+
     const orderValidation = /^(0|[1-9]\d*)$/
     const schema = yup
         .object()
@@ -192,33 +193,6 @@ const SliderManagementForm = ({ res }: Props) => {
     })
 
 
-    useEffect(() => {
-
-        if (sliderList) {
-            getVendortList()
-            setVendorSelect(sliderList?.vendor_id)
-            setValue("vendor_id", sliderList?.vendor_id)
-            setValue('franchise_id', sliderList?.franchise_id)
-            setFranchise(sliderList?.franchise_id)
-            setValue('order_number', sliderList?.order_number)
-            setValue('image', sliderList?.image)
-            setImagePreview(`${IMAGE_URL}${sliderList?.image}`)
-            setSelectType(sliderList?.screentype)
-
-        }
-
-    }, [sliderList])
-
-
-    useEffect(() => {
-        getFranchiseList()
-    }, [])
-
-    useEffect(() => {
-        if (res) {
-            getSlider()
-        }
-    }, [res])
 
 
 
@@ -279,15 +253,21 @@ const SliderManagementForm = ({ res }: Props) => {
 
 
 
-    const OnChangeProduct = useCallback(async (value: any) => {
+    const OnChangeProduct = async (value: any) => {
 
         let data = productListRes?.filter((res: any) => res?._id === value?.id);
         let prdctlist: any = await getProduct(data?.[0] || []);
+        console.log({ prdctlist }, 'PRODUCT LIST')
+        let autosearch = {
+            id: prdctlist?._id,
+            label: prdctlist?.name
+        }
+        setSingleProduct(autosearch)
         setValue("product_id", prdctlist?._id)
         setSelectProduct(prdctlist)
         setProductData(prdctlist)
 
-    }, [productListRes])
+    }
 
 
     const onChangeType = useCallback((e: any) => {
@@ -299,8 +279,6 @@ const SliderManagementForm = ({ res }: Props) => {
 
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-
-
         const CREATE_URL = 'admin/slider/create';
         const UPDATE_URL = 'admin/slider/update';
 
@@ -331,6 +309,33 @@ const SliderManagementForm = ({ res }: Props) => {
         }
     }
 
+    useEffect(() => {
+
+        if (sliderList) {
+            getVendortList()
+            setVendorSelect(sliderList?.vendor_id)
+            setValue("vendor_id", sliderList?.vendor_id)
+            setValue('franchise_id', sliderList?.franchise_id)
+            setFranchise(sliderList?.franchise_id)
+            setValue('order_number', sliderList?.order_number)
+            setValue('image', sliderList?.image)
+            setImagePreview(`${IMAGE_URL}${sliderList?.image}`)
+            setSelectType(sliderList?.screentype)
+
+        }
+
+    }, [sliderList])
+
+
+    useEffect(() => {
+        getFranchiseList()
+    }, [])
+
+    useEffect(() => {
+        if (res) {
+            getSlider()
+        }
+    }, [res])
 
 
 
@@ -400,7 +405,7 @@ const SliderManagementForm = ({ res }: Props) => {
                     </Grid>
 
                     <Grid item xs={12} lg={2}>
-                        <CustomSingleSearch list={productList} value={selectedProduct} onChangeValue={OnChangeProduct} fieldLabel='Products' />
+                        <CustomSingleSearch list={productList} value={singleProduct ? singleProduct : selectedProduct} onChangeValue={OnChangeProduct} fieldLabel='Products' />
                     </Grid>
                     <Grid item xs={12} lg={2}>
                         <Customselect

@@ -68,7 +68,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
             resolver: yupResolver(schema),
             defaultValues: {
                 product_id: data?.product_id,
-                name: data?.name || "",
+                name: `${data?.name},${data?.title ? data?.title : ''}` || "",
                 quantity: data?.quantity || "",
                 total: (data?.quantity * data?.unitPrice),
                 seller_price: data?.seller_price,
