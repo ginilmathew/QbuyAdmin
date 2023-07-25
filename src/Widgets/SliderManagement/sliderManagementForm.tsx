@@ -101,7 +101,7 @@ const SliderManagementForm = ({ res }: Props) => {
         });
 
 
-    console.log({ vendor }, 'VENDOR SELECT')
+
 
     const onChangeSelectFranchise = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setFranchise(e.target.value)
@@ -321,6 +321,7 @@ const SliderManagementForm = ({ res }: Props) => {
             setValue('image', sliderList?.image)
             setImagePreview(`${IMAGE_URL}${sliderList?.image}`)
             setSelectType(sliderList?.screentype)
+            setValue('product_id', sliderList?.product_id)
 
         }
 

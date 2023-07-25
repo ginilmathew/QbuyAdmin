@@ -47,7 +47,6 @@ type Inputs = {
 const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge }: props) => {
 
 
-    console.log({ data }, 'EDIT PAGE')
 
     const schema = yup
         .object()
