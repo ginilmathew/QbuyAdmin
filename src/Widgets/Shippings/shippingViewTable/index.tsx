@@ -305,6 +305,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 />}
             {addOpen &&
                 <AddProductModal
+               
                     order_id={id}
                     SetDeliveryCharge={SetDeliveryCharge}
                     allProduct={productList}

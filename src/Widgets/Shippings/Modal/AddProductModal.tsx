@@ -25,7 +25,7 @@ type props = {
     setaddProductList: any,
     SetDeliveryCharge?: any,
     order_id: string,
-    product_id: any
+  
 }
 type Inputs = {
     name: string;
