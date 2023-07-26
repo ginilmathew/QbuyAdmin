@@ -78,7 +78,7 @@ const SliderManagementForm = ({ res }: Props) => {
         image: yup
             .mixed()
             .required('Image is Required'),
-        store: yup.string().required('Store Id is Required'),
+        vendor_id: yup.string().required('Store Id is Required'),
     }
     const products = {
         franchise_id: yup.string().required('Franchisee is Required'),
@@ -86,7 +86,7 @@ const SliderManagementForm = ({ res }: Props) => {
         image: yup
             .mixed()
             .required('Image is Required'),
-        store: yup.string().required('Store Id is Required'),
+        vendor_id: yup.string().required('Store Id is Required'),
         product_id: yup.string().required('Product Id is Required'),
 
     }
@@ -117,8 +117,7 @@ const SliderManagementForm = ({ res }: Props) => {
             defaultValues: {
                 franchise_id: '',
                 order_number: '',
-                vendor_id: null,
-                product_id: null
+            
             }
         });
 
@@ -200,6 +199,7 @@ const SliderManagementForm = ({ res }: Props) => {
         if (sliderList?.vendor_id && sliderList?.franchise_id) {
             const response = await fetchData(`admin/vendor-list/${sliderList?.franchise_id}/${process.env.NEXT_PUBLIC_TYPE}`)
             setVendor(response?.data?.data)
+            setValue('vendor_id',sliderList?.vendor_id)
             const responseProduct = await postData('admin/product/vendorproducts', { id: sliderList?.vendor_id, type: process.env.NEXT_PUBLIC_TYPE });
             const Filter = responseProduct?.data?.data?.map((res: any) => ({
                 label: res?.name,
@@ -267,8 +267,8 @@ const SliderManagementForm = ({ res }: Props) => {
         } catch (err: any) {
             toast.error(err)
         }
-        setValue('store', e.target.value)
-        setError('store', { message: '' })
+        setValue('vendor_id', e.target.value)
+        setError('vendor_id', { message: '' })
     }
 
 
@@ -323,7 +323,7 @@ const SliderManagementForm = ({ res }: Props) => {
         formData.append("order_number", data?.order_number);
         formData.append("product_id", data?.product_id);
         formData.append("vendor_id", data?.vendor_id);
-        formData.append("screentype", data?.screentype ? data?.screentype : null )
+        formData.append("screentype", data?.screentype ? data?.screentype : null)
         try {
             setLoading(true)
             await postData(res ? UPDATE_URL : CREATE_URL, formData)
@@ -343,7 +343,7 @@ const SliderManagementForm = ({ res }: Props) => {
         if (sliderList) {
             getVendortList()
             setVendorSelect(sliderList?.vendor_id)
-            setValue("vendor_id", sliderList?.vendor_id)
+            setValue("vendor_id",sliderList?.vendor_id)
             setValue('franchise_id', sliderList?.franchise_id)
             setFranchise(sliderList?.franchise_id)
             setValue('order_number', sliderList?.order_number)
@@ -382,7 +382,7 @@ const SliderManagementForm = ({ res }: Props) => {
         <Box>
             <CustomBox title='Slider Details'>
                 <Grid container spacing={2}>
-                   
+
                     <Grid item xs={12} lg={2}>
                         <Customselect
                             disabled={false}
@@ -442,8 +442,8 @@ const SliderManagementForm = ({ res }: Props) => {
                                 disabled={false}
                                 type='text'
                                 control={control}
-                                error={errors.store}
-                                fieldName="store"
+                                error={errors.vendor_id}
+                                fieldName="vendor_id"
                                 placeholder={``}
                                 fieldLabel={"Store Name"}
                                 selectvalue={""}
@@ -475,7 +475,7 @@ const SliderManagementForm = ({ res }: Props) => {
                                 fieldLabel='Products' />
                         </Grid>
                     }
-                    
+
                     <Grid item xs={12} lg={2}>
                         <CustomInput
                             type='text'
