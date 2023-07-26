@@ -572,7 +572,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                             onClick={ChangeOrderStatus} />
                     </Box>
                 </CustomBox>}
-            <Box py={3} display={'flex'} justifyContent={'center'}>
+            {res && <Box py={3} display={'flex'} justifyContent={'center'}>
                 <Custombutton
                     btncolor=''
                     IconEnd={''}
@@ -583,7 +583,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                     label={'Update Order'}
                     disabled={loading}
                     onClick={handleSubmit(SubmitOrder)} />
-            </Box>
+            </Box>}
         </Box>
     )
 }

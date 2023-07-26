@@ -105,6 +105,15 @@ const SliderManagement = ({ data }: datapr) => {
 
         },
         {
+            field: 'screentype',
+            headerName: 'Screen Type',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => params?.row?.screentype === "null" ||  params?.row?.screentype === "undefined" ? '_' : params?.row?.screentype,
+
+        },
+        {
             field: 'order_number',
             headerName: 'Order',
             flex: 1,

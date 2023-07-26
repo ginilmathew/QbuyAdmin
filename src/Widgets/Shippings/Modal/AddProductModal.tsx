@@ -24,7 +24,8 @@ type props = {
     allProduct: any;
     setaddProductList: any,
     SetDeliveryCharge?: any,
-    order_id: string
+    order_id: string,
+    product_id: any
 }
 type Inputs = {
     name: string;
@@ -34,7 +35,8 @@ type Inputs = {
     quantity: any;
     total: any;
     seller: string | number;
-
+    stock_value: any
+    product_id: any
 };
 
 const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id }: props) => {
@@ -56,9 +58,6 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const [attributeSelect, setAttributeSelect] = useState<any>([])
     const [vendorDetails, setVendorDetails] = useState<any>(null)
 
-    console.log({ allProduct }, 'PRODUCT DATA')
-    console.log({ selectProduct }, 'SELECTED PRODUCT')
-    console.log({ attributeSelect }, 'VARIENT SELECT')
 
     const schema = yup
         .object()
@@ -92,9 +91,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         try {
             setLoading(true)
             const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
-
             setVendor(response?.data?.data)
-
         } catch (err: any) {
             toast.error(err.message)
             setLoading(false)
@@ -123,6 +120,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
 
         try {
             const response = await postData('admin/product/vendorproducts', { id: result?.[0]?.id, type: process.env.NEXT_PUBLIC_TYPE });
+
             const Filter = response?.data?.data?.map((res: any) => ({
                 label: res?.name,
                 id: res?._id
@@ -141,11 +139,10 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         setValue("total", "")
         setValue("quantity", "")
         setValue("price", "")
-
         let data = productListRes?.filter((res: any) => res?._id === value?.id);
         let prdctlist: any = await getProduct(data?.[0] || []);
         setSelectProduct(prdctlist)
-        let filter = prdctlist || [].filter((res: any) => res?.id === value?.id)
+        let filter = prdctlist || [].filter((res: any) => res?.id === value?.id);
         if (filter?.variant === false) {
             setValue('price', filter?.price);
             setValue("total", filter?.price)
@@ -189,7 +186,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         setValue("seller", matchedObjects[0]?.seller);
         setValue("total", matchedObjects[0]?.price);
         setValue('price', matchedObjects[0]?.price);
-
+        setValue('stock_value', matchedObjects[0]?.stockValue + matchedObjects[0]?.minQty);
     }
 
     const OnChangeQuantity = (e: any) => {
@@ -241,10 +238,9 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
 
 
     const Submit = async (data: any) => {
-        console.log({ data }, 'DATA')
+
         let AllProducts: any = []
         AllProducts = structuredClone(allProduct);
-
         if (!productData?.variant) {
             let duplicateProduct = AllProducts?.productDetails?.some((res: any) => res?.product_id === selectProduct?._id);
             if (duplicateProduct) {
@@ -273,16 +269,23 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             unitPrice: data?.price,
             variant_id: null,
             vendor_mobile: vendorDetails?.[0]?.vendor_mobile,
-            delivery: null
+            delivery: null,
+            title: null,
+            stock_value: null,
         }
 
         if (selectProduct?.variant === true) {
-            value['type'] = "varient";
+            value['type'] = "variant";
             value['delivery'] = attributeSelect?.[0]?.delivery;
+            value['title'] = attributeSelect?.[0]?.title;
+            value['variant_id'] = attributeSelect?.[0]?.id;
+            value['stock_value'] = selectProduct.stock ? parseInt(attributeSelect?.[0]?.stockValue) + parseInt(attributeSelect?.[0]?.minQty) : null;
         } else {
             value['type'] = "single";
             value['delivery'] = selectProduct?.delivery;
+            value['stock_value'] = selectProduct.stock ? selectProduct.stockValue + parseInt(selectProduct?.minQty) : null
         }
+
         AllProducts.productDetails.push(value);
 
         //find highest delivery Charge
@@ -416,7 +419,14 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                             </Customselect>
                         </Grid>
                         <Grid item xs={12} lg={3}>
-                            <CustomSingleSearch list={productList} onChangeValue={OnChangeProduct} fieldLabel='Products' />
+                            <CustomSingleSearch
+                                control={control}
+                                error={errors.product_id}
+                                fieldName='product_id'
+                                list={productList}
+                                onChangeValue={OnChangeProduct}
+                                fieldLabel='Products'
+                            />
                         </Grid>
 
                         {(productData && productData?.variant) && productData?.attributes?.map((res: any, i: number) => (

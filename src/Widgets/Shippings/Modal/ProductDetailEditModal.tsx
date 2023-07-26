@@ -45,7 +45,7 @@ type Inputs = {
 };
 
 const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge }: props) => {
-
+    console.log(data, 'DATA DATA')
 
 
     const schema = yup
@@ -132,6 +132,13 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
             setValue('seller_price', data?.seller_price)
             setError('quantity', { message: 'Minimum Quantity Required' })
         } else {
+            if (data?.stock_value) {
+                if (data?.stock_value < parseFloat(value)) {
+                    setError('quantity', { message: 'Out of Stock' })
+                    return false;
+                }
+            }
+
             setError('quantity', { message: '' })
             // let purchsePrz = (parseInt(data?.seller_price) * parseFloat(value));
             let unitprz = (parseInt(data?.unitPrice) * parseFloat(value));

@@ -28,7 +28,8 @@ type Inputs = {
     store: any,
     vendor_id: any,
     product_id: any,
-    screentype: any
+    screentype: any,
+
 
 }
 
@@ -39,7 +40,8 @@ type IFormInput = {
     store: any,
     vendor_id: any,
     product_id: any,
-    screentype: any
+    screentype: any,
+
 }
 
 const SliderManagementForm = ({ res }: Props) => {
@@ -68,19 +70,39 @@ const SliderManagementForm = ({ res }: Props) => {
     const [selectedProduct, setSelectedProduct] = useState<any>(null);
     const [singleProduct, setSingleProduct] = useState<any>(null)
 
-
-
     const orderValidation = /^(0|[1-9]\d*)$/
+
+    const store = {
+        franchise_id: yup.string().required('Franchisee is Required'),
+        order_number: yup.string().required('Order Number is Required').matches(orderValidation, 'Order should be number'),
+        image: yup
+            .mixed()
+            .required('Image is Required'),
+        store: yup.string().required('Store Id is Required'),
+    }
+    const products = {
+        franchise_id: yup.string().required('Franchisee is Required'),
+        order_number: yup.string().required('Order Number is Required').matches(orderValidation, 'Order should be number'),
+        image: yup
+            .mixed()
+            .required('Image is Required'),
+        store: yup.string().required('Store Id is Required'),
+        product_id: yup.string().required('Product Id is Required'),
+
+    }
+    const all = {
+        franchise_id: yup.string().required('Franchisee is Required'),
+        order_number: yup.string().required('Order Number is Required').matches(orderValidation, 'Order should be number'),
+        image: yup
+            .mixed()
+            .required('Image is Required'),
+    }
+
+
+
     const schema = yup
         .object()
-        .shape({
-            franchise_id: yup.string().required('Franchisee is Required'),
-            order_number: yup.string().required('Order Number is Required').matches(orderValidation, 'Order should be number'),
-            image: yup
-                .mixed()
-                .required('Image is Required')
-
-        })
+        .shape(selectType === "store" ? store : selectType === "product" ? products : all)
 
 
 
@@ -257,13 +279,14 @@ const SliderManagementForm = ({ res }: Props) => {
 
         let data = productListRes?.filter((res: any) => res?._id === value?.id);
         let prdctlist: any = await getProduct(data?.[0] || []);
-        console.log({ prdctlist }, 'PRODUCT LIST')
+
         let autosearch = {
             id: prdctlist?._id,
             label: prdctlist?.name
         }
         setSingleProduct(autosearch)
-        setValue("product_id", prdctlist?._id)
+        setValue("product_id", prdctlist?._id);
+        setError('product_id', { message: "" })
         setSelectProduct(prdctlist)
         setProductData(prdctlist)
 
@@ -285,9 +308,6 @@ const SliderManagementForm = ({ res }: Props) => {
 
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-
-
-
         const CREATE_URL = 'admin/slider/create';
         const UPDATE_URL = 'admin/slider/update';
 
@@ -303,19 +323,19 @@ const SliderManagementForm = ({ res }: Props) => {
         formData.append("order_number", data?.order_number);
         formData.append("product_id", data?.product_id);
         formData.append("vendor_id", data?.vendor_id);
-        formData.append("screentype", data?.screentype)
-        // try {
-        //     setLoading(true)
-        //     await postData(res ? UPDATE_URL : CREATE_URL, formData)
-        //     reset()
-        //     toast.success(res ? 'Update Successfully' : 'Created Successfully')
-        //     router.push('/sliderManagement')
-        // } catch (err: any) {
-        //     toast.error(err?.message)
-        //     setLoading(false)
-        // } finally {
-        //     setLoading(false)
-        // }
+        formData.append("screentype", data?.screentype ? data?.screentype : null )
+        try {
+            setLoading(true)
+            await postData(res ? UPDATE_URL : CREATE_URL, formData)
+            reset()
+            toast.success(res ? 'Update Successfully' : 'Created Successfully')
+            router.push('/sliderManagement')
+        } catch (err: any) {
+            toast.error(err?.message)
+            setLoading(false)
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -362,32 +382,7 @@ const SliderManagementForm = ({ res }: Props) => {
         <Box>
             <CustomBox title='Slider Details'>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} lg={2}>
-                        <Customselect
-                            disabled={false}
-                            type='text'
-                            control={control}
-                            error={errors.screentype}
-                            fieldName="screentype"
-                            placeholder={``}
-                            fieldLabel={"Screen Type"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={selectType}
-                            options={''}
-                            onChangeValue={onChangeType}
-                            background={'#fff'}
-                        >
-                            <MenuItem value="" disabled >
-                                <>Select Store</>
-                            </MenuItem>
-                            {ScreenType && ScreenType.map((res: any) => (
-                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
-                            ))}
-                        </Customselect>
-                    </Grid>
+                   
                     <Grid item xs={12} lg={2}>
                         <Customselect
                             disabled={false}
@@ -411,6 +406,32 @@ const SliderManagementForm = ({ res }: Props) => {
                             </MenuItem>
                             {getfranchise && getfranchise?.filter((act: any) => act?.status !== 'inactive').map((res: any) => (
                                 <MenuItem key={res?._id} value={res?._id}>{res?.franchise_name}</MenuItem>
+                            ))}
+                        </Customselect>
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
+                        <Customselect
+                            disabled={false}
+                            type='text'
+                            control={control}
+                            error={errors.screentype}
+                            fieldName="screentype"
+                            placeholder={``}
+                            fieldLabel={"Screen Type"}
+                            selectvalue={""}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={selectType}
+                            options={''}
+                            onChangeValue={onChangeType}
+                            background={'#fff'}
+                        >
+                            <MenuItem value="" disabled >
+                                <>Select Store</>
+                            </MenuItem>
+                            {ScreenType && ScreenType.map((res: any) => (
+                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
                             ))}
                         </Customselect>
                     </Grid>
@@ -444,9 +465,17 @@ const SliderManagementForm = ({ res }: Props) => {
                         </Grid>}
                     {selectType === "product" &&
                         <Grid item xs={12} lg={2}>
-                            <CustomSingleSearch list={productList} value={singleProduct ? singleProduct : selectedProduct} onChangeValue={OnChangeProduct} fieldLabel='Products' />
+                            <CustomSingleSearch
+                                control={control}
+                                error={errors.product_id}
+                                fieldName="product_id"
+                                list={productList}
+                                value={singleProduct ? singleProduct : selectedProduct}
+                                onChangeValue={OnChangeProduct}
+                                fieldLabel='Products' />
                         </Grid>
                     }
+                    
                     <Grid item xs={12} lg={2}>
                         <CustomInput
                             type='text'
