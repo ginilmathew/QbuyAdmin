@@ -163,16 +163,12 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
         let product = []
 
         if (data?.variant_id) {
-
             product = allProduct?.productDetails?.filter((res: any) => res?.variant_id !== data?.variant_id).map((itm: any) => (
                 {
                     ...itm
                 }))
 
-
         } else {
-
-
             product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== data?.product_id).map((itm: any) => (
                 {
                     ...itm
@@ -213,6 +209,12 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     }
 
     const DeliverySubmit = () => {
+
+        let deliveryPrice = getValues('deliveryPrice')
+        if (parseInt(deliveryPrice) <= 0) {
+            toast.warning('Delivery Price Cannot be Zero');
+            return false;
+        }
         allProduct['delivery_charge'] = getValues('deliveryPrice');
         allProduct['grand_total'] = parseInt(allProduct?.delivery_charge) + parseInt(allProduct?.total_amount);
         handleClose()

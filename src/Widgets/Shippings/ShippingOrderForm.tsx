@@ -49,11 +49,6 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     const router = useRouter()
 
     const idd = view ? view : res;
-
-
-
-
-
     const [orderhistory, setOrderhistory] = useState<any>()
     const [customerGroupSelect, setCustomerGroupSelect] = useState<string>('')
     const [paymentMethodList, setPaymentMethodList] = useState<any>([

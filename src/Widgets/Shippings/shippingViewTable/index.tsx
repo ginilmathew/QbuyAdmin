@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,15 +6,16 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import ProductDetailEditModal from '../Modal/ProductDetailEditModal';
 import Custombutton from '@/components/Custombutton';
 import AddProductModal from '../Modal/AddProductModal';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
-import { postData } from '@/CustomAxios';
+import { fetchData, postData } from '@/CustomAxios';
 import { toast } from "react-toastify";
+import VendorStatusContext from '@/helpers/shippingStatus';
 type props = {
     res: any,
     readonly: any,
@@ -34,9 +35,11 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [singleList, setSingleList] = useState([]);
     const [mode, setMode] = useState<any>(null)
     const [productList, setProductList] = useState<any>(null);
+    const [vendorList, setVendorList] = useState<any>([])
+    const [vendorStatuslist, setVendorStatusList] = useState<any>([])
+    const [vendorStatusData, setVendorStatus] = useState<any>([])
 
-
-
+    console.log({ vendorList })
 
     const handleClose = useCallback(() => {
         setModalOpen(false);
@@ -86,17 +89,24 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 product_id: itm?.product_id,
                 store_name: itm?.productdata?.vendors?.store_name,
                 store_address: itm?.productdata?.vendors?.store_address,
-                vendor_mobile: itm?.productdata?.vendors?.vendor_mobile,
+                vendor: itm?.productdata?.vendors,
                 seller_price: itm?.type === "single" ? itm?.productdata?.seller_price : itm?.variants?.seller_price,
                 delivery: itm?.deliveryPrice,
+                fixed_delivery_price: itm?.type === "single" ? itm?.deliveryPrice : itm?.variants?.fixed_delivery_price,
                 title: itm?.type === "single" ? null : itm?.variants?.title,
-                stock_value:itm?.type === "single" ? (itm?.stock_value + parseFloat(itm?.quantity)): (itm?.variants?.stock_value + parseFloat(itm?.quantity)),
+                stock_value: itm?.type === "single" ? (itm?.stock_value + parseFloat(itm?.quantity)) : (itm?.variants?.stock_value + parseFloat(itm?.quantity)),
             }))
             let Combine = {
                 ...pricedata,
                 productDetails
             }
-            setProductList(Combine)
+
+            const result = productDetails?.map((res: any) => res?.vendor)
+            setVendorStatus(productDetails?.map((res: any) => ({ "vendor_id": "", "staus": "" })))
+            const uniqueNames = Array.from(new Set(result.map(res => res)));
+            setVendorList(uniqueNames)
+            setProductList(Combine);
+
         }
 
 
@@ -118,6 +128,23 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     }, [productList])
 
 
+    const vendorStatus = async () => {
+        try {
+            const fetch = await fetchData('common/vendor-status-list');
+            console.log({ fetch })
+            setVendorStatusList(fetch?.data?.data)
+
+        } catch (err: any) {
+
+
+        }
+
+    }
+
+
+
+
+
 
     useEffect(() => {
         if (productList) {
@@ -129,6 +156,10 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
         }
 
     }, [productList])
+
+    useEffect(() => {
+        vendorStatus()
+    }, [])
 
 
 
@@ -164,21 +195,21 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
 
         }
 
- 
 
- 
-        // const highestDelivery = product.reduce((highest: any, delivery: any) => {
-        //     return Math.max(highest, delivery.delivery);
-        // }, 0);
+
+        const highestDelivery = product.reduce((highest: any, delivery: any) => {
+            return Math.max(highest, delivery.fixed_delivery_price);
+        }, 0);
 
         const res = await removeItemApi(row?.product_id);
 
- 
+
         if (res?.data?.message === "Success") {
             if (product?.length > 0) {
                 const rate = product?.reduce((inital: any, price: any) => inital + (parseFloat(price?.unitPrice) * parseFloat(price?.quantity)), 0);
                 let pricedata = {
-                    delivery_charge: productList?.delivery_charge,
+                    // delivery_charge: productList?.delivery_charge,
+                    delivery_charge: highestDelivery,
                     grand_total: (parseInt(productList?.delivery_charge) + rate),
                     total_amount: rate
                 }
@@ -186,6 +217,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                     ...pricedata,
                     productDetails: [...product],
                 });
+                setVendorList(product.map((res: any) => res?.vendor));
             } else {
                 let pricedata = {
                     delivery_charge: "",
@@ -200,6 +232,17 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
         }
     }
 
+
+    const vendorStatusChange = (e: any, index: number, res: any) => {
+        console.log(res, 'RES')
+        const { value } = e.target;
+        let status: any = []
+        vendorStatusData[index]['vendor_id'] = res?._id;
+        vendorStatusData[index]['staus']=value;
+
+        console.log(vendorStatusData)
+
+    }
 
 
 
@@ -242,7 +285,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                                 <TableCell component="th" scope="row">
                                     {row?.name}  {row.title ? (row.title) : ''}
                                 </TableCell>
-                                <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor_mobile}{ }</TableCell>
+                                <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor?.vendor_mobile}{ }</TableCell>
                                 <TableCell align="center">{row.quantity}</TableCell>
                                 <TableCell align="center">{(row?.unitPrice)}</TableCell>
                                 <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
@@ -292,6 +335,44 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            {/* STATUS CHANGE */}
+            <Box marginTop={5}>
+                <Typography style={{ fontSize: 20, fontWeight: 'bold' }}>Vendor Status</Typography>
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center">#</TableCell>
+                                <TableCell align="center">Vendor Name</TableCell>
+                                <TableCell align="center">Status</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+
+                            {vendorList?.map((res: any, index: number) => (
+                                <TableRow
+                                    key={res.name}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell align="center">{index + 1 }</TableCell>
+                                    <TableCell align="center">{res?.vendor_name}</TableCell>
+                                    <TableCell align="center">
+                                        <select onChange={(e: any) => vendorStatusChange(e, index, res)}>
+                                            {vendorStatuslist?.map((res: any) => (
+                                                <option value={res?._id}>{res?.status_name}</option>
+                                            ))}
+                                        </select>
+                                    </TableCell>
+                                </TableRow>
+
+                            ))}
+
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Box>
+
             {modalOpen &&
                 <ProductDetailEditModal
                     SetDeliveryCharge={SetDeliveryCharge}
@@ -305,7 +386,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 />}
             {addOpen &&
                 <AddProductModal
-               
+                    setVendorList={setVendorList}
                     order_id={id}
                     SetDeliveryCharge={SetDeliveryCharge}
                     allProduct={productList}
@@ -316,28 +397,6 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
 
                 />}
 
-            {/*   
-           {modalOpen && <Dialog
-                open={modalOpen}
-                onClose={handleCloseDeleteModal}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                maxWidth={'xs'}
-                fullWidth
-            >
-                <DialogTitle id="alert-dialog-title">
-                    Are you sure you want Delete ?
-                </DialogTitle>
-                <DialogContent>
-
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDeleteModal}>No</Button>
-                    <Button onClick={removeProduct} autoFocus>
-                        Yes
-                    </Button>
-                </DialogActions>
-            </Dialog> } */}
 
 
         </Box>

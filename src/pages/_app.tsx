@@ -17,6 +17,7 @@ import HeaderProvider from '@/helpers/header/HeaderContext';
 import type { NextComponentType } from 'next'
 
 import PushNotificationLayout from '@/components/PushNotificationLayout';
+import VendorStatusProvider from '@/helpers/shippingStatus/VendorStatusContext';
 
 const poppins = Poppins({
 	subsets: ['latin'],
@@ -72,14 +73,14 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 						<Component {...pageProps} />
 					) : (
 						<ProtectedRoute>
-
-							<UserProvider>
-								{/* <PushNotificationLayout> */}
+					
+								<UserProvider>
+									{/* <PushNotificationLayout> */}
 									<Header />
 									<Component {...pageProps} />
-								{/* </PushNotificationLayout> */}
-							</UserProvider>
-
+									{/* </PushNotificationLayout> */}
+								</UserProvider>
+						
 						</ProtectedRoute>
 					)}
 					<ToastContainer />

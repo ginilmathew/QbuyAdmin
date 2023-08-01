@@ -25,7 +25,8 @@ type props = {
     setaddProductList: any,
     SetDeliveryCharge?: any,
     order_id: string,
-  
+    setVendorList: any
+
 }
 type Inputs = {
     name: string;
@@ -37,9 +38,10 @@ type Inputs = {
     seller: string | number;
     stock_value: any
     product_id: any
+
 };
 
-const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id }: props) => {
+const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id, setVendorList }: props) => {
 
 
 
@@ -57,6 +59,8 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const [selectProduct, setSelectProduct] = useState<any>([]);
     const [attributeSelect, setAttributeSelect] = useState<any>([])
     const [vendorDetails, setVendorDetails] = useState<any>(null)
+
+
 
 
     const schema = yup
@@ -77,8 +81,12 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
             defaultValues: {
-
-
+                franchisee: null,
+                price: null,
+                product_id: null,
+                quantity: null,
+                store: null,
+                total: null
             }
 
         });
@@ -141,6 +149,8 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         setValue("price", "")
         let data = productListRes?.filter((res: any) => res?._id === value?.id);
         let prdctlist: any = await getProduct(data?.[0] || []);
+
+
         setSelectProduct(prdctlist)
         let filter = prdctlist || [].filter((res: any) => res?.id === value?.id);
         if (filter?.variant === false) {
@@ -192,7 +202,13 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const OnChangeQuantity = (e: any) => {
         const { value } = e.target;
         setValue("quantity", value)
+        if (value === "" || value <= 0) {
+            toast.warning('Quantity is Required')
+            return false;
+        }
+
         let stock = selectProduct?.stock;
+
         if (selectProduct?.available) {
             if (selectProduct?.variant === false) {
 
@@ -217,11 +233,14 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                     if (parseFloat(value) > stockValue) {
                         toast.warning("Stock Value excedded")
                     } else {
-                        let total = (parseFloat(value) * attributeSelect?.[0]?.price?.price);
+                        console.log('ELSE PAGE Stock')
+                        let total = (parseFloat(value) * attributeSelect?.[0]?.price);
                         setValue("total", total)
                     }
 
                 } else {
+                    console.log('ELSE PAGE CALLED')
+                    console.log({ attributeSelect }, 'ATTRIBUTE SELECT')
                     let result = (parseInt(attributeSelect?.[0]?.price) * parseFloat(value));
                     setValue("total", result)
                     console.log({ result })
@@ -238,6 +257,13 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
 
 
     const Submit = async (data: any) => {
+        let quntityValidation = parseInt(data?.quantity)
+
+        if (quntityValidation < 1 || Number.isNaN(quntityValidation)) {
+            toast.warning('Wrong Data!...')
+            return false;
+        }
+
 
         let AllProducts: any = []
         AllProducts = structuredClone(allProduct);
@@ -266,21 +292,25 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             store_address: vendorDetails?.[0]?.store_address,
             store_name: vendorDetails?.[0]?.store_name,
             type: null,
+            vendor: vendorDetails?.[0],
             unitPrice: data?.price,
             variant_id: null,
             vendor_mobile: vendorDetails?.[0]?.vendor_mobile,
             delivery: null,
             title: null,
             stock_value: null,
+            fixed_delivery_price: null
         }
 
         if (selectProduct?.variant === true) {
             value['type'] = "variant";
             value['delivery'] = attributeSelect?.[0]?.delivery;
+            // value['fixed_delivery_price']=attributeSelect?.[0]?.delivery;
             value['title'] = attributeSelect?.[0]?.title;
             value['variant_id'] = attributeSelect?.[0]?.id;
             value['stock_value'] = selectProduct.stock ? parseInt(attributeSelect?.[0]?.stockValue) + parseInt(attributeSelect?.[0]?.minQty) : null;
         } else {
+            // value['fixed_delivery_price']=selectProduct?.delivery;
             value['type'] = "single";
             value['delivery'] = selectProduct?.delivery;
             value['stock_value'] = selectProduct.stock ? selectProduct.stockValue + parseInt(selectProduct?.minQty) : null
@@ -289,22 +319,32 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         AllProducts.productDetails.push(value);
 
         //find highest delivery Charge
-        // const highestDelivery = AllProducts.productDetails.reduce((highest: any, delivery: any) => {
-        //     return Math.max(highest, delivery.delivery);
-        // }, 0);
-        AllProducts['delivery_charge'] = allProduct?.delivery_charge;
+        const highestDelivery = AllProducts.productDetails.reduce((highest: any, delivery: any) => {
+            return Math.max(highest, delivery.delivery);
+        }, 0);
+
+
+
+        // AllProducts['delivery_charge'] = allProduct?.delivery_charge;
+        AllProducts['delivery_charge'] = highestDelivery;
         AllProducts['total_amount'] = parseInt(data?.total) + parseInt(allProduct?.total_amount);
         AllProducts['grand_total'] = (parseInt(data?.total) + parseInt(allProduct?.total_amount)) + parseInt(allProduct?.delivery_charge);
+
+        console.log(AllProducts.productDetails,'ALL PRODUCTS')
         try {
             setLoading(true)
             let publishValue = {
                 id: order_id,
                 productDetails: [...AllProducts.productDetails]
             }
+
             await postData('admin/order/edit', publishValue);
             toast.success('Product Added Successfully')
             setLoading(false)
-            setaddProductList(AllProducts)
+            setaddProductList(AllProducts);
+            let result = AllProducts?.productDetails?.map((res: any) => res?.vendor)
+      
+            setVendorList([...result])
             handleClose()
             AllProducts = [];
         } catch (err) {
