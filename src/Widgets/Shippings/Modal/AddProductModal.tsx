@@ -25,7 +25,8 @@ type props = {
     setaddProductList: any,
     SetDeliveryCharge?: any,
     order_id: string,
-    setVendorList: any
+    setVendorList: any;
+    setVendorStatus:any;
 
 }
 type Inputs = {
@@ -37,11 +38,12 @@ type Inputs = {
     total: any;
     seller: string | number;
     stock_value: any
-    product_id: any
+    product_id: any;
+
 
 };
 
-const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id, setVendorList }: props) => {
+const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id, setVendorList ,setVendorStatus}: props) => {
 
 
 
@@ -59,7 +61,6 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const [selectProduct, setSelectProduct] = useState<any>([]);
     const [attributeSelect, setAttributeSelect] = useState<any>([])
     const [vendorDetails, setVendorDetails] = useState<any>(null)
-
 
 
 
@@ -124,7 +125,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
 
         ))
         let vendorDetails = vendor?.filter((res: any) => res?._id === e.target.value);
-        setVendorDetails(vendorDetails)
+         setVendorDetails(vendorDetails)
 
         try {
             const response = await postData('admin/product/vendorproducts', { id: result?.[0]?.id, type: process.env.NEXT_PUBLIC_TYPE });
@@ -299,17 +300,20 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             delivery: null,
             title: null,
             stock_value: null,
-            fixed_delivery_price: null
+            fixed_delivery_price: null,
+            delivery_charge:null
         }
 
         if (selectProduct?.variant === true) {
             value['type'] = "variant";
             value['delivery'] = attributeSelect?.[0]?.delivery;
+   
             // value['fixed_delivery_price']=attributeSelect?.[0]?.delivery;
             value['title'] = attributeSelect?.[0]?.title;
             value['variant_id'] = attributeSelect?.[0]?.id;
             value['stock_value'] = selectProduct.stock ? parseInt(attributeSelect?.[0]?.stockValue) + parseInt(attributeSelect?.[0]?.minQty) : null;
         } else {
+           
             // value['fixed_delivery_price']=selectProduct?.delivery;
             value['type'] = "single";
             value['delivery'] = selectProduct?.delivery;
@@ -317,26 +321,32 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         }
 
         AllProducts.productDetails.push(value);
-
+        setVendorStatus(AllProducts.productDetails?.map((res: any) => ({ "vendor_id": null, "status": null})))
+        console.log(AllProducts.productDetails,'ALL PRODUCTS PUSH')
+ 
         //find highest delivery Charge
         const highestDelivery = AllProducts.productDetails.reduce((highest: any, delivery: any) => {
             return Math.max(highest, delivery.delivery);
         }, 0);
 
-
+ 
+     
 
         // AllProducts['delivery_charge'] = allProduct?.delivery_charge;
         AllProducts['delivery_charge'] = highestDelivery;
         AllProducts['total_amount'] = parseInt(data?.total) + parseInt(allProduct?.total_amount);
         AllProducts['grand_total'] = (parseInt(data?.total) + parseInt(allProduct?.total_amount)) + parseInt(allProduct?.delivery_charge);
 
-        console.log(AllProducts.productDetails,'ALL PRODUCTS')
+ 
+   
+
         try {
             setLoading(true)
             let publishValue = {
                 id: order_id,
                 productDetails: [...AllProducts.productDetails]
             }
+
 
             await postData('admin/order/edit', publishValue);
             toast.success('Product Added Successfully')

@@ -75,7 +75,8 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     const [loader, setLoader] = useState<boolean>(false)
     const [orderviewList, setOrderViewList] = useState<any>(null)
     const [productList, setProductList] = useState<any>([])
-    const [paymentStatus, setPaymentStatus] = useState<any>([])
+    const [paymentStatus, setPaymentStatus] = useState<any>([]);
+    const [vendor_statusP, setVendorStatusP] = useState<any>(null)
     const [orderStatusSelect, setOrderStatus] = useState<any>([
         {
             value: "active",
@@ -182,7 +183,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     }
 
     const ChangeOrderStatus = async () => {
-        console.log(idd)
+     
         let value = {
             order_id: idd,
             status: orderSelect,
@@ -252,10 +253,12 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
     const SubmitOrder = async (data: any) => {
 
+
         let result = {
             id: idd,
             delivery_charge: deliveryCharge,
             ...data,
+            vendor_status:vendor_statusP
         }
         try {
 
@@ -505,7 +508,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             </CustomBox>
             <CustomBox title='Product Details'>
                 {orderviewList &&
-                    <ShippingTable res={orderviewList} readonly={res} id={idd} SetDeliveryCharge={SetDeliveryCharge} />}
+                    <ShippingTable res={orderviewList} readonly={res} id={idd} SetDeliveryCharge={SetDeliveryCharge} setVendorStatusP={setVendorStatusP} />}
             </CustomBox>
             {idd && <HistoryTable res={orderviewList?.order_history} />}
 
