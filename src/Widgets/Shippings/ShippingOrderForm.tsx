@@ -19,7 +19,7 @@ import { useRouter } from 'next/router';
 
 import CustomTextarea from '@/components/CustomTextarea';
 import CustomLoader from '@/components/CustomLoader';
-
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import ShippingTable from './shippingViewTable';
 import HistoryTable from './shippingViewTable/History';
 
@@ -36,7 +36,8 @@ type Inputs = {
     order_status: string,
     comment: string;
     order_id: string;
-    payment_status: string
+    payment_status: string;
+    vendor_status: any
 };
 
 type props = {
@@ -74,9 +75,10 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [loader, setLoader] = useState<boolean>(false)
     const [orderviewList, setOrderViewList] = useState<any>(null)
-    const [productList, setProductList] = useState<any>([])
-    const [paymentStatus, setPaymentStatus] = useState<any>([]);
     const [vendor_statusP, setVendorStatusP] = useState<any>(null)
+    const [defaultStatus,setDefaultStatus]=useState<any>(null)
+
+
     const [orderStatusSelect, setOrderStatus] = useState<any>([
         {
             value: "active",
@@ -93,11 +95,11 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     ]
     )
     const [deliveryCharge, SetDeliveryCharge] = useState(null)
+    const [vendorStatusList, setVendorStatusList] = useState<any>([])
 
 
-
-
-
+    console.log({ vendor_statusP }, 'VENDOR STATUS P')
+    console.log({ orderviewList }, 'ORDER VIEW LIST')
 
     const schema = yup
         .object()
@@ -183,7 +185,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     }
 
     const ChangeOrderStatus = async () => {
-     
+
         let value = {
             order_id: idd,
             status: orderSelect,
@@ -213,6 +215,37 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
         }
     }
 
+    const vendorStatus = async () => {
+        try {
+            const fetch = await fetchData('common/order-status-list');
+
+            setVendorStatusList(fetch?.data?.data)
+
+        } catch (err: any) {
+
+
+        }
+
+    }
+
+
+    const vendorStatusChange = (e: any, index: number, res: any) => {
+
+   
+        const { value } = e.target;
+
+        vendor_statusP[index]['status'] = value;
+        setVendorStatusP(vendor_statusP)
+
+
+    }
+
+
+
+    useEffect(() => {
+        vendorStatus();
+    }, [])
+
 
 
 
@@ -231,6 +264,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             setValue("payment_method", orderviewList.payment_type);
             setValue("payment_status", orderviewList?.payment_status);
             SetDeliveryCharge(orderviewList?.delivery_charge)
+            setVendorStatusP([...orderviewList?.vendor_status])
         }
 
     }, [orderviewList])
@@ -253,12 +287,12 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
     const SubmitOrder = async (data: any) => {
 
-
+        console.log({ vendor_statusP }, 'VENDOR STATUS PP')
         let result = {
             id: idd,
             delivery_charge: deliveryCharge,
             ...data,
-            vendor_status:vendor_statusP
+            vendor_status: vendor_statusP
         }
         try {
 
@@ -274,6 +308,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
         }
 
     }
+
 
 
 
@@ -508,7 +543,56 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             </CustomBox>
             <CustomBox title='Product Details'>
                 {orderviewList &&
-                    <ShippingTable res={orderviewList} readonly={res} id={idd} SetDeliveryCharge={SetDeliveryCharge} setVendorStatusP={setVendorStatusP} />}
+                    <ShippingTable res={orderviewList} readonly={res} id={idd} SetDeliveryCharge={SetDeliveryCharge} />}
+            </CustomBox>
+
+            <CustomBox title='Vendor Status'>
+                <TableContainer component={Paper} >
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center">#</TableCell>
+                                <TableCell align="center">Vendor Name</TableCell>
+                                <TableCell align="center">Store Name</TableCell>
+                                <TableCell align="center">Current Status</TableCell>
+                                {res && 
+                                <TableCell align="center">Change Status</TableCell>}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {vendor_statusP && vendor_statusP?.map((resp: any, i: number) => (
+                                <TableRow
+                                    // key={row.name}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell align="center" component="th" scope="row">
+                                        {i + 1}
+                                    </TableCell>
+                                    <TableCell align="center" component="th" scope="row">
+                                        {resp?.store_name}
+                                    </TableCell>
+                                    <TableCell align="center" component="th" scope="row">
+                                        {resp?.vendor_name}
+                                    </TableCell>
+                                    <TableCell align="center" component="th" scope="row">
+                                        {resp?.status}
+                                    </TableCell>
+                                    {res && 
+                                    <TableCell align="center" component="th" scope="row">
+                                        <select onChange={(e: any) => vendorStatusChange(e, i, resp)} style={{cursor:'pointer',background:'#fff',border:'1px solid #f5f5f5',padding:10}}>
+                                            <option> <em> Select Status</em></option>
+                                            {vendor_statusP && vendorStatusList?.map((list: any) => (
+                                                <option value={list?.status_name}>{list?.status_name}</option>
+                                            ))}
+                                        </select>
+                                       
+
+                                    </TableCell> }
+                                </TableRow>))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
             </CustomBox>
             {idd && <HistoryTable res={orderviewList?.order_history} />}
 

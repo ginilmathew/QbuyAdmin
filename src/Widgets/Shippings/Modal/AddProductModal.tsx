@@ -25,8 +25,8 @@ type props = {
     setaddProductList: any,
     SetDeliveryCharge?: any,
     order_id: string,
-    setVendorList: any;
-    setVendorStatus:any;
+
+
 
 }
 type Inputs = {
@@ -43,7 +43,7 @@ type Inputs = {
 
 };
 
-const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id, setVendorList ,setVendorStatus}: props) => {
+const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id}: props) => {
 
 
 
@@ -321,8 +321,8 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         }
 
         AllProducts.productDetails.push(value);
-        setVendorStatus(AllProducts.productDetails?.map((res: any) => ({ "vendor_id": null, "status": null})))
-        console.log(AllProducts.productDetails,'ALL PRODUCTS PUSH')
+        // setVendorStatus(AllProducts.productDetails?.map((res: any) => ({ "vendor_id": null, "status": null})))
+        // console.log(AllProducts.productDetails,'ALL PRODUCTS PUSH')
  
         //find highest delivery Charge
         const highestDelivery = AllProducts.productDetails.reduce((highest: any, delivery: any) => {
@@ -352,9 +352,9 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             toast.success('Product Added Successfully')
             setLoading(false)
             setaddProductList(AllProducts);
-            let result = AllProducts?.productDetails?.map((res: any) => res?.vendor)
+ 
       
-            setVendorList([...result])
+           
             handleClose()
             AllProducts = [];
         } catch (err) {

@@ -21,14 +21,14 @@ type props = {
     readonly: any,
     id: any,
     SetDeliveryCharge: any,
-    setVendorStatusP: any
+
 }
 
 
-const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setVendorStatusP }: props) => {
+const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
 
 
-  console.log({res},'RESPONSE DELIVERY PRICE')
+
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalDelete, setModalDelete] = useState(false);
@@ -37,10 +37,9 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setVendorStatusP 
     const [mode, setMode] = useState<any>(null)
     const [productList, setProductList] = useState<any>(null);
     const [vendorList, setVendorList] = useState<any>([])
-    const [vendorStatuslist, setVendorStatusList] = useState<any>([])
-    const [vendorStatusData, setVendorStatus] = useState<any>([])
 
-    console.log({ vendorList })
+
+
 
 
 
@@ -96,30 +95,30 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setVendorStatusP 
                 store_address: itm?.productdata?.vendors?.store_address,
                 vendor: itm?.productdata?.vendors,
                 seller_price: itm?.type === "single" ? itm?.productdata?.seller_price : itm?.variants?.seller_price,
-                delivery:itm?.type === "single" ? itm?.delivery : itm?.variants?.fixed_delivery_price,
+                delivery: itm?.type === "single" ? itm?.delivery : itm?.variants?.fixed_delivery_price,
                 fixed_delivery_price: itm?.type === "single" ? itm?.delivery : itm?.variants?.fixed_delivery_price,
                 title: itm?.type === "single" ? null : itm?.variants?.title,
                 stock_value: itm?.type === "single" ? (itm?.stock_value + parseFloat(itm?.quantity)) : (itm?.variants?.stock_value + parseFloat(itm?.quantity)),
             }))
 
-      
+
             let Combine = {
                 ...pricedata,
                 productDetails
             }
 
-            const result = productDetails?.map((res: any) => res?.vendor)
-            setVendorStatus(productDetails?.map((res: any) => ({ "vendor_id": "", "status": "" })))
+            // const result = productDetails?.map((res: any) => res?.vendor)
+            // setVendorStatus(productDetails?.map((res: any) => ({ "vendor_id": "", "status": "" })))
 
 
-            const uniqueArray = result.filter((obj, index, self) => {
-              
-                return index === self.findIndex((o) => o._id === obj._id);
-              });
+            // const uniqueArray = result.filter((obj, index, self) => {
+
+            //     return index === self.findIndex((o) => o._id === obj._id);
+            // });
             // const uniqueNames = Array.from(new Set(result.map(res => res)));
-         
 
-            setVendorList(uniqueArray)
+
+   
             setProductList(Combine);
 
         }
@@ -128,11 +127,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setVendorStatusP 
     }, [res])
 
 
-    useEffect(() => {
-        if (vendorStatusData) {
-            setVendorStatusP([...vendorStatusData])
-        }
-    }, [vendorStatusData])
+
 
 
 
@@ -150,18 +145,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setVendorStatusP 
     }, [productList])
 
 
-    const vendorStatus = async () => {
-        try {
-            const fetch = await fetchData('common/order-status-list');
 
-            setVendorStatusList(fetch?.data?.data)
-
-        } catch (err: any) {
-
-
-        }
-
-    }
 
 
 
@@ -179,9 +163,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setVendorStatusP 
 
     }, [productList])
 
-    useEffect(() => {
-        vendorStatus()
-    }, [])
+
 
 
 
@@ -239,7 +221,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setVendorStatusP 
                     ...pricedata,
                     productDetails: [...product],
                 });
-                setVendorList(product.map((res: any) => res?.vendor));
+       
             } else {
                 let pricedata = {
                     delivery_charge: "",
@@ -255,16 +237,16 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setVendorStatusP 
     }
 
 
-    const vendorStatusChange = (e: any, index: number, res: any) => {
-        console.log(e,index,res,"EVEMNT RES")
+    // const vendorStatusChange = (e: any, index: number, res: any) => {
+    //     console.log(e, index, res, "EVEMNT RES")
 
-        const { value } = e.target;
-        vendorStatusData[index]['vendor_id'] = res?._id;
-        vendorStatusData[index]['status'] = value;
+    //     const { value } = e.target;
+    //     vendorStatusData[index]['vendor_id'] = res?._id;
+    //     vendorStatusData[index]['status'] = value;
 
 
 
-    }
+    // }
 
 
 
@@ -358,42 +340,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setVendorStatusP 
                 </Table>
             </TableContainer>
 
-            {/* STATUS CHANGE */}
-            <Box marginTop={5}>
-                <Typography style={{ fontSize: 20, fontWeight: 'bold' }}>Vendor Status</Typography>
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell align="center">#</TableCell>
-                                <TableCell align="center">Vendor Name</TableCell>
-                                <TableCell align="center">Status</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-
-                            {vendorList?.map((res: any, index: number) => (
-                                <TableRow
-                                    key={res.name}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell align="center">{index + 1}</TableCell>
-                                    <TableCell align="center">{res?.vendor_name}</TableCell>
-                                    <TableCell align="center">
-                                        <select onChange={(e: any) => vendorStatusChange(e, index, res)}>
-                                            {vendorStatuslist?.map((res: any) => (
-                                                <option value={res?.status_name}>{res?.status_name}</option>
-                                            ))}
-                                        </select>
-                                    </TableCell>
-                                </TableRow>
-
-                            ))}
-
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
+            
 
             {modalOpen &&
                 <ProductDetailEditModal
@@ -408,8 +355,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setVendorStatusP 
                 />}
             {addOpen &&
                 <AddProductModal
-                setVendorStatus={setVendorStatus}
-                    setVendorList={setVendorList}
+               
+              
                     order_id={id}
                     SetDeliveryCharge={SetDeliveryCharge}
                     allProduct={productList}
