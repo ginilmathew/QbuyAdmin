@@ -37,7 +37,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [mode, setMode] = useState<any>(null)
     const [productList, setProductList] = useState<any>(null);
     const [vendorList, setVendorList] = useState<any>([])
-
+   console.log({res})
+   console.log({productList},'PRODUCT LIST')
 
 
 
@@ -95,8 +96,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 store_address: itm?.productdata?.vendors?.store_address,
                 vendor: itm?.productdata?.vendors,
                 seller_price: itm?.type === "single" ? itm?.productdata?.seller_price : itm?.variants?.seller_price,
-                delivery: itm?.type === "single" ? itm?.delivery : itm?.variants?.fixed_delivery_price,
-                fixed_delivery_price: itm?.type === "single" ? itm?.delivery : itm?.variants?.fixed_delivery_price,
+                delivery: itm?.type === "single" ? itm?.deliveryPrice : itm?.variants?.fixed_delivery_price,
+                fixed_delivery_price: itm?.type === "single" ? itm?.deliveryPrice : itm?.variants?.fixed_delivery_price,
                 title: itm?.type === "single" ? null : itm?.variants?.title,
                 stock_value: itm?.type === "single" ? (itm?.stock_value + parseFloat(itm?.quantity)) : (itm?.variants?.stock_value + parseFloat(itm?.quantity)),
             }))
@@ -191,6 +192,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
             toast.warning('You have to add atleast Two Product !..')
             return false;
         }
+
+        console.log({PRODUCTLIST:productList?.productDetails})
         let product: any[] = []
         if (row?.type === "variant") {
             product = productList?.productDetails?.filter((res: any) => res?.variant_id !== row?.variant_id);
@@ -200,6 +203,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
         }
 
 
+        console.log({product},'PRODUCT SSSSSSS')
 
         const highestDelivery = product.reduce((highest: any, delivery: any) => {
             return Math.max(highest, delivery.fixed_delivery_price);
