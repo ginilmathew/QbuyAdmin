@@ -36,13 +36,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [singleList, setSingleList] = useState([]);
     const [mode, setMode] = useState<any>(null)
     const [productList, setProductList] = useState<any>(null);
-    const [vendorList, setVendorList] = useState<any>([])
-   console.log({res})
-   console.log({productList},'PRODUCT LIST')
-
-
-
-
+   
 
 
 
@@ -96,8 +90,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 store_address: itm?.productdata?.vendors?.store_address,
                 vendor: itm?.productdata?.vendors,
                 seller_price: itm?.type === "single" ? itm?.productdata?.seller_price : itm?.variants?.seller_price,
-                delivery: itm?.type === "single" ? itm?.deliveryPrice : itm?.variants?.fixed_delivery_price,
-                fixed_delivery_price: itm?.type === "single" ? itm?.deliveryPrice : itm?.variants?.fixed_delivery_price,
+                deliveryPrice: itm?.type === "single" ? itm?.deliveryPrice  : itm?.variants?.fixed_delivery_price,
+                // fixed_delivery_price: itm?.type === "single" ? itm?.deliveryPrice : itm?.variants?.fixed_delivery_price,
                 title: itm?.type === "single" ? null : itm?.variants?.title,
                 stock_value: itm?.type === "single" ? (itm?.stock_value + parseFloat(itm?.quantity)) : (itm?.variants?.stock_value + parseFloat(itm?.quantity)),
             }))
@@ -119,7 +113,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
             // const uniqueNames = Array.from(new Set(result.map(res => res)));
 
 
-   
+
             setProductList(Combine);
 
         }
@@ -193,7 +187,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
             return false;
         }
 
-        console.log({PRODUCTLIST:productList?.productDetails})
+        console.log({ PRODUCTLIST: productList?.productDetails })
         let product: any[] = []
         if (row?.type === "variant") {
             product = productList?.productDetails?.filter((res: any) => res?.variant_id !== row?.variant_id);
@@ -203,21 +197,24 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
         }
 
 
-        console.log({product},'PRODUCT SSSSSSS')
+
 
         const highestDelivery = product.reduce((highest: any, delivery: any) => {
-            return Math.max(highest, delivery.fixed_delivery_price);
+            return Math.max(highest, delivery.deliveryPrice);
         }, 0);
+
+        console.log({highestDelivery},'HIGHST DELIVERY')
 
         const res = await removeItemApi(row?.product_id);
 
 
         if (res?.data?.message === "Success") {
+            SetDeliveryCharge(highestDelivery)
             if (product?.length > 0) {
                 const rate = product?.reduce((inital: any, price: any) => inital + (parseFloat(price?.unitPrice) * parseFloat(price?.quantity)), 0);
                 let pricedata = {
                     // delivery_charge: productList?.delivery_charge,
-                    delivery_charge: highestDelivery,
+                    delivery_charge: Math.ceil(highestDelivery),
                     grand_total: (parseInt(productList?.delivery_charge) + rate),
                     total_amount: rate
                 }
@@ -225,7 +222,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                     ...pricedata,
                     productDetails: [...product],
                 });
-       
+
             } else {
                 let pricedata = {
                     delivery_charge: "",
@@ -344,7 +341,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 </Table>
             </TableContainer>
 
-            
+
 
             {modalOpen &&
                 <ProductDetailEditModal
@@ -359,8 +356,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 />}
             {addOpen &&
                 <AddProductModal
-               
-              
+
+
                     order_id={id}
                     SetDeliveryCharge={SetDeliveryCharge}
                     allProduct={productList}

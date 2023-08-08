@@ -62,7 +62,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const [attributeSelect, setAttributeSelect] = useState<any>([])
     const [vendorDetails, setVendorDetails] = useState<any>(null)
 
-
+    console.log({ selectProduct })
 
     const schema = yup
         .object()
@@ -240,12 +240,10 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                     }
 
                 } else {
-                    console.log('ELSE PAGE CALLED')
-                    console.log({ attributeSelect }, 'ATTRIBUTE SELECT')
+                  
                     let result = (parseInt(attributeSelect?.[0]?.price) * parseFloat(value));
                     setValue("total", result)
-                    console.log({ result })
-                    console.log('NOT STOCK')
+                
                 }
             }
 
@@ -297,16 +295,14 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             unitPrice: data?.price,
             variant_id: null,
             vendor_mobile: vendorDetails?.[0]?.vendor_mobile,
-            delivery: null,
             title: null,
             stock_value: null,
-            fixed_delivery_price: null,
-            delivery_charge: null
+            deliveryPrice: null
         }
 
         if (selectProduct?.variant === true) {
             value['type'] = "variant";
-            value['delivery'] = attributeSelect?.[0]?.delivery;
+            value['deliveryPrice'] = attributeSelect?.[0]?.delivery;
 
             // value['fixed_delivery_price']=attributeSelect?.[0]?.delivery;
             value['title'] = attributeSelect?.[0]?.title;
@@ -314,24 +310,26 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             value['stock_value'] = selectProduct.stock ? parseInt(attributeSelect?.[0]?.stockValue) + parseInt(attributeSelect?.[0]?.minQty) : null;
         } else {
 
-            // value['fixed_delivery_price']=selectProduct?.delivery;
+            // value['fixed_delivery_price'] = selectProduct?.delivery;
             value['type'] = "single";
-            value['delivery'] = selectProduct?.delivery;
+            value['deliveryPrice'] = selectProduct?.delivery;
             value['stock_value'] = selectProduct.stock ? selectProduct.stockValue + parseInt(selectProduct?.minQty) : null
         }
 
         AllProducts.productDetails.push(value);
+
+
+
         // setVendorStatus(AllProducts.productDetails?.map((res: any) => ({ "vendor_id": null, "status": null})))
         // console.log(AllProducts.productDetails,'ALL PRODUCTS PUSH')
 
         //find highest delivery Charge
         const highestDelivery = AllProducts.productDetails.reduce((highest: any, delivery: any) => {
-            return Math.max(highest, delivery.delivery);
+            return Math.max(highest, delivery.deliveryPrice);
         }, 0);
 
 
-
-
+        SetDeliveryCharge(highestDelivery)
         // AllProducts['delivery_charge'] = allProduct?.delivery_charge;
         AllProducts['delivery_charge'] = highestDelivery;
         AllProducts['total_amount'] = parseInt(data?.total) + parseInt(allProduct?.total_amount);

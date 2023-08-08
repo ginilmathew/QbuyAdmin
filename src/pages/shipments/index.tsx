@@ -138,7 +138,7 @@ const Shipments = () => {
                             cursor: 'pointer'
                         }} />
 
-                    {row?.status == "created" &&
+                    {(!['completed', 'cancelled'].includes(row?.status)) &&
                         <BorderColorTwoToneIcon
                             onClick={() => ShippmentEdit(row?._id)}
                             style={{

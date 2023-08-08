@@ -76,7 +76,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     const [loader, setLoader] = useState<boolean>(false)
     const [orderviewList, setOrderViewList] = useState<any>(null)
     const [vendor_statusP, setVendorStatusP] = useState<any>(null)
-    const [defaultStatus,setDefaultStatus]=useState<any>(null)
+    const [defaultStatus, setDefaultStatus] = useState<any>(null)
 
 
     const [orderStatusSelect, setOrderStatus] = useState<any>([
@@ -94,12 +94,11 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
         },
     ]
     )
-    const [deliveryCharge, SetDeliveryCharge] = useState(null)
+    const [deliveryCharge, SetDeliveryCharge] = useState<any>(null)
     const [vendorStatusList, setVendorStatusList] = useState<any>([])
 
 
-    console.log({ vendor_statusP }, 'VENDOR STATUS P')
-    console.log({ orderviewList }, 'ORDER VIEW LIST')
+  console.log({deliveryCharge},'deliveryCharge')
 
     const schema = yup
         .object()
@@ -230,14 +229,9 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
 
     const vendorStatusChange = (e: any, index: number, res: any) => {
-
-   
         const { value } = e.target;
-
         vendor_statusP[index]['status'] = value;
         setVendorStatusP(vendor_statusP)
-
-
     }
 
 
@@ -290,7 +284,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
         console.log({ vendor_statusP }, 'VENDOR STATUS PP')
         let result = {
             id: idd,
-            delivery_charge: deliveryCharge,
+            delivery_charge: Math.ceil(deliveryCharge),
             ...data,
             vendor_status: vendor_statusP
         }
@@ -555,8 +549,8 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                                 <TableCell align="center">Vendor Name</TableCell>
                                 <TableCell align="center">Store Name</TableCell>
                                 <TableCell align="center">Current Status</TableCell>
-                                {res && 
-                                <TableCell align="center">Change Status</TableCell>}
+                                {res &&
+                                    <TableCell align="center">Change Status</TableCell>}
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -577,17 +571,15 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                                     <TableCell align="center" component="th" scope="row">
                                         {resp?.status}
                                     </TableCell>
-                                    {res && 
-                                    <TableCell align="center" component="th" scope="row">
-                                        <select onChange={(e: any) => vendorStatusChange(e, i, resp)} style={{cursor:'pointer',background:'#fff',border:'1px solid #f5f5f5',padding:10}}>
-                                            <option> <em> Select Status</em></option>
-                                            {vendor_statusP && vendorStatusList?.map((list: any) => (
-                                                <option value={list?.status_name}>{list?.status_name}</option>
-                                            ))}
-                                        </select>
-                                       
-
-                                    </TableCell> }
+                                    {res &&
+                                        <TableCell align="center" component="th" scope="row">
+                                            <select onChange={(e: any) => vendorStatusChange(e, i, resp)} style={{ cursor: 'pointer', background: '#fff', border: '1px solid #f5f5f5', padding: 10 }}>
+                                                <option> <em> Select Status</em></option>
+                                                {vendor_statusP && vendorStatusList?.filter((res:any)=> res?.status_name !== "completed").map((list: any) => (
+                                                    <option value={list?.status_name}>{list?.status_name}</option>
+                                                ))}
+                                            </select>
+                                        </TableCell>}
                                 </TableRow>))}
                         </TableBody>
                     </Table>

@@ -480,7 +480,7 @@ const VendorAccountsForm = ({ idd }: props) => {
                         <CustomViewInput fieldLabel='Promotion Cost' text={vendorSingleList?.promotion_cost} color='#FF7B7B' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Payable' text={vendorSingleList?.total_payable} color='#2EA10C' />
+                        <CustomViewInput fieldLabel='Total Payable' text={vendorSingleList?.total_outstanding} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
                         <Typography mb={3}></Typography>

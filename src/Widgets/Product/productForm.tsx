@@ -1277,9 +1277,6 @@ const ProductForm = ({ res, view }: props) => {
         }
         if (productList) {
             value["id"] = productList?._id;
-
-
-
         }
 
         try {
@@ -1423,7 +1420,7 @@ const ProductForm = ({ res, view }: props) => {
                     </Grid>
 
 
-                    <Grid item xs={12} lg={3}>
+                    {/* <Grid item xs={12} lg={3}>
                         <CustomMultiselect
 
                             multiple={true}
@@ -1444,9 +1441,9 @@ const ProductForm = ({ res, view }: props) => {
                                 <MenuItem value={res?.value}>{res?.name}</MenuItem>
                             ))}
                         </CustomMultiselect>
-                    </Grid>
+                    </Grid> */}
 
-                    <Grid item xs={12} lg={3}>
+                    {/* <Grid item xs={12} lg={3}>
                         <CustomMultiselect
 
                             multiple={true}
@@ -1467,9 +1464,9 @@ const ProductForm = ({ res, view }: props) => {
                                 <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
                             ))}
                         </CustomMultiselect>
-                    </Grid>
+                    </Grid> */}
 
-                    <Grid item xs={12} lg={3}>
+                    {/* <Grid item xs={12} lg={3}>
                         <Customselect
                             type='text'
                             control={control}
@@ -1493,7 +1490,7 @@ const ProductForm = ({ res, view }: props) => {
                             ))}
 
                         </Customselect>
-                    </Grid>
+                    </Grid> */}
 
 
                     <Grid item xs={12} lg={1.5}>
@@ -1874,7 +1871,6 @@ const ProductForm = ({ res, view }: props) => {
                 {!res && !view &&
                     <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
-
                     <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} closeIcon={idd ? false : true} removeAttributes={!productList ? () => removeAttributes(i) : null} />
                 )}
             </CustomBox>

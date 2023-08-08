@@ -45,7 +45,7 @@ type Inputs = {
 };
 
 const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge }: props) => {
-    console.log(data, 'DATA DATA')
+
 
 
     const schema = yup
@@ -158,7 +158,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
 
     const SubmitButton = async (data: any) => {
-        console.log({ data }, "DATA")
+
 
         let product = []
 
@@ -177,9 +177,8 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
 
 
-
         data.price = (data?.unitPrice * parseFloat(data?.quantity));
-        const { total, deliveryPrice, ...alldata } = data;
+        const { total, ...alldata } = data;
 
         product.push(alldata)
 
@@ -209,7 +208,6 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     }
 
     const DeliverySubmit = () => {
-
         let deliveryPrice = getValues('deliveryPrice')
         if (parseInt(deliveryPrice) <= 0) {
             toast.warning('Delivery Price Cannot be Zero');

@@ -28,7 +28,7 @@ export async function getServerSideProps({ req, res }: props) {
 
   let token = session?.user?.accessToken
 
-  const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/account/vendors/list`, {
+  const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/account/vendors/list/${process.env.NEXT_PUBLIC_TYPE}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
