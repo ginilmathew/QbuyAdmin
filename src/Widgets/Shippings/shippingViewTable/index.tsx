@@ -36,8 +36,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [singleList, setSingleList] = useState([]);
     const [mode, setMode] = useState<any>(null)
     const [productList, setProductList] = useState<any>(null);
-   
 
+    console.log({ productList }, 'productList')
 
 
     const handleClose = useCallback(() => {
@@ -90,10 +90,11 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 store_address: itm?.productdata?.vendors?.store_address,
                 vendor: itm?.productdata?.vendors,
                 seller_price: itm?.type === "single" ? itm?.productdata?.seller_price : itm?.variants?.seller_price,
-                deliveryPrice: itm?.type === "single" ? itm?.deliveryPrice  : itm?.variants?.fixed_delivery_price,
+                deliveryPrice: itm?.type === "single" ? itm?.deliveryPrice : itm?.variants?.fixed_delivery_price,
                 // fixed_delivery_price: itm?.type === "single" ? itm?.deliveryPrice : itm?.variants?.fixed_delivery_price,
                 title: itm?.type === "single" ? null : itm?.variants?.title,
                 stock_value: itm?.type === "single" ? (itm?.stock_value + parseFloat(itm?.quantity)) : (itm?.variants?.stock_value + parseFloat(itm?.quantity)),
+                stock: itm?.type === "single" ? itm?.stock : itm?.variants?.stock
             }))
 
 
@@ -187,7 +188,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
             return false;
         }
 
-        console.log({ PRODUCTLIST: productList?.productDetails })
+     
         let product: any[] = []
         if (row?.type === "variant") {
             product = productList?.productDetails?.filter((res: any) => res?.variant_id !== row?.variant_id);
@@ -203,7 +204,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
             return Math.max(highest, delivery.deliveryPrice);
         }, 0);
 
-        console.log({highestDelivery},'HIGHST DELIVERY')
+
 
         const res = await removeItemApi(row?.product_id);
 

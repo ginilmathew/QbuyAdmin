@@ -79,6 +79,8 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     const [defaultStatus, setDefaultStatus] = useState<any>(null)
 
 
+    console.log({orderviewList})
+
     const [orderStatusSelect, setOrderStatus] = useState<any>([
         {
             value: "active",
@@ -575,7 +577,8 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                                         <TableCell align="center" component="th" scope="row">
                                             <select onChange={(e: any) => vendorStatusChange(e, i, resp)} style={{ cursor: 'pointer', background: '#fff', border: '1px solid #f5f5f5', padding: 10 }}>
                                                 <option> <em> Select Status</em></option>
-                                                {vendor_statusP && vendorStatusList?.filter((res:any)=> res?.status_name !== "completed").map((list: any) => (
+                                             
+                                                {vendor_statusP && vendorStatusList?.filter((res:any)=> res?.status_name !== "completed" && res?.status_name !== "pickedup").map((list: any) => (
                                                     <option value={list?.status_name}>{list?.status_name}</option>
                                                 ))}
                                             </select>

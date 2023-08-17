@@ -333,7 +333,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         // AllProducts['delivery_charge'] = allProduct?.delivery_charge;
         AllProducts['delivery_charge'] = highestDelivery;
         AllProducts['total_amount'] = parseInt(data?.total) + parseInt(allProduct?.total_amount);
-        AllProducts['grand_total'] = (parseInt(data?.total) + parseInt(allProduct?.total_amount)) + parseInt(allProduct?.delivery_charge);
+        AllProducts['grand_total'] = (parseInt(data?.total) + parseInt(allProduct?.total_amount)) + parseInt(highestDelivery);
 
 
 
@@ -350,9 +350,6 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             toast.success('Product Added Successfully')
             setLoading(false)
             setaddProductList(AllProducts);
-
-
-
             handleClose()
             AllProducts = [];
         } catch (err) {
