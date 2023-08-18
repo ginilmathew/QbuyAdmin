@@ -548,8 +548,8 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell align="center">#</TableCell>
-                                <TableCell align="center">Vendor Name</TableCell>
                                 <TableCell align="center">Store Name</TableCell>
+                                <TableCell align="center">Vendor Name</TableCell>
                                 <TableCell align="center">Current Status</TableCell>
                                 {res &&
                                     <TableCell align="center">Change Status</TableCell>}

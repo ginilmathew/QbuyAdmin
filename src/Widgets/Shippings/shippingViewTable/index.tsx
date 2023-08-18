@@ -37,7 +37,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [mode, setMode] = useState<any>(null)
     const [productList, setProductList] = useState<any>(null);
 
-    console.log({ productList }, 'productList')
+
 
 
     const handleClose = useCallback(() => {

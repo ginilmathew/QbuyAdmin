@@ -160,6 +160,8 @@ const Shipments = () => {
 
     const searchProducts = useCallback((value: any) => {
         let competitiions = serachList?.filter((com: any) => com?.order_id.toString().toLowerCase().includes(value.toLowerCase())
+        || com?.user?.mobile.toString().toLowerCase().includes(value.toLowerCase()) || 
+        com?.franchisee?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) 
         )
         startTransition(() => {
             setShippingList(competitiions)

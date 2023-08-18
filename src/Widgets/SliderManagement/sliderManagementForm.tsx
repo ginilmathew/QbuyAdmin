@@ -70,6 +70,8 @@ const SliderManagementForm = ({ res }: Props) => {
     const [selectedProduct, setSelectedProduct] = useState<any>(null);
     const [singleProduct, setSingleProduct] = useState<any>(null)
 
+ console.log({singleProduct})
+    
     const orderValidation = /^(0|[1-9]\d*)$/
 
     const store = {
@@ -98,6 +100,9 @@ const SliderManagementForm = ({ res }: Props) => {
             .required('Image is Required'),
     }
 
+
+
+  console.log({sliderList})
 
 
     const schema = yup
@@ -130,6 +135,8 @@ const SliderManagementForm = ({ res }: Props) => {
         setSelectedProduct(null)
         setProductListRes([])
         setProductList([])
+        setSelectType(null)
+        setValue("screentype", "")
         setVendorSelect('')
 
         setValue('franchise_id', e.target.value)
@@ -279,16 +286,21 @@ const SliderManagementForm = ({ res }: Props) => {
 
         let data = productListRes?.filter((res: any) => res?._id === value?.id);
         let prdctlist: any = await getProduct(data?.[0] || []);
-
+         
         let autosearch = {
             id: prdctlist?._id,
             label: prdctlist?.name
         }
-        setSingleProduct(autosearch)
-        setValue("product_id", prdctlist?._id);
-        setError('product_id', { message: "" })
-        setSelectProduct(prdctlist)
-        setProductData(prdctlist)
+        if(prdctlist?._id !== undefined){
+            setSingleProduct(autosearch)
+            setValue("product_id", prdctlist?._id);
+            setError('product_id', { message: "" })
+            setSelectProduct(prdctlist)
+            setProductData(prdctlist)
+        }else{
+            setSingleProduct([])
+        }
+        setSelectedProduct([])
 
     }
 

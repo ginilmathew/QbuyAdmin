@@ -62,7 +62,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const [attributeSelect, setAttributeSelect] = useState<any>([])
     const [vendorDetails, setVendorDetails] = useState<any>(null)
 
-    console.log({ selectProduct })
+
 
     const schema = yup
         .object()
@@ -234,16 +234,16 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                     if (parseFloat(value) > stockValue) {
                         toast.warning("Stock Value excedded")
                     } else {
-                        console.log('ELSE PAGE Stock')
+                       
                         let total = (parseFloat(value) * attributeSelect?.[0]?.price);
                         setValue("total", total)
                     }
 
                 } else {
-                  
+
                     let result = (parseInt(attributeSelect?.[0]?.price) * parseFloat(value));
                     setValue("total", result)
-                
+
                 }
             }
 
