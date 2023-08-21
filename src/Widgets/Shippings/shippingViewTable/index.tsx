@@ -141,13 +141,6 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     }, [productList])
 
 
-
-
-
-
-
-
-
     useEffect(() => {
         if (productList) {
             let value = {

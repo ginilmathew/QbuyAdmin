@@ -46,7 +46,7 @@ type Inputs = {
 
 const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge }: props) => {
 
-  
+console.log({data})
 
     const schema = yup
         .object()
@@ -67,7 +67,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
             resolver: yupResolver(schema),
             defaultValues: {
                 product_id: data?.product_id,
-                name: `${data?.name},${data?.title ? data?.title : ''}` || "",
+                name: `${data?.name} ${data?.title ? `,${data?.title}` : ""}`,
                 quantity: data?.quantity || "",
                 total: (data?.quantity * data?.unitPrice),
                 seller_price: data?.seller_price,
@@ -160,28 +160,28 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
 
 
-    const SubmitButton = async (data: any) => {
+    const SubmitButton = async (item: any) => {
 
 
         let product = []
 
-        if (data?.variant_id) {
-            product = allProduct?.productDetails?.filter((res: any) => res?.variant_id !== data?.variant_id).map((itm: any) => (
+        if (item?.variant_id) {
+            product = allProduct?.productDetails?.filter((res: any) => res?.variant_id !== item?.variant_id).map((itm: any) => (
                 {
                     ...itm
                 }))
 
         } else {
-            product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== data?.product_id).map((itm: any) => (
+            product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== item?.product_id).map((itm: any) => (
                 {
                     ...itm
                 }))
         }
+        item.title = data?.title;
+        item.name = data?.name;
+        item.price = (item?.unitPrice * parseFloat(item?.quantity));
 
-
-
-        data.price = (data?.unitPrice * parseFloat(data?.quantity));
-        const { total, ...alldata } = data;
+        const { total, ...alldata } = item;
 
         product.push(alldata)
 
@@ -190,7 +190,6 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                 id: order_iD,
                 productDetails: product
             }
-
             const response = await postData('admin/order/edit', publishValue);
             const rate = response?.data?.data?.productDetails?.reduce((inital: any, price: any) => inital + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0)
 
@@ -366,11 +365,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                             onClick={mode === "product" ? handleSubmit(SubmitButton) : DeliverySubmit} />
                     </Box>
                 </DialogContent>
-
-
-
             </Box>
-
         </Dialog>
     )
 }

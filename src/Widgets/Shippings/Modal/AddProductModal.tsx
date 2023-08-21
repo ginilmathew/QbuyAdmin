@@ -543,9 +543,6 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                                 defaultValue={''}
                             />
                         </Grid>
-
-
-
                     </Grid>
                     <Box py={1} display={'flex'} justifyContent={'center'}>
                         <Custombutton
