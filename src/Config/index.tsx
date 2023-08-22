@@ -4,7 +4,7 @@
 
 // 1- corporate, 2-ta, 3-customer, 4 -supplier
 
-export const env = "dev"
+export const env = "live"
 
 const URLS = {
     live: "https://apiqbuygreen.diginestsolutions.in/public/api/",
