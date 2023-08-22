@@ -7,7 +7,7 @@ const TagInput = ({ tagValues , values,close}) => {
     const [tags, setTags] = useState( values ? [...values] : [])
     const [value, setValue] = useState('')
 
-)
+
   
     // console.log({tags})
 
