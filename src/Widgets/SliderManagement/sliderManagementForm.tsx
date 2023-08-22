@@ -70,7 +70,7 @@ const SliderManagementForm = ({ res }: Props) => {
     const [selectedProduct, setSelectedProduct] = useState<any>(null);
     const [singleProduct, setSingleProduct] = useState<any>(null)
 
- console.log({singleProduct})
+
     
     const orderValidation = /^(0|[1-9]\d*)$/
 

@@ -65,7 +65,7 @@ const SliderManagement = ({ data }: datapr) => {
     const [serachList, setSearchList] = useState<any>(data ? data?.data : [])
     const [pending, startTransition] = useTransition();
 
-    console.log({ sliderList })
+
 
     const handleClose = () => {
         setOpen(false)

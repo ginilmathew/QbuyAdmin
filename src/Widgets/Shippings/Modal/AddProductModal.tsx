@@ -234,7 +234,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                     if (parseFloat(value) > stockValue) {
                         toast.warning("Stock Value excedded")
                     } else {
-                       
+
                         let total = (parseFloat(value) * attributeSelect?.[0]?.price);
                         setValue("total", total)
                     }
@@ -335,17 +335,20 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         AllProducts['total_amount'] = parseInt(data?.total) + parseInt(allProduct?.total_amount);
         AllProducts['grand_total'] = (parseInt(data?.total) + parseInt(allProduct?.total_amount)) + parseInt(highestDelivery);
 
+        if (Number.isNaN(AllProducts?.grand_total)) {
+            toast.warning('product not available');
+            return false;
+        }
 
+     
 
-
+        
         try {
             setLoading(true)
             let publishValue = {
                 id: order_id,
                 productDetails: [...AllProducts.productDetails]
             }
-
-
             await postData('admin/order/edit', publishValue);
             toast.success('Product Added Successfully')
             setLoading(false)

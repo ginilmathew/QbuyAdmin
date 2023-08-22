@@ -47,7 +47,7 @@ export async function getServerSideProps({ req, res }: props) {
 
 const VendorProfile = ({data} : datapr) => {
 
-  console.log({data})
+
 
   const router = useRouter();
 

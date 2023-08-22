@@ -55,7 +55,7 @@ const VendorAccounts = ({ data }: datapr) => {
   const [serachList, setSearchList] = useState<any>(data?.data)
 
 
-
+console.log({vendorAccountsList})
 
 
   const columns: GridColDef[] = [

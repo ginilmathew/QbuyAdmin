@@ -15,8 +15,7 @@ const DeliveryCharges = () => {
 
 
     const [open, setOpen] = useState<boolean>(false)
-  
-    console.log({ open })
+
   
     const handleClose = () => {
         setOpen(false)
