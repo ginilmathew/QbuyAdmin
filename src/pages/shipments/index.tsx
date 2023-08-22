@@ -10,12 +10,13 @@ import { toast } from 'react-toastify';
 import { fetchData } from '@/CustomAxios';
 import moment from 'moment';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 
 const Shipments = () => {
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('md'));
 
- 
+
     const router = useRouter()
 
 
@@ -28,10 +29,15 @@ const Shipments = () => {
         router.push(`/shipments/view/${id}`)
     }
 
+    const ShippmentEdit = (id: string) => {
+        router.push(`/shipments/edit/${id}`)
+    }
+
+
 
     const columns: GridColDef[] = [
         {
-            field: 'order_id', 
+            field: 'order_id',
             headerName: 'Order ID',
             headerAlign: 'center',
             align: 'center',
@@ -61,7 +67,7 @@ const Shipments = () => {
             width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
-
+            valueGetter: (params) => params.row.grand_total?.toFixed(2) 
         },
 
         {
@@ -131,19 +137,21 @@ const Shipments = () => {
                             color: '#58D36E',
                             cursor: 'pointer'
                         }} />
-                    {/* <BorderColorTwoToneIcon
 
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }}
-                    />
-                    <DeleteOutlineTwoToneIcon
+                    {(!['completed', 'cancelled'].includes(row?.status)) &&
+                        <BorderColorTwoToneIcon
+                            onClick={() => ShippmentEdit(row?._id)}
+                            style={{
+                                color: '#58D36E',
+                                cursor: 'pointer'
+                            }}
+                        />}
+                    {/* <DeleteOutlineTwoToneIcon
 
                         sx={{
                             color: '#58D36E',
                             cursor: 'pointer',
-                        }} /> */}
+                        }} />  */}
                 </Stack>
             )
         }
@@ -152,6 +160,8 @@ const Shipments = () => {
 
     const searchProducts = useCallback((value: any) => {
         let competitiions = serachList?.filter((com: any) => com?.order_id.toString().toLowerCase().includes(value.toLowerCase())
+        || com?.user?.mobile.toString().toLowerCase().includes(value.toLowerCase()) || 
+        com?.franchisee?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) 
         )
         startTransition(() => {
             setShippingList(competitiions)

@@ -1277,9 +1277,6 @@ const ProductForm = ({ res, view }: props) => {
         }
         if (productList) {
             value["id"] = productList?._id;
-
-
-
         }
 
         try {
@@ -1326,8 +1323,6 @@ const ProductForm = ({ res, view }: props) => {
 
     }
 
-
-
     const ChangeStatus = useCallback((e: any) => {
         const { value } = e.target;
         setStatusSelect(value)
@@ -1338,9 +1333,6 @@ const ProductForm = ({ res, view }: props) => {
     if (loader) {
         return <><CustomLoader /></>
     }
-
-
-
 
     return (
         <Box>
@@ -1473,8 +1465,8 @@ const ProductForm = ({ res, view }: props) => {
                             ))}
                         </CustomMultiselect>
                     </Grid> */}
-{/* 
-                    <Grid item xs={12} lg={3}>
+
+                    {/* <Grid item xs={12} lg={3}>
                         <Customselect
                             type='text'
                             control={control}
@@ -1879,7 +1871,6 @@ const ProductForm = ({ res, view }: props) => {
                 {!res && !view &&
                     <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
-
                     <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} closeIcon={idd ? false : true} removeAttributes={!productList ? () => removeAttributes(i) : null} />
                 )}
             </CustomBox>

@@ -6,13 +6,20 @@ const TagInput = ({ tagValues , values,close}) => {
 
     const [tags, setTags] = useState( values ? [...values] : [])
     const [value, setValue] = useState('')
+
+
   
     // console.log({tags})
 
     const submitvalues = (e) => {
 
+        if(tags.includes(e.target.value)){
+            return false
+        }
+
         let modifiedString = e.target.value?.replace(' ', '_');
         if(e.target.value?.length >= 1 && modifiedString ){
+
             if (e.key === 'Enter') {
                 setTags((prev) => {
                     tagValues([...prev, modifiedString])

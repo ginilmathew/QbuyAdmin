@@ -255,7 +255,7 @@ const AddProducts = ({ data }: datapr) => {
         try {
             setLoding(true)
             const response = await fetchData(`/admin/product/list/${process.env.NEXT_PUBLIC_TYPE}`)
-            console.log({ response })
+         
             setProductList(response?.data?.data)
             setSearchList(response.data.data);
         } catch (err: any) {

@@ -50,6 +50,8 @@ export async function getServerSideProps({ req, res }: props) {
 
 const VendorSignup = ({data}: datapr) => {
 
+
+
     const router = useRouter();
 
 
@@ -61,7 +63,7 @@ const VendorSignup = ({data}: datapr) => {
     const [pending, startTransition] = useTransition();
 
 
-    console.log({ vendorList })
+  
 
 
     const addvaendor = () => {

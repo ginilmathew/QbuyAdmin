@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useLayoutEffect, useCallback } from 'react'
+import React, { useEffect, useState, useContext, useLayoutEffect, useCallback } from 'react'
 import { useRouter } from 'next/router';
 
 import { LinearProgress, Stack } from '@mui/material';
@@ -13,6 +13,8 @@ type ProtectedRouteProps = {
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+
+
     const [loading, setLoading] = useState(true)
     const [userLoader, setUserLoader] = useState<boolean>(false)
     const router = useRouter()
@@ -29,6 +31,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
         try {
             if (session) {
                 let details = JSON.parse(JSON.stringify(session.user))
+            
                 localStorage.setItem("token", details?.accessToken)
                 getProfile(details?._id)
             }
@@ -44,7 +47,9 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
             setLoading(false)
             setUserLoader(true)
             const response = await fetchData(`auth/profile/${id}`)
+            localStorage.setItem("user", response?.data?.data)
             userContext.setUser(response?.data?.data)
+            console.log({})
         } catch (err: any) {
             setUserLoader(false)
             toast.error(err?.message)
@@ -69,6 +74,8 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
             <div>Loading...</div>
         )
     }
+
+
 
     return <>
         {children}

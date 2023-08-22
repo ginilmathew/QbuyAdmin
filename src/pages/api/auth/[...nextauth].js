@@ -42,12 +42,13 @@ export const authOptions = {
 					},
 				});
 
-				//console.log({res})
+			
 
 
 				const user = await res.json();
-
-				//console.log({ user: JSON.stringify(user) })
+       
+		
+		
 				if (!res.ok) {
 					throw new Error(user.message);
 				}
@@ -67,7 +68,7 @@ export const authOptions = {
 	},
 	callbacks: {
 		async jwt({ token, user, account }) {
-			//console.log({ token, user, account })
+	
 			if (account && user) {
 				//console.log({account, user})
 				token._id = user?.user?._id;
@@ -76,7 +77,7 @@ export const authOptions = {
 				token.email = user?.user?.email;
 				token.accessToken = user.access_token;
 				token.accessTokenExpires = user.expires_in;
-				//console.log({token})
+			
 				return {
 					...token,
 					accessToken: user.access_token,
@@ -93,7 +94,7 @@ export const authOptions = {
 
 		},
 		async session({ session, token }) {
-			//console.log({session, token})
+		
 			session.user.accessToken = token.accessToken;
 			session.user.refreshToken = token.refreshToken;
 			session.user.accessTokenExpires = token.accessTokenExpires;

@@ -65,7 +65,7 @@ const SliderManagement = ({ data }: datapr) => {
     const [serachList, setSearchList] = useState<any>(data ? data?.data : [])
     const [pending, startTransition] = useTransition();
 
-    console.log({ sliderList })
+
 
     const handleClose = () => {
         setOpen(false)
@@ -102,6 +102,15 @@ const SliderManagement = ({ data }: datapr) => {
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => params?.row?.franchise?.franchise_name
+
+        },
+        {
+            field: 'screentype',
+            headerName: 'Screen Type',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => params?.row?.screentype === "null" ||  params?.row?.screentype === "undefined" ? '_' : params?.row?.screentype,
 
         },
         {

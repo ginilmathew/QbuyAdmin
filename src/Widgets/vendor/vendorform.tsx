@@ -118,7 +118,7 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
 
-    console.log({ vendorList })
+
 
     const orderValidation = /^[0-9]*$/
 
@@ -350,7 +350,7 @@ const Vendorform = ({ res, view, data }: props) => {
         try {
             setLoading(true)
             const response = await fetchData(`/admin/category/list/${process.env.NEXT_PUBLIC_TYPE}`)
-            console.log({ response })
+          
             setGetCategory(response?.data?.data)
             setLoading(false)
 
@@ -414,7 +414,7 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
     const onChangeStartTime = (value: any) => {
-        console.log({ value })
+      
         setValue('start_time', value)
         setError('start_time', { message: '' })
 

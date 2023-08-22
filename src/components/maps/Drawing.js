@@ -31,7 +31,7 @@ const Drawing = ({ onComplete }) => {
 	const drawingManager = useRef(null)
 
 	const onPolygonComplete = (polygon) => {
-		console.log({polygon})
+	
 
 		let latlongs = []
 		let paths = []

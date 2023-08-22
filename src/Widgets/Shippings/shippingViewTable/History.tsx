@@ -15,7 +15,6 @@ type props = {
 
 const HistoryTable = ({ res }: props) => {
 
-    console.log({ res })
     return (
         <CustomBox title='Order History'>
             <TableContainer component={Paper} >

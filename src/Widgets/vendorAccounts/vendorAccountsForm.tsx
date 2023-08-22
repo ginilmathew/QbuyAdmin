@@ -57,7 +57,7 @@ const VendorAccountsForm = ({ idd }: props) => {
     const [checkedValue, setcheckedvalue] = useState<any>(false)
 
 
-   
+
 
     const columns: GridColDef[] = [
         {
@@ -239,7 +239,7 @@ const VendorAccountsForm = ({ idd }: props) => {
         try {
             setLoading(true)
             const response = await fetchData(`/admin/category/list/${process.env.NEXT_PUBLIC_TYPE}`)
-            console.log({ response })
+           
             setGetCategory(response?.data?.data)
             setLoading(false)
 
@@ -477,10 +477,10 @@ const VendorAccountsForm = ({ idd }: props) => {
                         <CustomViewInput fieldLabel='Total Earnings' text={vendorSingleList?.total_earnings} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Promotion Coast' text={vendorSingleList?.promotion_cost} color='#FF7B7B' />
+                        <CustomViewInput fieldLabel='Promotion Cost' text={vendorSingleList?.promotion_cost} color='#FF7B7B' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Payable' text={vendorSingleList?.total_payable} color='#2EA10C' />
+                        <CustomViewInput fieldLabel='Total Payable' text={vendorSingleList?.total_outstanding} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
                         <Typography mb={3}></Typography>
@@ -534,7 +534,7 @@ const VendorAccountsForm = ({ idd }: props) => {
                 setVendorSinglelist={setVendorSinglelist}
                 viewVendor={viewVendor}
                 setTotal={setTotal}
-                
+
 
             />}
             {openLog && <VendorLogsModal onClose={onCloseLogModal} open={openLog} id={idd} date={dateSelect} />}

@@ -14,21 +14,12 @@ import { postData } from '@/CustomAxios';
 import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
-import moment from 'moment'
-import CustomMultiselect from '@/components/CustomMultiselect';
-import Maps from '@/components/maps/maps';
-import Polygon from '@/components/maps/Polygon';
+
 import { useRouter } from 'next/router';
-import { IMAGE_URL } from '../../Config/index';
+
 import CustomTextarea from '@/components/CustomTextarea';
 import CustomLoader from '@/components/CustomLoader';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import ShippingTable from './shippingViewTable';
 import HistoryTable from './shippingViewTable/History';
 
@@ -44,26 +35,36 @@ type Inputs = {
     payment_method: string,
     order_status: string,
     comment: string;
-    order_id:string;
+    order_id: string;
+    payment_status: string;
+    vendor_status: any
 };
 
 type props = {
     view?: any,
-    res?: any
+    res?: any,
+    edit?: any
 }
 
-const ShippingOrderForm = ({ view, res }: props) => {
+const ShippingOrderForm = ({ view, res, edit }: props) => {
     const router = useRouter()
 
     const idd = view ? view : res;
-
-
-
-
-
     const [orderhistory, setOrderhistory] = useState<any>()
     const [customerGroupSelect, setCustomerGroupSelect] = useState<string>('')
-    const [paymentMethodList, setPaymentMethodList] = useState<any>([])
+    const [paymentMethodList, setPaymentMethodList] = useState<any>([
+        {
+            id: 1,
+            name: "Online",
+            value: "online"
+        },
+        {
+            id: 2,
+            name: "COD",
+            value: "COD"
+        },
+
+    ])
     const [paymentMethodSelect, setPaymentMethodSelect] = useState<string>('')
     const [paymentStatusList, setPaymentStatusList] = useState<any>([])
     const [paymentStatusSelect, setPaymentStatusSelect] = useState<string>('')
@@ -74,6 +75,12 @@ const ShippingOrderForm = ({ view, res }: props) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [loader, setLoader] = useState<boolean>(false)
     const [orderviewList, setOrderViewList] = useState<any>(null)
+    const [vendor_statusP, setVendorStatusP] = useState<any>(null)
+    const [defaultStatus, setDefaultStatus] = useState<any>(null)
+
+
+    console.log({orderviewList})
+
     const [orderStatusSelect, setOrderStatus] = useState<any>([
         {
             value: "active",
@@ -89,17 +96,16 @@ const ShippingOrderForm = ({ view, res }: props) => {
         },
     ]
     )
-    const [OrderStatusList, setOrderStatusList] = useState([])
+    const [deliveryCharge, SetDeliveryCharge] = useState<any>(null)
+    const [vendorStatusList, setVendorStatusList] = useState<any>([])
 
 
-    console.log({ orderviewList })
-
-
+  console.log({deliveryCharge},'deliveryCharge')
 
     const schema = yup
         .object()
         .shape({
-            comment: yup.string().max(60, 'Maximum Character Exceeds').required('Comment is Required'),
+            comment: yup.string().max(60, 'Maximum Character Exceeds').nullable(),
         })
         .required();
 
@@ -125,10 +131,16 @@ const ShippingOrderForm = ({ view, res }: props) => {
     }
 
     const paymentMethodChange = (e: any) => {
+        const { value } = e.target;
+        setValue("payment_method", value)
+        setPaymentMethodSelect(value)
 
     }
 
     const paymentStatusChange = (e: any) => {
+        const { value } = e.target;
+        setValue("payment_status", value)
+        setPaymentStatusSelect(value)
 
     }
 
@@ -145,6 +157,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
             setLoader(true)
             const response = await fetchData(`admin/order/show/${idd}`)
             setOrderViewList(response?.data?.data)
+
             setLoader(false)
 
         } catch (err: any) {
@@ -173,7 +186,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
     }
 
     const ChangeOrderStatus = async () => {
-        console.log(idd)
+
         let value = {
             order_id: idd,
             status: orderSelect,
@@ -194,6 +207,41 @@ const ShippingOrderForm = ({ view, res }: props) => {
 
     }
 
+    const PaymentStatusList = async () => {
+        try {
+            const response = await fetchData('common/payment-status-list');
+            setPaymentStatusList(response?.data?.data)
+        } catch (err) {
+
+        }
+    }
+
+    const vendorStatus = async () => {
+        try {
+            const fetch = await fetchData('common/order-status-list');
+
+            setVendorStatusList(fetch?.data?.data)
+
+        } catch (err: any) {
+
+
+        }
+
+    }
+
+
+    const vendorStatusChange = (e: any, index: number, res: any) => {
+        const { value } = e.target;
+        vendor_statusP[index]['status'] = value;
+        setVendorStatusP(vendor_statusP)
+    }
+
+
+
+    useEffect(() => {
+        vendorStatus();
+    }, [])
+
 
 
 
@@ -203,10 +251,16 @@ const ShippingOrderForm = ({ view, res }: props) => {
             setValue('name', orderviewList?.user?.name)
             setValue('mobile', orderviewList?.user?.mobile)
             setValue('email', orderviewList?.user?.email)
-            setValue('order_id',orderviewList?.order_id)
+            setValue('order_id', orderviewList?.order_id)
             // setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name ? orderviewList?.billaddress?.name : ''},${orderviewList?.billaddress?.area?.address ? orderviewList?.billaddress?.area?.address : ''},${orderviewList?.billaddress?.pincode ? orderviewList?.billaddress?.pincode : ''},${orderviewList?.billaddress?.mobile ? `${'Mob:'}${orderviewList?.billaddress?.mobile}` : ''}`)
             setValue('shipping_address_delivery_address', `${orderviewList?.shipaddress?.name ? orderviewList?.shipaddress?.name : ''},${orderviewList?.shipaddress?.area?.address ? orderviewList?.shipaddress?.area?.address : ''},${orderviewList?.shipaddress?.pincode ? orderviewList?.shipaddress?.pincode : ''},
             ${orderviewList?.shipaddress?.mobile ? `${'Mob:'}${orderviewList?.shipaddress?.mobile}` : ''}`)
+            setPaymentMethodSelect(orderviewList?.payment_type);
+            setPaymentStatusSelect(orderviewList?.payment_status);
+            setValue("payment_method", orderviewList.payment_type);
+            setValue("payment_status", orderviewList?.payment_status);
+            SetDeliveryCharge(orderviewList?.delivery_charge)
+            setVendorStatusP([...orderviewList?.vendor_status])
         }
 
     }, [orderviewList])
@@ -217,13 +271,39 @@ const ShippingOrderForm = ({ view, res }: props) => {
     useEffect(() => {
         if (idd) {
             getVenderListShow()
-
         }
     }, [idd])
 
+
     useEffect(() => {
         orderStatusList()
+        PaymentStatusList()
     }, [])
+
+
+    const SubmitOrder = async (data: any) => {
+
+        console.log({ vendor_statusP }, 'VENDOR STATUS PP')
+        let result = {
+            id: idd,
+            delivery_charge: Math.ceil(deliveryCharge),
+            ...data,
+            vendor_status: vendor_statusP
+        }
+        try {
+
+            const response = await postData('admin/order/update', result);
+            router.push('/shipments')
+            toast.success('Order Updated Successfully')
+
+        } catch (err) {
+            let message = 'Unknown Error'
+            if (err instanceof Error) message = err.message
+            reportError({ message })
+            toast.error(message)
+        }
+
+    }
 
 
 
@@ -245,7 +325,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             placeholder={``}
                             fieldLabel={"Customer Name"}
                             disabled={false}
-                            view={false}
+                            view={true}
                             defaultValue={''}
                         />
                     </Grid>
@@ -258,13 +338,12 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             placeholder={``}
                             fieldLabel={"Email Address"}
                             disabled={false}
-                            view={false}
+                            view={true}
                             defaultValue={''}
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput
-
                             type='text'
                             control={control}
                             error={errors.mobile}
@@ -272,7 +351,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             placeholder={``}
                             fieldLabel={"Mobile Number"}
                             disabled={false}
-                            view={view ? true : false}
+                            view={true}
                             defaultValue={''}
                         />
                     </Grid>
@@ -282,6 +361,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             control={control}
                             error={errors.customer_group}
                             fieldName="customer_group"
+                            disabled={view ? true : false}
                             placeholder={``}
                             fieldLabel={"Customer Group"}
                             selectvalue={""}
@@ -303,7 +383,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
             </CustomBox>
             <CustomBox title='Customer Details'>
                 <Grid container spacing={2}>
-                <Grid item xs={12} lg={2.5}>
+                    <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -312,7 +392,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             placeholder={``}
                             fieldLabel={"Order ID"}
                             disabled={false}
-                            view={false}
+                            view={true}
                             defaultValue={''}
                         />
                     </Grid>
@@ -320,6 +400,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                         <Customselect
                             type='text'
                             control={control}
+                            disabled={true}
                             error={errors.order_type}
                             fieldName="order_type"
                             placeholder={``}
@@ -358,7 +439,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             placeholder={``}
                             fieldLabel={"Shipping Address or Delivery Address"}
                             disabled={false}
-                            view={false}
+                            view={idd ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -369,10 +450,11 @@ const ShippingOrderForm = ({ view, res }: props) => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
                         <Customselect
+                            disabled={view ? true : false}
                             type='text'
                             control={control}
-                            error={errors.customer_group}
-                            fieldName="customer_group"
+                            error={errors.payment_method}
+                            fieldName="payment_method"
                             placeholder={``}
                             fieldLabel={"Payment Method"}
                             selectvalue={""}
@@ -387,15 +469,21 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             <MenuItem value="" disabled >
                                 <>Select PaymentMethod</>
                             </MenuItem>
+                            {paymentMethodList && paymentMethodList.map((res: any) => (
+                                <MenuItem value={res?.value}  >
+                                    <Typography>{res?.name}</Typography>
+                                </MenuItem>
+                            ))}
 
                         </Customselect>
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
                         <Customselect
                             type='text'
+                            disabled={view || (orderviewList?.payment_status === "completed" || orderviewList?.payment_status === "cancelled") ? true : false}
                             control={control}
-                            error={errors.customer_group}
-                            fieldName="customer_group"
+                            error={errors.payment_status}
+                            fieldName="payment_status"
                             placeholder={``}
                             fieldLabel={"Payment Status"}
                             selectvalue={""}
@@ -410,6 +498,12 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             <MenuItem value="" disabled >
                                 <>Select PaymentStatus</>
                             </MenuItem>
+                            {paymentStatusList && paymentStatusList?.map((res: any) => (
+                                <MenuItem value={res?.status_name}>
+                                    <Typography>{res?.status_name}</Typography>
+                                </MenuItem>
+                            ))}
+
 
                         </Customselect>
                     </Grid>
@@ -418,11 +512,11 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             type='text'
                             control={control}
                             error={errors.name}
-                            fieldName="name"
+                            fieldName="invoice"
                             placeholder={``}
                             fieldLabel={"Invoice No."}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
 
@@ -432,7 +526,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             type='text'
                             control={control}
                             error={errors.name}
-                            fieldName="name"
+                            fieldName="reward_point"
                             placeholder={``}
                             fieldLabel={"Reward Points Received"}
                             disabled={false}
@@ -445,11 +539,59 @@ const ShippingOrderForm = ({ view, res }: props) => {
             </CustomBox>
             <CustomBox title='Product Details'>
                 {orderviewList &&
-                    <ShippingTable res={orderviewList} />}
+                    <ShippingTable res={orderviewList} readonly={res} id={idd} SetDeliveryCharge={SetDeliveryCharge} />}
+            </CustomBox>
+
+            <CustomBox title='Vendor Status'>
+                <TableContainer component={Paper} >
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center">#</TableCell>
+                                <TableCell align="center">Store Name</TableCell>
+                                <TableCell align="center">Vendor Name</TableCell>
+                                <TableCell align="center">Current Status</TableCell>
+                                {res &&
+                                    <TableCell align="center">Change Status</TableCell>}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {vendor_statusP && vendor_statusP?.map((resp: any, i: number) => (
+                                <TableRow
+                                    // key={row.name}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell align="center" component="th" scope="row">
+                                        {i + 1}
+                                    </TableCell>
+                                    <TableCell align="center" component="th" scope="row">
+                                        {resp?.store_name}
+                                    </TableCell>
+                                    <TableCell align="center" component="th" scope="row">
+                                        {resp?.vendor_name}
+                                    </TableCell>
+                                    <TableCell align="center" component="th" scope="row">
+                                        {resp?.status}
+                                    </TableCell>
+                                    {res &&
+                                        <TableCell align="center" component="th" scope="row">
+                                            <select onChange={(e: any) => vendorStatusChange(e, i, resp)} style={{ cursor: 'pointer', background: '#fff', border: '1px solid #f5f5f5', padding: 10 }}>
+                                                <option> <em> Select Status</em></option>
+                                             
+                                                {vendor_statusP && vendorStatusList?.filter((res:any)=> res?.status_name !== "completed" && res?.status_name !== "pickedup").map((list: any) => (
+                                                    <option value={list?.status_name}>{list?.status_name}</option>
+                                                ))}
+                                            </select>
+                                        </TableCell>}
+                                </TableRow>))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
             </CustomBox>
             {idd && <HistoryTable res={orderviewList?.order_history} />}
 
-            {(idd && !orderviewList?.order_history?.some((res: any) => res?.status === 'cancelled' || res?.status === 'completed')) &&
+            {(res && !orderviewList?.order_history?.some((res: any) => res?.status === 'cancelled' || res?.status === 'completed')) &&
                 <CustomBox title='Add Order History'>
                     <Grid container spacing={2}>
                         <Grid item xs={12} lg={2.5}>
@@ -487,7 +629,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                                 placeholder={``}
                                 fieldLabel={"comment"}
                                 disabled={false}
-                                view={false}
+                                view={view ? true : false}
                                 defaultValue={''}
                             />
 
@@ -507,7 +649,7 @@ const ShippingOrderForm = ({ view, res }: props) => {
                             onClick={ChangeOrderStatus} />
                     </Box>
                 </CustomBox>}
-            {/* <Box py={3}>
+            {res && <Box py={3} display={'flex'} justifyContent={'center'}>
                 <Custombutton
                     btncolor=''
                     IconEnd={''}
@@ -515,10 +657,10 @@ const ShippingOrderForm = ({ view, res }: props) => {
                     endIcon={false}
                     startIcon={false}
                     height={''}
-                    label={'Add Order'}
+                    label={'Update Order'}
                     disabled={loading}
-                    onClick={null} />
-            </Box> */}
+                    onClick={handleSubmit(SubmitOrder)} />
+            </Box>}
         </Box>
     )
 }
