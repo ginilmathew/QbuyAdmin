@@ -212,6 +212,11 @@ export const Admin_item = [
                 item: 'Product Tags',
                 path: '/producttags',
             },
+            {
+                id: 10.12,
+                item: 'Platform Charge',
+                path: '/platformcharge',
+            },
         ]
     },
     {

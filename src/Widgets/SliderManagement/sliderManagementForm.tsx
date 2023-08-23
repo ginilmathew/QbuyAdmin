@@ -71,7 +71,7 @@ const SliderManagementForm = ({ res }: Props) => {
     const [singleProduct, setSingleProduct] = useState<any>(null)
 
 
-    
+
     const orderValidation = /^(0|[1-9]\d*)$/
 
     const store = {
@@ -80,7 +80,7 @@ const SliderManagementForm = ({ res }: Props) => {
         image: yup
             .mixed()
             .required('Image is Required'),
-        vendor_id: yup.string().required('Store Id is Required'),
+        vendor_id: yup.string().required('Store is Required'),
     }
     const products = {
         franchise_id: yup.string().required('Franchisee is Required'),
@@ -88,8 +88,8 @@ const SliderManagementForm = ({ res }: Props) => {
         image: yup
             .mixed()
             .required('Image is Required'),
-        vendor_id: yup.string().required('Store Id is Required'),
-        product_id: yup.string().required('Product Id is Required'),
+        vendor_id: yup.string().required('Store  is Required'),
+        product_id: yup.string().required('Product is Required'),
 
     }
     const all = {
@@ -102,7 +102,7 @@ const SliderManagementForm = ({ res }: Props) => {
 
 
 
-  console.log({sliderList})
+    
 
 
     const schema = yup
@@ -122,7 +122,7 @@ const SliderManagementForm = ({ res }: Props) => {
             defaultValues: {
                 franchise_id: '',
                 order_number: '',
-            
+
             }
         });
 
@@ -206,7 +206,7 @@ const SliderManagementForm = ({ res }: Props) => {
         if (sliderList?.vendor_id && sliderList?.franchise_id) {
             const response = await fetchData(`admin/vendor-list/${sliderList?.franchise_id}/${process.env.NEXT_PUBLIC_TYPE}`)
             setVendor(response?.data?.data)
-            setValue('vendor_id',sliderList?.vendor_id)
+            setValue('vendor_id', sliderList?.vendor_id)
             const responseProduct = await postData('admin/product/vendorproducts', { id: sliderList?.vendor_id, type: process.env.NEXT_PUBLIC_TYPE });
             const Filter = responseProduct?.data?.data?.map((res: any) => ({
                 label: res?.name,
@@ -286,18 +286,18 @@ const SliderManagementForm = ({ res }: Props) => {
 
         let data = productListRes?.filter((res: any) => res?._id === value?.id);
         let prdctlist: any = await getProduct(data?.[0] || []);
-         
+
         let autosearch = {
             id: prdctlist?._id,
             label: prdctlist?.name
         }
-        if(prdctlist?._id !== undefined){
+        if (prdctlist?._id !== undefined) {
             setSingleProduct(autosearch)
             setValue("product_id", prdctlist?._id);
             setError('product_id', { message: "" })
             setSelectProduct(prdctlist)
             setProductData(prdctlist)
-        }else{
+        } else {
             setSingleProduct([])
         }
         setSelectedProduct([])
@@ -355,7 +355,7 @@ const SliderManagementForm = ({ res }: Props) => {
         if (sliderList) {
             getVendortList()
             setVendorSelect(sliderList?.vendor_id)
-            setValue("vendor_id",sliderList?.vendor_id)
+            setValue("vendor_id", sliderList?.vendor_id)
             setValue('franchise_id', sliderList?.franchise_id)
             setFranchise(sliderList?.franchise_id)
             setValue('order_number', sliderList?.order_number)

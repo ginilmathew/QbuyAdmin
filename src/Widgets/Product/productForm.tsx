@@ -301,7 +301,7 @@ const ProductForm = ({ res, view }: props) => {
             const response = await fetchData(`admin/product/show/${idd}`)
             setProductList(response?.data?.data)
         } catch (err: any) {
-            toast.success(err.message)
+            toast.error(err.message)
             setLoader(false)
         } finally {
             setLoader(false)
