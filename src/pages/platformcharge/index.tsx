@@ -29,7 +29,7 @@ const PlatformCharges = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [platformList, setplatformList] = useState<any>([]);
 
-  console.log({ platformList })
+
 
 
 

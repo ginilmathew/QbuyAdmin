@@ -79,7 +79,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     const [defaultStatus, setDefaultStatus] = useState<any>(null)
 
 
-    console.log({orderviewList})
+
 
     const [orderStatusSelect, setOrderStatus] = useState<any>([
         {
@@ -98,9 +98,8 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     )
     const [deliveryCharge, SetDeliveryCharge] = useState<any>(null)
     const [vendorStatusList, setVendorStatusList] = useState<any>([])
+    const [platformList, setplatformList] = useState<any>(null);
 
-
-  console.log({deliveryCharge},'deliveryCharge')
 
     const schema = yup
         .object()
@@ -237,9 +236,22 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     }
 
 
+    const GetPlatformCharge = async () => {
+        try {
+
+            const response = await fetchData('common/platformcharge')
+            setplatformList(response?.data?.data)
+
+        } catch (err) {
+
+        }
+    }
+
+
 
     useEffect(() => {
         vendorStatus();
+        GetPlatformCharge()
     }, [])
 
 
@@ -283,12 +295,13 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
     const SubmitOrder = async (data: any) => {
 
-        console.log({ vendor_statusP }, 'VENDOR STATUS PP')
+    
         let result = {
             id: idd,
             delivery_charge: Math.ceil(deliveryCharge),
             ...data,
-            vendor_status: vendor_statusP
+            vendor_status: vendor_statusP,
+            platform_charge: platformList?.platformCharge,
         }
         try {
 
@@ -577,8 +590,8 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                                         <TableCell align="center" component="th" scope="row">
                                             <select onChange={(e: any) => vendorStatusChange(e, i, resp)} style={{ cursor: 'pointer', background: '#fff', border: '1px solid #f5f5f5', padding: 10 }}>
                                                 <option> <em> Select Status</em></option>
-                                             
-                                                {vendor_statusP && vendorStatusList?.filter((res:any)=> res?.status_name !== "completed" && res?.status_name !== "pickedup").map((list: any) => (
+
+                                                {vendor_statusP && vendorStatusList?.filter((res: any) => res?.status_name !== "completed" && res?.status_name !== "pickedup").map((list: any) => (
                                                     <option value={list?.status_name}>{list?.status_name}</option>
                                                 ))}
                                             </select>
