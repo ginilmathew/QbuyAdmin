@@ -79,7 +79,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     const [defaultStatus, setDefaultStatus] = useState<any>(null)
 
 
-
+    console.log({ orderviewList })
 
     const [orderStatusSelect, setOrderStatus] = useState<any>([
         {
@@ -236,22 +236,22 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     }
 
 
-    const GetPlatformCharge = async () => {
-        try {
+    // const GetPlatformCharge = async () => {
+    //     try {
 
-            const response = await fetchData('common/platformcharge')
-            setplatformList(response?.data?.data)
+    //         const response = await fetchData('common/platformcharge')
+    //         setplatformList(response?.data?.data)
 
-        } catch (err) {
+    //     } catch (err) {
 
-        }
-    }
+    //     }
+    // }
 
 
 
     useEffect(() => {
         vendorStatus();
-        GetPlatformCharge()
+        // GetPlatformCharge()
     }, [])
 
 
@@ -295,17 +295,17 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
     const SubmitOrder = async (data: any) => {
 
-    
+
         let result = {
             id: idd,
             delivery_charge: Math.ceil(deliveryCharge),
             ...data,
             vendor_status: vendor_statusP,
-            platform_charge: platformList?.platformCharge,
+            platform_charge: orderviewList?.platform_charge,
         }
         try {
 
-            const response = await postData('admin/order/update', result);
+            await postData('admin/order/update', result);
             router.push('/shipments')
             toast.success('Order Updated Successfully')
 
