@@ -38,7 +38,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [productList, setProductList] = useState<any>(null);
 
 
-
+console.log({productList},'PRODUCT LIT')
 
     const handleClose = useCallback(() => {
         setModalOpen(false);
@@ -211,7 +211,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 let pricedata = {
                     // delivery_charge: productList?.delivery_charge,
                     delivery_charge: Math.ceil(highestDelivery),
-                    grand_total: (parseInt(productList?.delivery_charge) + rate),
+                    grand_total: (parseInt(productList?.delivery_charge) + rate + productList?.platform_charge),
                     total_amount: rate,
                     platform_charge: productList?.platform_charge,
                 }
@@ -338,7 +338,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                         <TableRow>
                             <TableCell colSpan={2}></TableCell>
                             <TableCell align="right">Total</TableCell>
-                            <TableCell align="center">₹ {parseFloat(productList?.grand_total + productList?.platform_charge)?.toFixed(2)}</TableCell>
+                            <TableCell align="center">₹ {parseFloat(productList?.grand_total)?.toFixed(2)}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>

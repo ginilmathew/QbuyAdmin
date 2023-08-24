@@ -333,7 +333,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         // AllProducts['delivery_charge'] = allProduct?.delivery_charge;
         AllProducts['delivery_charge'] = highestDelivery;
         AllProducts['total_amount'] = parseInt(data?.total) + parseInt(allProduct?.total_amount);
-        AllProducts['grand_total'] = (parseInt(data?.total) + parseInt(allProduct?.total_amount)) + parseInt(highestDelivery);
+        AllProducts['grand_total'] = (parseInt(data?.total) + parseInt(allProduct?.total_amount)) + parseInt(highestDelivery) + allProduct?.platform_charge;
 
         if (Number.isNaN(AllProducts?.grand_total)) {
             toast.warning('product not available');
