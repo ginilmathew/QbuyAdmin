@@ -28,7 +28,7 @@ type props = {
 const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
 
 
-
+    console.log({ res })
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalDelete, setModalDelete] = useState(false);
@@ -38,7 +38,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [productList, setProductList] = useState<any>(null);
 
 
-
+console.log({productList},'PRODUCT LIT')
 
     const handleClose = useCallback(() => {
         setModalOpen(false);
@@ -74,7 +74,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
             let pricedata = {
                 delivery_charge: parseInt(res?.delivery_charge),
                 grand_total: res?.grand_total,
-                total_amount: res?.total_amount
+                total_amount: res?.total_amount,
+                platform_charge: res?.platform_charge,
             }
             let productDetails: []
             productDetails = res?.product_details?.map((itm: any) => ({
@@ -94,7 +95,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 // fixed_delivery_price: itm?.type === "single" ? itm?.deliveryPrice : itm?.variants?.fixed_delivery_price,
                 title: itm?.type === "single" ? null : itm?.variants?.title,
                 stock_value: itm?.type === "single" ? (itm?.stock_value + parseFloat(itm?.quantity)) : (itm?.variants?.stock_value + parseFloat(itm?.quantity)),
-                stock: itm?.type === "single" ? itm?.stock : itm?.variants?.stock
+                stock: itm?.type === "single" ? itm?.stock : itm?.variants?.stock,
+
             }))
 
 
@@ -181,7 +183,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
             return false;
         }
 
-     
+
         let product: any[] = []
         if (row?.type === "variant") {
             product = productList?.productDetails?.filter((res: any) => res?.variant_id !== row?.variant_id);
@@ -209,8 +211,9 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 let pricedata = {
                     // delivery_charge: productList?.delivery_charge,
                     delivery_charge: Math.ceil(highestDelivery),
-                    grand_total: (parseInt(productList?.delivery_charge) + rate),
-                    total_amount: rate
+                    grand_total: (parseInt(productList?.delivery_charge) + rate + productList?.platform_charge),
+                    total_amount: rate,
+                    platform_charge: productList?.platform_charge,
                 }
                 setProductList({
                     ...pricedata,
@@ -273,6 +276,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                             <TableCell align="center">Total Price</TableCell>
                             {readonly && <TableCell align="center"></TableCell>}
                             {readonly && <TableCell align="center"></TableCell>}
+                            {readonly && <TableCell align="center"></TableCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -328,6 +332,11 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                         </TableRow>
                         <TableRow>
                             <TableCell colSpan={2}></TableCell>
+                            <TableCell align="right">Platform Charge</TableCell>
+                            <TableCell align="center">₹ {parseFloat(productList?.platform_charge)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell colSpan={2}></TableCell>
                             <TableCell align="right">Total</TableCell>
                             <TableCell align="center">₹ {parseFloat(productList?.grand_total)?.toFixed(2)}</TableCell>
                         </TableRow>
@@ -350,16 +359,12 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 />}
             {addOpen &&
                 <AddProductModal
-
-
                     order_id={id}
                     SetDeliveryCharge={SetDeliveryCharge}
                     allProduct={productList}
                     setaddProductList={setProductList}
                     open={addOpen}
                     handleClose={handleCloseAddModal}
-
-
                 />}
 
         </Box>

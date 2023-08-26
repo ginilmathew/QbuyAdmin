@@ -138,7 +138,7 @@ const VendorAccountsForm = ({ idd }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            // valueGetter: (params) => moment(params.row.transaction_date,'YYYY-MM-DD  HH:mm A').format('MM-DD-YYYY HH:mm A')
+            valueGetter: (params) => moment(params.row.transaction_date,"YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
         },
         {
             field: 'amount',

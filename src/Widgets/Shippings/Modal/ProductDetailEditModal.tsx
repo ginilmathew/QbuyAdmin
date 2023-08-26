@@ -46,7 +46,8 @@ type Inputs = {
 
 const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge }: props) => {
 
-console.log({data})
+
+
 
     const schema = yup
         .object()
@@ -183,6 +184,8 @@ console.log({data})
 
         const { total, ...alldata } = item;
 
+
+
         product.push(alldata)
 
         try {
@@ -195,8 +198,9 @@ console.log({data})
 
             let resetvalue = {
                 delivery_charge: data?.deliveryPrice,
-                grand_total: (parseInt(data?.deliveryPrice) + rate),
+                grand_total: (parseInt(data?.deliveryPrice) + rate + allProduct?.platform_charge),
                 total_amount: rate,
+                platform_charge: allProduct?.platform_charge,
                 productDetails: [...response?.data?.data?.productDetails]
             }
             setProductList(resetvalue)
