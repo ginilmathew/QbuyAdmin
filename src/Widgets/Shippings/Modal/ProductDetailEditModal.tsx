@@ -45,7 +45,7 @@ type Inputs = {
 };
 
 const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge }: props) => {
- 
+
 
 
 
@@ -184,7 +184,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
         const { total, ...alldata } = item;
 
-       
+
 
         product.push(alldata)
 
@@ -200,7 +200,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                 delivery_charge: data?.deliveryPrice,
                 grand_total: (parseInt(data?.deliveryPrice) + rate + allProduct?.platform_charge),
                 total_amount: rate,
-                platform_charge:allProduct?.platform_charge,
+                platform_charge: allProduct?.platform_charge,
                 productDetails: [...response?.data?.data?.productDetails]
             }
             setProductList(resetvalue)

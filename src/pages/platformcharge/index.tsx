@@ -131,10 +131,18 @@ const PlatformCharges = () => {
   return (
     <Box px={5} py={2} pt={10} mt={0}>
       <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
-        <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} height={60}>
-          <Typography fontSize={30} fontWeight={'bold'} color="#58D36E" letterSpacing={1} sx={{ fontFamily: `'Poppins' sans-serif`, }}>Platform Charge</Typography>
+        <Box
+          display={'flex'}
+          justifyContent={'space-between'}
+          alignItems={'center'} height={60}>
+          <Typography
+            fontSize={30}
+            fontWeight={'bold'}
+            color="#58D36E"
+            letterSpacing={1}
+            sx={{ fontFamily: `'Poppins' sans-serif`, }}>Platform Charge</Typography>
           <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} gap={3}>
-            <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={HandleOpen} IconEnd={''} IconStart={AddIcon} />
+            <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={platformList?.length > 0 ? 'Update' : 'Add'} onClick={HandleOpen} IconEnd={''} IconStart={AddIcon} />
           </Box>
         </Box>
       </Box>
