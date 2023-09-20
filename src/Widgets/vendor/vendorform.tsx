@@ -121,7 +121,6 @@ const Vendorform = ({ res, view, data }: props) => {
     const [multpleArraySub, setMultipleArraySub] = useState<any>([]);
 
 
-console.log({vendorList})
 
 
     const orderValidation = /^[0-9]*$/
