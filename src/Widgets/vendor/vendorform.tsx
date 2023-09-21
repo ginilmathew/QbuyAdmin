@@ -386,24 +386,24 @@ const Vendorform = ({ res, view, data }: props) => {
 
     }
 
-    const subCategoryList = async () => {
-        let array = vendorList?.category_id?.map((res: any) => res?.id);
-        try {
-            let data = {
-                categories: array
-            }
-            const response = await postData('admin/subcategorylist', data);
-            setSubcategoryList(response?.data);
-            let subcat = vendorList?.subCategory_id?.map((res: any) => res?.id);
-            let result = Array.isArray(subcat)
-             if(result){
-                setMultipleArraySub(subcat)
-                setValue('subCategory_id', vendorList?.subCategory_id);
-             }
-        } catch (err: any) {
+    // const subCategoryList = async () => {
+    //     let array = vendorList?.category_id?.map((res: any) => res?.id);
+    //     try {
+    //         let data = {
+    //             categories: array
+    //         }
+    //         const response = await postData('admin/subcategorylist', data);
+    //         setSubcategoryList(response?.data);
+    //         let subcat = vendorList?.subCategory_id?.map((res: any) => res?.id);
+    //         let result = Array.isArray(subcat)
+    //          if(result){
+    //             setMultipleArraySub(subcat)
+    //             setValue('subCategory_id', vendorList?.subCategory_id);
+    //          }
+    //     } catch (err: any) {
 
-        }
-    }
+    //     }
+    // }
 
 
     useEffect(() => {
@@ -412,7 +412,7 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
         if (vendorList && array) {
-            subCategoryList()
+            // subCategoryList()
             setValue('approval_status', vendorList?.approval_status);
             setValue('vendor_name', vendorList?.vendor_name);
             setValue('vendor_mobile', vendorList?.vendor_mobile);
@@ -470,24 +470,24 @@ const Vendorform = ({ res, view, data }: props) => {
     }
 
 
-    const onChangeSelectSubCategory = (e:any) => {
-        // setCategory(e.target.value)
-        // setValue('category_id', e.target.value)
-        // setError('category_id', { message: '' })
-        const { value } = e.target;
-        let find = subcategorylist?.filter((res: any, I: number) => value?.includes(res._id))
-        let data = find?.map((res: any) => ({
-            id: res?._id,
-            name: res?.name,
-            image: res?.image
+    // const onChangeSelectSubCategory = (e:any) => {
+    //     // setCategory(e.target.value)
+    //     // setValue('category_id', e.target.value)
+    //     // setError('category_id', { message: '' })
+    //     const { value } = e.target;
+    //     let find = subcategorylist?.filter((res: any, I: number) => value?.includes(res._id))
+    //     let data = find?.map((res: any) => ({
+    //         id: res?._id,
+    //         name: res?.name,
+    //         image: res?.image
 
-        }))
-        if (data) {
-            setValue('subCategory_id', data)
-            setError('subCategory_id', { message: '' })
-        }
-        setMultipleArraySub(value);
-    }
+    //     }))
+    //     if (data) {
+    //         setValue('subCategory_id', data)
+    //         setError('subCategory_id', { message: '' })
+    //     }
+    //     setMultipleArraySub(value);
+    // }
 
 
 
@@ -786,7 +786,7 @@ const Vendorform = ({ res, view, data }: props) => {
                                 ))}
                             </Customselect>
                         </Grid>
-                        <Grid item xs={12} lg={2}>
+                        <Grid item xs={12} lg={4}>
                             <CustomMultiselect
 
                                 multiple={true}
@@ -810,7 +810,7 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
                         </Grid>
-                        <Grid item xs={12} lg={2}>
+                        {/* <Grid item xs={12} lg={2}>
                             <CustomMultiselect
 
                                 multiple={true}
@@ -833,7 +833,7 @@ const Vendorform = ({ res, view, data }: props) => {
                             </CustomMultiselect>
 
 
-                        </Grid>
+                        </Grid> */}
                         <Grid item xs={12} lg={1.6}>
                             <CustomTimepicker
                                 disabled={view ? true : false}
