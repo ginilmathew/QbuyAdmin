@@ -121,6 +121,7 @@ const Vendorform = ({ res, view, data }: props) => {
     const [multpleArraySub, setMultipleArraySub] = useState<any>([]);
 
 
+    console.log({vendorList})
 
 
     const orderValidation = /^[0-9]*$/
@@ -372,10 +373,12 @@ const Vendorform = ({ res, view, data }: props) => {
                     categories: array
                 }
                 const response = await postData('admin/subcategorylist', data);
+           
                 let filter = response?.data.map((res: any) => res?._id);
+              
                 setMultipleArraySub(filter)
                 setSubcategoryList(response?.data)
-                console.log({ response: response?.data })
+        
             } catch (err: any) {
 
             }
@@ -392,8 +395,11 @@ const Vendorform = ({ res, view, data }: props) => {
             const response = await postData('admin/subcategorylist', data);
             setSubcategoryList(response?.data);
             let subcat = vendorList?.subCategory_id?.map((res: any) => res?.id);
-            setMultipleArraySub(subcat)
-            setValue('subCategory_id', vendorList?.subCategory_id);
+            let result = Array.isArray(subcat)
+             if(result){
+                setMultipleArraySub(subcat)
+                setValue('subCategory_id', vendorList?.subCategory_id);
+             }
         } catch (err: any) {
 
         }
