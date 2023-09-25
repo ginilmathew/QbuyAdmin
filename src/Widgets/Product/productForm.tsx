@@ -1828,7 +1828,7 @@ const ProductForm = ({ res, view }: props) => {
                     <Grid item xs={12} lg={6}>
                         {view &&
                             <>
-                                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+              <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
                                     sx={{
                                         fontSize: {
                                             lg: 16,
@@ -1849,9 +1849,7 @@ const ProductForm = ({ res, view }: props) => {
                                 </Box>
                             </>
                         }
-
-
-                        {productList &&
+     {productList &&
                             <>
                                 <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} py={1} >
                                     {recomendedProductEditList?.map((res: any) => (
