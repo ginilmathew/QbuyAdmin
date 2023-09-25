@@ -11,6 +11,7 @@ import { authOptions } from '../api/auth/[...nextauth]'
 import CustomSwitch from '@/components/CustomSwitch';
 import { max, min } from 'lodash';
 import { toast } from 'react-toastify';
+import Custombutton from '@/components/Custombutton'
 // type props = {
 //     req: any,
 //     res: any
@@ -61,13 +62,14 @@ function VendorProducts() {
 
         let value = {
             product_id: id,
-            status: e.target.checked === true ? "active" : "inactive"
+          
         }
 
         try {
             setLoding(true)
-            const response = await postData('admin/product/status-update', value)
+            const response = await fetchData(`/admin/temp-product-approve/${id}`)
             // setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
+            toast.success('Approved Successfully')
             getProductList()
         }
         catch (err: any) {
@@ -163,39 +165,43 @@ function VendorProducts() {
         },
         {
             field: 'Active Status',
-            headerName: 'Active Status',
+            headerName: 'Approve Product',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
-                    {/* <CustomSwitch
-                        changeRole={(e: any) => OnchangeCheck(e, row?._id)}
-                        checked={row?.status === 'active' ? true : false}
-
-                    /> */}
+                   <Custombutton
+                                btncolor=''
+                                height={30}
+                                IconEnd={""}
+                                IconStart={''}
+                                startIcon={false}
+                                endIcon={false}
+                                onClick={OnchangeCheck}
+                                label='Approve' />
 
                 </Stack>
             )
         },
-        {
-            field: 'Actions',
-            headerName: 'Actions',
-            width: 200,
-            headerAlign: 'center',
-            align: 'center',
-            renderCell: ({ row }) => (
-                <Stack alignItems={'center'} gap={1} direction={'row'}>
-                    <RemoveRedEyeIcon
-                        onClick={()=>null}
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }} />
+        // {
+        //     field: 'Actions',
+        //     headerName: 'Actions',
+        //     width: 200,
+        //     headerAlign: 'center',
+        //     align: 'center',
+        //     renderCell: ({ row }) => (
+        //         <Stack alignItems={'center'} gap={1} direction={'row'}>
+        //             <RemoveRedEyeIcon
+        //                 onClick={()=>null}
+        //                 style={{
+        //                     color: '#58D36E',
+        //                     cursor: 'pointer'
+        //                 }} />
                   
-                </Stack>
-            )
-        }
+        //         </Stack>
+        //     )
+        // }
     ];
 
 
