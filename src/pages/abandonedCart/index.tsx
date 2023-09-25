@@ -1,43 +1,53 @@
-import React from 'react'
+import React, { startTransition, useCallback, useState,useEffect } from 'react'
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
 import CustomTable from '@/components/CustomTable';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { useRouter } from 'next/router';
+import { fetchData } from '@/CustomAxios';
+import { toast } from 'react-toastify';
+import moment from 'moment';
 
 const AbandonedCart = () => {
+    const router = useRouter()
+    const [loading, setLoading] = useState(false);
+    const [cartData, setCartData] = useState([]);
+    const [searchList, setSearchList] = useState([]);
     
     const columns: GridColDef[] = [
         {
-            field: 'Customer ID',
+            field:'user_id',
             headerName: 'Customer ID',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params.row.user?.user_id || '',
         },
         {
-            field: 'Customer',
+            field: 'name',
             headerName: 'Customer',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params.row.user?.name || '',
         },
 
         {
-            field: 'Mobile',
+            field: 'mobile',
             headerName: 'Mobile',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-
+            valueGetter: (params) => params.row.user?.mobile || '',
         },
         {
-            field: 'Date & Time',
+            field: 'created_at',
             headerName: 'Date & Time',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => (moment(params.row.created_at).format('DD/MM/YYYY hh:mm A')),
         },
         {
             field: 'Actions',
@@ -48,7 +58,7 @@ const AbandonedCart = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-
+                    onClick={() => abandonedCartView(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -69,12 +79,46 @@ const AbandonedCart = () => {
         { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
     ];
+
+    const searchProducts = useCallback((value: any) => {
+        let filteredData = searchList?.filter((item: any) => {
+          const userIdMatch = item?.user?.user_id.toString().toLowerCase().includes(value.toLowerCase());
+          const mobileMatch = item?.user?.mobile.toString().toLowerCase().includes(value.toLowerCase());
+          return userIdMatch || mobileMatch;
+        });
+    
+        setCartData(filteredData);
+      }, [searchList]);
+    
+    const fetchCart = async () => {
+        try {
+            setLoading(true);
+            const response = await fetchData(`admin/abandoned/list`);
+            console.log(response?.data?.data);
+            setCartData(response?.data?.data); 
+            setSearchList(response?.data?.data)
+        } catch (err: any) {
+            toast.error(err.message || 'Error fetching OTP data');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchCart()
+    }, [])
+
+    const abandonedCartView = (id: string) => {
+        router.push(`/abandonedCart/view/${id}`)
+    }
+  
+
   return (
     <Box px={5} py={2} pt={10} mt={0}>
     <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-        <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Abandoned Cart' onClick={() => null} />
+        <CustomTableHeader addbtn={false} imprtBtn={false} setState={searchProducts}  Headerlabel='Abandoned Cart' onClick={abandonedCartView} />
         <Box py={5}>
-            <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+            <CustomTable dashboard={false} columns={columns} rows={cartData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
         </Box>
     </Box>
 </Box>

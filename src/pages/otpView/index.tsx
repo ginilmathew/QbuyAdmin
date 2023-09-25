@@ -1,15 +1,23 @@
-import React from 'react'
+import React, { startTransition, useCallback, useState,useEffect } from 'react'
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
 import CustomTable from '@/components/CustomTable';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { useRouter } from 'next/router';
+import { fetchData } from '@/CustomAxios';
+import { toast } from 'react-toastify';
+import moment from 'moment';
 
 const OTP_View = () => {
+
+    const [loading, setLoading] = useState(false);
+    const [otpData, setOtpData] = useState([]);
+    const [searchList, setSearchList] = useState([]);
+
   const columns: GridColDef[] = [
     {
-        field: 'ID',
+        field: 'user_id',
         headerName: 'ID',
         flex: 1,
         headerAlign: 'center',
@@ -17,7 +25,7 @@ const OTP_View = () => {
   
     },
     {
-        field: 'Mobile',
+        field: 'mobile',
         headerName: 'Mobile',
         flex: 1,
         headerAlign: 'center',
@@ -48,12 +56,12 @@ const OTP_View = () => {
         flex: 1,
         headerAlign: 'center',
         align: 'center',
-  
+        valueGetter: (params) => (moment(params.row.created_at).format('DD/MM/YYYY hh:mm A')),
 
     },
    
     {
-        field: 'OTP',
+        field: 'loginotp',
         headerName: 'OTP',
         flex: 1,
         headerAlign: 'center',
@@ -75,15 +83,47 @@ const rows = [
     { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
 ];
 
+
+const searchProducts = useCallback((value: any) => {
+    let filteredData = searchList?.filter((item: any) => {
+      const userIdMatch = item?.user_id.toString().toLowerCase().includes(value.toLowerCase());
+      const mobileMatch = item?.mobile.toString().toLowerCase().includes(value.toLowerCase());
+      return userIdMatch || mobileMatch;
+    });
+
+    setOtpData(filteredData);
+  }, [searchList]);
+
+
+
+    const fetchOTPData = async () => {
+        try {
+            setLoading(true);
+            const response = await fetchData(`admin/otp-view`);
+            console.log(response?.data?.data);
+            setOtpData(response?.data?.data); 
+            setSearchList(response?.data?.data)
+        } catch (err: any) {
+            toast.error(err.message || 'Error fetching OTP data');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchOTPData()
+    }, [])
+
   return (
     <Box px={5} py={2} pt={10} mt={0}>
     <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-        <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='OTP View' onClick={() => null} />
+        <CustomTableHeader addbtn={false} setState={searchProducts}  imprtBtn={false} Headerlabel='OTP View' onClick={() => null} />
         <Box py={5}>
-            <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+            <CustomTable dashboard={false} columns={columns} rows={otpData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
         </Box>
     </Box>
 </Box>
+
   )
 }
 
