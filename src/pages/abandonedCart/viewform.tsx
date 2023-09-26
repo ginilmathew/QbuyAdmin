@@ -28,7 +28,7 @@ const AbandonedForm = ({ resData, view }: props) => {
     const idd = resData ? resData : view;
     const router = useRouter()
     const [loading, setLoading] = useState(false);
-    const [abandonedData, setAbandonedData] = useState([]);
+    const [abandonedData, setAbandonedData] = useState<any>([]);
     console.log({ abandonedData }, 'hai')
     const [searchList, setSearchList] = useState([]);
     const customerName = resData?.data?.user?.name || '';
@@ -63,7 +63,7 @@ const AbandonedForm = ({ resData, view }: props) => {
         try {
             setLoading(true);
             const response = await fetchData(`admin/abandoned/show/${idd}`);
-            console.log(response?.data?.data);
+       
             setAbandonedData(response?.data?.data);
             setSearchList(response?.data?.data)
         } catch (err: any) {
@@ -155,7 +155,7 @@ const AbandonedForm = ({ resData, view }: props) => {
             <CustomBox title='Abandoned Details'>
             {abandonedData && abandonedData.product_details && (
                     <Box display={'flex'} flexDirection="column">
-                        {abandonedData.product_details.map((product, index) => (
+                        {abandonedData.product_details.map((product:any, index:number) => (
                             // <Grid container flex={.7} spacing={2}>
                             //     <Grid item xs={12} lg={3}>
                             //         <Typography>Product Image</Typography>
