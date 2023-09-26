@@ -51,7 +51,8 @@ type Inputs = {
     latitude: any,
     longitude: any,
     order_status: any,
-    approval_status: any
+    approval_status: any,
+    subCategory_id: any
 };
 
 
@@ -83,7 +84,8 @@ type IFormInput = {
     latitude: any,
     longitude: any,
     order_status: any,
-    approval_status: any
+    approval_status: any,
+    subCategory_id: any
 };
 
 type props = {
@@ -114,10 +116,12 @@ const Vendorform = ({ res, view, data }: props) => {
     const [paths, setPaths] = useState<any>(null)
     const [vendorList, setVendorList] = useState<any>(data)
     const [statusList, setStatusList] = useState<any>([]);
-    const [statusSelect, setStatusSelect] = useState<any>(null)
+    const [statusSelect, setStatusSelect] = useState<any>(null);
+    const [subcategorylist, setSubcategoryList] = useState<any>([]);
+    const [multpleArraySub, setMultipleArraySub] = useState<any>([]);
 
 
-
+    console.log({vendorList})
 
 
     const orderValidation = /^[0-9]*$/
@@ -309,12 +313,6 @@ const Vendorform = ({ res, view, data }: props) => {
     }
 
 
-    const onChangeSelectCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCategory(e.target.value)
-        setValue('category_id', e.target.value)
-        setError('category_id', { message: '' })
-
-    }
 
     const onChangeSelectFranchise = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFranchise(e.target.value)
@@ -350,7 +348,7 @@ const Vendorform = ({ res, view, data }: props) => {
         try {
             setLoading(true)
             const response = await fetchData(`/admin/category/list/${process.env.NEXT_PUBLIC_TYPE}`)
-          
+
             setGetCategory(response?.data?.data)
             setLoading(false)
 
@@ -365,56 +363,102 @@ const Vendorform = ({ res, view, data }: props) => {
     }
 
 
+    const filterSubcategory = async () => {
+
+
+        let array = vendorList?.category_id?.map((res: any) => res?.id);
+        if (array?.length > 0) {
+            try {
+                let data = {
+                    categories: array
+                }
+                const response = await postData('admin/subcategorylist', data);
+           
+                let filter = response?.data.map((res: any) => res?._id);
+              
+                setMultipleArraySub(filter)
+                setSubcategoryList(response?.data)
+        
+            } catch (err: any) {
+
+            }
+        }
+
+    }
+
+    // const subCategoryList = async () => {
+    //     let array = vendorList?.category_id?.map((res: any) => res?.id);
+    //     try {
+    //         let data = {
+    //             categories: array
+    //         }
+    //         const response = await postData('admin/subcategorylist', data);
+    //         setSubcategoryList(response?.data);
+    //         let subcat = vendorList?.subCategory_id?.map((res: any) => res?.id);
+    //         let result = Array.isArray(subcat)
+    //          if(result){
+    //             setMultipleArraySub(subcat)
+    //             setValue('subCategory_id', vendorList?.subCategory_id);
+    //          }
+    //     } catch (err: any) {
+
+    //     }
+    // }
+
+
     useEffect(() => {
 
-        let array = vendorList?.category_id?.map((res: any) => res?.id)
+        let array = vendorList?.category_id?.map((res: any) => res?.id);
+
 
         if (vendorList && array) {
-            setValue('approval_status', vendorList?.approval_status)
-            setValue('vendor_name', vendorList?.vendor_name)
-            setValue('vendor_mobile', vendorList?.vendor_mobile)
-            setValue('vendor_email', vendorList?.vendor_email)
-            setValue('store_name', vendorList?.store_name)
-            setValue('store_address', vendorList?.store_address)
-            setValue('franchise_id', vendorList?.franchise_id)
-            setFranchise(vendorList?.franchise_id)
-            setValue('category_id', vendorList?.category_id)
-            setCategory(vendorList?.category_id)
-            setValue('store_logo', vendorList?.store_logo)
-            setImagePreview(`${IMAGE_URL}${vendorList?.store_logo}`)
-            setValue('start_time', vendorList?.start_time !== 'null' ? moment(vendorList?.start_time, 'HH:mm') : "null")
-            setValue('end_time', vendorList?.end_time !== 'null' ? moment(vendorList?.end_time, 'HH:mm') : 'null')
-            setValue('license_number', vendorList?.kyc_details?.license_number)
-            setValue('ffsai_number', vendorList?.kyc_details?.ffsai_number)
-            setValue('pan_card_number', vendorList?.kyc_details?.pan_card_number)
-            setValue('aadhar_card_number', vendorList?.kyc_details?.aadhar_card_number)
-            setValue('account_number', vendorList?.kyc_details?.account_number)
-            setValue('ifsc', vendorList?.kyc_details?.ifsc)
-            setValue('branch', vendorList?.kyc_details?.branch)
-            setValue('recipient_name', vendorList?.kyc_details?.recipient_name)
-            setValue('commission', vendorList?.additional_details?.commission)
-            setValue('offer_description', vendorList?.additional_details?.offer_description)
-            setValue('tax', vendorList?.additional_details?.tax)
-            setMultipleArray(array)
-            setValue('display_order', vendorList?.display_order)
+            // subCategoryList()
+            setValue('approval_status', vendorList?.approval_status);
+            setValue('vendor_name', vendorList?.vendor_name);
+            setValue('vendor_mobile', vendorList?.vendor_mobile);
+            setValue('vendor_email', vendorList?.vendor_email);
+            setValue('store_name', vendorList?.store_name);
+            setValue('store_address', vendorList?.store_address);
+            setValue('franchise_id', vendorList?.franchise_id);
+            setFranchise(vendorList?.franchise_id);
+
+            setValue('category_id', vendorList?.category_id);
+            setCategory(vendorList?.category_id);
+            setValue('store_logo', vendorList?.store_logo);
+            setImagePreview(`${IMAGE_URL}${vendorList?.store_logo}`);
+            setValue('start_time', vendorList?.start_time !== 'null' ? moment(vendorList?.start_time, 'HH:mm') : "null");
+            setValue('end_time', vendorList?.end_time !== 'null' ? moment(vendorList?.end_time, 'HH:mm') : 'null');
+            setValue('license_number', vendorList?.kyc_details?.license_number);
+            setValue('ffsai_number', vendorList?.kyc_details?.ffsai_number);
+            setValue('pan_card_number', vendorList?.kyc_details?.pan_card_number);
+            setValue('aadhar_card_number', vendorList?.kyc_details?.aadhar_card_number);
+            setValue('account_number', vendorList?.kyc_details?.account_number);
+            setValue('ifsc', vendorList?.kyc_details?.ifsc);
+            setValue('branch', vendorList?.kyc_details?.branch);
+            setValue('recipient_name', vendorList?.kyc_details?.recipient_name);
+            setValue('commission', vendorList?.additional_details?.commission);
+            setValue('offer_description', vendorList?.additional_details?.offer_description);
+            setValue('tax', vendorList?.additional_details?.tax);
+            setMultipleArray(array);
+            setValue('display_order', vendorList?.display_order);
             let paths = vendorList?.delivery_location?.map((loc: any) => {
                 return {
                     lat: parseFloat(loc[0]),
                     lng: parseFloat(loc[1])
                 }
             })
-            setValue('latitude', vendorList?.vendor_location?.[0]?.lat)
-            setValue('longitude', vendorList?.vendor_location?.[0]?.lng)
-            setPaths(paths)
-            setValue('coordinates', vendorList?.delivery_location)
-            setStatusSelect(vendorList?.approval_status)
+            setValue('latitude', vendorList?.vendor_location?.[0]?.lat);
+            setValue('longitude', vendorList?.vendor_location?.[0]?.lng);
+            setPaths(paths);
+            setValue('coordinates', vendorList?.delivery_location);
+            setStatusSelect(vendorList?.approval_status);
         }
     }, [vendorList])
 
 
 
     const onChangeStartTime = (value: any) => {
-      
+
         setValue('start_time', value)
         setError('start_time', { message: '' })
 
@@ -426,9 +470,28 @@ const Vendorform = ({ res, view, data }: props) => {
     }
 
 
+    // const onChangeSelectSubCategory = (e:any) => {
+    //     // setCategory(e.target.value)
+    //     // setValue('category_id', e.target.value)
+    //     // setError('category_id', { message: '' })
+    //     const { value } = e.target;
+    //     let find = subcategorylist?.filter((res: any, I: number) => value?.includes(res._id))
+    //     let data = find?.map((res: any) => ({
+    //         id: res?._id,
+    //         name: res?.name,
+    //         image: res?.image
+
+    //     }))
+    //     if (data) {
+    //         setValue('subCategory_id', data)
+    //         setError('subCategory_id', { message: '' })
+    //     }
+    //     setMultipleArraySub(value);
+    // }
 
 
-    const onChangeMultiple = (event: any) => {
+
+    const onChangeMultiple = async (event: any) => {
         const {
             target: { value },
         } = event;
@@ -451,6 +514,18 @@ const Vendorform = ({ res, view, data }: props) => {
         setMultipleArray(
             values
         );
+
+        if (values?.length > 0) {
+            try {
+                let data = {
+                    categories: values
+                }
+                const response = await postData('admin/subcategorylist', data);
+                setSubcategoryList(response?.data)
+            } catch (err: any) {
+
+            }
+        }
 
     }
 
@@ -512,6 +587,7 @@ const Vendorform = ({ res, view, data }: props) => {
         formData.append("store_address", data?.store_address);
         formData.append("franchise_id", data?.franchise_id);
         formData.append("category_id", JSON.stringify(data?.category_id));
+        formData.append("subCategory_id", JSON.stringify(data?.subCategory_id));
         formData.append("start_time", data?.start_time !== "null" ? moment(data?.start_time, 'hh:mm A').format('HH:mm') : "null");
         formData.append("end_time", data?.end_time !== "null" ? moment(data?.end_time, 'hh:mm A').format('HH:mm') : "null");
         formData.append("store_logo", data?.store_logo);
@@ -710,7 +786,7 @@ const Vendorform = ({ res, view, data }: props) => {
                                 ))}
                             </Customselect>
                         </Grid>
-                        <Grid item xs={12} lg={3}>
+                        <Grid item xs={12} lg={4}>
                             <CustomMultiselect
 
                                 multiple={true}
@@ -731,31 +807,34 @@ const Vendorform = ({ res, view, data }: props) => {
                                     <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
                                 ))}
                             </CustomMultiselect>
-                            {/* <Customselect
-                                type='text'
+
+
+                        </Grid>
+                        {/* <Grid item xs={12} lg={2}>
+                            <CustomMultiselect
+
+                                multiple={true}
                                 control={control}
-                                error={errors.category_id}
-                                fieldName="category_id"
+                                error={errors.subCategory_id}
+                                fieldName="subCategory_id"
                                 placeholder={``}
-                                fieldLabel={"Category"}
-                                selectvalue={""}
-                                height={40}
-                                label={''}
-                                size={16}
-                                value={category}
-                                options={''}
-                                onChangeValue={onChangeSelectCategory}
-                                background={'#fff'}
+                                fieldLabel={"SubCategory"}
+                                readOnly={view ? true : false}
+                                value={multpleArraySub}
+                                onChangeValue={onChangeSelectSubCategory}
+                                type=''
                             >
-                                <MenuItem value="" disabled >
-                                    <>Select Category</>
+                                <MenuItem  disabled >
+                                    <>Select SubCategory</>
                                 </MenuItem>
-                                {getcategory && getcategory.map((res: any) => (
+                                {subcategorylist && subcategorylist?.map((res: any) => (
                                     <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
                                 ))}
-                            </Customselect> */}
-                        </Grid>
-                        <Grid item xs={12} lg={2.1}>
+                            </CustomMultiselect>
+
+
+                        </Grid> */}
+                        <Grid item xs={12} lg={1.6}>
                             <CustomTimepicker
                                 disabled={view ? true : false}
                                 changeValue={onChangeStartTime}
@@ -764,7 +843,7 @@ const Vendorform = ({ res, view, data }: props) => {
                                 error={errors.start_time}
                                 fieldLabel={'Store Time'} />
                         </Grid>
-                        <Grid item xs={12} lg={2.1}>
+                        <Grid item xs={12} lg={1.6}>
                             <Typography mb={3}></Typography>
                             <CustomTimepicker
                                 disabled={view ? true : false}
@@ -994,11 +1073,8 @@ const Vendorform = ({ res, view, data }: props) => {
                             fieldLabel={"Tax"}
                             disabled={false}
                             view={view ? true : false}
-
                         />
                     </Grid>
-
-
                 </Grid>
             </CustomBox>
             {vendorList?.approval_status !== "Approved" && idd &&

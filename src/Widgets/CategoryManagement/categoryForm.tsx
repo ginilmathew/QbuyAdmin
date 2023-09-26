@@ -133,10 +133,7 @@ const CategoryForm = ({ resData, view }: props) => {
             setImagefile(null)
             toast.warning('Image should be less than or equal 1MB')
         }
-
-
-
-    }
+ }
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         //console.log({data, type: process.env.NEXT_PUBLIC_TYPE})
