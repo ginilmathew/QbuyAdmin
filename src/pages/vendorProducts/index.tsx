@@ -58,12 +58,8 @@ function VendorProducts() {
         getProductList()
     },[])
 
-    const OnchangeCheck = async (e: any, id: string) => {
+    const OnchangeCheck = async ( id: string) => {
 
-        let value = {
-            product_id: id,
-          
-        }
 
         try {
             setLoding(true)
@@ -178,7 +174,7 @@ function VendorProducts() {
                                 IconStart={''}
                                 startIcon={false}
                                 endIcon={false}
-                                onClick={OnchangeCheck}
+                                onClick={()=>OnchangeCheck(row?._id)}
                                 label='Approve' />
 
                 </Stack>
