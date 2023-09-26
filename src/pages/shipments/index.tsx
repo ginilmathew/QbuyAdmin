@@ -172,7 +172,7 @@ const Shipments = () => {
 
         try {
             setLoading(true)
-            const response = await fetchData(`admin/orders/${process.env.ENXT_PUBLIC_TYPE}`)
+            const response = await fetchData(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`)
             setShippingList(response?.data?.data)
             setSearchList(response?.data?.data)
         } catch (err: any) {
