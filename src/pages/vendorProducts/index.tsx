@@ -1,8 +1,8 @@
 import { fetchData, postData } from '@/CustomAxios'
 import CustomTableHeader from '@/Widgets/CustomTableHeader'
-import { Box, Stack } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import { getServerSession } from 'next-auth'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { startTransition, useCallback, useEffect, useState } from 'react'
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import CustomTable from '@/components/CustomTable';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
@@ -11,7 +11,12 @@ import { authOptions } from '../api/auth/[...nextauth]'
 import CustomSwitch from '@/components/CustomSwitch';
 import { max, min } from 'lodash';
 import { toast } from 'react-toastify';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import Custombutton from '@/components/Custombutton'
+import { useRouter } from 'next/router'
+import CustomApproveModal from '@/components/CustomApproveModal';
+import WarningIcon from '@mui/icons-material/Warning';
 // type props = {
 //     req: any,
 //     res: any
@@ -48,25 +53,30 @@ import Custombutton from '@/components/Custombutton'
 
 
 function VendorProducts() {
+    const router = useRouter()
 
-    const [productList,setProductList]=useState([]);
+    const [productList, setProductList] = useState([]);
     const [loading, setLoding] = useState<boolean>(false)
+    const [modal, setModal] = useState<boolean>(false);
+    const [rowid, setId] = useState<any>(null)
+    const [setSerachList, setSearchList] = useState<any>([])
 
-    // console.log({data})
+    console.log({productList})
 
-    useEffect(()=>{
+    useEffect(() => {
         getProductList()
-    },[])
+    }, [])
 
-    const OnchangeCheck = async ( id: string) => {
-
+    const OnchangeCheck = async (id: string) => {
 
         try {
             setLoding(true)
             const response = await fetchData(`/admin/temp-product-approve/${id}`)
+
+            let idd = response?.data?.data?._id;
             // setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
-            toast.success('Approved Successfully')
-            getProductList()
+            router.push(`/products/edit/${idd}`)
+
         }
         catch (err: any) {
             toast.warning(err?.message)
@@ -77,10 +87,22 @@ function VendorProducts() {
 
     }
 
- 
+
+    const RejectConformation = useCallback((id: string) => {
+        setModal(true)
+        setId(id)
+
+    }, [])
+
+
+    const HandleClose = useCallback(() => {
+        setModal(false)
+    }, [modal])
+
+
 
     const columns: GridColDef[] = [
-    
+
         {
             field: 'name',
             headerName: 'Product Name',
@@ -161,77 +183,150 @@ function VendorProducts() {
         },
         {
             field: 'Active Status',
-            headerName: 'Approve Product',
+            headerName: 'Approve / Reject',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
             renderCell: ({ row }) => (
+
+                
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
-                   <Custombutton
-                                btncolor=''
-                                height={30}
-                                IconEnd={""}
-                                IconStart={''}
-                                startIcon={false}
-                                endIcon={false}
-                                onClick={()=>OnchangeCheck(row?._id)}
-                                label='Approve' />
+
+                  {row?.approval_status !== "rejected" ? <> <Box onClick={() => OnchangeCheck(row?._id)}
+                        style={{
+                            color: '#58D36E',
+                            cursor: 'pointer'
+                        }}>
+                        <CheckCircleIcon />
+                    </Box>
+
+                    <Box
+                        onClick={() => RejectConformation(row?._id)}
+                        style={{
+                            color: 'red',
+                            cursor: 'pointer'
+                        }}>
+                        <HighlightOffIcon />
+                    </Box></> :  <> <Box
+                        style={{
+                            color: 'grey',
+                           
+
+                        }}>
+                        <CheckCircleIcon />
+                    </Box>
+
+                    <Box
+                      
+                        style={{
+                            color: 'grey',
+                           
+                        }}>
+                        <HighlightOffIcon />
+                    </Box></>}
+
+                   
 
                 </Stack>
             )
         },
-        // {
-        //     field: 'Actions',
-        //     headerName: 'Actions',
-        //     width: 200,
-        //     headerAlign: 'center',
-        //     align: 'center',
-        //     renderCell: ({ row }) => (
-        //         <Stack alignItems={'center'} gap={1} direction={'row'}>
-        //             <RemoveRedEyeIcon
-        //                 onClick={()=>null}
-        //                 style={{
-        //                     color: '#58D36E',
-        //                     cursor: 'pointer'
-        //                 }} />
-                  
-        //         </Stack>
-        //     )
-        // }
+
     ];
 
 
 
 
-    const getProductList = async()=>{
-        try{
+    const getProductList = async () => {
+        try {
 
             const response = await fetchData(`admin/temp-product/list/${process.env.NEXT_PUBLIC_TYPE}`)
-            console.log({response:response?.data?.data})
+            setSearchList(response.data.data);
             setProductList(response?.data?.data)
 
-        }catch(err){
+        } catch (err) {
 
         }
     }
 
 
+    const Confirmreject = useCallback(async () => {
+
+        try {
+            await fetchData(`admin/temp-product-reject/${rowid}`)
+            HandleClose()
+            getProductList()
+
+        } catch (err: any) {
+
+        }
+
+    }, [modal])
 
 
-    const searchVendor = useCallback((value: any) => {
 
-    }, [])
+    const searchProducts = useCallback((value: any) => {
+        let competitiions = setSerachList?.filter((com: any) => com?.name.toString().toLowerCase().includes(value.toLowerCase()) ||
+            com?.store?.name?.toString().toLowerCase().includes(value.toLowerCase())
+        )
+        startTransition(() => {
+            setProductList(competitiions)
+        })
+    }, [productList])
 
 
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader setState={searchVendor} addbtn={false} imprtBtn={false} Headerlabel='Vendor Products' onClick={() => null} />
+                <CustomTableHeader setState={searchProducts} addbtn={false} imprtBtn={false} Headerlabel='Vendor Products' onClick={() => null} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={productList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
+            {modal &&
+                <CustomApproveModal open={modal} onClose={HandleClose}>
+                    <Box display={'flex'} justifyContent={'space-around'} alignItems={'center'} width={{ lg: 300, md: 300, xs: 250 }} py={3} flexDirection={'column'}>
+                        <Box>
+                            <WarningIcon style={{ color: 'orange', fontSize: 30 }} />
+                        </Box>
+                        <Box>
+                            <Typography sx={{
+                                fontSize: {
+                                    lg: 16,
+                                    md: 14,
+                                    sm: 12,
+                                    xs: 11,
+                                },
+                                fontFamily: `'Poppins' sans-serif`,
+
+                            }}>Are you sure ?</Typography>
+                        </Box>
+                        <Box display={'flex'} justifyContent={'space-around'} gap={2} alignItems={'center'} py={2}>
+                            <Custombutton
+                                disabled={loading}
+                                btncolor='red'
+                                IconEnd={''}
+                                IconStart={''}
+                                endIcon={false}
+                                startIcon={false}
+                                height={''}
+                                label={'No'}
+                                onClick={HandleClose} />
+                            <Custombutton
+                                disabled={loading}
+                                btncolor=''
+                                IconEnd={''}
+                                IconStart={''}
+                                endIcon={false}
+                                startIcon={false}
+                                height={''}
+                                label={'yes'}
+                                onClick={() => Confirmreject()} />
+
+                        </Box>
+
+                    </Box>
+                </CustomApproveModal>}
         </Box>
     )
 }

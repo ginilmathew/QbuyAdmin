@@ -66,7 +66,7 @@ const AddProducts = ({ data }: datapr) => {
     const [_id, set_id] = useState<string>('');
 
 
-    console.log({ productList })
+ 
 
     const handleClose = () => {
         setOpen(false)
