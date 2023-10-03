@@ -34,6 +34,7 @@ type Inputs = {
     customer_name:string,
     email:string,
     mobile:number,
+    assign_rider:string,
     customer_group:string,
     item_name: string,
     description: string,
@@ -61,7 +62,7 @@ const PickUp = ({ view, res, edit }: props) => {
 
     const idd = view ? view : res;
     console.log(idd);
-    
+    const [type, settype] = useState<string>("");
     const [orderhistory, setOrderhistory] = useState<any>()
     const [customerGroupSelect, setCustomerGroupSelect] = useState<string>('')
     const [paymentMethodList, setPaymentMethodList] = useState<any>([
@@ -171,7 +172,12 @@ const PickUp = ({ view, res, edit }: props) => {
         setOrderSelect(value);
 
     }
-  
+    const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        settype(e.target.value)
+
+
+    }
+
 
     const imageUploder = async (file: any) => {
         if (file.size <= 1000000) {
@@ -352,6 +358,8 @@ const PickUp = ({ view, res, edit }: props) => {
             ...data,
            
         }
+        console.log(result);
+        
         try {
 
             await postData('admin/pickup-drop/create',data);
@@ -449,7 +457,7 @@ const PickUp = ({ view, res, edit }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
+                    <Grid item xs={12} lg={7}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -475,7 +483,7 @@ const PickUp = ({ view, res, edit }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
+                    <Grid item xs={12} lg={4.5}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -521,9 +529,9 @@ const PickUp = ({ view, res, edit }: props) => {
                             defaultValue={''}
                         />
                     </Grid> */}
-                    <Grid item xs={12} lg={2.5}>
-                        <CustomInput
-                        type='text'
+                    <Grid item xs={12} lg={4.7}>
+                        <CustomTextarea
+                        // type='text'
                             control={control}
                             error={errors.pickup_location}
                             fieldName="pickup_location"
@@ -534,12 +542,25 @@ const PickUp = ({ view, res, edit }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
+                    <Grid item xs={12} lg={4.7}>
+                        <CustomTextarea
+                            control={control}
+                            // type='text'
+                            error={errors.drop_off_location}
+                            fieldName="drop_off_location"
+                            placeholder={``}
+                            fieldLabel={"Delivery Location"}
+                            disabled={false}
+                            view={idd ? true : false}
+                            defaultValue={''}
+                        />
+                    </Grid>
                 </Grid>
-                {view &&
+                {/* {view &&
                         <Grid item xs={12} lg={3}>
                             {/* <Avatar variant='square' src={`${IMAGE_URL}${productList?.product_image}`} sx={{ width: '100%', height: 130 }} /> */}
-                        </Grid>}
-                    {!view &&
+                        {/* </Grid> */}
+                    {/* {!view &&
                         <Grid item xs={12} lg={3}>
                             <CustomImageUploader
                                 ICON={""}
@@ -561,27 +582,14 @@ const PickUp = ({ view, res, edit }: props) => {
                             />
 
                         </Grid>}
-            
+             */}
             
                 <Grid container spacing={2}>
-                <Grid item xs={12} lg={2.5}>
-                        <CustomInput
-                            control={control}
-                            type='text'
-                            error={errors.drop_off_location}
-                            fieldName="drop_off_location"
-                            placeholder={``}
-                            fieldLabel={"Delivery Location"}
-                            disabled={false}
-                            view={idd ? true : false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                   <Grid item xs={12} lg={2.5}>
-                   <Grid item xs={12} lg={6}>
+               
+                    <Grid item xs={12} lg={6}>
 
 {/* this only in edit image code ************************************** */}
-
+<div style={{marginTop:"15px"}}/>
 {defaultImage.length > 0 && !view &&
     <>
         {/* <Box display={'flex'} gap={2} >
@@ -612,7 +620,7 @@ const PickUp = ({ view, res, edit }: props) => {
         >{'Additional Images'}
 
         </Typography>
-        <Box display={'flex'} gap={2} >
+        <Box display={'flex'} gap={2}   >
 
             {defaultImage && defaultImage?.map((res: any, i: number) => (
                 <Box>
@@ -623,12 +631,12 @@ const PickUp = ({ view, res, edit }: props) => {
     </>
 }
 
-{!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />}
+{!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='' />}
 </Grid>
 
 
-                   </Grid>
-                    <Grid item xs={12} lg={2.5}>
+                
+                    {/* <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -668,7 +676,7 @@ const PickUp = ({ view, res, edit }: props) => {
                                 view={view ? true : false}
                                 defaultValue={''}
                             />
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </CustomBox>
             {/* <CustomBox title='Product Details'>
@@ -679,10 +687,65 @@ const PickUp = ({ view, res, edit }: props) => {
            
                        
             {/* {idd && <HistoryTable res={orderviewList?.order_history} />} */}
+            <Grid container lg={12} spacing={0.5} display={'flex'} direction={"row"} >
+  <CustomBox title='Rider'>
+    <Grid item xs={12} lg={12} >
+   
+       <Customselect
+              type='text'
+              control={control}
+              error={errors.assign_rider}
+              fieldName="Assign Rider"
+              placeholder={``}
+              fieldLabel={"Assign Rider"}
+              selectvalue={""}
+              height={40}
+              label={''}
+              size={20}
+              value={type}
+              options={''}
+              onChangeValue={onChangeSelect}
+              background={'#fff'}
+            >
+              <MenuItem value={10}>Ten</MenuItem>
+              <MenuItem value={20}>Twenty</MenuItem>
+              <MenuItem value={30}>Thirty</MenuItem>
+            </Customselect>
+    </Grid>
+  </CustomBox>
 
-          
+  {/* Add spacing between CustomBox components */}
+  <div style={{ marginLeft: "20px" }} />
+
+  <CustomBox title='Status'>
+    <Grid item xs={12} lg={12} >
+    <Customselect
+              type='text'
+              control={control}
+              error={errors.assign_rider}
+              fieldName="Choose Status"
+              placeholder={``}
+              fieldLabel={"Choose Status"}
+              selectvalue={""}
+              height={40}
+              label={''}
+              size={20}
+              value={type}
+              options={''}
+              onChangeValue={onChangeSelect}
+              background={'#fff'}
+            >
+              <MenuItem value={10}>Ten</MenuItem>
+              <MenuItem value={20}>Twenty</MenuItem>
+              <MenuItem value={30}>Thirty</MenuItem>
+            </Customselect>
+    </Grid>
+  </CustomBox>
+</Grid>
+
+       
               
-            {<Box py={3} display={'flex'} justifyContent={'center'}>
+            {<Box py={3} display={'flex-container'} justifyContent={'center'}>
                 <Custombutton
                     btncolor=''
                     IconEnd={''}

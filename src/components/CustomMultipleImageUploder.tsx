@@ -52,7 +52,7 @@ export const CustomMultipleImageUploader = ({ fieldLabel, onChangeImage, state }
                
                     <Box >
                         
-                        <Box py={1} display={'flex'} justifyContent={'space-between'}>
+                        <Box py={1} display={'flex'}>
                             <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
                                 sx={{
                                     fontSize: {
@@ -77,7 +77,7 @@ export const CustomMultipleImageUploader = ({ fieldLabel, onChangeImage, state }
                                 onClick={onImageUpload}
                                 label='Upload Images' />
                         </Box>
-                        <Box minHeight={150} border={'1px solid #f5f5f5'} >
+                        <Box minHeight={150}  border={'1px solid hsl(0, 0%, 85%)'} >
                             <Box display={'flex'} flexWrap={'wrap'} justifyContent={'initial'}>
                                 {imageList?.map((image, index) => (
                                     <Box key={index} display={'flex'} px={1} py={2}>
