@@ -557,9 +557,6 @@ const ProductForm = ({ res, view }: props) => {
             }
 
         }
-
-        //}
-
     }
 
 
