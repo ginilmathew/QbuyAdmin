@@ -169,7 +169,6 @@ const Shipments = () => {
     }, [shippingList])
 
     const ShippingOrders = async () => {
-
         try {
             setLoading(true)
             const response = await fetchData(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`)
