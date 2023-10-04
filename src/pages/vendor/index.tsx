@@ -7,12 +7,13 @@ import { useRouter } from 'next/router';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
-import { fetchData } from '@/CustomAxios';
+import { fetchData, postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import CustomDelete from '@/Widgets/CustomDelete';
 import { CleanHands } from '@mui/icons-material';
 import { authOptions } from '../api/auth/[...nextauth]'
 import { getServerSession } from "next-auth/next"
+import CustomSwitch from '@/components/CustomSwitch';
 
 type props = {
     req: any,
@@ -42,13 +43,13 @@ export async function getServerSideProps({ req, res }: props) {
 
     const data = await resu.json();
 
-    
-   
+
+
     // Pass data to the page via props
-    return { props: { data : data } };
+    return { props: { data: data } };
 }
 
-const VendorSignup = ({data}: datapr) => {
+const VendorSignup = ({ data }: datapr) => {
 
 
 
@@ -63,7 +64,7 @@ const VendorSignup = ({data}: datapr) => {
     const [pending, startTransition] = useTransition();
 
 
-  
+
 
 
     const addvaendor = () => {
@@ -141,15 +142,32 @@ const VendorSignup = ({data}: datapr) => {
             )
 
         },
+        // {
+        //     field: 'status',
+        //     headerName: 'Status',
+        //     flex: 1,
+        //     headerAlign: 'center',
+        //     align: 'center',
+        //     renderCell: ({ row }) => (
+        //         <Stack>
+        //             <Typography variant="body1" sx={{ color:row?.status === 'active' ? '#58D36E' : '#FF0000'}} fontSize={14} letterSpacing={.5} >{row?.status === 'active' ? "ONLINE" : 'OFFLINE'}</Typography>
+        //         </Stack>
+        //     )
+        // },
         {
-            field: 'status',
-            headerName: 'Status',
+            field: 'Active Status',
+            headerName: 'Active Status',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
             renderCell: ({ row }) => (
-                <Stack>
-                    <Typography variant="body1" sx={{ color:row?.status === 'active' ? '#58D36E' : '#FF0000'}} fontSize={14} letterSpacing={.5} >{row?.status === 'active' ? "ONLINE" : 'OFFLINE'}</Typography>
+                <Stack alignItems={'center'} gap={1} direction={'row'}>
+                    <CustomSwitch
+                        changeRole={(e: any) => OnchangeCheck(e, row?._id)}
+                        checked={row?.status === 'active' ? true : false}
+
+                    />
+
                 </Stack>
             )
         },
@@ -204,6 +222,28 @@ const VendorSignup = ({data}: datapr) => {
     }, [vendorList])
 
 
+
+    const OnchangeCheck = async (e: any, id: string) => {
+
+        let value = {
+            id: id,
+            status: e.target.checked === true ? "active" : "inactive"
+        }
+
+        try {
+            setLoading(true)
+            const response = await postData('admin/vendor/status', value)
+            // setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
+            fetchVendorList()
+        }
+        catch (err: any) {
+            toast.warning(err?.message)
+        } finally {
+            setLoading(false)
+
+        }
+
+    }
 
 
 
