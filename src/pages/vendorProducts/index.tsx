@@ -61,7 +61,7 @@ function VendorProducts() {
     const [rowid, setId] = useState<any>(null)
     const [setSerachList, setSearchList] = useState<any>([])
 
-    console.log({productList})
+ 
 
     useEffect(() => {
         getProductList()
