@@ -54,7 +54,7 @@ export async function getServerSideProps({ req, res }: props) {
 
 const AddProducts = ({ data }: datapr) => {
 
-  
+  console.log({data},'DATA IN PRODUCT')
     const router = useRouter()
 
 

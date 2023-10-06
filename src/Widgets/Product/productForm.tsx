@@ -219,7 +219,7 @@ const ProductForm = ({ res, view }: props) => {
         .shape({
             name: yup
                 .string()
-                .matches(/^[a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ\s\-\/]+$/, 'Please enter valid name')
+                .matches(/^[a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ\s\-0-9\/]+$/, 'Please enter valid name')
                 .max(40)
                 .required(),
             // display_order: yup.number().nullable().typeError("Must be Integer"),
