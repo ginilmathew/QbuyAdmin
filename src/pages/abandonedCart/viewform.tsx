@@ -18,46 +18,77 @@ import CustomLoader from '@/components/CustomLoader';
 import moment from 'moment';
 
 
-type props = {
-    resData?: any,
-    view?: any
-}
+// type props = {
+//     resData?: any,
+//     view?: any
+// }
+type ProductDetails = {
+    name: string;
+    image: string;
+    productdata: {
+        store: {
+            name: string;
+        };
+        category: {
+            name: string;
+        };
+    };
+    quantity: number;
+};
+
+type UserData = {
+    name: string;
+    mobile: string;
+    email: string;
+    created_at: string;
+
+};
+
+type AbandonedData = {
+    product_details: ProductDetails[];
+    user: UserData;
+    updated_at: string;
+
+};
+
+type Props = {
+    resData?: AbandonedData;
+    view?: any;
+};
 
 
-const AbandonedForm = ({ resData, view }: props) => {
+const AbandonedForm = ({ resData, view }: Props) => {
     const idd = resData ? resData : view;
-    const router = useRouter()
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [abandonedData, setAbandonedData] = useState([]);
-    console.log({ abandonedData }, 'hai')
+    const [abandonedData, setAbandonedData] = useState<AbandonedData | null>(null);
+    console.log({ abandonedData }, 'hai');
     const [searchList, setSearchList] = useState([]);
-    const customerName = resData?.data?.user?.name || '';
-    const mobileNumber = resData?.data?.user?.mobile || '';
-    const emailAddress = resData?.data?.user?.email || '';
-    const dateViewed = resData?.data?.updated_at || '';
+    const customerName = resData?.user?.name || '';
+    const mobileNumber = resData?.user?.mobile || '';
+    const emailAddress = resData?.user?.email || '';
+    const dateViewed = resData?.updated_at || '';
 
-
-
-    const { register,
+    const {
+        register,
         handleSubmit,
         control,
         setError,
         formState: { errors },
         reset,
-        setValue, } = useForm<any>({
-
-            defaultValues: {
-                name: '',
-                mobile: '',
-                email: '',
-                created: '',
-                store_address: '',
-                quantity: '',
-                names:'',
-                store:'',
-
-            }
-        });
+        setValue,
+    } = useForm<any>({
+        defaultValues: {
+            name: '',
+            mobile: '',
+            email: '',
+            created: '',
+            store_address: '',
+            quantity: '',
+            names: '',
+            store: '',
+        },
+    });
 
     const abandonedCart = async () => {
         try {
@@ -65,32 +96,31 @@ const AbandonedForm = ({ resData, view }: props) => {
             const response = await fetchData(`admin/abandoned/show/${idd}`);
             console.log(response?.data?.data);
             setAbandonedData(response?.data?.data);
-            setSearchList(response?.data?.data)
+            setSearchList(response?.data?.data);
         } catch (err: any) {
             toast.error(err.message || 'Error fetching OTP data');
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
         if (idd) {
-            abandonedCart()
+            abandonedCart();
         }
-    }, [idd])
+    }, [idd]);
 
     useEffect(() => {
         if (abandonedData && abandonedData.product_details && abandonedData.product_details.length > 0) {
-
-            setValue('name', abandonedData?.user?.name)
-            setValue('mobile', abandonedData?.user?.mobile)
-            setValue('email', abandonedData?.user?.email)
-            setValue('created', abandonedData?.user?.created_at)
+            setValue('name', abandonedData?.user?.name);
+            setValue('mobile', abandonedData?.user?.mobile);
+            setValue('email', abandonedData?.user?.email);
+            setValue('created', abandonedData?.user?.created_at);
             setValue('names', abandonedData?.product_details[0]?.name);
             setValue('store', abandonedData?.product_details[0]?.productdata?.store?.name);
-            setValue('quantity', abandonedData?.product_details[0]?.quantity);
+            setValue('quantity', abandonedData?.product_details[0]?.quantity.toString());
         }
-    }, [abandonedData]);
+    }, [abandonedData, setValue]);
 
     return (
         <Box>
@@ -150,66 +180,49 @@ const AbandonedForm = ({ resData, view }: props) => {
                     </Grid>
 
 
+
                 </Grid>
             </CustomBox>
-            <CustomBox title='Abandoned Details'>
-            {abandonedData && abandonedData.product_details && (
-                    <Box display={'flex'} flexDirection="column">
-                        {abandonedData.product_details.map((product, index) => (
-                            // <Grid container flex={.7} spacing={2}>
-                            //     <Grid item xs={12} lg={3}>
-                            //         <Typography>Product Image</Typography>
-                            //         {abandonedData && abandonedData.product_details && abandonedData.product_details.length > 0 ? (
-                            //             <Avatar
-                            //                 variant='square'
-                            //                 src={`${IMAGE_URL}${abandonedData.product_details[0]?.image}`}
-                            //                 sx={{ width: '93%', height: 130 }}
-                            //             />
-                            //         ) : (
-                            //             <div style={{ width: '100%', height: 130, backgroundColor: 'lightgray' }}></div>
-                            //         )}
-                            //     </Grid>
-                            <Grid container flex={.7} spacing={2} key={index}>
+            {/* <CustomBox title="Abandoned Details">
+                {abandonedData?.product_details.map((product, index) => (
+                    <Box key={index} display="flex" flexDirection="column">
+                        <Grid container flex={0.7} spacing={2}>
                             <Grid item xs={12} lg={3}>
                                 <Typography>Product Image</Typography>
-                                {product && product.image ? (
-                                    <Avatar
-                                        variant='square'
-                                        src={`${IMAGE_URL}${product.image}`}
-                                        sx={{ width: '93%', height: 130 }}
-                                    />
-                                ) : (
-                                    <div style={{ width: '100%', height: 130, backgroundColor: 'lightgray' }}></div>
-                                )}
+                                <Avatar
+                                    variant="square"
+                                    src={IMAGE_URL + product.image} 
+                                    sx={{ width: '93%', height: 130 }}
+                                />
                             </Grid>
-                                <Grid container flex={0.9} spacing={2} sx={{ paddingTop: '22px' }}>
-                                    <Grid item xs={12} lg={3}>
-                                        <CustomInput
-                                            type='text'
-                                            control={control}
-                                            error={errors.names}
-                                            fieldName="names"
-                                            placeholder={``}
-                                            fieldLabel={"Product Name"}
-                                            disabled={false}
-                                            view={view ? true : false}
-
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={3}>
-                                        <CustomInput
-                                            type='text'
-                                            control={control}
-                                            error={errors.store}
-                                            fieldName="store"
-                                            placeholder={``}
-                                            fieldLabel={"Store Name"}
-                                            disabled={false}
-                                            view={view ? true : false}
-                                        />
-                                    </Grid>
-
-                                    <Grid item xs={12} lg={3}>
+                            <Grid container flex={0.9} spacing={2} sx={{ paddingTop: '22px' }}>
+                                <Grid item xs={12} lg={3}>
+                                    <CustomInput
+                                        type="text"
+                                        control={control}
+                                        error={errors.names}
+                                        fieldName="names"
+                                        placeholder={``}
+                                        fieldLabel="Product Name"
+                                        disabled={false}
+                                        view={view ? true : false}
+                                        defaultValue={product?.name}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} lg={3}>
+                                    <CustomInput
+                                        type="text"
+                                        control={control}
+                                        error={errors.store}
+                                        fieldName="store"
+                                        placeholder={``}
+                                        fieldLabel="Store Name"
+                                        disabled={false}
+                                        view={view ? true : false}
+                                        defaultValue={product?.productdata?.category?.name}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} lg={3}>
                                         <CustomInput
                                             type='text'
                                             control={control}
@@ -219,25 +232,101 @@ const AbandonedForm = ({ resData, view }: props) => {
                                             fieldLabel={"Category"}
                                             disabled={false}
                                             view={view ? true : false}
+                                            defaultValue={product?.productdata?.store?.name}
                                         />
                                     </Grid>
-                                    <Grid item xs={12} lg={3}>
-                                        <CustomInput
-                                            type='text'
-                                            control={control}
-                                            error={errors.quantity}
-                                            fieldName="quantity"
-                                            placeholder={``}
-                                            fieldLabel={"Quantity"}
-                                            disabled={false}
-                                            view={view ? true : false}
-                                        />
-                                    </Grid>
+                                <Grid item xs={12} lg={3}>
+                                    <CustomInput
+                                        type="text"
+                                        control={control}
+                                        error={errors.quantity}
+                                        fieldName="quantity"
+                                        placeholder={``}
+                                        fieldLabel="Quantity"
+                                        disabled={false}
+                                        view={view ? true : false}
+                                        defaultValue={product.quantity.toString()}
+                                    />
                                 </Grid>
-                            </Grid>))}
+                            </Grid>
+                        </Grid>
                     </Box>
-                )}
+                ))}
+            </CustomBox> */}
+
+            <CustomBox title="Abandoned Details">
+                {abandonedData?.product_details.map((product, index) => (
+                    <Box key={index} display="flex" flexDirection="column">
+                        <Grid container flex={0.7} spacing={2}>
+                            <Grid item xs={12} lg={3}>
+                                <Typography>Product Image</Typography>
+                                <Avatar
+                                    variant="square"
+                                    src={IMAGE_URL + product.image}
+                                    sx={{ width: '93%', height: 130 }}
+                                />
+                            </Grid>
+                            <Grid container flex={0.9} spacing={2} sx={{ paddingTop: '22px' }}>
+                                <Grid item xs={12} lg={3}>
+                                    <CustomInput
+                                        type="text"
+                                        control={control}
+                                        error={errors.names}
+                                        fieldName="names"
+                                        placeholder={``}
+                                        fieldLabel="Product Name"
+                                        disabled={false}
+                                        view={view ? true : false}
+                                        defaultValue={product?.name}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} lg={3}>
+                                    <CustomInput
+                                        type="text"
+                                        control={control}
+                                        error={errors.store}
+                                        fieldName="store"
+                                        placeholder={``}
+                                        fieldLabel="Store Name"
+                                        disabled={false}
+                                        view={view ? true : false}
+                                        defaultValue={product?.productdata?.store?.name}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} lg={3}>
+                                    <CustomInput
+                                        type='text'
+                                        control={control}
+                                        error={errors.category}
+                                        fieldName="category"
+                                        placeholder={``}
+                                        fieldLabel="Category"
+                                        disabled={false}
+                                        view={view ? true : false}
+                                        defaultValue={product?.productdata?.category?.name}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} lg={3}>
+                                    <CustomInput
+                                        type="text"
+                                        control={control}
+                                        error={errors.quantity}
+                                        fieldName="quantity"
+                                        placeholder={``}
+                                        fieldLabel="Quantity"
+                                        disabled={false}
+                                        view={view ? true : false}
+                                        defaultValue={product.quantity.toString()}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                ))}
             </CustomBox>
+
+
+
         </Box>
     )
 }
