@@ -1,23 +1,44 @@
-import React, { startTransition, useCallback, useState,useEffect } from 'react'
+
+import { Box } from '@mui/material'
+import React, { useState, useEffect, useCallback, useTransition } from 'react'
+import { Stack, Typography } from '@mui/material';
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { Box, Stack } from '@mui/material';
-import CustomTableHeader from '@/Widgets/CustomTableHeader';
-import CustomTable from '@/components/CustomTable';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import moment from 'moment'
 import { useRouter } from 'next/router';
 import { fetchData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
-import moment from 'moment';
+import dynamic from 'next/dynamic';
+import useSWR from 'swr';
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
+const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
+
+
+const fetcher = (url: any) => fetchData(url).then((res) => res);
 
 const AbandonedCart = () => {
+    const { data, error, isLoading, mutate } = useSWR(`admin/abandoned/list`, fetcher);
     const router = useRouter()
     const [loading, setLoading] = useState(false);
     const [cartData, setCartData] = useState([]);
     const [searchList, setSearchList] = useState([]);
-    
+    const [pending, startTransition] = useTransition();
+
+
+    useEffect(() => {
+        if (data?.data?.data) {
+            setCartData(data?.data?.data)
+        }
+    }, [data?.data?.data])
+
+    const abandonedCartView = (id: string) => {
+        router.push(`/abandonedCart/view/${id}`)
+    }
+
+
     const columns: GridColDef[] = [
         {
-            field:'user_id',
+            field: 'user_id',
             headerName: 'Customer ID',
             flex: 1,
             headerAlign: 'center',
@@ -58,7 +79,7 @@ const AbandonedCart = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-                    onClick={() => abandonedCartView(row?._id)}
+                        onClick={() => abandonedCartView(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -68,60 +89,44 @@ const AbandonedCart = () => {
             )
         }
     ];
-    const rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-    ];
+
 
     const searchProducts = useCallback((value: any) => {
-        let filteredData = searchList?.filter((item: any) => {
-          const userIdMatch = item?.user?.user_id.toString().toLowerCase().includes(value.toLowerCase());
-          const mobileMatch = item?.user?.mobile.toString().toLowerCase().includes(value.toLowerCase());
-          return userIdMatch || mobileMatch;
+        let Results = data?.data?.data?.filter((com: any) =>
+            com?.user?.user_id.toString().includes(value) ||
+            com?.user?.mobile.toString().includes(value)
+        );
+
+        startTransition(() => {
+            setCartData(Results);
         });
-    
-        setCartData(filteredData);
-      }, [searchList]);
-    
-    const fetchCart = async () => {
-        try {
-            setLoading(true);
-            const response = await fetchData(`admin/abandoned/list`);
-            setCartData(response?.data?.data); 
-            setSearchList(response?.data?.data)
-        } catch (err: any) {
-            toast.error(err.message || 'Error fetching OTP data');
-        } finally {
-            setLoading(false);
-        }
-    }
+    }, [cartData]);
 
-    useEffect(() => {
-        fetchCart()
-    }, [])
-
-    const abandonedCartView = (id: string) => {
-        router.push(`/abandonedCart/view/${id}`)
-    }
-  
-
-  return (
-    <Box px={5} py={2} pt={10} mt={0}>
-    <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-        <CustomTableHeader addbtn={false} imprtBtn={false} setState={searchProducts}  Headerlabel='Abandoned Cart' onClick={abandonedCartView} />
-        <Box py={5}>
-            <CustomTable dashboard={false} columns={columns} rows={cartData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+    if (isLoading) {
+        <Box px={5} py={2} pt={10} mt={0}>
+            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
+                <CustomTableHeader addbtn={false} imprtBtn={false} setState={searchProducts} Headerlabel='Abandoned Cart' onClick={abandonedCartView} />
+                <Box py={5}>
+                    <CustomTable dashboard={false} columns={columns} rows={[]} loading={true} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                </Box>
+            </Box>
         </Box>
-    </Box>
-</Box>
-  )
+    }
+    if (error) {
+        toast.error(error?.message);
+    }
+
+
+    return (
+        <Box px={5} py={2} pt={10} mt={0}>
+            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
+                <CustomTableHeader addbtn={false} imprtBtn={false} setState={searchProducts} Headerlabel='Abandoned Cart' onClick={abandonedCartView} />
+                <Box py={5}>
+                    <CustomTable dashboard={false} columns={columns} rows={cartData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                </Box>
+            </Box>
+        </Box>
+    )
 }
 
 export default AbandonedCart
