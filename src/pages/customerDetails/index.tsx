@@ -33,11 +33,12 @@ const Customer = () => {
             align: 'center',
         },
         {
-            field: 'franchise_name',
+            field: 'name',
             headerName: 'Customer Name',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params?.row?.users?.name,
 
         },
         {
@@ -49,11 +50,12 @@ const Customer = () => {
             valueGetter: (params) => params?.row?.users?.mobile,
         },
         {
-            field: 'owner_namsse',
+            field: 'email',
             headerName: 'Email',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params?.row?.users?.email,
 
         },
         {
