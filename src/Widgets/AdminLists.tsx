@@ -7,6 +7,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import { Admin_item, sales_item, Logs_item, support_item } from "../utilities/Menu_items"
 import { Box, Collapse, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 interface props extends idprops {
     res: any,
@@ -34,15 +35,40 @@ export const ListItems = ({ res, handleOpen, open, handleClose }: props) => {
 
     const NavigatePath = (path: any) => {
         if (path) {
-            router.push(path)
+            //router.push(path)
             handleClose()
+        }
+    }
+
+    const renderMenuItem = (path: any) => {
+        if(path){
+            return(
+                <Link href={path} onClick={handleClose}>
+                    <Typography 
+                        fontSize={13} 
+                        //onClick={() => NavigatePath(res?.path && res?.path)} 
+                        sx={{fontFamily:`'Poppins' sans-serif`,}}
+                    >{res?.item}</Typography>
+                </Link>
+            )
+        }
+        else{
+            return(
+                <Typography 
+                    fontSize={13} 
+                    onClick={() => NavigatePath(res?.path && res?.path)} 
+                    sx={{fontFamily:`'Poppins' sans-serif`,}}
+                >{res?.item}</Typography>
+            )
         }
     }
 
     return (
         <>
             <ListItemButton onClick={handleOpen} sx={{height:30}}>
-                <ListItemText><Typography fontSize={13} onClick={() => NavigatePath(res?.path && res?.path)} sx={{fontFamily:`'Poppins' sans-serif`,}}>{res?.item}</Typography></ListItemText>
+                <ListItemText>
+                    {renderMenuItem(res?.path)}
+                </ListItemText>
                 {(res?.list && res?.list?.length > 0) ? open === res?.id ? <ExpandLess /> : <ExpandMore /> : null}
             </ListItemButton>
 

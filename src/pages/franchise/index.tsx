@@ -1,53 +1,25 @@
-import CustomTable from '@/components/CustomTable'
-import CustomTableHeader from '@/Widgets/CustomTableHeader'
-import { Box, Stack, Typography } from '@mui/material'
-import React, { useState, useEffect, useTransition, useCallback } from 'react'
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import dynamic from 'next/dynamic';
+
+
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const Box = dynamic(() => import('@mui/material/Box'), { ssr: false });
+const Stack = dynamic(() => import('@mui/material/Stack'), { ssr: false });
+const Typography = dynamic(() => import('@mui/material/Typography'), { ssr: false });
+const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
+const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
+const DeleteOutlineTwoToneIcon = dynamic(() => import('@mui/icons-material/DeleteOutlineTwoTone'), { ssr: false });
+const CustomDelete = dynamic(() => import('@/Widgets/CustomDelete'), { ssr: false });
+const CustomSwitch = dynamic(() => import('@/components/CustomSwitch'), { ssr: false });
+
+import React, { useState, useEffect, useTransition, startTransition } from 'react'
+import {  GridColDef } from '@mui/x-data-grid';
 import { useRouter } from 'next/router';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
-import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
 import { fetchData, postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
-import CustomDelete from '@/Widgets/CustomDelete';
-import CustomSwitch from '@/components/CustomSwitch';
-import { authOptions } from '../api/auth/[...nextauth]'
-import { getServerSession } from "next-auth/next"
 import useSWR from 'swr'
 
-type props = {
-    req: any,
-    res: any
-}
 
-type datapr = {
-    data: any
-}
-// This gets called on every request
-export async function getServerSideProps({ req, res }: props) {
-    // Fetch data from external API
-    //const res = await fetch(`https://.../data`);
-    //const data = await res.json();
-
-    let session = await getServerSession(req, res, authOptions)
-
-    let token = session?.user?.accessToken
-
-    const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/franchise/list`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-    });
-
-    const data = await resu.json();
-
-
-
-    // Pass data to the page via props
-    return { props: { data: data } };
-}
 
 const fetcher = (url: any) => fetchData(url).then((res) => res);
 
@@ -56,21 +28,22 @@ const Franchise = () => {
     //console.log({user: user})
 
     const router = useRouter();
-    const [loading, setLoading] = useState<boolean>(false);
     const [franchiseList, setFranchiseList] = useState<any>([]);
     const [_id, set_id] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);
-    const [serachList, setSearchList] = useState<any>([])
-    const [pending, startTransition] = useTransition();
 
-    const { data, error, isLoading } = useSWR('/admin/franchise/list', fetcher)
+    const { data, error, isLoading, mutate } = useSWR('/admin/franchise/list', fetcher)
 
 
     useEffect(() => {
         if(data?.data?.data){
             setFranchiseList(data?.data?.data)
         }
-    }, [data?.data?.data])
+
+        if(error){
+            toast.error(error)
+        }
+    }, [data?.data?.data, error])
     
 
 
@@ -233,7 +206,7 @@ const Franchise = () => {
 
     const OnchangeCheck = async (e: any, id: string) => {
 
-        const { checked } = e.target;
+        //const { checked } = e.target;
 
  
 
@@ -242,17 +215,17 @@ const Franchise = () => {
             status: e.target.checked === true ? "active" : "inactive"
         }
         try {
-            setLoading(true)
+            //setLoading(true)
             const response = await postData('admin/franchise/status', value)
 
+            mutate()
 
-
-            getFranchiseList()
+            //getFranchiseList()
         }
         catch (err: any) {
             toast.warning(err?.message)
         } finally {
-            setLoading(false)
+            //setLoading(false)
 
         }
 
@@ -262,19 +235,7 @@ const Franchise = () => {
         router.push('/franchise/addFranchise')
     }
 
-    const getFranchiseList = async () => {
-        try {
-            setLoading(true)
-            const response = await fetchData('/admin/franchise/list')
-            setFranchiseList(response?.data?.data)
-            setSearchList(response?.data?.data)
-        } catch (err: any) {
-            toast.error(err?.message)
-            setLoading(false)
-        } finally {
-            setLoading(false)
-        }
-    }
+   
 
 
 
