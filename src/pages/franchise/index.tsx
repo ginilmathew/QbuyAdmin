@@ -13,6 +13,7 @@ import CustomDelete from '@/Widgets/CustomDelete';
 import CustomSwitch from '@/components/CustomSwitch';
 import { authOptions } from '../api/auth/[...nextauth]'
 import { getServerSession } from "next-auth/next"
+import useSWR from 'swr'
 
 type props = {
     req: any,
@@ -48,17 +49,29 @@ export async function getServerSideProps({ req, res }: props) {
     return { props: { data: data } };
 }
 
-const Franchise = ({ data }: datapr) => {
+const fetcher = (url: any) => fetchData(url).then((res) => res);
+
+const Franchise = () => {
 
     //console.log({user: user})
 
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(false);
-    const [franchiseList, setFranchiseList] = useState<any>(data ? data?.data : []);
+    const [franchiseList, setFranchiseList] = useState<any>([]);
     const [_id, set_id] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);
-    const [serachList, setSearchList] = useState<any>(data ? data?.data : [])
+    const [serachList, setSearchList] = useState<any>([])
     const [pending, startTransition] = useTransition();
+
+    const { data, error, isLoading } = useSWR('/admin/franchise/list', fetcher)
+
+
+    useEffect(() => {
+        if(data?.data?.data){
+            setFranchiseList(data?.data?.data)
+        }
+    }, [data?.data?.data])
+    
 
 
     const handleClose = () => {
@@ -266,7 +279,7 @@ const Franchise = ({ data }: datapr) => {
 
 
     const searchfranchise = (value: any) => {
-        let Results = serachList?.filter((com: any) => com?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.franchise_id.toString().toLowerCase().includes(value.toLowerCase())
+        let Results = data?.data?.data?.filter((com: any) => com?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.franchise_id.toString().toLowerCase().includes(value.toLowerCase())
         )
         startTransition(() => {
             setFranchiseList(Results)
@@ -279,12 +292,24 @@ const Franchise = ({ data }: datapr) => {
     // }, [])
 
 
+    if(isLoading){
+        <Box px={5} py={2} pt={10} mt={0}>
+            <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
+                <CustomTableHeader setState={searchfranchise} addbtn={true} imprtBtn={false} Headerlabel='Franchisee' onClick={addvaendor} />
+                <Box py={3}>
+                    <CustomTable dashboard={false} columns={columns} rows={[]} loading={true} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                </Box>
+            </Box>
+        </Box>
+    }
+
+
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchfranchise} addbtn={true} imprtBtn={false} Headerlabel='Franchisee' onClick={addvaendor} />
                 <Box py={3}>
-                    <CustomTable dashboard={false} columns={columns} rows={franchiseList ? franchiseList : [] } id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={franchiseList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
 
