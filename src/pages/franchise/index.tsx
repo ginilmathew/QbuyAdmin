@@ -20,34 +20,34 @@ type props = {
     res: any
 }
 
-type datapr = {
-    data: any
-}
-// This gets called on every request
-export async function getServerSideProps({ req, res }: props) {
-    // Fetch data from external API
-    //const res = await fetch(`https://.../data`);
-    //const data = await res.json();
+// type datapr = {
+//     data: any
+// }
+// // This gets called on every request
+// export async function getServerSideProps({ req, res }: props) {
+//     // Fetch data from external API
+//     //const res = await fetch(`https://.../data`);
+//     //const data = await res.json();
 
-    let session = await getServerSession(req, res, authOptions)
+//     let session = await getServerSession(req, res, authOptions)
 
-    let token = session?.user?.accessToken
+//     let token = session?.user?.accessToken
 
-    const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/franchise/list`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-    });
+//     const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/franchise/list`, {
+//         method: 'GET',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Authorization': `Bearer ${token}`,
+//         },
+//     });
 
-    const data = await resu.json();
+//     const data = await resu.json();
 
 
 
-    // Pass data to the page via props
-    return { props: { data: data } };
-}
+//     // Pass data to the page via props
+//     return { props: { data: data } };
+// }
 
 const fetcher = (url: any) => fetchData(url).then((res) => res);
 
@@ -244,9 +244,6 @@ const Franchise = () => {
         try {
             setLoading(true)
             const response = await postData('admin/franchise/status', value)
-
-
-
             getFranchiseList()
         }
         catch (err: any) {
