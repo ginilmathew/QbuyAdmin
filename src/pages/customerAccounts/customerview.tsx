@@ -27,11 +27,8 @@ type props = {
 
 
 const CustomerAccountForm = ({ resData, view }: props) => {
-    console.log({resData},'ttt')
     const idd = resData ? resData : view;
-    console.log({ idd }, 'ppppppp')
     const [customerData, setCustomerData] = useState<any>(null);
-    console.log({ customerData }, 'llllllllllll')
     const router = useRouter()
     const [loading, setLoading] = useState(false);
 
@@ -104,8 +101,6 @@ const CustomerAccountForm = ({ resData, view }: props) => {
         try {
             setLoading(true);
             const response = await fetchData(`admin/account/customers/show/${idd}`);
-    
-            console.log('Customer Data:', response?.data?.data); 
             reset(response?.data?.data);
             setCustomerData(response?.data?.data?.total_orders);
         } catch (err: any) {
@@ -137,7 +132,7 @@ const CustomerAccountForm = ({ resData, view }: props) => {
                             fieldLabel="Rider Name"
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={customerData?.data?.customer_name}
+                          
                         />
                     </Grid>
                    
@@ -152,7 +147,7 @@ const CustomerAccountForm = ({ resData, view }: props) => {
                             fieldLabel="Email Address"
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={customerData?.data?.customer_email}
+                          
                         />
                     </Grid>
 
@@ -166,7 +161,7 @@ const CustomerAccountForm = ({ resData, view }: props) => {
                             fieldLabel="Mobile Number"
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={customerData?.data?.customer_phone}
+                          
                         />
                     </Grid>
                 </Grid>

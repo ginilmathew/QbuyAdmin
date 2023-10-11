@@ -136,7 +136,6 @@ const Customer = () => {
         try {
             setLoading(true);
             const response = await fetchData(`admin/customer-details/list`);
-            console.log(response?.data?.data);
             setCustomerData(response?.data?.data);
             setSearchList(response?.data?.data)
 

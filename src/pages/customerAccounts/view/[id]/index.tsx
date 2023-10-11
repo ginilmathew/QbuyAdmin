@@ -8,9 +8,7 @@ import React, { useState, useEffect } from 'react'
 const index = () => {
     const router = useRouter()
     const { id } = router.query
-    console.log({id},'lll')
-  
-
+ 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <CustomHeaderBack backlabel='View Customer' />

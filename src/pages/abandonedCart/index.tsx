@@ -94,7 +94,6 @@ const AbandonedCart = () => {
         try {
             setLoading(true);
             const response = await fetchData(`admin/abandoned/list`);
-            console.log(response?.data?.data);
             setCartData(response?.data?.data); 
             setSearchList(response?.data?.data)
         } catch (err: any) {
