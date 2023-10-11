@@ -14,22 +14,27 @@ import { toast } from 'react-toastify';
 import { fetchData } from '@/CustomAxios';
 import moment from 'moment';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import useSWR from 'swr'
+
+
+const fetcher = (url: any) => fetchData(url).then((res) => res);
 
 const Shipments = () => {
-
-    
-
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('md'));
-
-
     const router = useRouter()
-
-
     const [loading, setLoading] = useState<boolean>(false);
     const [shippingList, setShippingList] = useState<any>([])
     const [pending, startTransition] = useTransition();
-    const [serachList, setSearchList] = useState<any>([])
+    const [serachList, setSearchList] = useState<any>([]);
+
+    const { data, error, isLoading } = useSWR(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
+
+    useEffect(() => {
+        if (data?.data?.data) {
+            setShippingList(data?.data?.data)
+        }
+    }, [data?.data?.data])
 
     const ShippmentView = (id: string) => {
         router.push(`/shipments/view/${id}`)
@@ -73,7 +78,7 @@ const Shipments = () => {
             width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => params.row.grand_total?.toFixed(2) 
+            valueGetter: (params) => params.row.grand_total?.toFixed(2)
         },
 
         {
@@ -165,38 +170,57 @@ const Shipments = () => {
 
 
     const searchProducts = useCallback((value: any) => {
-        let competitiions = serachList?.filter((com: any) => com?.order_id.toString().toLowerCase().includes(value.toLowerCase())
-        || com?.user?.mobile.toString().toLowerCase().includes(value.toLowerCase()) || 
-        com?.franchisee?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) 
+        let competitiions = data?.data?.data?.filter((com: any) => com?.order_id.toString().toLowerCase().includes(value.toLowerCase())
+            || com?.user?.mobile.toString().toLowerCase().includes(value.toLowerCase()) ||
+            com?.franchisee?.franchise_name.toString().toLowerCase().includes(value.toLowerCase())
         )
         startTransition(() => {
             setShippingList(competitiions)
         })
     }, [shippingList])
 
-    const ShippingOrders = async () => {
-        try {
-            setLoading(true)
-            const response = await fetchData(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`)
-            setShippingList(response?.data?.data)
-            setSearchList(response?.data?.data)
-        } catch (err: any) {
-            toast.error(err.message)
-            setLoading(false)
+    // const ShippingOrders = async () => {
+    //     try {
+    //         setLoading(true)
+    //         const response = await fetchData(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`)
+    //         setShippingList(response?.data?.data)
+    //         setSearchList(response?.data?.data)
+    //     } catch (err: any) {
+    //         toast.error(err.message)
+    //         setLoading(false)
 
-        } finally {
-            setLoading(false)
-        }
-    }
+    //     } finally {
+    //         setLoading(false)
+    //     }
+    // }
 
-    useEffect(() => {
-        ShippingOrders()
-    }, [])
+    // useEffect(() => {
+    //     ShippingOrders()
+    // }, [])
 
     const addOrderShipmets = () => {
         router.push('/shipments/addOrder')
     }
 
+
+    if (isLoading) {
+        <Box px={5} py={2} pt={10} mt={0}>
+
+            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
+                <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='Orders' onClick={addOrderShipmets} addbtn={false} />
+                <Box py={5}>
+                    <CustomTable dashboard={false} columns={columns} rows={[]} id={"id"} bg={"#ffff"} loading={true} label='Recent Activity' />
+                </Box>
+            </Box>
+
+
+        </Box>
+    }
+
+
+  if(error){
+    toast.error(error?.message)
+  }
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>

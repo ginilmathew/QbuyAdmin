@@ -27,7 +27,7 @@ type props = {
 
 
 const CustomerAccountForm = ({ resData, view }: props) => {
-    console.log({resData},'ttt')
+    console.log({ resData }, 'ttt')
     const idd = resData ? resData : view;
     console.log({ idd }, 'ppppppp')
     const [customerData, setCustomerData] = useState<any>(null);
@@ -44,7 +44,6 @@ const CustomerAccountForm = ({ resData, view }: props) => {
         formState: { errors },
         reset,
         setValue, } = useForm<any>({
-
             defaultValues: {
                 customer_name: '',
                 customer_phone: '',
@@ -67,7 +66,7 @@ const CustomerAccountForm = ({ resData, view }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => moment(params?.row?.created_at ,"YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+            valueGetter: (params) => moment(params?.row?.created_at, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
         },
         {
             field: 'grand_total',
@@ -83,7 +82,7 @@ const CustomerAccountForm = ({ resData, view }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => moment(params?.row?.delivered_date ,"YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+            valueGetter: (params) => moment(params?.row?.delivered_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
 
         },
 
@@ -104,8 +103,8 @@ const CustomerAccountForm = ({ resData, view }: props) => {
         try {
             setLoading(true);
             const response = await fetchData(`admin/account/customers/show/${idd}`);
-    
-            console.log('Customer Data:', response?.data?.data); 
+
+            console.log('Customer Data:', response?.data?.data);
             reset(response?.data?.data);
             setCustomerData(response?.data?.data?.total_orders);
         } catch (err: any) {
@@ -140,7 +139,7 @@ const CustomerAccountForm = ({ resData, view }: props) => {
                             defaultValue={customerData?.data?.customer_name}
                         />
                     </Grid>
-                   
+
 
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput
