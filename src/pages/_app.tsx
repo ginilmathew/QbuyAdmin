@@ -7,20 +7,14 @@ const ProtectedRoute = dynamic(() => import('@/Routes/protectedRoutes'), { ssr: 
 const LinearProgress = dynamic(() => import('@mui/material/LinearProgress'), { ssr: false });
 const Stack = dynamic(() => import('@mui/material/Stack'), { ssr: false });
 
-
-//import Header from '@/Widgets/Header';
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import { Poppins } from 'next/font/google';
-//import UserProvider from '@/helpers/user/UserContext';
-//import ProtectedRoute from '@/Routes/protectedRoutes';
 import React, { useEffect } from 'react';
 import Router from 'next/router';
-//import LinearProgress from '@mui/material/LinearProgress';
-//import Stack from '@mui/material/Stack';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { SessionProvider, useSession } from "next-auth/react"
+import { SessionProvider } from "next-auth/react"
 import type { NextComponentType } from 'next'
 
 // import PushNotificationLayout from '@/components/PushNotificationLayout';
