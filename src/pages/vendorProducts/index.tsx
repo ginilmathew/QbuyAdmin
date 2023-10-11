@@ -1,22 +1,26 @@
 import { fetchData, postData } from '@/CustomAxios'
-import CustomTableHeader from '@/Widgets/CustomTableHeader'
+
 import { Box, Stack, Typography } from '@mui/material'
 import { getServerSession } from 'next-auth'
 import React, { startTransition, useCallback, useEffect, useState } from 'react'
-import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import CustomTable from '@/components/CustomTable';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import { GridColDef } from '@mui/x-data-grid';
 import moment from 'moment'
 import { authOptions } from '../api/auth/[...nextauth]'
 import CustomSwitch from '@/components/CustomSwitch';
 import { max, min } from 'lodash';
 import { toast } from 'react-toastify';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import Custombutton from '@/components/Custombutton'
 import { useRouter } from 'next/router'
-import CustomApproveModal from '@/components/CustomApproveModal';
-import WarningIcon from '@mui/icons-material/Warning';
+import useSWR from 'swr'
+import dynamic from 'next/dynamic';
+
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CheckCircleIcon = dynamic(() => import('@mui/icons-material/CheckCircle'), { ssr: false });
+const HighlightOffIcon = dynamic(() => import('@mui/icons-material/HighlightOff'), { ssr: false });
+const Custombutton = dynamic(() => import('@/components/Custombutton'), { ssr: false });
+const CustomApproveModal = dynamic(() => import('@/components/CustomApproveModal'), { ssr: false });
+const WarningIcon = dynamic(() => import('@mui/icons-material/Warning'), { ssr: false });
+
 // type props = {
 //     req: any,
 //     res: any
@@ -52,7 +56,11 @@ import WarningIcon from '@mui/icons-material/Warning';
 // }
 
 
+
+const fetcher = (url: any) => fetchData(url).then((res) => res);
 function VendorProducts() {
+    const { data, error, isLoading, mutate } = useSWR(`admin/temp-product/list/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
+
     const router = useRouter()
 
     const [productList, setProductList] = useState([]);
@@ -61,11 +69,17 @@ function VendorProducts() {
     const [rowid, setId] = useState<any>(null)
     const [setSerachList, setSearchList] = useState<any>([])
 
- 
 
     useEffect(() => {
-        getProductList()
-    }, [])
+        if (data?.data?.data) {
+            setProductList(data?.data?.data)
+        }
+    }, [data?.data?.data])
+
+
+    // useEffect(() => {
+    //     getProductList()
+    // }, [])
 
     const OnchangeCheck = async (id: string) => {
 
@@ -189,10 +203,10 @@ function VendorProducts() {
             align: 'center',
             renderCell: ({ row }) => (
 
-                
+
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
 
-                  {row?.approval_status !== "rejected" ? <> <Box onClick={() => OnchangeCheck(row?._id)}
+                    {row?.approval_status !== "rejected" ? <> <Box onClick={() => OnchangeCheck(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -200,32 +214,32 @@ function VendorProducts() {
                         <CheckCircleIcon />
                     </Box>
 
-                    <Box
-                        onClick={() => RejectConformation(row?._id)}
-                        style={{
-                            color: 'red',
-                            cursor: 'pointer'
-                        }}>
-                        <HighlightOffIcon />
-                    </Box></> :  <> <Box
-                        style={{
-                            color: 'grey',
-                           
+                        <Box
+                            onClick={() => RejectConformation(row?._id)}
+                            style={{
+                                color: 'red',
+                                cursor: 'pointer'
+                            }}>
+                            <HighlightOffIcon />
+                        </Box></> : <> <Box
+                            style={{
+                                color: 'grey',
 
-                        }}>
-                        <CheckCircleIcon />
-                    </Box>
 
-                    <Box
-                      
-                        style={{
-                            color: 'grey',
-                           
-                        }}>
-                        <HighlightOffIcon />
-                    </Box></>}
+                            }}>
+                            <CheckCircleIcon />
+                        </Box>
 
-                   
+                        <Box
+
+                            style={{
+                                color: 'grey',
+
+                            }}>
+                            <HighlightOffIcon />
+                        </Box></>}
+
+
 
                 </Stack>
             )
@@ -236,17 +250,17 @@ function VendorProducts() {
 
 
 
-    const getProductList = async () => {
-        try {
+    // const getProductList = async () => {
+    //     try {
 
-            const response = await fetchData(`admin/temp-product/list/${process.env.NEXT_PUBLIC_TYPE}`)
-            setSearchList(response.data.data);
-            setProductList(response?.data?.data)
+    //         const response = await fetchData(`admin/temp-product/list/${process.env.NEXT_PUBLIC_TYPE}`)
+    //         setSearchList(response.data.data);
+    //         setProductList(response?.data?.data)
 
-        } catch (err) {
+    //     } catch (err) {
 
-        }
-    }
+    //     }
+    // }
 
 
     const Confirmreject = useCallback(async () => {
@@ -254,7 +268,7 @@ function VendorProducts() {
         try {
             await fetchData(`admin/temp-product-reject/${rowid}`)
             HandleClose()
-            getProductList()
+            mutate()
 
         } catch (err: any) {
 
@@ -265,7 +279,7 @@ function VendorProducts() {
 
 
     const searchProducts = useCallback((value: any) => {
-        let competitiions = setSerachList?.filter((com: any) => com?.name.toString().toLowerCase().includes(value.toLowerCase()) ||
+        let competitiions = data?.data?.data?.filter((com: any) => com?.name.toString().toLowerCase().includes(value.toLowerCase()) ||
             com?.store?.name?.toString().toLowerCase().includes(value.toLowerCase())
         )
         startTransition(() => {
@@ -275,6 +289,22 @@ function VendorProducts() {
 
 
 
+    if (isLoading) {
+        <Box px={5} py={2} pt={10} mt={0}>
+            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
+                <CustomTableHeader setState={searchProducts} addbtn={false} imprtBtn={false} Headerlabel='Vendor Products' onClick={() => null} />
+                <Box py={5}>
+                    <CustomTable dashboard={false} columns={columns} rows={[]} loading={true} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                </Box>
+            </Box>
+
+        </Box>
+    }
+
+
+    if (error) {
+        toast.error(error?.message)
+    }
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>

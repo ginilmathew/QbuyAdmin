@@ -1,5 +1,4 @@
-import CustomTable from '@/components/CustomTable'
-import CustomTableHeader from '@/Widgets/CustomTableHeader'
+
 import { Box, Stack, Typography } from '@mui/material'
 import React, { useEffect, useState, useCallback, useTransition } from 'react'
 import {GridColDef} from '@mui/x-data-grid';
@@ -14,7 +13,8 @@ const CustomDelete = dynamic(() => import('@/Widgets/CustomDelete'), { ssr: fals
 const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
 const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
 const DeleteOutlineTwoToneIcon = dynamic(() => import('@mui/icons-material/DeleteOutlineTwoTone'), { ssr: false });
-
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
 type props = {
     req: any,
     res: any

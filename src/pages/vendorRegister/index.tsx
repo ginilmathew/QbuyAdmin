@@ -1,17 +1,18 @@
-import CustomTableHeader from '@/Widgets/CustomTableHeader'
-import CustomTable from '@/components/CustomTable'
+
 import { Box, Stack } from '@mui/material'
 import React, { startTransition, useCallback, useEffect, useState } from 'react'
-import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { GridColDef } from '@mui/x-data-grid';
 import { authOptions } from '../api/auth/[...nextauth]'
 import { getServerSession } from "next-auth/next"
 import { fetchData } from '@/CustomAxios';
-import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import { useRouter } from 'next/router';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import useSWR from 'swr';
 import { toast } from 'react-toastify';
+const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
 // type props = {
 //     req: any,
 //     res: any
