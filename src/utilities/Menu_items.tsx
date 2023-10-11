@@ -318,6 +318,11 @@ export const sales_item = [
         item: "Product Adding",
         path: '/products',
     },
+    {
+        id: 11,
+        item: "Vendor Products",
+        path: '/vendorProducts',
+    },
 
 ]
 

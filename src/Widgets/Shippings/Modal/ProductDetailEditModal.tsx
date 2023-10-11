@@ -46,9 +46,6 @@ type Inputs = {
 
 const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge }: props) => {
 
-
-
-
     const schema = yup
         .object()
         .shape({
@@ -305,7 +302,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                                     error={errors.unitPrice}
                                     fieldName="unitPrice"
                                     placeholder={``}
-                                    fieldLabel={"Regular Price"}
+                                    fieldLabel={"Unit Price"}
                                     disabled={false}
                                     view={false}
                                     defaultValue={''}

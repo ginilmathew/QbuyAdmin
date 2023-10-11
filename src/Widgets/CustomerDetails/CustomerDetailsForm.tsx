@@ -99,7 +99,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     };
 
 
-    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const onSubmit = async (data:any) => {
         setLoading(true);
 
         try {

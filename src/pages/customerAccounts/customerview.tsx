@@ -41,7 +41,6 @@ const CustomerAccountForm = ({ resData, view }: props) => {
         formState: { errors },
         reset,
         setValue, } = useForm<any>({
-
             defaultValues: {
                 customer_name: '',
                 customer_phone: '',
@@ -64,7 +63,7 @@ const CustomerAccountForm = ({ resData, view }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => moment(params?.row?.created_at ,"YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+            valueGetter: (params) => moment(params?.row?.created_at, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
         },
         {
             field: 'grand_total',
@@ -80,7 +79,7 @@ const CustomerAccountForm = ({ resData, view }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => moment(params?.row?.delivered_date ,"YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+            valueGetter: (params) => moment(params?.row?.delivered_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
 
         },
 
@@ -135,7 +134,7 @@ const CustomerAccountForm = ({ resData, view }: props) => {
                           
                         />
                     </Grid>
-                   
+
 
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput

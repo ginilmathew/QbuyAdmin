@@ -1,17 +1,18 @@
 import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
-import Dashboard from './dashboard'
+import dynamic from 'next/dynamic';
 import React from 'react'
-import { useRouter } from 'next/router'
 import { useSession } from "next-auth/react"
-import ProtectedRoute from '@/Routes/protectedRoutes'
-import Login from './login'
-import Shipments from './shipments'
-import PushNotificationLayout from "../components/PushNotificationLayout";
+//import Login from './login'
+//import Shipments from './shipments'
 
-const inter = Inter({ subsets: ['latin'] })
+const Login = dynamic(() => import('./login'), {
+	ssr: false,
+});
+
+const Shipments = dynamic(() => import('./shipments'), {
+	ssr: false,
+});
+
 
 export default function Home() {
 	const { data: session, status } = useSession()

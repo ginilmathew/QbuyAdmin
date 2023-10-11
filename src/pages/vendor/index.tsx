@@ -1,69 +1,77 @@
-import CustomTable from '@/components/CustomTable'
-import CustomTableHeader from '@/Widgets/CustomTableHeader'
+
 import { Box, Stack, Typography } from '@mui/material'
 import React, { useEffect, useState, useCallback, useTransition } from 'react'
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import {GridColDef} from '@mui/x-data-grid';
 import { useRouter } from 'next/router';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
-import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
-import { fetchData } from '@/CustomAxios';
+import { fetchData, postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
-import CustomDelete from '@/Widgets/CustomDelete';
-import { CleanHands } from '@mui/icons-material';
-import { authOptions } from '../api/auth/[...nextauth]'
-import { getServerSession } from "next-auth/next"
+import dynamic from 'next/dynamic';
+import useSWR from 'swr';
 
+const CustomSwitch = dynamic(() => import('@/components/CustomSwitch'), { ssr: false });
+const CustomDelete = dynamic(() => import('@/Widgets/CustomDelete'), { ssr: false });
+const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
+const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
+const DeleteOutlineTwoToneIcon = dynamic(() => import('@mui/icons-material/DeleteOutlineTwoTone'), { ssr: false });
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
 type props = {
     req: any,
     res: any
 }
 
-type datapr = {
-    data: any
-}
-// This gets called on every request
-export async function getServerSideProps({ req, res }: props) {
-    // Fetch data from external API
-    //const res = await fetch(`https://.../data`);
-    //const data = await res.json();
+// type datapr = {
+//     data: any
+// }
+// // This gets called on every request
+// export async function getServerSideProps({ req, res }: props) {
+//     // Fetch data from external API
+//     //const res = await fetch(`https://.../data`);
+//     //const data = await res.json();
 
-    let session = await getServerSession(req, res, authOptions)
+//     let session = await getServerSession(req, res, authOptions)
 
-    let token = session?.user?.accessToken
+//     let token = session?.user?.accessToken
 
-    const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/vendor/list/${process.env.NEXT_PUBLIC_TYPE}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-    });
+//     const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/vendor/list/${process.env.NEXT_PUBLIC_TYPE}`, {
+//         method: 'GET',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Authorization': `Bearer ${token}`,
+//         },
+//     });
 
-    const data = await resu.json();
+//     const data = await resu.json();
 
-    
-   
-    // Pass data to the page via props
-    return { props: { data : data } };
-}
 
-const VendorSignup = ({data}: datapr) => {
 
+//     // Pass data to the page via props
+//     return { props: { data: data } };
+// }
+
+const fetcher = (url: any) => fetchData(url).then((res) => res);
+
+const VendorSignup = () => {
+    const { data, error, isLoading, mutate } = useSWR(`/admin/vendor/list/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
 
 
     const router = useRouter();
 
 
-    const [vendorList, setVendorList] = useState(data?.data);
+    const [vendorList, setVendorList] = useState([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(false);
     const [_id, set_id] = useState<string>('');
-    const [serachList, setSearchList] = useState<any>(data?.data)
+    const [serachList, setSearchList] = useState<any>([])
     const [pending, startTransition] = useTransition();
 
 
-  
+    useEffect(() => {
+        if (data?.data?.data) {
+            setVendorList(data?.data?.data)
+        }
+    }, [data?.data?.data])
+
 
 
     const addvaendor = () => {
@@ -141,15 +149,32 @@ const VendorSignup = ({data}: datapr) => {
             )
 
         },
+        // {
+        //     field: 'status',
+        //     headerName: 'Status',
+        //     flex: 1,
+        //     headerAlign: 'center',
+        //     align: 'center',
+        //     renderCell: ({ row }) => (
+        //         <Stack>
+        //             <Typography variant="body1" sx={{ color:row?.status === 'active' ? '#58D36E' : '#FF0000'}} fontSize={14} letterSpacing={.5} >{row?.status === 'active' ? "ONLINE" : 'OFFLINE'}</Typography>
+        //         </Stack>
+        //     )
+        // },
         {
-            field: 'status',
-            headerName: 'Status',
+            field: 'Active Status',
+            headerName: 'Active Status',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
             renderCell: ({ row }) => (
-                <Stack>
-                    <Typography variant="body1" sx={{ color:row?.status === 'active' ? '#58D36E' : '#FF0000'}} fontSize={14} letterSpacing={.5} >{row?.status === 'active' ? "ONLINE" : 'OFFLINE'}</Typography>
+                <Stack alignItems={'center'} gap={1} direction={'row'}>
+                    <CustomSwitch
+                        changeRole={(e: any) => OnchangeCheck(e, row?._id)}
+                        checked={row?.status === 'active' ? true : false}
+
+                    />
+
                 </Stack>
             )
         },
@@ -186,29 +211,51 @@ const VendorSignup = ({data}: datapr) => {
     ];
 
 
-    const fetchVendorList = useCallback(async () => {
+    // const fetchVendorList = useCallback(async () => {
+    //     try {
+    //         setLoading(true)
+    //         const response = await fetchData(`/admin/vendor/list/${process.env.NEXT_PUBLIC_TYPE}`)
+    //         setVendorList(response?.data?.data)
+    //         setSearchList(response?.data?.data)
+    //     }
+    //     catch (err: any) {
+    //         setLoading(false)
+    //         toast.error(err)
+    //     }
+    //     finally {
+    //         setLoading(false)
+    //     }
+
+    // }, [vendorList])
+
+
+
+    const OnchangeCheck = async (e: any, id: string) => {
+
+        let value = {
+            id: id,
+            status: e.target.checked === true ? "active" : "inactive"
+        }
+
         try {
             setLoading(true)
-            const response = await fetchData(`/admin/vendor/list/${process.env.NEXT_PUBLIC_TYPE}`)
-            setVendorList(response?.data?.data)
-            setSearchList(response?.data?.data)
+            const response = await postData('admin/vendor/status', value)
+            // setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
+            mutate()
         }
         catch (err: any) {
+            toast.warning(err?.message)
+        } finally {
             setLoading(false)
-            toast.error(err)
-        }
-        finally {
-            setLoading(false)
+
         }
 
-    }, [vendorList])
-
-
+    }
 
 
 
     const searchVendor = useCallback((value: any) => {
-        let Result = serachList?.filter((com: any) => com?.store_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase) || com?.vendor_mobile?.toString().toLowerCase().includes(value.toLowerCase()))
+        let Result = data?.data?.data.filter((com: any) => com?.store_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase) || com?.vendor_mobile?.toString().toLowerCase().includes(value.toLowerCase()))
         startTransition(() => {
             setVendorList(Result)
         })
@@ -229,6 +276,23 @@ const VendorSignup = ({data}: datapr) => {
         set_id(id)
         setOpen(true)
     }
+
+    if (isLoading) {
+        <Box px={5} py={2} pt={10} mt={0}>
+            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
+                <CustomTableHeader setState={searchVendor} addbtn={true} imprtBtn={false} Headerlabel='Vendor Signup' onClick={addvaendor} />
+                <Box py={3}>
+                    <CustomTable dashboard={false} columns={columns} rows={[]} loading={true} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                </Box>
+            </Box>
+
+        </Box>
+    }
+
+    if (error) {
+        toast?.error(error?.message)
+    }
+
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>

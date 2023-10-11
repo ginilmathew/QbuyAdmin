@@ -102,7 +102,7 @@ const SliderManagementForm = ({ res }: Props) => {
 
 
 
-    
+
 
 
     const schema = yup
@@ -204,19 +204,30 @@ const SliderManagementForm = ({ res }: Props) => {
 
     const getVendortList = (async () => {
         if (sliderList?.vendor_id && sliderList?.franchise_id) {
-            const response = await fetchData(`admin/vendor-list/${sliderList?.franchise_id}/${process.env.NEXT_PUBLIC_TYPE}`)
-            setVendor(response?.data?.data)
-            setValue('vendor_id', sliderList?.vendor_id)
-            const responseProduct = await postData('admin/product/vendorproducts', { id: sliderList?.vendor_id, type: process.env.NEXT_PUBLIC_TYPE });
-            const Filter = responseProduct?.data?.data?.map((res: any) => ({
-                label: res?.name,
-                id: res?._id
-            }))
-            const selectedProduct = Filter.find((res: any) => res?.id === sliderList.product_id)
+            try {
+                const response = await fetchData(`admin/vendor-list/${sliderList?.franchise_id}/${process.env.NEXT_PUBLIC_TYPE}`)
+                setVendor(response?.data?.data)
+                setValue('vendor_id', sliderList?.vendor_id)
+            } catch (err: any) {
 
-            setSelectedProduct(selectedProduct)
-            setProductListRes(responseProduct?.data?.data)
-            setProductList(Filter)
+            }
+
+            try {
+                const responseProduct = await postData('admin/product/vendorproducts', { id: sliderList?.vendor_id, type: process.env.NEXT_PUBLIC_TYPE });
+                const Filter = responseProduct?.data?.data?.map((res: any) => ({
+                    label: res?.name,
+                    id: res?._id
+                }))
+                const selectedProduct = Filter.find((res: any) => res?.id === sliderList.product_id)
+
+                setSelectedProduct(selectedProduct)
+                setProductListRes(responseProduct?.data?.data)
+                setProductList(Filter)
+
+            } catch (err:any) {
+
+            }
+
         }
 
     })
@@ -244,7 +255,14 @@ const SliderManagementForm = ({ res }: Props) => {
             id: 2,
             value: "product"
 
+        },
+        {
+            name: "Reset",
+            id: 2,
+            value: "reset"
+
         }
+
     ]
 
 
@@ -307,14 +325,20 @@ const SliderManagementForm = ({ res }: Props) => {
 
     const onChangeType = useCallback((e: any) => {
         const { value } = e.target;
-        if (value === "store") {
-            setSingleProduct([])
-            setValue("product_id", "")
-            setSelectProduct(null)
-            setProductData(null)
+        if(value !== "reset"){
+            if (value === "store") {
+                setSingleProduct([])
+                setValue("product_id", "")
+                setSelectProduct(null)
+                setProductData(null)
+            }
+            setSelectType(value)
+            setValue("screentype", value)
+        }else{
+            setSelectType(null)
+            setValue("screentype", "")
         }
-        setSelectType(value)
-        setValue("screentype", value)
+       
     }, [])
 
 

@@ -52,17 +52,17 @@ const CustomTextarea = ({
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
                         <TextareaAutosize
-                           style={{background:view ? "#f2f5f2" : "#fff"}}
+                           style={{background:view ? "#f2f5f2" : "#fff",border:'1px solid hsl(0, 0%, 85%)' }}
                             readOnly={view}
                             minRows={6}
                             defaultValue={defaultValue}
                             value={value}
-                            onChange={(e) => {
+                                                     onChange={(e) => {
                                 onChangeValue ? onChangeValue(e) :
                                     onChange(e)
                             }}
                             onBlur={onBlur}
-                            aria-invalid={error ? "true" : "false"}
+                                                  aria-invalid={error ? "true" : "false"}
                             className="form-control"
                             placeholder={placeholder}
                             id="exampleInputEmail1"

@@ -1,8 +1,16 @@
 /* global google */
-import React, { useRef, useState, useEffect } from "react";
-import { PolygonF, GoogleMap } from "@react-google-maps/api";
+import React, { useRef, useState, useEffect, useMemo } from "react";
+import { PolygonF, GoogleMap, useLoadScript } from "@react-google-maps/api";
 
 const Polygons = ({ onComplete, path }) => {
+
+    const libraries = useMemo(() => ['drawing'], []);
+
+	const { isLoaded } = useLoadScript({
+		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLEKEY,
+		libraries,
+		region: 'in'
+	});
 
     const [polygonRef, setPolygonRef] = useState(null)
 
@@ -75,7 +83,9 @@ const Polygons = ({ onComplete, path }) => {
     };
 
 
-
+    if(!isLoaded){
+		return <div style={{ width: 800, height: 400, justifyContent: 'center', alignItems: 'center', display: 'flex' }}>Loading...</div>
+	}
 
 
     return (

@@ -219,7 +219,7 @@ const ProductForm = ({ res, view }: props) => {
         .shape({
             name: yup
                 .string()
-                .matches(/^[a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ\s\-\/]+$/, 'Please enter valid name')
+                .matches(/^[a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ\s\-0-9\/]+$/, 'Please enter valid name')
                 .max(40)
                 .required(),
             // display_order: yup.number().nullable().typeError("Must be Integer"),
@@ -557,9 +557,6 @@ const ProductForm = ({ res, view }: props) => {
             }
 
         }
-
-        //}
-
     }
 
 
@@ -1420,7 +1417,7 @@ const ProductForm = ({ res, view }: props) => {
                     </Grid>
 
 
-                    <Grid item xs={12} lg={3}>
+                    {/* <Grid item xs={12} lg={3}>
                         <CustomMultiselect
 
                             multiple={true}
@@ -1441,9 +1438,9 @@ const ProductForm = ({ res, view }: props) => {
                                 <MenuItem value={res?.value}>{res?.name}</MenuItem>
                             ))}
                         </CustomMultiselect>
-                    </Grid>
+                    </Grid> */}
 
-                    <Grid item xs={12} lg={3}>
+                    {/* <Grid item xs={12} lg={3}>
                         <CustomMultiselect
 
                             multiple={true}
@@ -1464,8 +1461,8 @@ const ProductForm = ({ res, view }: props) => {
                                 <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
                             ))}
                         </CustomMultiselect>
-                    </Grid>
-
+                    </Grid> */}
+{/* 
                     <Grid item xs={12} lg={3}>
                         <Customselect
                             type='text'
@@ -1490,7 +1487,7 @@ const ProductForm = ({ res, view }: props) => {
                             ))}
 
                         </Customselect>
-                    </Grid>
+                    </Grid> */}
 
 
                     <Grid item xs={12} lg={1.5}>
@@ -1828,7 +1825,7 @@ const ProductForm = ({ res, view }: props) => {
                     <Grid item xs={12} lg={6}>
                         {view &&
                             <>
-                                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+              <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
                                     sx={{
                                         fontSize: {
                                             lg: 16,
@@ -1849,9 +1846,7 @@ const ProductForm = ({ res, view }: props) => {
                                 </Box>
                             </>
                         }
-
-
-                        {productList &&
+     {productList &&
                             <>
                                 <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} py={1} >
                                     {recomendedProductEditList?.map((res: any) => (

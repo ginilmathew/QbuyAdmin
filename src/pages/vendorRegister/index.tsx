@@ -1,15 +1,18 @@
-import CustomTableHeader from '@/Widgets/CustomTableHeader'
-import CustomTable from '@/components/CustomTable'
+
 import { Box, Stack } from '@mui/material'
 import React, { startTransition, useCallback, useEffect, useState } from 'react'
-import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { GridColDef } from '@mui/x-data-grid';
 import { authOptions } from '../api/auth/[...nextauth]'
 import { getServerSession } from "next-auth/next"
 import { fetchData } from '@/CustomAxios';
-import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import { useRouter } from 'next/router';
 import moment from 'moment';
-
+import dynamic from 'next/dynamic';
+import useSWR from 'swr';
+import { toast } from 'react-toastify';
+const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
 // type props = {
 //     req: any,
 //     res: any
@@ -44,14 +47,23 @@ import moment from 'moment';
 //     return { props: { data: data } };
 // }
 
-const VendorRegister = () => {
 
+const fetcher = (url: any) => fetchData(url).then((res) => res);
+const VendorRegister = () => {
+    const { data, error, isLoading, mutate } = useSWR(`/admin/vendor-register-list/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
     const router = useRouter()
 
     const [vendorReglist, setVendorRegList] = useState<any>([])
     const [loading, setLoading] = useState<any>(false);
     const [serachList, setSearchList] = useState<any>([])
 
+
+
+    useEffect(() => {
+        if (data?.data?.data) {
+            setVendorRegList(data?.data?.data)
+        }
+    }, [data?.data?.data])
 
 
     const editRegister = useCallback((id: string) => {
@@ -75,7 +87,7 @@ const VendorRegister = () => {
             align: 'center',
             valueGetter: (params) => moment(params.row.created_at).format("DD/MM/YYYY HH:MM A"),
         },
-    
+
         {
             field: 'vendor_name',
             headerName: 'Vendor Name',
@@ -138,33 +150,46 @@ const VendorRegister = () => {
     ];
 
 
-    async function getRegisterList() {
-        try {
-            setLoading(true)
-            const res = await fetchData(`/admin/vendor-register-list/${process.env.NEXT_PUBLIC_TYPE}`);
-            setVendorRegList(res?.data?.data);
-            setSearchList(res?.data?.data);
-            setLoading(false)
-        } catch (err: any) {
-            setLoading(false)
-        } finally {
-            setLoading(false)
-        }
+    // async function getRegisterList() {
+    //     try {
+    //         setLoading(true)
+    //         const res = await fetchData(`/admin/vendor-register-list/${process.env.NEXT_PUBLIC_TYPE}`);
+    //         setVendorRegList(res?.data?.data);
+    //         setSearchList(res?.data?.data);
+    //         setLoading(false)
+    //     } catch (err: any) {
+    //         setLoading(false)
+    //     } finally {
+    //         setLoading(false)
+    //     }
 
-    }
+    // }
 
     const searchVendor = useCallback((value: any) => {
-        let Result = serachList?.filter((com: any) => com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.store_name?.toString().toLowerCase().includes(value.toLowerCase()))
+        let Result = data?.data?.data?.filter((com: any) => com?.vendor_id.toString().toLowerCase().includes(value.toLowerCase()) || com?.vendor_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.store_name?.toString().toLowerCase().includes(value.toLowerCase()))
         startTransition(() => {
             setVendorRegList(Result)
         })
     }, [vendorReglist])
 
-    useEffect(() => {
-        getRegisterList()
-    }, [])
-    
+    // useEffect(() => {
+    //     getRegisterList()
+    // }, [])
 
+    if (isLoading) {
+        <Box px={5} py={2} pt={10} mt={0}>
+            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
+                <CustomTableHeader setState={searchVendor} addbtn={false} imprtBtn={false} Headerlabel='Vendor Register' onClick={() => null} />
+                <Box py={5}>
+                    <CustomTable dashboard={false} columns={columns} rows={[]} id={"id"} loading={true} bg={"#ffff"} label='Recent Activity' />
+                </Box>
+            </Box>
+        </Box>
+    }
+
+    if(error){
+        toast.error(error?.message)
+    }
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>

@@ -13,7 +13,7 @@ const customerAccounts = () => {
     const router = useRouter()
     const [loading, setLoading] = useState(false);
     const [customerAccountData, setCustomerAccountData] = useState([]);
-    console.log({customerAccountData})
+  
     const [searchList, setSearchList] = useState([]);
 
     const columns: GridColDef[] = [
@@ -92,7 +92,6 @@ const customerAccounts = () => {
         try {
             setLoading(true);
             const response = await fetchData(`admin/account/customers/list`);
-            console.log(response?.data?.data);
             setCustomerAccountData(response?.data?.data);
             setSearchList(response?.data?.data)
 
