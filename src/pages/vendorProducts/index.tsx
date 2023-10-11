@@ -310,7 +310,7 @@ function VendorProducts() {
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
                 <CustomTableHeader setState={searchProducts} addbtn={false} imprtBtn={false} Headerlabel='Vendor Products' onClick={() => null} />
                 <Box py={5}>
-                    <CustomTable dashboard={false} columns={columns} rows={productList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={productList ? productList : []} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
             {modal &&
