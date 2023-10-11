@@ -1,18 +1,24 @@
 import { Router, useRouter } from 'next/router'
 import React, { useState, useTransition, useEffect, useCallback } from 'react'
+import dynamic from 'next/dynamic';
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
-import CustomTableHeader from '@/Widgets/CustomTableHeader';
-import CustomTable from '@/components/CustomTable';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
+
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
+const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
+const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
+
+import { useTheme } from '@mui/material/styles';
 import { toast } from 'react-toastify';
 import { fetchData } from '@/CustomAxios';
 import moment from 'moment';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 
 const Shipments = () => {
+
+    
+
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('md'));
 

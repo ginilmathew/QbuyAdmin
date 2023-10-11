@@ -6,7 +6,7 @@ import { useForm, SubmitHandler, set } from "react-hook-form";
 import Custombutton from '@/components/Custombutton';
 import CustomImageUploader from '@/components/CustomImageUploader';
 import Customselect from '@/components/Customselect';
-import { useJsApiLoader } from "@react-google-maps/api";
+//import { useJsApiLoader } from "@react-google-maps/api";
 import { fetchData } from '@/CustomAxios';
 import CustomTimepicker from '@/components/CustomTimepicker';
 import { postData } from '@/CustomAxios';
@@ -210,19 +210,19 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
 
-    const getVendorlist = async () => {
-        try {
-            setLoader(true)
-            const response = await fetchData(`admin/vendor/show/${idd}`)
-            setVendorList(response?.data?.data)
+    // const getVendorlist = async () => {
+    //     try {
+    //         setLoader(true)
+    //         const response = await fetchData(`admin/vendor/show/${idd}`)
+    //         setVendorList(response?.data?.data)
 
-        } catch (err: any) {
-            toast.success(err.message)
-            setLoader(false)
-        } finally {
-            setLoader(false)
-        }
-    }
+    //     } catch (err: any) {
+    //         toast.success(err.message)
+    //         setLoader(false)
+    //     } finally {
+    //         setLoader(false)
+    //     }
+    // }
 
 
     // useEffect(() => {
@@ -233,69 +233,69 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
 
-    const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: "AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I",
-        id: 'google-map-script',
-    })
+    // const { isLoaded } = useJsApiLoader({
+    //     googleMapsApiKey: "AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I",
+    //     id: 'google-map-script',
+    // })
 
 
 
 
 
-    const containerStyle = {
-        width: "100%",
-        height: "400px",
-    };
+    // const containerStyle = {
+    //     width: "100%",
+    //     height: "400px",
+    // };
 
-    const center = {
-        lat: 37.7749,
-        lng: -122.4194,
-    };
+    // const center = {
+    //     lat: 37.7749,
+    //     lng: -122.4194,
+    // };
 
 
 
-    const [path, setPath] = useState([
-        { lat: 52.52549080781086, lng: 13.398118538856465 },
-        { lat: 52.48578559055679, lng: 13.36653284549709 },
-        { lat: 52.48871246221608, lng: 13.44618372440334 }
-    ]);
+    // const [path, setPath] = useState([
+    //     { lat: 52.52549080781086, lng: 13.398118538856465 },
+    //     { lat: 52.48578559055679, lng: 13.36653284549709 },
+    //     { lat: 52.48871246221608, lng: 13.44618372440334 }
+    // ]);
 
     // Define refs for Polygon instance and listeners
-    const polygonRef = useRef<google.maps.Polygon | null>(null);
-    const listenersRef = useRef<google.maps.MapsEventListener[]>([]);
+    // const polygonRef = useRef<google.maps.Polygon | null>(null);
+    // const listenersRef = useRef<google.maps.MapsEventListener[]>([]);
 
     // Call setPath with new edited path
-    const onEdit = useCallback(() => {
-        if (polygonRef.current) {
-            const nextPath = polygonRef.current
-                .getPath()
-                .getArray()
-                .map((latLng: google.maps.LatLng) => {
-                    return { lat: latLng.lat(), lng: latLng.lng() };
-                });
-            setPath(nextPath);
-        }
-    }, [setPath]);
+    // const onEdit = useCallback(() => {
+    //     if (polygonRef.current) {
+    //         const nextPath = polygonRef.current
+    //             .getPath()
+    //             .getArray()
+    //             .map((latLng: google.maps.LatLng) => {
+    //                 return { lat: latLng.lat(), lng: latLng.lng() };
+    //             });
+    //         setPath(nextPath);
+    //     }
+    // }, [setPath]);
 
     // Bind refs to current Polygon and listeners
-    const onLoad = useCallback(
-        (polygon: google.maps.Polygon) => {
-            polygonRef.current = polygon;
-            const path = polygon.getPath();
-            listenersRef.current.push(
-                path.addListener("set_at", onEdit),
-                path.addListener("insert_at", onEdit),
-                path.addListener("remove_at", onEdit)
-            );
-        },
-        [onEdit]
-    );
+    // const onLoad = useCallback(
+    //     (polygon: google.maps.Polygon) => {
+    //         polygonRef.current = polygon;
+    //         const path = polygon.getPath();
+    //         listenersRef.current.push(
+    //             path.addListener("set_at", onEdit),
+    //             path.addListener("insert_at", onEdit),
+    //             path.addListener("remove_at", onEdit)
+    //         );
+    //     },
+    //     [onEdit]
+    // );
 
     // Clean up refs
-    const onUnmount = useCallback(() => {
-        listenersRef.current.forEach((lis: google.maps.MapsEventListener) => lis.remove());
-        polygonRef.current = null;
-    }, []);
+    // const onUnmount = useCallback(() => {
+    //     listenersRef.current.forEach((lis: google.maps.MapsEventListener) => lis.remove());
+    //     polygonRef.current = null;
+    // }, []);
 
 
     const imageUploder = (file: any) => {
@@ -363,28 +363,28 @@ const Vendorform = ({ res, view, data }: props) => {
     }
 
 
-    const filterSubcategory = async () => {
+    // const filterSubcategory = async () => {
 
 
-        let array = vendorList?.category_id?.map((res: any) => res?.id);
-        if (array?.length > 0) {
-            try {
-                let data = {
-                    categories: array
-                }
-                const response = await postData('admin/subcategorylist', data);
+    //     let array = vendorList?.category_id?.map((res: any) => res?.id);
+    //     if (array?.length > 0) {
+    //         try {
+    //             let data = {
+    //                 categories: array
+    //             }
+    //             const response = await postData('admin/subcategorylist', data);
            
-                let filter = response?.data.map((res: any) => res?._id);
+    //             let filter = response?.data.map((res: any) => res?._id);
               
-                setMultipleArraySub(filter)
-                setSubcategoryList(response?.data)
+    //             setMultipleArraySub(filter)
+    //             setSubcategoryList(response?.data)
         
-            } catch (err: any) {
+    //         } catch (err: any) {
 
-            }
-        }
+    //         }
+    //     }
 
-    }
+    // }
 
     // const subCategoryList = async () => {
     //     let array = vendorList?.category_id?.map((res: any) => res?.id);
@@ -455,7 +455,8 @@ const Vendorform = ({ res, view, data }: props) => {
         }
     }, [vendorList])
 
-
+    console.log({paths});
+    
 
     const onChangeStartTime = (value: any) => {
 
@@ -887,7 +888,7 @@ const Vendorform = ({ res, view, data }: props) => {
                     <Divider />
                     {/* {isLoaded && */}
                     <Box py={1}>
-                        {idd && data?.delivery_location ? <Polygon onComplete={polygonComplete} path={paths} /> : <Maps onPolygonComplete={polygonComplete} />}
+                        {(idd && data?.delivery_location && paths) ? <Polygon onComplete={polygonComplete} path={paths} /> : <Maps onPolygonComplete={polygonComplete} />}
                         {(errors && errors?.coordinates) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates?.message}`}</span>}
                     </Box>
                 </Box>
