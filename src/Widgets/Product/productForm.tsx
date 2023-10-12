@@ -1419,7 +1419,6 @@ const ProductForm = ({ res, view }: props) => {
 
                     <Grid item xs={12} lg={3}>
                         <CustomMultiselect
-
                             multiple={true}
                             control={control}
                             error={errors.food_type}
