@@ -11,11 +11,9 @@ import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { fetchData, postData } from '@/CustomAxios';
-import { Message } from '@mui/icons-material';
 import { IMAGE_URL } from '@/Config';
 import { useRouter } from 'next/router';
-import CustomLoader from '@/components/CustomLoader';
-import moment from 'moment';
+
 
 
 type ProductDetails = {
@@ -28,9 +26,11 @@ type ProductDetails = {
         category: {
             name: string;
         };
+        model: string; 
     };
     quantity: number;
 };
+
 
 type UserData = {
     name: string;
@@ -83,6 +83,7 @@ const AbandonedForm = ({ resData, view }: Props) => {
             names: '',
             store: '',
             category: '',
+            model: '',
         },
     });
 
@@ -111,6 +112,7 @@ const AbandonedForm = ({ resData, view }: Props) => {
             abandonedData.product_details.forEach((product, index) => {
                 setValue(`names[${index}]`, product?.name);
                 setValue(`store[${index}]`, product?.productdata?.store?.name);
+                setValue(`model[${index}]`, product?.productdata?.model);
                 setValue(`category[${index}]`, product?.productdata?.category?.name);
                 setValue(`quantity[${index}]`, product?.quantity);
             });
@@ -211,6 +213,20 @@ const AbandonedForm = ({ resData, view }: Props) => {
                                     <CustomInput
                                         type="text"
                                         control={control}
+                                        error={errors[`model[${index}]`]}
+                                        fieldName={`model[${index}]`}
+                                        placeholder={``}
+                                        fieldLabel="Model"
+                                        disabled={false}
+                                        view={view ? true : false}
+                                        defaultValue={product?.productdata?.model} 
+                                    />
+                                </Grid>
+
+                                <Grid item xs={12} lg={3}>
+                                    <CustomInput
+                                        type="text"
+                                        control={control}
                                         error={errors[`category[${index}]`]}
                                         fieldName={`category[${index}]`}
                                         placeholder={``}
@@ -236,10 +252,10 @@ const AbandonedForm = ({ resData, view }: Props) => {
                             </Grid>
                         </Grid>
                     </Box>
-                    
+
                 ))}
             </CustomBox>
-          
+
 
         </Box>
     )
