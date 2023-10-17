@@ -289,9 +289,10 @@ const ProductForm = ({ res, view }: props) => {
                 fixed_delivery_price: 0,
                 commission: 0
             }
+           
         });
 
-
+     
 
 
 
@@ -1415,9 +1416,7 @@ const ProductForm = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-
-
-                    <Grid item xs={12} lg={3}>
+                    { process.env.NEXT_PUBLIC_TYPE ==="panda"&& <Grid item xs={12} lg={3}>
                         <CustomMultiselect
                             multiple={true}
                             control={control}
@@ -1437,9 +1436,9 @@ const ProductForm = ({ res, view }: props) => {
                                 <MenuItem value={res?.value}>{res?.name}</MenuItem>
                             ))}
                         </CustomMultiselect>
-                    </Grid> 
+                    </Grid>}
 
-                     <Grid item xs={12} lg={3}>
+                    {process.env.NEXT_PUBLIC_TYPE ==="panda"&& <Grid item xs={12} lg={3}>
                         <CustomMultiselect
 
                             multiple={true}
@@ -1449,7 +1448,7 @@ const ProductForm = ({ res, view }: props) => {
                             placeholder={``}
                             fieldLabel={"Product Tags"}
                             readOnly={view ? true : false}
-                            value={multpleArrayProductTag}
+                            value={multpleArrayProductTag} 
                             onChangeValue={onChangeMultipleProductTag}
                             type=''
                         >
@@ -1460,8 +1459,8 @@ const ProductForm = ({ res, view }: props) => {
                                 <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
                             ))}
                         </CustomMultiselect>
-                    </Grid> 
-
+                    </Grid>}
+                    {process.env.NEXT_PUBLIC_TYPE ==="panda"&&
                     <Grid item xs={12} lg={3}>
                         <Customselect
                             type='text'
@@ -1486,7 +1485,7 @@ const ProductForm = ({ res, view }: props) => {
                             ))}
 
                         </Customselect>
-                    </Grid>
+                    </Grid>} 
 
 
                     <Grid item xs={12} lg={1.5}>
