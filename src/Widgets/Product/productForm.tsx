@@ -642,10 +642,10 @@ const ProductForm = ({ res, view }: props) => {
                     setRecomendedProductList(result)
                     setVendorList(response?.data?.data)
                     let vendor = response?.data?.data?.find((ven: any) => ven?._id === vendorId)
-                    if(vendor){
+                    if (vendor) {
                         setCategoryList(vendor?.category_id);
                     }
-                    
+
 
                     setValue('franchisee', productList?.franchisee?._id)
                 } catch (err: any) {
@@ -1416,8 +1416,8 @@ const ProductForm = ({ res, view }: props) => {
                         />
                     </Grid>
 
-
-                    {/* <Grid item xs={12} lg={3}>
+                    {process?.env?.NEXT_PUBLIC_TYPE === "panda" && <>
+                    <Grid item xs={12} lg={3}>
                         <CustomMultiselect
 
                             multiple={true}
@@ -1438,9 +1438,9 @@ const ProductForm = ({ res, view }: props) => {
                                 <MenuItem value={res?.value}>{res?.name}</MenuItem>
                             ))}
                         </CustomMultiselect>
-                    </Grid> */}
+                    </Grid>
 
-                    {/* <Grid item xs={12} lg={3}>
+                    <Grid item xs={12} lg={3}>
                         <CustomMultiselect
 
                             multiple={true}
@@ -1461,8 +1461,8 @@ const ProductForm = ({ res, view }: props) => {
                                 <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
                             ))}
                         </CustomMultiselect>
-                    </Grid> */}
-{/* 
+                    </Grid>
+
                     <Grid item xs={12} lg={3}>
                         <Customselect
                             type='text'
@@ -1487,8 +1487,8 @@ const ProductForm = ({ res, view }: props) => {
                             ))}
 
                         </Customselect>
-                    </Grid> */}
-
+                    </Grid>
+                    </>}
 
                     <Grid item xs={12} lg={1.5}>
                         <CustomInput
@@ -1825,7 +1825,7 @@ const ProductForm = ({ res, view }: props) => {
                     <Grid item xs={12} lg={6}>
                         {view &&
                             <>
-              <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
                                     sx={{
                                         fontSize: {
                                             lg: 16,
@@ -1846,7 +1846,7 @@ const ProductForm = ({ res, view }: props) => {
                                 </Box>
                             </>
                         }
-     {productList &&
+                        {productList &&
                             <>
                                 <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} py={1} >
                                     {recomendedProductEditList?.map((res: any) => (
