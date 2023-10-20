@@ -55,6 +55,7 @@ const Customer = () => {
         setOpen(false)
     }
 
+    
     const columns: GridColDef[] = [
         {
             field: 'customer_id',

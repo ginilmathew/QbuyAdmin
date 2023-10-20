@@ -121,7 +121,7 @@ const Vendorform = ({ res, view, data }: props) => {
     const [multpleArraySub, setMultipleArraySub] = useState<any>([]);
 
 
-    console.log({vendorList})
+    console.log({ vendorList })
 
 
     const orderValidation = /^[0-9]*$/
@@ -144,6 +144,7 @@ const Vendorform = ({ res, view, data }: props) => {
             // store_address: yup.string().required('Store Address is Required'),
             franchise_id: yup.string().required('Franchise is  Required'),
             category_id: yup.array().typeError('Category is Required').required('Category is Required'),
+           
             // start_time: yup.string().required('Required'),
             // end_time: yup.string().required('Required'),
             store_logo: yup
@@ -373,12 +374,12 @@ const Vendorform = ({ res, view, data }: props) => {
     //                 categories: array
     //             }
     //             const response = await postData('admin/subcategorylist', data);
-           
+
     //             let filter = response?.data.map((res: any) => res?._id);
-              
+
     //             setMultipleArraySub(filter)
     //             setSubcategoryList(response?.data)
-        
+
     //         } catch (err: any) {
 
     //         }
@@ -455,8 +456,8 @@ const Vendorform = ({ res, view, data }: props) => {
         }
     }, [vendorList])
 
-    console.log({paths});
-    
+    console.log({ paths });
+
 
     const onChangeStartTime = (value: any) => {
 
@@ -552,7 +553,13 @@ const Vendorform = ({ res, view, data }: props) => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
-
+        if (data.category_id.length === 0) {
+            setError('category_id', { message: 'Category is Required' });
+            return; 
+        } else {
+            setError('category_id', { message: '' }); 
+        }
+    
         const URL_CREATE = '/admin/vendor/create'
         const URL_EDIT = '/admin/vendor/update'
         let kyc_details = {
@@ -788,28 +795,29 @@ const Vendorform = ({ res, view, data }: props) => {
                             </Customselect>
                         </Grid>
                         <Grid item xs={12} lg={4}>
-                            <CustomMultiselect
+                            <div style={{ width: '300px' }}>
+                                <CustomMultiselect
 
-                                multiple={true}
-                                control={control}
-                                error={errors.category_id}
-                                fieldName="category_id"
-                                placeholder={``}
-                                fieldLabel={"Category"}
-                                readOnly={view ? true : false}
-                                value={multpleArray}
-                                onChangeValue={onChangeMultiple}
-                                type=''
-                            >
-                                <MenuItem value="" disabled >
-                                    <>Select Category</>
-                                </MenuItem>
-                                {getcategory && getcategory.map((res: any) => (
-                                    <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
-                                ))}
-                            </CustomMultiselect>
+                                    multiple={true}
+                                    control={control}
+                                    error={errors.category_id}
+                                    fieldName="category_id"
+                                    placeholder={``}
+                                    fieldLabel={"Category"}
+                                    readOnly={view ? true : false}
+                                    value={multpleArray}
+                                    onChangeValue={onChangeMultiple}
+                                    type=''
+                                >
+                                    <MenuItem value="" disabled >
+                                        <>Select Category</>
+                                    </MenuItem>
+                                    {getcategory && getcategory.map((res: any) => (
+                                        <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
+                                    ))}
+                                </CustomMultiselect>
 
-
+                            </div>
                         </Grid>
                         {/* <Grid item xs={12} lg={2}>
                             <CustomMultiselect

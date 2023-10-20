@@ -82,7 +82,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
         });
 
-
+    const [outOfStock, setOutOfStock] = useState(false);
 
     const onChangePurchaseValue = (e: any) => {
         const { value } = e.target;
@@ -117,110 +117,118 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     }
 
 
-
     const onChangeQuantity = (e: any) => {
         const { value } = e.target;
-        setValue('quantity', value)
-
-        // let unitprice = getValues('unitPrice');
-        // let purchaseprice = getValues('seller_price');
+        setValue('quantity', value);
 
         if (parseInt(value) <= 0 || value === "") {
-            setValue('unitPrice', data?.quantity * data?.unitPrice)
-            setValue('seller_price', data?.seller_price)
-            setError('quantity', { message: 'Minimum Quantity Required' })
+            setValue('unitPrice', data?.quantity * data?.unitPrice);
+            setValue('seller_price', data?.seller_price);
+            setError('quantity', { message: 'Minimum Quantity Required' });
+            setOutOfStock(false);
         } else {
-
             if (data?.stock) {
                 if (data?.stock_value) {
                     if (data?.stock_value < parseFloat(value)) {
-                        setError('quantity', { message: 'Out of Stock' })
+                        setError('quantity', { message: 'Out of Stock' });
+                        setOutOfStock(true);
                         return false;
                     }
                 }
-
             }
-            setError('quantity', { message: '' })
-            // let purchsePrz = (parseInt(data?.seller_price) * parseFloat(value));
+            setError('quantity', { message: '' });
             let unitprz = (parseInt(data?.unitPrice) * parseFloat(value));
             setValue('unitPrice', data?.unitPrice);
             setValue('seller_price', data?.seller_price);
             setValue('total', unitprz);
+            setOutOfStock(false);
         }
-
     }
-
     const onChangeDeliveryCharge = (e: any) => {
         const { value } = e.target;
         setValue('deliveryPrice', value)
         SetDeliveryCharge(value)
     }
 
-
-
     const SubmitButton = async (item: any) => {
-
-
-        let product = []
-
+        let product = [];
+    
         if (item?.variant_id) {
-            product = allProduct?.productDetails?.filter((res: any) => res?.variant_id !== item?.variant_id).map((itm: any) => (
-                {
-                    ...itm
-                }))
-
+            product = allProduct?.productDetails?.filter((res: any) => res?.variant_id !== item?.variant_id).map((itm: any) => ({
+                ...itm
+            }));
         } else {
-            product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== item?.product_id).map((itm: any) => (
-                {
-                    ...itm
-                }))
+            product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== item?.product_id).map((itm: any) => ({
+                ...itm
+            }));
         }
+    
         item.title = data?.title;
         item.name = data?.name;
-        item.price = (item?.unitPrice * parseFloat(item?.quantity));
-
+        item.price = item?.unitPrice * parseFloat(item?.quantity);
+    
         const { total, ...alldata } = item;
-
-
-
-        product.push(alldata)
-
+        product.push(alldata);
+    
         try {
             let publishValue = {
                 id: order_iD,
                 productDetails: product
-            }
+            };
+    
             const response = await postData('admin/order/edit', publishValue);
-            const rate = response?.data?.data?.productDetails?.reduce((inital: any, price: any) => inital + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0)
-
-            let resetvalue = {
-                delivery_charge: data?.deliveryPrice,
-                grand_total: (parseInt(data?.deliveryPrice) + rate + allProduct?.platform_charge),
+    
+            const highestDelivery = product.reduce((highest: number, product: any) => {
+                return Math.max(highest, parseFloat(product?.deliveryPrice));
+            }, 0);
+    
+            allProduct['delivery_charge'] = highestDelivery;
+    
+            const rate = response?.data?.data?.productDetails?.reduce((initial: number, price: any) =>
+                initial + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0);
+    
+            let resetValue = {
+                delivery_charge: highestDelivery,
+                grand_total: parseInt(highestDelivery) + rate + allProduct?.platform_charge,
                 total_amount: rate,
                 platform_charge: allProduct?.platform_charge,
                 productDetails: [...response?.data?.data?.productDetails]
-            }
-            setProductList(resetvalue)
-            toast.success('Order edit Successfully')
-            handleClose()
-
-        } catch (err: any) {
-            toast.error(err)
+            };
+    
+            setProductList(resetValue);
+            toast.success('Order edit Successfully');
+            handleClose();
+        } catch (err) {
+           
         }
-
     }
+    
 
+
+    // const DeliverySubmit = () => {
+    //     let deliveryPrice = getValues('deliveryPrice')
+    //     if (parseInt(deliveryPrice) <= 0) {
+    //         toast.warning('Delivery Price Cannot be Zero');
+    //         return false;
+    //     }
+    //     allProduct['delivery_charge'] = getValues('deliveryPrice');
+    //     allProduct['grand_total'] = parseInt(allProduct?.delivery_charge) + parseInt(allProduct?.total_amount);
+    //     handleClose()
+    // }
     const DeliverySubmit = () => {
-        let deliveryPrice = getValues('deliveryPrice')
+        let deliveryPrice = getValues('deliveryPrice');
         if (parseInt(deliveryPrice) <= 0) {
             toast.warning('Delivery Price Cannot be Zero');
             return false;
         }
-        allProduct['delivery_charge'] = getValues('deliveryPrice');
-        allProduct['grand_total'] = parseInt(allProduct?.delivery_charge) + parseInt(allProduct?.total_amount);
-        handleClose()
-    }
 
+        allProduct['delivery_charge'] = parseInt(deliveryPrice);
+        allProduct['grand_total'] =
+            allProduct['total_amount'] + allProduct['delivery_charge'] + allProduct['platform_charge'];
+    
+        handleClose();
+    };
+    
     return (
         <Dialog
             onClose={handleClose}
@@ -362,8 +370,11 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                             startIcon={false}
                             height={''}
                             label={'Update'}
-                            disabled={false}
+                            //disabled={false}
+                            disabled={outOfStock || false}
                             onClick={mode === "product" ? handleSubmit(SubmitButton) : DeliverySubmit} />
+                       
+
                     </Box>
                 </DialogContent>
             </Box>

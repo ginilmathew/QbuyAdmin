@@ -28,6 +28,8 @@ const Shipments = () => {
     const [pending, startTransition] = useTransition();
     const [serachList, setSearchList] = useState<any>([]);
 
+
+
     const { data, error, isLoading } = useSWR(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
 
     useEffect(() => {
@@ -169,15 +171,31 @@ const Shipments = () => {
     ];
 
 
+    // const searchProducts = useCallback((value: any) => {
+    //     let competitiions = data?.data?.data?.filter((com: any) => com?.order_id.toString().toLowerCase().includes(value.toLowerCase())
+    //         || com?.user?.mobile.toString().toLowerCase().includes(value.toLowerCase()) ||
+    //         com?.franchisee?.franchise_name.toString().toLowerCase().includes(value.toLowerCase())
+    //     )
+    //     startTransition(() => {
+    //         setShippingList(competitiions)
+    //     })
+    // }, [shippingList])
+    
     const searchProducts = useCallback((value: any) => {
-        let competitiions = data?.data?.data?.filter((com: any) => com?.order_id.toString().toLowerCase().includes(value.toLowerCase())
-            || com?.user?.mobile.toString().toLowerCase().includes(value.toLowerCase()) ||
-            com?.franchisee?.franchise_name.toString().toLowerCase().includes(value.toLowerCase())
-        )
+        let competitiions = data?.data?.data?.filter((com: any) => 
+            (com?.order_id?.toString()?.toLowerCase().includes(value.toLowerCase()) ||
+            com?.user?.mobile?.toString()?.toLowerCase().includes(value.toLowerCase()) ||
+            com?.user?.name?.toString()?.toLowerCase().includes(value.toLowerCase()) ||
+            com?.franchisee?.franchise_name?.toString()?.toLowerCase().includes(value.toLowerCase()))
+        );
         startTransition(() => {
-            setShippingList(competitiions)
-        })
-    }, [shippingList])
+            setShippingList(competitiions);
+        });
+    }, [shippingList]);
+    
+    
+    
+    
 
     // const ShippingOrders = async () => {
     //     try {

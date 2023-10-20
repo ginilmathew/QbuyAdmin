@@ -17,7 +17,7 @@ const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'
 const fetcher = (url: any) => fetchData(url).then((res) => res);
 
 const AbandonedCart = () => {
-    const { data, error, isLoading, mutate } = useSWR(`admin/abandoned/list`, fetcher);
+    const { data, error, isLoading, mutate } = useSWR(`admin/abandoned/list/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
     const router = useRouter()
     const [loading, setLoading] = useState(false);
     const [cartData, setCartData] = useState([]);
@@ -28,6 +28,7 @@ const AbandonedCart = () => {
     useEffect(() => {
         if (data?.data?.data) {
             setCartData(data?.data?.data)
+            console.log({setCartData},'kk')
         }
     }, [data?.data?.data])
 
@@ -93,14 +94,17 @@ const AbandonedCart = () => {
 
     const searchProducts = useCallback((value: any) => {
         let Results = data?.data?.data?.filter((com: any) =>
-            com?.user?.user_id.toString().includes(value) ||
-            com?.user?.mobile.toString().includes(value)
+            (com?.user?.user_id?.toString() || '').includes(value) ||
+            (com?.user?.mobile?.toString() || '').includes(value) ||
+            (com?.user?.name?.toLowerCase() || '').includes(value.toLowerCase())
         );
-
+    
         startTransition(() => {
             setCartData(Results);
         });
-    }, [cartData]);
+    }, [data?.data?.data]);
+    
+    
 
     if (isLoading) {
         <Box px={5} py={2} pt={10} mt={0}>

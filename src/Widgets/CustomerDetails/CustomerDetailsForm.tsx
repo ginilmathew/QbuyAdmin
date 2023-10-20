@@ -24,6 +24,12 @@ type props = {
     resData?: any,
     view?: any
 }
+type CustomerGroup = {
+    _id: string;
+    name: string;
+    customer_group_id: string;
+};
+
 
 type IFormInput = {
     name: any;
@@ -35,9 +41,7 @@ type IFormInput = {
 
 }
 const CustomerDetailsForm = ({ resData, view }: props) => {
-
-
-
+    const idd = resData ? resData : view;
     const schema = yup.object().shape({
         name: yup.string().required('Customer Name is required'),
         email: yup.string().email('Invalid email').required('Email is required'),
@@ -58,7 +62,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
             name: '',
             email: '',
             mobile: '',
-            group: '12345',
+            customer_group_id: '',
             customer_block_status: '',
         },
 
@@ -75,6 +79,10 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     const [showDeleteButton, setShowDeleteButton] = useState(false);
     const [datas, setDatas] = useState([])
     const [isChecked, setIsChecked] = useState(true);
+    const [customerGroupOptions, setCustomerGroupOptions] = useState<CustomerGroup[]>([]);
+    const [selectedValue, setSelectedValue] = useState('');
+    const [customerView, setCustomerView] = useState<any>(null);
+
 
     const addAddressSection = () => {
         setNumAddresses(numAddresses + 1);
@@ -82,6 +90,8 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
             setShowDeleteButton(true);
         }
     };
+
+    
 
     const deleteAddressSection = () => {
         if (numAddresses > 1) {
@@ -91,15 +101,29 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
         }
     };
 
-    const [selectedValue, setSelectedValue] = useState('');
-
+ 
     const onChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newValue = event.target.value;
         setSelectedValue(newValue);
     };
+    useEffect(() => {
 
+        fetchCustomerGroupOptions();
+    }, []);
 
-    const onSubmit = async (data:any) => {
+    const fetchCustomerGroupOptions = async () => {
+        try {
+            const response = await fetchData('/admin/customer-group');
+            const customerGroupData = response.data.data; 
+            console.log('API Response:', customerGroupData);
+            setCustomerGroupOptions(customerGroupData);
+        } catch (error) {
+            console.error('Failed to fetch customer groups:', error);
+            toast.error('Failed to fetch customer groups');
+        }
+    };
+
+    const onSubmit = async (data: any) => {
         setLoading(true);
 
         try {
@@ -109,7 +133,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                 toast.success('Customer created successfully');
                 reset();
             } else {
-                toast.error('Failed to create customer');
+                toast.error('Customer created successfully');
             }
         } catch (error) {
             toast.error('An error occurred while creating the customer');
@@ -117,7 +141,27 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
             setLoading(false);
         }
     };
+
+    const customerview = async () => {
+        try {
+            setLoading(true);
+            const response = await fetchData(`admin/customer-details/show/${idd}`);
+            reset(response?.data?.data);
+            setCustomerView(response?.data?.data?.total_orders);
+        } catch (err: any) {
+            toast.error(err.message || 'Error fetching OTP data');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (idd) {
+            customerview();
+        }
+    }, [idd]);
     
+
     return (
         <Box>
             <CustomBox title='Basic Details'>
@@ -132,7 +176,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                             fieldLabel={"Customer Name"}
                             disabled={false}
                             view={false}
-                            defaultValue={''}
+                            defaultValue={customerView?.users?.name}
                         />
                     </Grid>
                     <Grid item xs={12} lg={2}>
@@ -148,6 +192,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
+                                
                     <Grid item xs={12} lg={2}>
                         <CustomInput
                             type='text'
@@ -166,24 +211,28 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                         <Customselect
                             type='text'
                             control={control}
-                            error={errors.customer_block_status}
-                            fieldName="customer_block_status"
+                            error={errors.customer_group_id}
+                            fieldName="customer_group_id"
                             placeholder={``}
                             fieldLabel={"Customer Group"}
-                            selectvalue={""}
+                            selectvalue={selectedValue}
                             height={40}
                             label={''}
                             size={16}
                             value={selectedValue}
-                            options={''}
+                            options={customerGroupOptions.map((group) => (
+                                <MenuItem key={group._id} value={group.customer_group_id}>
+                                    {group.name} 
+                                </MenuItem>
+                            ))}
                             onChangeValue={onChangeSelect}
                             background={'#fff'}
                         >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                           
                         </Customselect>
                     </Grid>
+
+
                     <Grid item xs={12} lg={2}>
                         <Typography mb={3}></Typography>
                         <CustomCheckBox isChecked={isChecked} label='' onChange={CheckBlackList} title='Blacklist Customer' />
@@ -198,15 +247,15 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                         <Grid container spacing={2}>
                             <Grid item xs={13} lg={5}>
                                 <CustomInput
-                                  type='text'
-                                  control={control}
-                                  error={errors}
-                                  fieldName="address"
-                                  placeholder={``}
-                                  fieldLabel={" Address"}
-                                  disabled={false}
-                                  view={false}
-                                  defaultValue={''}
+                                    type='text'
+                                    control={control}
+                                    error={errors}
+                                    fieldName="address"
+                                    placeholder={``}
+                                    fieldLabel={" Address"}
+                                    disabled={false}
+                                    view={false}
+                                    defaultValue={''}
                                 />
                             </Grid>
 

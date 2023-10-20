@@ -202,46 +202,48 @@ function VendorProducts() {
             headerAlign: 'center',
             align: 'center',
             renderCell: ({ row }) => (
-
-
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
-
-                    {row?.approval_status !== "rejected" ? <> <Box onClick={() => OnchangeCheck(row?._id)}
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }}>
-                        <CheckCircleIcon />
-                    </Box>
-
-                        <Box
-                            onClick={() => RejectConformation(row?._id)}
-                            style={{
-                                color: 'red',
-                                cursor: 'pointer'
-                            }}>
-                            <HighlightOffIcon />
-                        </Box></> : <> <Box
-                            style={{
-                                color: 'grey',
-
-
-                            }}>
-                            <CheckCircleIcon />
-                        </Box>
-
-                        <Box
-
-                            style={{
-                                color: 'grey',
-
-                            }}>
-                            <HighlightOffIcon />
-                        </Box></>}
-
-
-
+                    {(row?.approval_status === "rejected" || row?.approval_status === "approved") ? (          
+                        <>
+                            <Box
+                                style={{
+                                    color: 'grey',
+                                }}
+                            >
+                                <CheckCircleIcon />
+                            </Box>
+                            <Box
+                                style={{
+                                    color: 'grey',
+                                }}
+                            >
+                                <HighlightOffIcon />
+                            </Box>
+                        </>
+                    ) : (
+                       
+                        <>
+                            <Box onClick={() => OnchangeCheck(row?._id)}
+                                style={{
+                                    color: '#58D36E',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                <CheckCircleIcon />
+                            </Box>
+                            <Box
+                                onClick={() => RejectConformation(row?._id)}
+                                style={{
+                                    color: 'red',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                <HighlightOffIcon />
+                            </Box>
+                        </>
+                    )}
                 </Stack>
+
             )
         },
 

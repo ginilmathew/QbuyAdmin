@@ -51,6 +51,7 @@ console.log({productList},'PRODUCT LIT')
         setModalOpen(true);
         setMode(mode)
     }, [modalOpen, singleList, mode]);
+   
 
     const handleOpenAddModal = useCallback(() => {
         setAddOpen(true)
@@ -329,7 +330,8 @@ console.log({productList},'PRODUCT LIT')
                                     cursor: 'pointer'
                                 }}
                             /></TableCell>}
-                        </TableRow>
+                        </TableRow> 
+                    
                         <TableRow>
                             <TableCell colSpan={2}></TableCell>
                             <TableCell align="right">Platform Charge</TableCell>

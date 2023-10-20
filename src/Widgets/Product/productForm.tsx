@@ -237,10 +237,16 @@ const ProductForm = ({ res, view }: props) => {
 
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
             minimum_qty: yup.string().matches(orderValidation, 'Accept only positive number').nullable(),
-            weight: yup.string().max(30, "Name must be less than 30 characters").matches(
-                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s/0-9]*)$/gi,
-                'Only contain alphabets letters.'
-            ).nullable()
+            // weight: yup.string().max(30, "Name must be less than 30 characters").matches(
+            //     /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s/0-9]*)$/gi,
+            //     'Only contain alphabets letters.'
+            // ).nullable()
+            weight: yup.string()
+            .max(30, "Name must be less than 30 characters")
+            .matches(/^(\d+(\.\d*)?|\.\d+)$/, 'Only contain valid numerical values.')
+            .nullable()
+          
+
             // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
 
         })
@@ -642,10 +648,10 @@ const ProductForm = ({ res, view }: props) => {
                     setRecomendedProductList(result)
                     setVendorList(response?.data?.data)
                     let vendor = response?.data?.data?.find((ven: any) => ven?._id === vendorId)
-                    if(vendor){
+                    if (vendor) {
                         setCategoryList(vendor?.category_id);
                     }
-                    
+
 
                     setValue('franchisee', productList?.franchisee?._id)
                 } catch (err: any) {
@@ -1462,7 +1468,7 @@ const ProductForm = ({ res, view }: props) => {
                             ))}
                         </CustomMultiselect>
                     </Grid> */}
-{/* 
+                    {/* 
                     <Grid item xs={12} lg={3}>
                         <Customselect
                             type='text'
@@ -1488,8 +1494,6 @@ const ProductForm = ({ res, view }: props) => {
 
                         </Customselect>
                     </Grid> */}
-
-
                     <Grid item xs={12} lg={1.5}>
                         <CustomInput
                             type='text'
@@ -1825,7 +1829,7 @@ const ProductForm = ({ res, view }: props) => {
                     <Grid item xs={12} lg={6}>
                         {view &&
                             <>
-              <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
                                     sx={{
                                         fontSize: {
                                             lg: 16,
@@ -1846,7 +1850,7 @@ const ProductForm = ({ res, view }: props) => {
                                 </Box>
                             </>
                         }
-     {productList &&
+                        {productList &&
                             <>
                                 <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} py={1} >
                                     {recomendedProductEditList?.map((res: any) => (

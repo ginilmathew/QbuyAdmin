@@ -67,7 +67,7 @@ const OTP_View = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => (moment(params?.row?.created_at).format('DD/MM/YYYY hh:mm A')),
+            valueGetter: (params) => (moment(params?.row?.updated_at).format('DD/MM/YYYY hh:mm A')),
 
         },
 
