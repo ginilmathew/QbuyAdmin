@@ -1,3 +1,5 @@
+'use client'
+
 import { Router, useRouter } from 'next/router'
 import React, { useState, useTransition, useEffect, useCallback } from 'react'
 import dynamic from 'next/dynamic';
@@ -28,7 +30,7 @@ const Shipments = () => {
     const [pending, startTransition] = useTransition();
     const [serachList, setSearchList] = useState<any>([]);
 
-    const { data, error, isLoading } = useSWR(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
+    const { data, error, isLoading } = useSWR(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`, fetcher, { refreshInterval: 1000 });
 
     useEffect(() => {
         if (data?.data?.data) {
