@@ -186,14 +186,14 @@ const ProductForm = ({ res, view }: props) => {
             name: 'Breakfast'
         },
         {
-            value: 'dinner',
-            name: 'Dinner'
-        },
-        {
             value: 'lunch',
             name: 'Lunch'
         },
-
+        {
+            value: 'dinner',
+            name: 'Dinner'
+        },
+       
     ]);
 
     const [product_category, setProductCategory] = useState<any>([
@@ -212,6 +212,7 @@ const ProductForm = ({ res, view }: props) => {
     const [productTagList, setProductTagList] = useState<any>([])
     const [multpleArrayProductTag, setMultipleArrayProductTag] = useState<any>([]);
     const [multpleArrayFoodType, setMultipleArrayFoodType] = useState<any>([]);
+    
 
     const orderValidation = /^[0-9]*$/
     const schema = yup
@@ -242,12 +243,32 @@ const ProductForm = ({ res, view }: props) => {
             //     'Only contain alphabets letters.'
             // ).nullable()
             weight: yup.string()
-            .max(30, "Name must be less than 30 characters")
-            .matches(/^(\d+(\.\d*)?|\.\d+)$/, 'Only contain valid numerical values.')
-            .nullable()
-          
+                .max(30, "Name must be less than 30 characters")
+                .matches(/^(\d+(\.\d*)?|\.\d+)$/, 'Only contain valid numerical values.')
+                .nullable()
+            // regular_price: yup
+            //     .string()
+            //     .required('Selling Price is Required')
+            //     .test('is-greater-than-purchase', 'Selling Price should not be less than Purchase Price', function (value) {
+            //         const purchasePrice = this.parent.seller_price;
+            //         return parseFloat(value) >= parseFloat(purchasePrice);
+            //     }),
+
+            // seller_price: yup
+            //     .string()
+            //     .required('Purchase Price is Required'),
+
+            // offer_price: yup
+            //     .string()
+            //     .required('Offer Price is Required')
+            //     .test('is-greater-than-purchase', 'Offer Price should not be less than Purchase Price', function (value) {
+            //         const purchasePrice = this.parent.seller_price;
+            //         return parseFloat(value) >= parseFloat(purchasePrice);
+            //     }),
+
 
             // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
+
 
         })
         .required();
@@ -605,6 +626,7 @@ const ProductForm = ({ res, view }: props) => {
         setValue('offer_date_to', e)
 
     }
+
 
 
     const onChangeMultipleFoodType = (event: any) => {
@@ -1021,7 +1043,6 @@ const ProductForm = ({ res, view }: props) => {
                 setError("seller_price", { type: 'custom', message: 'Purchase price must be greater than 0' })
                 return false;
             }
-
             let regularPrice = parseInt(data?.regular_price);
             // console.log({ regularPrice })
             if (data?.regular_price !== "") {
@@ -1030,8 +1051,6 @@ const ProductForm = ({ res, view }: props) => {
                     return false;
                 }
             }
-
-
             if (!isEmpty(data?.offer_price)) {
                 if (isNaN(data?.offer_price)) {
                     setError("offer_price", { type: 'custom', message: 'Offer price must be a number' })
@@ -1055,6 +1074,7 @@ const ProductForm = ({ res, view }: props) => {
                 }
 
             }
+              
 
             if (isNaN(data?.fixed_delivery_price) || isEmpty(data?.fixed_delivery_price) || data?.fixed_delivery_price < 0) {
                 setError("fixed_delivery_price", { type: 'custom', message: 'delivery price required' })
@@ -1141,7 +1161,7 @@ const ProductForm = ({ res, view }: props) => {
             }
         ))
 
-
+ 
 
         let vendorData = vendorList?.filter((res: any) => res?._id === vendorSelect).map((get: any) => (
             {
@@ -1966,6 +1986,9 @@ const ProductForm = ({ res, view }: props) => {
                         />
 
                     </Grid>
+
+
+
                 </Grid>
             </CustomBox>}
             {varientsarray && varientsarray.length > 0 && <CustomBox title='Add Variant & Price'>

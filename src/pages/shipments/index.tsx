@@ -57,12 +57,12 @@ const Shipments = () => {
             width: matches ? 180 : 200,
         },
         {
-            field: 'Date & Time',
+            field: 'created_at',
             headerName: 'Date & Time',
             width: matches ? 180 : 200,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => (moment(params.row.created_at).format('DD/MM/YYYY hh:mm A')),
+            valueGetter: (params) => (moment(params?.row?.created_at).format('DD/MM/YYYY hh:mm A')),
 
         },
         {

@@ -183,11 +183,11 @@ const Customer = () => {
                 </Box>
             </Box>
             {open && <CustomDelete
-                heading='Category'
-                paragraph='category'
+                heading='Customer'
+                paragraph='customer'
                 _id={_id}
                 setData={setCustomerData}
-                data={categoryList}
+                data={customerData}
                 url={`/admin/customer-details/delete/${_id}`}
                 onClose={handleClose}
                 open={open} />}

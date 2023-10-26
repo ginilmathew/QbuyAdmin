@@ -56,7 +56,7 @@ const fetcher = (url: any) => fetchData(url).then((res) => res);
 
 const SliderManagement = () => {
     const router = useRouter()
-    const { data, error, isLoading,mutate } = useSWR(`admin/slider/list/${process.env.NEXT_PUBLIC_TYPE}`,fetcher);
+    const { data, error, isLoading, mutate } = useSWR(`admin/slider/list/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
 
     const [open, setOpen] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false);
@@ -64,12 +64,30 @@ const SliderManagement = () => {
     const [_id, set_id] = useState<string>('');
     // const [serachList, setSearchList] = useState<any>([])
     const [pending, startTransition] = useTransition();
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [searchResults, setSearchResults] = useState<any[]>([]);
 
-   useEffect(()=>{
-    if(data?.data?.data){
-        setSliderList(data?.data?.data)
-    }
-   },[data?.data?.data])
+    useEffect(() => {
+        if (data?.data?.data) {
+            setSliderList(data?.data?.data);
+        }
+    }, [data?.data?.data]);
+
+
+    useEffect(() => {
+        if (searchQuery) {
+            const filteredResults = sliderList.filter((item: any) =>
+                item.franchise?.franchise_name
+                    .toString()
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())
+            );
+            setSearchResults(filteredResults);
+        } else {
+            setSearchResults(sliderList);
+        }
+    }, [searchQuery, sliderList]);
+
 
     const handleClose = () => {
         setOpen(false)
@@ -114,7 +132,7 @@ const SliderManagement = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => params?.row?.screentype === "null" ||  params?.row?.screentype === "undefined" ? '_' : params?.row?.screentype,
+            valueGetter: (params) => params?.row?.screentype === "null" || params?.row?.screentype === "undefined" ? '_' : params?.row?.screentype,
 
         },
         {
@@ -209,15 +227,13 @@ const SliderManagement = () => {
     }
 
     const searchVendor = useCallback((value: any) => {
+        setSearchQuery(value);
         let Result = data?.data?.data?.filter((com: any) => com?.franchise?.franchise_name
-            .toString().toLowerCase().includes(value.toLowerCase()))
+            .toString().toLowerCase().includes(value.toLowerCase()));
         startTransition(() => {
-            setSliderList(Result)
-        })
-    }, [sliderList])
-
-
-
+            setSliderList(Result);
+        });
+    }, [data?.data?.data]);
 
     // const getSlider = async () => {
     //     try {
@@ -233,20 +249,21 @@ const SliderManagement = () => {
     //     }
     // }
 
-    if(isLoading){
+
+    if (isLoading) {
         <Box px={5} py={2} pt={10} mt={0}>
-        <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
-            <CustomTableHeader setState={searchVendor} imprtBtn={false} Headerlabel='Slider Management' onClick={addSlider} addbtn={true} />
-            <Box py={5}>
-                <CustomTable dashboard={false} columns={columns} rows={[]} id={"id"} bg={"#ffff"} loading={true} rowheight={80} label='Recent Activity' />
+            <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
+                <CustomTableHeader setState={searchVendor} imprtBtn={false} Headerlabel='Slider Management' onClick={addSlider} addbtn={true} />
+                <Box py={5}>
+                    <CustomTable dashboard={false} columns={columns} rows={[]} id={"id"} bg={"#ffff"} loading={true} rowheight={80} label='Recent Activity' />
+                </Box>
             </Box>
+
         </Box>
-       
-    </Box>
     }
 
-    
-    if(error){
+
+    if (error) {
         toast.error(error?.message)
     }
 
@@ -262,7 +279,15 @@ const SliderManagement = () => {
             <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchVendor} imprtBtn={false} Headerlabel='Slider Management' onClick={addSlider} addbtn={true} />
                 <Box py={5}>
-                    <CustomTable dashboard={false} columns={columns} rows={sliderList ? sliderList : []} id={"_id"} bg={"#ffff"} rowheight={80} label='Recent Activity' />
+                    <CustomTable
+                        dashboard={false}
+                        columns={columns}
+                        rows={searchResults}
+                        id="_id"
+                        bg="#ffff"
+                        rowheight={80}
+                        label="Recent Activity"
+                    />
                 </Box>
             </Box>
             {open && <CustomDelete

@@ -287,7 +287,9 @@ console.log({productList},'PRODUCT LIT')
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
-                                    {row?.name}  {row.title ? (row.title) : ''}
+                                    {/* {row?.name}  {row.title ? (row.title) : ''} */}
+                                    {row?.name}  {row.title ? `(${row.title})` : ''}
+
                                 </TableCell>
                                 <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor?.vendor_mobile}{ }</TableCell>
                                 <TableCell align="center">{row.quantity}</TableCell>

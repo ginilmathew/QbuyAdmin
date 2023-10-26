@@ -131,7 +131,7 @@ const CustomProductVarient = ({ content, index, deafultCommission, onChange, sta
                 <Grid item lg={1.5} xs={12}>
                     <DatePickers
                         values={state?.[index]?.offer_date_from ? state?.[index]?.offer_date_from : null}
-                        changeValue={(e: any) => onChange(moment(e, 'YYYY-MM-DD').format('YYYY-MM-DD'), 'offer_date_from')}
+                        changeValue={(e: any) => onChange(moment(e, 'DD-MM-YYYY').format('DD-MM-YYYY'), 'offer_date_from')}
                         fieldName='offer_date_from'
                         error={errors.offer_date_from}
                         fieldLabel={'Offer From'}

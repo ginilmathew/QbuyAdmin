@@ -795,7 +795,7 @@ const Vendorform = ({ res, view, data }: props) => {
                             </Customselect>
                         </Grid>
                         <Grid item xs={12} lg={4}>
-                            <div style={{ width: '300px' }}>
+                            <div style={{ width: '260px' }}>
                                 <CustomMultiselect
 
                                     multiple={true}

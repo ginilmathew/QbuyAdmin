@@ -80,7 +80,7 @@ const VendorRegister = () => {
             align: 'center',
         },
         {
-            field: 'CREATED',
+            field: 'created_at',
             headerName: 'Vendor Create',
             flex: 1,
             headerAlign: 'center',
@@ -187,7 +187,7 @@ const VendorRegister = () => {
         </Box>
     }
 
-    if(error){
+    if (error) {
         toast.error(error?.message)
     }
 
