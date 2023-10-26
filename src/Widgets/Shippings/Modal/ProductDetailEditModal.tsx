@@ -49,6 +49,14 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     const schema = yup
         .object()
         .shape({
+            quantity: yup
+            .string()
+            .typeError('Quantity is Required')
+            .required('Quantity is Required')
+            .test('is-min-value', 'Quantity must be at least 1', (value) => {
+                // Add your validation logic here
+                return parseInt(value) >= 1; // Validate if quantity is greater than or equal to 1
+            }),  
             // seller_price: yup.string().required('Required')
         })
         .required();
@@ -128,7 +136,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
         if (parseInt(value) <= 0 || value === "") {
             setValue('unitPrice', data?.quantity * data?.unitPrice)
             setValue('seller_price', data?.seller_price)
-            setError('quantity', { message: 'Minimum Quantity Required' })
+         
         } else {
 
             if (data?.stock) {
@@ -211,6 +219,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     }
 
     const DeliverySubmit = () => {
+     
         let deliveryPrice = getValues('deliveryPrice')
         if (parseInt(deliveryPrice) <= 0) {
             toast.warning('Delivery Price Cannot be Zero');
@@ -244,7 +253,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                             fontWeight: 'bold',
                             letterSpacing: 1,
                             fontFamily: `'Poppins' sans-serif`,
-                        }}>{mode === 'product' ? 'Edit Product' : 'Edit Delivery Charge'}</Typography>
+                        }}>{mode === 'product' ? 'Edit Producttt' : 'Edit Delivery Charge'}</Typography>
                     </Box>
                     <Box onClick={handleClose}>
                         <Box

@@ -394,7 +394,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                     </Grid>
                 </Grid>
             </CustomBox>
-            <CustomBox title='Customer Details'>
+            <CustomBox title='Order Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput

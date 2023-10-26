@@ -67,8 +67,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const schema = yup
         .object()
         .shape({
-
-        })
+                })
         .required();
 
 
@@ -88,15 +87,22 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                 quantity: null,
                 store: null,
                 total: null
-            }
 
-        });
+            },
+
+
+
+        },
+       );
 
     const onselectFranchise = async (e: React.ChangeEvent<HTMLInputElement>) => {
-
+        setValue("total", "")
+        setValue("quantity", "")
+        setValue("price", "")
         setFranchiseSelect(e.target.value)
         setValue('franchisee', e.target.value)
         setError('franchisee', { message: '' })
+    
         try {
             setLoading(true)
             const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
@@ -114,6 +120,10 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
 
 
     const onSelectStore = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setValue("total", "")
+        setValue("quantity", "")
+        setValue("price", "")
+         setValue("franchisee","")
         setVendorSelect(e.target.value)
         let result = vendor?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
             {
@@ -141,7 +151,9 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         }
         setValue('store', e.target.value)
         setError('store', { message: '' })
+       
     }
+    
 
     const OnChangeProduct = useCallback(async (value: any) => {
 
@@ -199,15 +211,15 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         setValue('price', matchedObjects[0]?.price);
         setValue('stock_value', matchedObjects[0]?.stockValue + matchedObjects[0]?.minQty);
     }
-
-    const OnChangeQuantity = (e: any) => {
+        const OnChangeQuantity = (e: any) => {
         const { value } = e.target;
         setValue("quantity", value)
         if (value === "" || value <= 0) {
-            toast.warning('Quantity is Required')
+            setError('quantity',{ message: 'Quantity is Required' })
             return false;
         }
-
+      
+        
         let stock = selectProduct?.stock;
 
         if (selectProduct?.available) {
@@ -260,7 +272,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
 
         if (quntityValidation < 1 || Number.isNaN(quntityValidation)) {
             toast.warning('Wrong Data!...')
-            return false;
+         return false;
         }
 
 
@@ -370,6 +382,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     useEffect(() => {
         getFranchiseList()
     }, [])
+
 
     return (
         <Dialog
@@ -517,6 +530,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                                 fieldLabel={"Quantity"}
                                 disabled={false}
                                 view={false}
+                              
                                 defaultValue={''}
                             />
                         </Grid>

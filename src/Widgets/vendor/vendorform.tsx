@@ -143,7 +143,7 @@ const Vendorform = ({ res, view, data }: props) => {
             store_name: yup.string().max(60, 'Maximum Character Exceeds').required('Store Name is Required'),
             // store_address: yup.string().required('Store Address is Required'),
             franchise_id: yup.string().required('Franchise is  Required'),
-            category_id: yup.array().typeError('Category is Required').required('Category is Required'),
+            category_id: yup.array().required("Category is  Required").typeError("Category is  Required"),
             // start_time: yup.string().required('Required'),
             // end_time: yup.string().required('Required'),
             store_logo: yup
@@ -166,7 +166,7 @@ const Vendorform = ({ res, view, data }: props) => {
             longitude: yup.string().matches(location, 'please enter valid format').required('Longitude is required')
 
         })
-
+    
 
 
     const { register,
@@ -203,7 +203,6 @@ const Vendorform = ({ res, view, data }: props) => {
                 display_order: null,
             }
         });
-
 
 
 
@@ -492,6 +491,7 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
 
+
     const onChangeMultiple = async (event: any) => {
         const {
             target: { value },
@@ -510,6 +510,11 @@ const Vendorform = ({ res, view, data }: props) => {
             setValue('category_id', data)
             setError('category_id', { message: '' })
         }
+         if (data.length===0) {
+            setError('category_id', { message: 'Category is Requireda' })
+            setValue('category_id', null)
+            console.log("jj");
+             }     
 
         setPostArray(data)
         setMultipleArray(
@@ -810,7 +815,7 @@ const Vendorform = ({ res, view, data }: props) => {
                             </CustomMultiselect>
 
 
-                        </Grid>
+                        </Grid>                    
                         {/* <Grid item xs={12} lg={2}>
                             <CustomMultiselect
 
