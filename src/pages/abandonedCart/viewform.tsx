@@ -11,17 +11,11 @@ import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { fetchData, postData } from '@/CustomAxios';
-import { Message } from '@mui/icons-material';
 import { IMAGE_URL } from '@/Config';
 import { useRouter } from 'next/router';
-import CustomLoader from '@/components/CustomLoader';
-import moment from 'moment';
 
 
-// type props = {
-//     resData?: any,
-//     view?: any
-// }
+
 type ProductDetails = {
     name: string;
     image: string;
@@ -32,9 +26,11 @@ type ProductDetails = {
         category: {
             name: string;
         };
+        model: string; 
     };
     quantity: number;
 };
+
 
 type UserData = {
     name: string;
@@ -62,7 +58,6 @@ const AbandonedForm = ({ resData, view }: Props) => {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [abandonedData, setAbandonedData] = useState<AbandonedData | null>(null);
-    console.log({ abandonedData }, 'hai');
     const [searchList, setSearchList] = useState([]);
     const customerName = resData?.user?.name || '';
     const mobileNumber = resData?.user?.mobile || '';
@@ -87,6 +82,8 @@ const AbandonedForm = ({ resData, view }: Props) => {
             quantity: '',
             names: '',
             store: '',
+            category: '',
+            model: '',
         },
     });
 
@@ -94,7 +91,6 @@ const AbandonedForm = ({ resData, view }: Props) => {
         try {
             setLoading(true);
             const response = await fetchData(`admin/abandoned/show/${idd}`);
-       
             setAbandonedData(response?.data?.data);
             setSearchList(response?.data?.data);
         } catch (err: any) {
@@ -110,17 +106,24 @@ const AbandonedForm = ({ resData, view }: Props) => {
         }
     }, [idd]);
 
+
     useEffect(() => {
         if (abandonedData && abandonedData.product_details && abandonedData.product_details.length > 0) {
+            abandonedData.product_details.forEach((product, index) => {
+                setValue(`names[${index}]`, product?.name);
+                setValue(`store[${index}]`, product?.productdata?.store?.name);
+                setValue(`model[${index}]`, product?.productdata?.model);
+                setValue(`category[${index}]`, product?.productdata?.category?.name);
+                setValue(`quantity[${index}]`, product?.quantity);
+            });
             setValue('name', abandonedData?.user?.name);
             setValue('mobile', abandonedData?.user?.mobile);
             setValue('email', abandonedData?.user?.email);
             setValue('created', abandonedData?.user?.created_at);
-            setValue('names', abandonedData?.product_details[0]?.name);
-            setValue('store', abandonedData?.product_details[0]?.productdata?.store?.name);
-            setValue('quantity', abandonedData?.product_details[0]?.quantity.toString());
         }
     }, [abandonedData, setValue]);
+
+
 
     return (
         <Box>
@@ -165,105 +168,18 @@ const AbandonedForm = ({ resData, view }: Props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.created}
-                            fieldName="created"
-                            placeholder={``}
-                            fieldLabel={"Date Viewed"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={abandonedData ? moment(abandonedData?.user?.created_at).format('DD/MM/YYYY') : ''}
-                        />
-                    </Grid>
-
-
-
                 </Grid>
             </CustomBox>
-            {/* <CustomBox title="Abandoned Details">
-                {abandonedData?.product_details.map((product, index) => (
-                    <Box key={index} display="flex" flexDirection="column">
-                        <Grid container flex={0.7} spacing={2}>
-                            <Grid item xs={12} lg={3}>
-                                <Typography>Product Image</Typography>
-                                <Avatar
-                                    variant="square"
-                                    src={IMAGE_URL + product.image} 
-                                    sx={{ width: '93%', height: 130 }}
-                                />
-                            </Grid>
-                            <Grid container flex={0.9} spacing={2} sx={{ paddingTop: '22px' }}>
-                                <Grid item xs={12} lg={3}>
-                                    <CustomInput
-                                        type="text"
-                                        control={control}
-                                        error={errors.names}
-                                        fieldName="names"
-                                        placeholder={``}
-                                        fieldLabel="Product Name"
-                                        disabled={false}
-                                        view={view ? true : false}
-                                        defaultValue={product?.name}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} lg={3}>
-                                    <CustomInput
-                                        type="text"
-                                        control={control}
-                                        error={errors.store}
-                                        fieldName="store"
-                                        placeholder={``}
-                                        fieldLabel="Store Name"
-                                        disabled={false}
-                                        view={view ? true : false}
-                                        defaultValue={product?.productdata?.category?.name}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} lg={3}>
-                                        <CustomInput
-                                            type='text'
-                                            control={control}
-                                            error={errors.category}
-                                            fieldName="category"
-                                            placeholder={``}
-                                            fieldLabel={"Category"}
-                                            disabled={false}
-                                            view={view ? true : false}
-                                            defaultValue={product?.productdata?.store?.name}
-                                        />
-                                    </Grid>
-                                <Grid item xs={12} lg={3}>
-                                    <CustomInput
-                                        type="text"
-                                        control={control}
-                                        error={errors.quantity}
-                                        fieldName="quantity"
-                                        placeholder={``}
-                                        fieldLabel="Quantity"
-                                        disabled={false}
-                                        view={view ? true : false}
-                                        defaultValue={product.quantity.toString()}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                ))}
-            </CustomBox> */}
-
             <CustomBox title="Abandoned Details">
-                {abandonedData?.product_details.map((product:any, index:any) => (
+                {abandonedData?.product_details?.map((product, index) => (
                     <Box key={index} display="flex" flexDirection="column">
                         <Grid container flex={0.7} spacing={2}>
                             <Grid item xs={12} lg={3}>
                                 <Typography>Product Image</Typography>
                                 <Avatar
                                     variant="square"
-                                    src={IMAGE_URL + product.image}
-                                    sx={{ width: '93%', height: 130 }}
+                                    src={IMAGE_URL + product?.image}
+                                    sx={{ width: '85%', height: 130 }}
                                 />
                             </Grid>
                             <Grid container flex={0.9} spacing={2} sx={{ paddingTop: '22px' }}>
@@ -271,8 +187,8 @@ const AbandonedForm = ({ resData, view }: Props) => {
                                     <CustomInput
                                         type="text"
                                         control={control}
-                                        error={errors.names}
-                                        fieldName="names"
+                                        error={errors[`names[${index}]`]}
+                                        fieldName={`names[${index}]`}
                                         placeholder={``}
                                         fieldLabel="Product Name"
                                         disabled={false}
@@ -284,8 +200,8 @@ const AbandonedForm = ({ resData, view }: Props) => {
                                     <CustomInput
                                         type="text"
                                         control={control}
-                                        error={errors.store}
-                                        fieldName="store"
+                                        error={errors[`store[${index}]`]}
+                                        fieldName={`store[${index}]`}
                                         placeholder={``}
                                         fieldLabel="Store Name"
                                         disabled={false}
@@ -295,10 +211,24 @@ const AbandonedForm = ({ resData, view }: Props) => {
                                 </Grid>
                                 <Grid item xs={12} lg={3}>
                                     <CustomInput
-                                        type='text'
+                                        type="text"
                                         control={control}
-                                        error={errors.category}
-                                        fieldName="category"
+                                        error={errors[`model[${index}]`]}
+                                        fieldName={`model[${index}]`}
+                                        placeholder={``}
+                                        fieldLabel="Model"
+                                        disabled={false}
+                                        view={view ? true : false}
+                                        defaultValue={product?.productdata?.model} 
+                                    />
+                                </Grid>
+
+                                <Grid item xs={12} lg={3}>
+                                    <CustomInput
+                                        type="text"
+                                        control={control}
+                                        error={errors[`category[${index}]`]}
+                                        fieldName={`category[${index}]`}
                                         placeholder={``}
                                         fieldLabel="Category"
                                         disabled={false}
@@ -310,21 +240,21 @@ const AbandonedForm = ({ resData, view }: Props) => {
                                     <CustomInput
                                         type="text"
                                         control={control}
-                                        error={errors.quantity}
-                                        fieldName="quantity"
+                                        error={errors[`quantity[${index}]`]}
+                                        fieldName={`quantity[${index}]`}
                                         placeholder={``}
                                         fieldLabel="Quantity"
                                         disabled={false}
                                         view={view ? true : false}
-                                        defaultValue={product.quantity.toString()}
+                                        defaultValue={product?.quantity}
                                     />
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Box>
+
                 ))}
             </CustomBox>
-
 
 
         </Box>

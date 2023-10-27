@@ -51,6 +51,7 @@ console.log({productList},'PRODUCT LIT')
         setModalOpen(true);
         setMode(mode)
     }, [modalOpen, singleList, mode]);
+   
 
     const handleOpenAddModal = useCallback(() => {
         setAddOpen(true)
@@ -286,7 +287,9 @@ console.log({productList},'PRODUCT LIT')
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
-                                    {row?.name}  {row.title ? (row.title) : ''}
+                                    {/* {row?.name}  {row.title ? (row.title) : ''} */}
+                                    {row?.name}  {row.title ? `(${row.title})` : ''}
+
                                 </TableCell>
                                 <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor?.vendor_mobile}{ }</TableCell>
                                 <TableCell align="center">{row.quantity}</TableCell>
@@ -329,7 +332,8 @@ console.log({productList},'PRODUCT LIT')
                                     cursor: 'pointer'
                                 }}
                             /></TableCell>}
-                        </TableRow>
+                        </TableRow> 
+                    
                         <TableRow>
                             <TableCell colSpan={2}></TableCell>
                             <TableCell align="right">Platform Charge</TableCell>

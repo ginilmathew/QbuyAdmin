@@ -186,14 +186,14 @@ const ProductForm = ({ res, view }: props) => {
             name: 'Breakfast'
         },
         {
-            value: 'dinner',
-            name: 'Dinner'
-        },
-        {
             value: 'lunch',
             name: 'Lunch'
         },
-
+        {
+            value: 'dinner',
+            name: 'Dinner'
+        },
+       
     ]);
 
     const [product_category, setProductCategory] = useState<any>([
@@ -212,6 +212,7 @@ const ProductForm = ({ res, view }: props) => {
     const [productTagList, setProductTagList] = useState<any>([])
     const [multpleArrayProductTag, setMultipleArrayProductTag] = useState<any>([]);
     const [multpleArrayFoodType, setMultipleArrayFoodType] = useState<any>([]);
+    
 
     const orderValidation = /^[0-9]*$/
     const schema = yup
@@ -237,11 +238,37 @@ const ProductForm = ({ res, view }: props) => {
 
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
             minimum_qty: yup.string().matches(orderValidation, 'Accept only positive number').nullable(),
-            weight: yup.string().max(30, "Name must be less than 30 characters").matches(
-                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s/0-9]*)$/gi,
-                'Only contain alphabets letters.'
-            ).nullable()
+            // weight: yup.string().max(30, "Name must be less than 30 characters").matches(
+            //     /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s/0-9]*)$/gi,
+            //     'Only contain alphabets letters.'
+            // ).nullable()
+            weight: yup.string()
+                .max(30, "Name must be less than 30 characters")
+                .matches(/^(\d+(\.\d*)?|\.\d+)$/, 'Only contain valid numerical values.')
+                .nullable()
+            // regular_price: yup
+            //     .string()
+            //     .required('Selling Price is Required')
+            //     .test('is-greater-than-purchase', 'Selling Price should not be less than Purchase Price', function (value) {
+            //         const purchasePrice = this.parent.seller_price;
+            //         return parseFloat(value) >= parseFloat(purchasePrice);
+            //     }),
+
+            // seller_price: yup
+            //     .string()
+            //     .required('Purchase Price is Required'),
+
+            // offer_price: yup
+            //     .string()
+            //     .required('Offer Price is Required')
+            //     .test('is-greater-than-purchase', 'Offer Price should not be less than Purchase Price', function (value) {
+            //         const purchasePrice = this.parent.seller_price;
+            //         return parseFloat(value) >= parseFloat(purchasePrice);
+            //     }),
+
+
             // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
+
 
         })
         .required();
@@ -602,6 +629,7 @@ const ProductForm = ({ res, view }: props) => {
     }
 
 
+
     const onChangeMultipleFoodType = (event: any) => {
 
 
@@ -643,10 +671,10 @@ const ProductForm = ({ res, view }: props) => {
                     setRecomendedProductList(result)
                     setVendorList(response?.data?.data)
                     let vendor = response?.data?.data?.find((ven: any) => ven?._id === vendorId)
-                    if(vendor){
+                    if (vendor) {
                         setCategoryList(vendor?.category_id);
                     }
-                    
+
 
                     setValue('franchisee', productList?.franchisee?._id)
                 } catch (err: any) {
@@ -1016,7 +1044,6 @@ const ProductForm = ({ res, view }: props) => {
                 setError("seller_price", { type: 'custom', message: 'Purchase price must be greater than 0' })
                 return false;
             }
-
             let regularPrice = parseInt(data?.regular_price);
             // console.log({ regularPrice })
             if (data?.regular_price !== "") {
@@ -1025,8 +1052,6 @@ const ProductForm = ({ res, view }: props) => {
                     return false;
                 }
             }
-
-
             if (!isEmpty(data?.offer_price)) {
                 if (isNaN(data?.offer_price)) {
                     setError("offer_price", { type: 'custom', message: 'Offer price must be a number' })
@@ -1050,6 +1075,7 @@ const ProductForm = ({ res, view }: props) => {
                 }
 
             }
+              
 
             if (isNaN(data?.fixed_delivery_price) || isEmpty(data?.fixed_delivery_price) || data?.fixed_delivery_price < 0) {
                 setError("fixed_delivery_price", { type: 'custom', message: 'delivery price required' })
@@ -1136,7 +1162,7 @@ const ProductForm = ({ res, view }: props) => {
             }
         ))
 
-
+ 
 
         let vendorData = vendorList?.filter((res: any) => res?._id === vendorSelect).map((get: any) => (
             {
@@ -1416,7 +1442,9 @@ const ProductForm = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    { process.env.NEXT_PUBLIC_TYPE ==="panda"&& <Grid item xs={12} lg={3}>
+                    { process.env.NEXT_PUBLIC_TYPE ==="panda" && <>
+                    
+                    <Grid item xs={12} lg={3}>
                         <CustomMultiselect
                             multiple={true}
                             control={control}
@@ -1436,9 +1464,9 @@ const ProductForm = ({ res, view }: props) => {
                                 <MenuItem value={res?.value}>{res?.name}</MenuItem>
                             ))}
                         </CustomMultiselect>
-                    </Grid>}
+                    </Grid>
 
-                    {process.env.NEXT_PUBLIC_TYPE ==="panda"&& <Grid item xs={12} lg={3}>
+                    <Grid item xs={12} lg={3}>
                         <CustomMultiselect
 
                             multiple={true}
@@ -1459,8 +1487,7 @@ const ProductForm = ({ res, view }: props) => {
                                 <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
                             ))}
                         </CustomMultiselect>
-                    </Grid>}
-                    {process.env.NEXT_PUBLIC_TYPE ==="panda"&&
+                    </Grid> 
                     <Grid item xs={12} lg={3}>
                         <Customselect
                             type='text'
@@ -1485,9 +1512,8 @@ const ProductForm = ({ res, view }: props) => {
                             ))}
 
                         </Customselect>
-                    </Grid>} 
-
-
+                    </Grid> 
+                    </>}
                     <Grid item xs={12} lg={1.5}>
                         <CustomInput
                             type='text'
@@ -1823,7 +1849,7 @@ const ProductForm = ({ res, view }: props) => {
                     <Grid item xs={12} lg={6}>
                         {view &&
                             <>
-              <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
                                     sx={{
                                         fontSize: {
                                             lg: 16,
@@ -1844,7 +1870,7 @@ const ProductForm = ({ res, view }: props) => {
                                 </Box>
                             </>
                         }
-     {productList &&
+                        {productList &&
                             <>
                                 <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} py={1} >
                                     {recomendedProductEditList?.map((res: any) => (
@@ -1960,6 +1986,9 @@ const ProductForm = ({ res, view }: props) => {
                         />
 
                     </Grid>
+
+
+
                 </Grid>
             </CustomBox>}
             {varientsarray && varientsarray.length > 0 && <CustomBox title='Add Variant & Price'>

@@ -1,20 +1,24 @@
-import CustomTableHeader from '@/Widgets/CustomTableHeader'
-import CustomTable from '@/components/CustomTable'
-import { Box, Typography, Stack } from '@mui/material'
-import React, { startTransition, useCallback, useState, useEffect } from 'react'
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { Box } from '@mui/material'
+import React, { useState, useEffect, useCallback, useTransition } from 'react'
+import { Stack, Typography } from '@mui/material';
+import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import moment from 'moment'
 import { useRouter } from 'next/router';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
-import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
 import { fetchData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
-import moment from 'moment';
-import CustomDelete from '@/Widgets/CustomDelete';
+import dynamic from 'next/dynamic';
+import useSWR from 'swr';
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
+const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
+const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
+const DeleteOutlineTwoToneIcon = dynamic(() => import('@mui/icons-material/DeleteOutlineTwoTone'), { ssr: false });
+const CustomDelete = dynamic(() => import('@/Widgets/CustomDelete'), { ssr: false });
 
 
+const fetcher = (url: any) => fetchData(url).then((res) => res);
 const Customer = () => {
-
+    const { data, error, isLoading, mutate } = useSWR(`admin/customer-details/list`, fetcher);
     const router = useRouter()
     const [loading, setLoading] = useState(false);
     const [customerData, setCustomerData] = useState([]);
@@ -22,8 +26,36 @@ const Customer = () => {
     const [_id, set_id] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);
     const [categoryList, setCategoryList] = useState([]);
+    const [pending, startTransition] = useTransition();
+
+    useEffect(() => {
+        if (data?.data?.data) {
+            setCustomerData(data?.data?.data)
+        }
+    }, [data?.data?.data])
 
 
+    const NavigateToaddCustomer = useCallback(() => {
+        router.push('/customerDetails/addCustomer')
+
+    }, []);
+
+    const editCustomer = (id: any) => {
+        router.push(`/customerDetails/edit/${id}`)
+    }
+    const viewCustomer = (id: any) => {
+        router.push(`/customerDetails/view/${id}`)
+    }
+
+    const handleOpen = (id: any) => {
+        set_id(id)
+        setOpen(true)
+    }
+    const handleClose = () => {
+        setOpen(false)
+    }
+
+    
     const columns: GridColDef[] = [
         {
             field: 'customer_id',
@@ -33,11 +65,12 @@ const Customer = () => {
             align: 'center',
         },
         {
-            field: 'franchise_name',
+            field: 'name',
             headerName: 'Customer Name',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params?.row?.users?.name,
 
         },
         {
@@ -49,11 +82,12 @@ const Customer = () => {
             valueGetter: (params) => params?.row?.users?.mobile,
         },
         {
-            field: 'owner_namsse',
+            field: 'email',
             headerName: 'Email',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params?.row?.users?.email,
 
         },
         {
@@ -113,58 +147,32 @@ const Customer = () => {
 
     ];
 
-    const handleOpen = (id: any) => {
-        set_id(id)
-        setOpen(true)
-    }
-    const handleClose = () => {
-        setOpen(false)
-    }
     const row = []
 
     const searchProducts = useCallback((value: any) => {
-        let filteredData = searchList?.filter((item: any) => {
-            const userIdMatch = item?.customer_id.toString().toLowerCase().includes(value.toLowerCase());
-            const mobileMatch = item?.users?.mobile.toString().toLowerCase().includes(value.toLowerCase());
-            return userIdMatch || mobileMatch;
+        let Results = data?.data?.data?.filter((com: any) =>
+            com?.customer_id.toString().includes(value) ||
+            com?.users?.mobile.toString().includes(value)
+        );
+
+        startTransition(() => {
+            setCustomerData(Results);
         });
-        setCustomerData(filteredData);
-    }, [searchList, customerData]);
+    }, [customerData]);
 
 
-    const fetchCustomerData = async () => {
-        try {
-            setLoading(true);
-            const response = await fetchData(`admin/customer-details/list`);
-            console.log(response?.data?.data);
-            setCustomerData(response?.data?.data);
-            setSearchList(response?.data?.data)
+    if (isLoading) {
 
-        } catch (err: any) {
-            toast.error(err.message || 'Error fetching OTP data');
-        } finally {
-            setLoading(false);
-        }
+        <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
+            <CustomTableHeader setState={searchProducts} addbtn={true} imprtBtn={false} Headerlabel='Customer' onClick={NavigateToaddCustomer} />
+            <Box py={3}>
+                <CustomTable dashboard={false} columns={columns} rows={[]} loading={true} id={'id'} bg={"#ffff"} label='Recent Activity' />
+            </Box>
+        </Box>
     }
-
-    useEffect(() => {
-        fetchCustomerData()
-    }, [])
-
-   
-
-    const NavigateToaddCustomer = useCallback(() => {
-        router.push('/customerDetails/addCustomer')
-
-    }, []);
-
-    const editCustomer = (id: any) => {
-        router.push(`/customerDetails/edit/${id}`)
+    if (error) {
+        toast.error(error?.message);
     }
-    const viewCustomer = (id: any) => {
-        router.push(`/customerDetails/view/${id}`)
-    }
-
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
@@ -175,11 +183,11 @@ const Customer = () => {
                 </Box>
             </Box>
             {open && <CustomDelete
-                heading='Category'
-                paragraph='category'
+                heading='Customer'
+                paragraph='customer'
                 _id={_id}
                 setData={setCustomerData}
-                data={categoryList}
+                data={customerData}
                 url={`/admin/customer-details/delete/${_id}`}
                 onClose={handleClose}
                 open={open} />}
