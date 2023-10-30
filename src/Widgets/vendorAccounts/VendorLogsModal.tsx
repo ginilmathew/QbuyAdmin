@@ -37,6 +37,7 @@ const VendorLogsModal = (props: SimpleDialogProps) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => (moment(params?.row?.date).format('DD/MM/YYYY hh:mm A')),
            
         },
         {

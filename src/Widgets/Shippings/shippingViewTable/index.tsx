@@ -38,7 +38,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [productList, setProductList] = useState<any>(null);
 
 
-console.log({productList},'PRODUCT LIT')
+    console.log({ productList }, 'PRODUCT LIT')
 
     const handleClose = useCallback(() => {
         setModalOpen(false);
@@ -51,7 +51,7 @@ console.log({productList},'PRODUCT LIT')
         setModalOpen(true);
         setMode(mode)
     }, [modalOpen, singleList, mode]);
-   
+
 
     const handleOpenAddModal = useCallback(() => {
         setAddOpen(true)
@@ -61,6 +61,7 @@ console.log({productList},'PRODUCT LIT')
         setAddOpen(false)
     }, [addOpen])
 
+    
 
     const handleOpenDeleteModal = useCallback(() => {
         setModalDelete(true)
@@ -69,6 +70,8 @@ console.log({productList},'PRODUCT LIT')
     const handleCloseDeleteModal = useCallback(() => {
         setModalDelete(false)
     }, [modalDelete])
+
+
 
     useEffect(() => {
         if (res) {
@@ -144,6 +147,8 @@ console.log({productList},'PRODUCT LIT')
     }, [productList])
 
 
+   
+
     useEffect(() => {
         if (productList) {
             let value = {
@@ -154,9 +159,6 @@ console.log({productList},'PRODUCT LIT')
         }
 
     }, [productList])
-
-
-
 
 
     const removeItemApi = async (pdct_id: any) => {
@@ -183,8 +185,6 @@ console.log({productList},'PRODUCT LIT')
             toast.warning('You have to add atleast Two Product !..')
             return false;
         }
-
-
         let product: any[] = []
         if (row?.type === "variant") {
             product = productList?.productDetails?.filter((res: any) => res?.variant_id !== row?.variant_id);
@@ -192,9 +192,6 @@ console.log({productList},'PRODUCT LIT')
             product = productList?.productDetails?.filter((res: any) => res?.product_id !== row?.product_id);
 
         }
-
-
-
 
         const highestDelivery = product.reduce((highest: any, delivery: any) => {
             return Math.max(highest, delivery.deliveryPrice);
@@ -332,13 +329,17 @@ console.log({productList},'PRODUCT LIT')
                                     cursor: 'pointer'
                                 }}
                             /></TableCell>}
-                        </TableRow> 
-                    
+                        </TableRow>
+
+                       
                         <TableRow>
                             <TableCell colSpan={2}></TableCell>
                             <TableCell align="right">Platform Charge</TableCell>
-                            <TableCell align="center">₹ {parseFloat(productList?.platform_charge)}</TableCell>
+                            <TableCell align="center">
+                                ₹ {isNaN(productList?.platform_charge) ? 'Nil' : parseFloat(productList?.platform_charge).toFixed(2)}
+                            </TableCell>
                         </TableRow>
+
                         <TableRow>
                             <TableCell colSpan={2}></TableCell>
                             <TableCell align="right">Total</TableCell>

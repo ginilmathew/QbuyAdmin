@@ -18,7 +18,7 @@ import * as yup from 'yup';
 import moment from 'moment'
 import CustomDatePicker from '@/components/CustomDatePicker';
 import Maps from '../../components/maps/maps'
-import { isEmpty, isNull, isNumber } from 'lodash';
+import { isEmpty, isNull, isNumber, truncate } from 'lodash';
 import Polygon from '@/components/maps/Polygon';
 import { IMAGE_URL } from '../../Config/index';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
@@ -193,7 +193,7 @@ const ProductForm = ({ res, view }: props) => {
             value: 'dinner',
             name: 'Dinner'
         },
-       
+
     ]);
 
     const [product_category, setProductCategory] = useState<any>([
@@ -212,7 +212,7 @@ const ProductForm = ({ res, view }: props) => {
     const [productTagList, setProductTagList] = useState<any>([])
     const [multpleArrayProductTag, setMultipleArrayProductTag] = useState<any>([]);
     const [multpleArrayFoodType, setMultipleArrayFoodType] = useState<any>([]);
-    
+
 
     const orderValidation = /^[0-9]*$/
     const schema = yup
@@ -327,6 +327,7 @@ const ProductForm = ({ res, view }: props) => {
         try {
             setLoader(true)
             const response = await fetchData(`admin/product/show/${idd}`)
+            console.log({ response }, 'hai')
             setProductList(response?.data?.data)
         } catch (err: any) {
             toast.error(err.message)
@@ -360,7 +361,6 @@ const ProductForm = ({ res, view }: props) => {
 
 
 
-
     // const onChangeSelectType = (e: React.ChangeEvent<HTMLInputElement>) => {
     //     setSelectType(e.target.value)
     //     setValue('type', e.target.value)
@@ -368,7 +368,7 @@ const ProductForm = ({ res, view }: props) => {
 
     // }
 
-
+   
     const StockCheck = (e: any) => {
         if (!view) {
             setValue('stock', e)
@@ -443,6 +443,7 @@ const ProductForm = ({ res, view }: props) => {
         setError('image', { message: '' })
     }
 
+    
 
     // console.log({ errors })
 
@@ -493,6 +494,7 @@ const ProductForm = ({ res, view }: props) => {
 
 
     }
+
 
     const onSelectStore = (e: React.ChangeEvent<HTMLInputElement>) => {
         setvendorSelect(e.target.value)
@@ -662,6 +664,7 @@ const ProductForm = ({ res, view }: props) => {
                 try {
                     const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
                     const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${productList?.franchisee?._id}`)
+
                     let result = recomendedProduct?.data?.data.map((res: any) => ({
                         _id: res?._id,
                         title: `${res?.name}-${res?.product_id}`,
@@ -1075,7 +1078,7 @@ const ProductForm = ({ res, view }: props) => {
                 }
 
             }
-              
+
 
             if (isNaN(data?.fixed_delivery_price) || isEmpty(data?.fixed_delivery_price) || data?.fixed_delivery_price < 0) {
                 setError("fixed_delivery_price", { type: 'custom', message: 'delivery price required' })
@@ -1162,7 +1165,7 @@ const ProductForm = ({ res, view }: props) => {
             }
         ))
 
- 
+
 
         let vendorData = vendorList?.filter((res: any) => res?._id === vendorSelect).map((get: any) => (
             {
@@ -1442,77 +1445,77 @@ const ProductForm = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    { process.env.NEXT_PUBLIC_TYPE ==="panda" && <>
-                    
-                    <Grid item xs={12} lg={3}>
-                        <CustomMultiselect
-                            multiple={true}
-                            control={control}
-                            error={errors.food_type}
-                            fieldName="food_type"
-                            placeholder={``}
-                            fieldLabel={"Food Type"}
-                            readOnly={view ? true : false}
-                            value={multpleArrayFoodType}
-                            onChangeValue={onChangeMultipleFoodType}
-                            type=''
-                        >
-                            <MenuItem value="" disabled >
-                                <>Select Category</>
-                            </MenuItem>
-                            {productType && productType.map((res: any) => (
-                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
-                            ))}
-                        </CustomMultiselect>
-                    </Grid>
 
-                    <Grid item xs={12} lg={3}>
-                        <CustomMultiselect
+                    {process?.env?.NEXT_PUBLIC_TYPE === "panda" && <>
+                        <Grid item xs={12} lg={3}>
+                            <CustomMultiselect
+                                multiple={true}
+                                control={control}
+                                error={errors.food_type}
+                                fieldName="food_type"
+                                placeholder={``}
+                                fieldLabel={"Food Type"}
+                                readOnly={view ? true : false}
+                                value={multpleArrayFoodType}
+                                onChangeValue={onChangeMultipleFoodType}
+                                type=''
+                            >
+                                <MenuItem value="" disabled >
+                                    <>Select Category</>
+                                </MenuItem>
+                                {productType && productType.map((res: any) => (
+                                    <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                                ))}
+                            </CustomMultiselect>
+                        </Grid>
 
-                            multiple={true}
-                            control={control}
-                            error={errors.product_tags}
-                            fieldName="product_tags"
-                            placeholder={``}
-                            fieldLabel={"Product Tags"}
-                            readOnly={view ? true : false}
-                            value={multpleArrayProductTag} 
-                            onChangeValue={onChangeMultipleProductTag}
-                            type=''
-                        >
-                            <MenuItem value="" disabled >
-                                <>Select Category</>
-                            </MenuItem>
-                            {productTagList && productTagList.map((res: any) => (
-                                <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
-                            ))}
-                        </CustomMultiselect>
-                    </Grid> 
-                    <Grid item xs={12} lg={3}>
-                        <Customselect
-                            type='text'
-                            control={control}
-                            error={errors.category_type}
-                            fieldName="category_type"
-                            placeholder={``}
-                            fieldLabel={"Category Type"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={productCategorySelect}
-                            options={''}
-                            onChangeValue={onSelectCategoryType}
-                            background={'#fff'}
-                            disabled={view ? true : false}
-                        >
-                            <MenuItem value="">select Category Type</MenuItem>
-                            {product_category?.map((res: any) => (
-                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
-                            ))}
+                        <Grid item xs={12} lg={3}>
+                            <CustomMultiselect
 
-                        </Customselect>
-                    </Grid> 
+                                multiple={true}
+                                control={control}
+                                error={errors.product_tags}
+                                fieldName="product_tags"
+                                placeholder={``}
+                                fieldLabel={"Product Tags"}
+                                readOnly={view ? true : false}
+                                value={multpleArrayProductTag}
+                                onChangeValue={onChangeMultipleProductTag}
+                                type=''
+                            >
+                                <MenuItem value="" disabled >
+                                    <>Select Category</>
+                                </MenuItem>
+                                {productTagList && productTagList.map((res: any) => (
+                                    <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
+                                ))}
+                            </CustomMultiselect>
+                        </Grid>
+                        <Grid item xs={12} lg={3}>
+                            <Customselect
+                                type='text'
+                                control={control}
+                                error={errors.category_type}
+                                fieldName="category_type"
+                                placeholder={``}
+                                fieldLabel={"Category Type"}
+                                selectvalue={""}
+                                height={40}
+                                label={''}
+                                size={16}
+                                value={productCategorySelect}
+                                options={''}
+                                onChangeValue={onSelectCategoryType}
+                                background={'#fff'}
+                                disabled={view ? true : false}
+                            >
+                                <MenuItem value="">select Category Type</MenuItem>
+                                {product_category?.map((res: any) => (
+                                    <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                                ))}
+
+                            </Customselect>
+                        </Grid>
                     </>}
                     <Grid item xs={12} lg={1.5}>
                         <CustomInput
@@ -1566,6 +1569,7 @@ const ProductForm = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
+
 
                     {vendorSelect &&
                         <Grid item xs={12} lg={3}>
@@ -1817,34 +1821,37 @@ const ProductForm = ({ res, view }: props) => {
                             </>
                         }
 
+
                         {view &&
-                            <>
-                                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
-                                    sx={{
-                                        fontSize: {
-                                            lg: 16,
-                                            md: 14,
-                                            sm: 12,
-                                            xs: 11,
-                                        },
-                                        fontFamily: `'Poppins' sans-serif`,
-
-                                    }}
-                                >{'Additional Images'}
-
-                                </Typography>
-                                <Box display={'flex'} gap={2} >
-
-                                    {defaultImage && defaultImage?.map((res: any, i: number) => (
-                                        <Box>
-                                            <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 130, height: 130, }} />
-                                        </Box>
-                                    ))}
-                                </Box>
-                            </>
+                            <div style={{ height: '200px', overflow: 'auto' }}>
+                                <>
+                                    <Typography letterSpacing={0.5} px={3} mb={3}
+                                        sx={{
+                                            fontSize: {
+                                                lg: 16,
+                                                md: 14,
+                                                sm: 12,
+                                                xs: 11,
+                                            },
+                                            fontFamily: `'Poppins' sans-serif`,
+                                        }}
+                                    >{'Additional Images'}</Typography>
+                                    <Box display="flex" gap={2}>
+                                        {defaultImage && defaultImage.map((res: any, i: number) => (
+                                            <Box key={i}>
+                                                <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 130, height: 130 }} />
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                </>
+                            </div>
                         }
 
-                        {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />}
+                        {/* {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />} */}
+                        <div style={{ height: '200px', overflow: 'auto' }}>
+                            {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />}
+                        </div>
+
                     </Grid>
                     <Grid item xs={12} lg={6}>
                         {view &&
