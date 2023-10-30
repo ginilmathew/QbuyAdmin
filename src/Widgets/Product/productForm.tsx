@@ -563,8 +563,28 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const addAtributes = () => {
+
+        let attributess = [];
+
+        if(attributes && attributes?.length > 0){
+            // attributes?.map((att: object, i: number) => {
+            //     attributess.push({
+            //         ...att,
+            //         id: i+1
+            //     })
+            // })
+
+            attributess=[...attributes, { id: `${moment().unix()}`, name: '', options: [], variant: false }]
+        }
+        else{
+            attributess = [{ id: `${moment().unix()}`, name: '', options: [], variant: false }]
+        }
+
+        setAttributes([...attributess])
+
+        console.log({attributess})
         // if(attributes?.length  < 2){
-        setAttributes([...attributes, { name: '', options: [], variant: false }])
+        //setAttributes((prev: any) => [...prev, { id: attributess?.length+1, name: '', options: [], variant: false }])
         // }
     }
 
@@ -848,7 +868,7 @@ const ProductForm = ({ res, view }: props) => {
             attributes[i].variant = e;
             setAttributes([...attributes])
             //setAddVarient(e)
-            addvarients()
+            addvarients(attributes)
         }
 
     }
@@ -926,7 +946,8 @@ const ProductForm = ({ res, view }: props) => {
 
 
 
-    const addvarients = () => {
+    const addvarients = (attributes: any) => {
+        console.log({attributes}, "vari")
         if (attributes?.some((res: any) => res?.variant === true)) {
             const output = [];
             setValue('seller_price', '')
@@ -944,8 +965,9 @@ const ProductForm = ({ res, view }: props) => {
 
             let combines = combine(attributesArray);
 
-            let attri = combines.map((val: any) => {
+            let attri = combines.map((val: any, i: number) => {
                 return {
+                    id: `${i}${moment().unix()}`,
                     title: val,
                     attributs: val.split(' '),
                     seller_price: '',
@@ -959,6 +981,8 @@ const ProductForm = ({ res, view }: props) => {
                     fixed_delivery_price: 0
                 }
             })
+
+            console.log({attri})
             setVarientsArray([...attri])
         } else {
             setVarientsArray([])
@@ -969,8 +993,8 @@ const ProductForm = ({ res, view }: props) => {
 
 
     useEffect(() => {
-        addvarients()
-    }, [index])
+        addvarients(attributes)
+    }, [index, attributes])
 
 
 
@@ -1335,16 +1359,32 @@ const ProductForm = ({ res, view }: props) => {
         }
     }
 
-    const removeAttributes = async (i: any) => {
+    const removeAttributes = async (id: number) => {
         // console.log('FUCTION CALLED')
-        if (!res || !view) {
-            attributes[i].variant = false;
-            setAttributes([...attributes])
-            let attribute = await attributes?.filter((att: any, index: Number) => index !== i)
 
-            // console.log({ attribute })
-            setAttributes([...attribute])
-            addvarients()
+        if (!res || !view) {
+            let newAttri = await attributes?.filter((att: any) => att.id !==id)
+            // attributes[i].variant = false;
+            // setAttributes([...attributes])
+            // let attribute = await attributes?.filter((att: any, index: Number) => index !== i)
+
+            // let attribu: Array<any> = [];
+
+            // await newAttri?.map((att: any, index: number) => {
+            //     attribu.push({
+            //         ...att,
+            //         id: index + 1
+            //     })
+
+            // })
+
+
+            //console.log({attribu})
+            //setAttributes(null)
+
+            await setAttributes([...newAttri])
+            addvarients(newAttri)
+            
         }
 
 
@@ -1897,7 +1937,7 @@ const ProductForm = ({ res, view }: props) => {
                 {!res && !view &&
                     <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
-                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} closeIcon={idd ? false : true} removeAttributes={!productList ? () => removeAttributes(i) : null} />
+                    <Attributes key={res?.id} item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} closeIcon={idd ? false : true} removeAttributes={!productList ? removeAttributes : null} />
                 )}
             </CustomBox>
 
@@ -1999,7 +2039,7 @@ const ProductForm = ({ res, view }: props) => {
                 </Grid>
             </CustomBox>}
             {varientsarray && varientsarray.length > 0 && <CustomBox title='Add Variant & Price'>
-                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient view={view} deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} stock={stock} />)}
+                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient key={varian?.id} view={view} deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} stock={stock} />)}
             </CustomBox>}
 
             {/* {attributes?.some((res: any) => res.varient === true) &&
