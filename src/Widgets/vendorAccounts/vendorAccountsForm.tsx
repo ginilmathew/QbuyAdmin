@@ -239,7 +239,7 @@ const VendorAccountsForm = ({ idd }: props) => {
         try {
             setLoading(true)
             const response = await fetchData(`/admin/category/list/${process.env.NEXT_PUBLIC_TYPE}`)
-           
+
             setGetCategory(response?.data?.data)
             setLoading(false)
 
