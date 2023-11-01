@@ -495,6 +495,9 @@ const ProductForm = ({ res, view }: props) => {
     }
 
     const onSelectStore = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const vendor=vendorList?.start_name;
+        console.log(vendor);
+        
         setvendorSelect(e.target.value)
         let result = vendorList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
             {
@@ -507,9 +510,16 @@ const ProductForm = ({ res, view }: props) => {
         ))
 
         setCategoryList(result?.[0]?.category)
-
+       
 
         let findresult = vendorList?.filter((res: any) => res?._id === e.target.value)
+        console.log(findresult);
+        
+        console.log(findresult?.approved_by)
+       console.log(findresult?.start_time)
+       console.log(findresult?.end_time)
+
+        
         setVendorListDirection(findresult)
         // setValue('commission', result[0]?.commision)
         setValue('store', e.target.value)
@@ -598,7 +608,9 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const onChangeProductFrom = (e: any) => {
+      
         setValue('product_availability_from', e)
+         
 
     }
 
@@ -988,7 +1000,7 @@ const ProductForm = ({ res, view }: props) => {
     }
 
 
-    //seach_Tag..............................................................................................
+    //seach_T/admin/vendor-list/650d671e97a01b7e46078cb7/pandaag..............................................................................................
 
     const searchTagvalues = (res: any) => {
         setSearchTag(res)
@@ -1051,6 +1063,15 @@ const ProductForm = ({ res, view }: props) => {
                     setError("regular_price", { type: 'custom', message: ' Price must be a number' })
                     return false;
                 }
+            }
+          
+            if(data?.regular_price<=0){
+                setError("regular_price", { type: 'custom', message: 'Selling price must be a greater than 0' })
+                return false;
+            }
+            if(data?.commission<=0){
+                setError("commission", { type: 'custom', message: 'Commission  must be a greater than 0' })
+                return false;
             }
             if (!isEmpty(data?.offer_price)) {
                 if (isNaN(data?.offer_price)) {
@@ -1844,7 +1865,7 @@ const ProductForm = ({ res, view }: props) => {
                             </>
                         }
 
-                        {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />}
+                        {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Imagess' />}
                     </Grid>
                     <Grid item xs={12} lg={6}>
                         {view &&
