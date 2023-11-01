@@ -32,7 +32,7 @@ type Inputs = {
     order_type: string,
     payment_address_pickup_address: string,
     shipping_address_delivery_address: string,
-    payment_method: string,
+    payment_type: string,
     order_status: string,
     comment: string;
     order_id: string;
@@ -131,7 +131,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
     const paymentMethodChange = (e: any) => {
         const { value } = e.target;
-        setValue("payment_method", value)
+        setValue("payment_type", value)
         setPaymentMethodSelect(value)
 
     }
@@ -269,7 +269,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             ${orderviewList?.shipaddress?.mobile ? `${'Mob:'}${orderviewList?.shipaddress?.mobile}` : ''}`)
             setPaymentMethodSelect(orderviewList?.payment_type);
             setPaymentStatusSelect(orderviewList?.payment_status);
-            setValue("payment_method", orderviewList.payment_type);
+            setValue("payment_type", orderviewList.payment_type);
             setValue("payment_status", orderviewList?.payment_status);
             SetDeliveryCharge(orderviewList?.delivery_charge)
             setVendorStatusP([...orderviewList?.vendor_status])
@@ -466,8 +466,8 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                             disabled={view ? true : false}
                             type='text'
                             control={control}
-                            error={errors.payment_method}
-                            fieldName="payment_method"
+                            error={errors.payment_type}
+                            fieldName="payment_type"
                             placeholder={``}
                             fieldLabel={"Payment Method"}
                             selectvalue={""}

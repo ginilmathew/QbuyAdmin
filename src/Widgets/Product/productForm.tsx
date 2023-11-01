@@ -135,6 +135,7 @@ type props = {
 const ProductForm = ({ res, view }: props) => {
     let idd = res ? res : view;
 
+console.log(idd);
 
     const router = useRouter()
 
@@ -174,6 +175,7 @@ const ProductForm = ({ res, view }: props) => {
     const [offerDate_from, setOffer_Date_from] = useState<any>(null);
     const [offerDate_to, setOffer_Date_to] = useState<any>(null);
     const [statusSelect, setStatusSelect] = useState<any>(null)
+    const [time, settime] = useState<any>("")
     const [statusChange, setStatusChange] = useState<any>(
         [
             { value: 'Pending', name: 'pending' }
@@ -497,7 +499,7 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const onSelectStore = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setvendorSelect(e.target.value)
+        setvendorSelect(e.target.value)   
         let result = vendorList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
             {
                 commision: get?.additional_details ? get?.additional_details.commission : 0,
@@ -507,13 +509,13 @@ const ProductForm = ({ res, view }: props) => {
             }
 
         ))
-
+        
         setCategoryList(result?.[0]?.category)
 
 
         let findresult = vendorList?.filter((res: any) => res?._id === e.target.value)
         setVendorListDirection(findresult)
-        // setValue('commission', result[0]?.commision)
+        // setValue('commission', result[0]?.commision)     
         setValue('store', e.target.value)
         setError('store', { message: '' })
     }
@@ -620,14 +622,58 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const onChangeProductFrom = (e: any) => {
-        setValue('product_availability_from', e)
-
-    }
+        if(idd){
+            setValue('product_availability_from', e);
+        }
+        else{
+            const start_time = vendorlistDirection?.[0]?.start_time;
+            const end_time = vendorlistDirection?.[0]?.end_time;
+            
+          
+            const selectedTime = moment(e, 'ha');
+            const startTime = moment(start_time, 'ha'); 
+            const endTime = moment(end_time, 'ha');
+            
+           
+            if (selectedTime.isBetween(startTime, endTime, null, '[]')) {
+              
+                setValue('product_availability_from', e);
+            } else {
+                
+                toast.error("Selected time is not within the valid range. Please select a time between start and end times.");
+            }
+         
+        }
+       
+    }   
 
     const onChangeProductTo = (e: any) => {
-        setValue('product_availability_to', e)
-
+                
+        if(idd){
+            setValue('product_availability_to', e);
+            console.log("kk");
+        }
+        else{
+            const start_time = vendorlistDirection?.[0]?.start_time;
+            const end_time = vendorlistDirection?.[0]?.end_time;
+        
+           
+            const selectedEndTime = moment(e, 'ha'); 
+            const startTime = moment(start_time, 'ha'); 
+            const endTime = moment(end_time, 'ha'); 
+        
+         
+            if (selectedEndTime.isBefore(startTime) || selectedEndTime.isAfter(endTime)) {
+               
+                toast.error("Selected end time is not within the valid range. Please select a time between start and end times.");
+            } else {
+               
+                setValue('product_availability_to', e);
+            }
+        }
+       
     }
+    
 
 
     const onCheckPandasuggestion = (e: any) => {
@@ -682,7 +728,7 @@ const ProductForm = ({ res, view }: props) => {
         if (productList) {
             const getvendorlist = async (vendorId: any) => {
                 try {
-                    const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
+                    const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)                
                     const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${productList?.franchisee?._id}`)
 
                     let result = recomendedProduct?.data?.data.map((res: any) => ({
@@ -1753,6 +1799,7 @@ const ProductForm = ({ res, view }: props) => {
                                 changeValue={onChangeProductFrom}
                                 fieldName='product_availability_from'
                                 control={control}
+                               
                                 error={errors.product_availability_from}
                                 fieldLabel={'Product Availability'} />
                         </Grid>}
@@ -1849,7 +1896,7 @@ const ProductForm = ({ res, view }: props) => {
 
                         {defaultImage.length > 0 && !view &&
                             <>
-                                <Box display={'flex'} gap={2} >
+                                <Box display={'flex'} gap={2} style={{ height: '200px', overflow: 'auto' }} >
                                     {defaultImage && defaultImage?.map((res: any, i: number) => (
                                         <Box position={'relative'}>
                                             <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 100, height: 100, }} />
