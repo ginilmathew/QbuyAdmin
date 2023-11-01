@@ -208,3 +208,17 @@ a {
     opacity: 0;
   }
 }
+.active-status {
+
+  color:green;
+ font-weight: bold;
+}
+.pending-status{
+  font-weight: bold;
+  color: blue;
+}
+.terminated-status{
+  color:red;
+  font-weight: bold;
+}
+
