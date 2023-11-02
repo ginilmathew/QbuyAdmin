@@ -61,14 +61,14 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const [selectProduct, setSelectProduct] = useState<any>([]);
     const [attributeSelect, setAttributeSelect] = useState<any>([])
     const [vendorDetails, setVendorDetails] = useState<any>(null)
-const [stockvl, setstockvl] = useState<any>(null)
+    const [stockvl, setstockvl] = useState<any>(null)
 
 
     const schema = yup
         .object()
         .shape({
-            
-                })
+
+        })
         .required();
 
 
@@ -94,7 +94,7 @@ const [stockvl, setstockvl] = useState<any>(null)
 
 
         },
-       );
+        );
 
     const onselectFranchise = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue("total", "")
@@ -103,12 +103,12 @@ const [stockvl, setstockvl] = useState<any>(null)
         setFranchiseSelect(e.target.value)
         setValue('franchisee', e.target.value)
         setError('franchisee', { message: '' })
-    
+
         try {
             setLoading(true)
             const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
             console.log(response);
-            
+
             setVendor(response?.data?.data)
         } catch (err: any) {
             toast.error(err.message)
@@ -126,7 +126,7 @@ const [stockvl, setstockvl] = useState<any>(null)
         setValue("total", "")
         setValue("quantity", "")
         setValue("price", "")
-         setValue("franchisee","")
+        setValue("franchisee", "")
         setVendorSelect(e.target.value)
         let result = vendor?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
             {
@@ -142,12 +142,12 @@ const [stockvl, setstockvl] = useState<any>(null)
 
         try {
             const response = await postData('admin/product/vendorproducts', { id: result?.[0]?.id, type: process.env.NEXT_PUBLIC_TYPE });
-          
-                   setstockvl(response?.data?.data?.stock_value)
+
+            setstockvl(response?.data?.data?.stock_value)
             const Filter = response?.data?.data?.map((res: any) => ({
                 label: res?.name,
                 id: res?._id
-            }))         
+            }))
             setProductListRes(response?.data?.data)
             setProductList(Filter)
         } catch (err: any) {
@@ -155,9 +155,9 @@ const [stockvl, setstockvl] = useState<any>(null)
         }
         setValue('store', e.target.value)
         setError('store', { message: '' })
-       
+
     }
-    
+
 
     const OnChangeProduct = useCallback(async (value: any) => {
 
@@ -215,15 +215,15 @@ const [stockvl, setstockvl] = useState<any>(null)
         setValue('price', matchedObjects[0]?.price);
         setValue('stock_value', matchedObjects[0]?.stockValue + matchedObjects[0]?.minQty);
     }
-        const OnChangeQuantity = (e: any) => {
+    const OnChangeQuantity = (e: any) => {
         const { value } = e.target;
         setValue("quantity", value)
         if (value === "" || value <= 0) {
-            setError('quantity',{ message: 'Quantity is Required' })
+            setError('quantity', { message: 'Quantity is Required' })
             return false;
         }
-      
-        
+
+
         let stock = selectProduct?.stock;
 
         if (selectProduct?.available) {
@@ -233,7 +233,7 @@ const [stockvl, setstockvl] = useState<any>(null)
                 let stockValue = selectProduct?.stockValue;
                 if (stock) {
                     if (parseFloat(value) > stockValue) {
-                        toast.error("Stock Value excedded")                 
+                        toast.error("Stock Value excedded")
                     } else {
                         let total = parseFloat(value) * selectProduct?.price;
                         setValue("total", total)
@@ -248,13 +248,13 @@ const [stockvl, setstockvl] = useState<any>(null)
                 if (stock) {
 
                     if (parseFloat(value) > stockValue) {
-                        toast.error("Stock Value excedded ")                   
+                        toast.error("Stock Value excedded ")
                     } else {
 
                         let total = (parseFloat(value) * attributeSelect?.[0]?.price);
                         setValue("total", total)
                     }
-              } else {
+                } else {
 
                     let result = (parseInt(attributeSelect?.[0]?.price) * parseFloat(value));
                     setValue("total", result)
@@ -275,28 +275,29 @@ const [stockvl, setstockvl] = useState<any>(null)
         let stock = selectProduct?.stock;
 
         console.log(selectProduct);
-        
-        let stk=selectProduct?.stockValue;
-       if (stock) {
-            if (parseFloat( data?.quantity) > stk) {
+
+        let stk = selectProduct?.stockValue;
+        if (stock) {
+            if (parseFloat(data?.quantity) > stk) {
                 toast.error("Stock Value excedded")
                 console.log("jj");
                 return false
-            } }
-           
-            let stockValue_attribute = attributeSelect?.[0]?.stockValue;
-            if (stock) {
-
-                if (parseFloat(data?.quantity) > stockValue_attribute) {
-                    toast.error("Stock Value excedded in attributecase")
-                    
-                    return false;
-                 
-                } 
             }
+        }
+
+        let stockValue_attribute = attributeSelect?.[0]?.stockValue;
+        if (stock) {
+
+            if (parseFloat(data?.quantity) > stockValue_attribute) {
+                toast.error("Stock Value excedded in attributecase")
+
+                return false;
+
+            }
+        }
         if (quntityValidation < 1 || Number.isNaN(quntityValidation)) {
             toast.warning('Wrong Data!...')
-         return false;
+            return false;
         }
 
 
@@ -316,7 +317,7 @@ const [stockvl, setstockvl] = useState<any>(null)
                 return false;
             }
         }
-      
+
         let value: any = {
             image: selectProduct?.product_image,
             name: selectProduct?.name,
@@ -376,9 +377,9 @@ const [stockvl, setstockvl] = useState<any>(null)
             return false;
         }
 
-     
 
-        
+
+
         try {
             setLoading(true)
             let publishValue = {
@@ -554,7 +555,7 @@ const [stockvl, setstockvl] = useState<any>(null)
                                 fieldLabel={"Quantity"}
                                 disabled={false}
                                 view={false}
-                              
+
                                 defaultValue={''}
                             />
                         </Grid>

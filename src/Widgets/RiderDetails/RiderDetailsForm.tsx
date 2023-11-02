@@ -105,15 +105,37 @@ const RiderDetailsform = ({ res, view }: props) => {
     const [selectedFranchiseName, setSelectedFranchiseName] = useState("");
     const [selectedFranchiseNames, setSelectedFranchiseNames] = useState<string[]>([]);
     const [statusSelect, setStatusSelect] = useState<any>(null)
+    const [isGenderModified, setIsGenderModified] = useState(false);
 
 
+    // const schema = yup.object().shape({
+    //     name: yup.string().required("Rider Name is required"),
+    //     mobile: yup.string()
+    //     .required("Mobile Number is required")
+    //     .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
+    //     emergency_contact: yup.string()
+    //     .required("Mobile Number is required")
+    //     .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
+    //     gender: yup.string().required("Gender is required"),
 
+    // });
     const schema = yup.object().shape({
-        name: yup.string().required("Rider Name is required"),
-        mobile: yup.string().required("Phone Number is required"),
-
+        name: yup.string().matches(/^[A-Za-z]+$/, "Rider Name should contain only characters").required("Rider Name is required"),
+        mobile: yup.string()
+            .required("Mobile Number is required")
+            .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
+        emergency_contact: yup.string()
+            .required("Emergency Contact is required")
+            .matches(/^[0-9]{10}$/, "Emergency Contact must be 10 digits long and contain only numeric characters"),
+        // gender: yup.string().required("Gender is required"),
+        aadhar_card_number: yup.string()
+            .matches(/^[0-9]+$/, "Adhaar Number should contain only numeric characters")
+            .max(13, "Adhaar Number should not exceed 13 characters"),
+        account_number: yup.string()
+            .matches(/^[0-9]+$/, "Account Number should contain only numeric characters")
+            .max(13, "Account Number should not exceed 13 characters"),
+        account_name: yup.string().matches(/^[A-Za-z]+$/, "Account Name should contain only characters"),
     });
-
 
 
     const { register,
@@ -162,6 +184,8 @@ const RiderDetailsform = ({ res, view }: props) => {
         setSelectedGender(e.target.value as string);
         setValue('gender', e.target.value as string);
     };
+
+
 
     const ChangeStatus = useCallback((e: any) => {
         const { value } = e.target;
@@ -235,7 +259,7 @@ const RiderDetailsform = ({ res, view }: props) => {
             setValue('branch', subOnboardingList?.bank_account_details?.branch);
             setValue('account_name', subOnboardingList?.bank_account_details?.account_name);
             setImagePreview(`${IMAGE_URL}${subOnboardingList?.image}`)
-            setSelectedGender(subOnboardingList?.gender || '');
+            setSelectedGender(subOnboardingList?.gender);
             setSelectedValue(subOnboardingList?.primary_franchise?.franchise_id || '');
             setValue('franchise_id', subOnboardingList?.primary_franchise?.franchise_id);
             setValue('franchise_name', subOnboardingList?.primary_franchise?.franchise_name);
@@ -316,12 +340,24 @@ const RiderDetailsform = ({ res, view }: props) => {
 
 
 
-            const primaryFranchise = {
-                franchise_id: selectedValue,
-                franchise_name: data.franchise_name,
-            };
+            // const primaryFranchise = franchiseList.find((franchise) => franchise.franchise_id === selectedValue);
+            // if (primaryFranchise) {
+            //     data.franchise_id = primaryFranchise._id; 
+            //     formData.append("franchise_name", primaryFranchise.franchise_name);
+            //     formData.append("franchise_id", primaryFranchise._id);
+            // }
+            const primaryFranchise = franchiseList.find((franchise) => franchise.franchise_id === selectedValue);
 
-            formData.append("primary_franchise", JSON.stringify(primaryFranchise));
+            if (primaryFranchise) {
+                const primaryFranchiseData = {
+                    franchise_id: primaryFranchise._id,
+                    franchise_name: primaryFranchise.franchise_name
+                };
+
+                formData.append("primary_franchise", JSON.stringify(primaryFranchiseData));
+            }
+
+
             const secondaryFranchises = selectedFranchisees.map((franchiseId, index) => {
                 return {
                     franchise_id: franchiseId,
@@ -519,7 +555,7 @@ const RiderDetailsform = ({ res, view }: props) => {
                                         label={""}
                                         size={16}
                                         value={selectedFranchisees[index]}
-                                        onChangeValue={(e) => handleFranchiseSelects(index, e)}
+                                        onChangeValue={(e:any) => handleFranchiseSelects(index, e)}
 
                                         background={"#fff"}
                                         options={franchiseList}

@@ -31,9 +31,23 @@ type FormInputs = {
 const RiderOnBoarding = () => {
 
     const schema = yup.object().shape({
-        name: yup.string().required("Rider Name is required"),
-        mobile: yup.string().required("Mobile Number is required"),
+        name: yup.string().matches(/^[A-Za-z]+$/, "Rider Name should contain only characters").required("Rider Name is required"),
+        mobile: yup.string()
+            .required("Mobile Number is required")
+            .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
+        emergency_contact: yup.string()
+            .required("Emergency Contact is required")
+            .matches(/^[0-9]{10}$/, "Emergency Contact must be 10 digits long and contain only numeric characters"),
+        gender: yup.string().required("Gender is required"),
+        aadhar_card_number: yup.string()
+            .matches(/^[0-9]+$/, "Adhaar Number should contain only numeric characters")
+            .max(13, "Adhaar Number should not exceed 13 characters"),
+        account_number: yup.string()
+            .matches(/^[0-9]+$/, "Account Number should contain only numeric characters")
+            .max(13, "Account Number should not exceed 13 characters"),
+        account_name: yup.string().matches(/^[A-Za-z]+$/, "Account Name should contain only characters"),
     });
+    
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [type, settype] = useState<string>("");
@@ -41,13 +55,6 @@ const RiderOnBoarding = () => {
     const [imagePreview, setImagePreview] = useState<any>(null)
 
 
-    // const { register,
-    //     handleSubmit,
-    //     control,
-    //     setError,
-    //     formState: { errors },
-    //     reset,
-    //     setValue, } = useForm<FormInputs>();
         
     const {
         register,
@@ -62,9 +69,14 @@ const RiderOnBoarding = () => {
     });
     
 
+    // const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     settype(e.target.value);
+    // }
     const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         settype(e.target.value);
+        setValue('gender', e.target.value); 
     }
+    
 
     const imageUploder = (file: any) => {
         if (file.size <= 1000000) {
