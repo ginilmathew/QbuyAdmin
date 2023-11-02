@@ -116,10 +116,33 @@ const RiderSupportform = ({ res, view }: props) => {
 
 
 
-    const schema = yup.object().shape({
-        name: yup.string().required("Rider Name is required"),
-        mobile: yup.string().required("Phone Number is required"),
+    // const schema = yup.object().shape({
+    //     name: yup.string().required("Rider Name is required"),
+    //     mobile: yup.string()
+    //     .required("Mobile Number is required")
+    //     .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
+    //     emergency_contact: yup.string()
+    //     .required("Mobile Number is required")
+    //     .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
+    //     gender: yup.string().required("Gender is required"),
 
+    // });
+    const schema = yup.object().shape({
+        name: yup.string().matches(/^[A-Za-z]+$/, "Rider Name should contain only characters").required("Rider Name is required"),
+        mobile: yup.string()
+            .required("Mobile Number is required")
+            .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
+        emergency_contact: yup.string()
+            .required("Emergency Contact is required")
+            .matches(/^[0-9]{10}$/, "Emergency Contact must be 10 digits long and contain only numeric characters"),
+        gender: yup.string().required("Gender is required"),
+        aadhar_card_number: yup.string()
+            .matches(/^[0-9]+$/, "Adhaar Number should contain only numeric characters")
+            .max(13, "Adhaar Number should not exceed 13 characters"),
+        account_number: yup.string()
+            .matches(/^[0-9]+$/, "Account Number should contain only numeric characters")
+            .max(13, "Account Number should not exceed 13 characters"),
+        account_name: yup.string().matches(/^[A-Za-z]+$/, "Account Name should contain only characters"),
     });
 
 
@@ -162,9 +185,9 @@ const RiderSupportform = ({ res, view }: props) => {
 
     const [statusChange, setStatusChange] = useState<any>(
         [
-            { value: 'Online', name: 'Online' },
-            { value: 'Offline', name: 'Offline' },
-            { value: 'Logged out', name: 'Logged out' }
+            { value: 'online', name: 'online' },
+            { value: 'offline', name: 'offline' },
+            { value: 'logged out', name: 'logged out' }
         ])
 
 
@@ -306,7 +329,7 @@ const RiderSupportform = ({ res, view }: props) => {
             formData.append("emergency_contact", data.emergency_contact);
             formData.append("city", data.city);
             formData.append("vehicle_number", data.vehicle_number);
-            formData.append("status", data.status);
+            formData.append("online_status", data.status);
 
 
             const kycDetails = {
@@ -530,7 +553,7 @@ const RiderSupportform = ({ res, view }: props) => {
                                         label={""}
                                         size={16}
                                         value={selectedFranchisees[index]}
-                                        onChangeValue={(e) => handleFranchiseSelects(index, e)}
+                                        onChangeValue={(e:any) => handleFranchiseSelects(index, e)}
 
                                         background={"#fff"}
                                         options={franchiseList}

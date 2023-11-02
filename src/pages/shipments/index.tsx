@@ -17,6 +17,8 @@ import { fetchData } from '@/CustomAxios';
 import moment from 'moment';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import useSWR from 'swr'
+import Custombutton from '@/components/Custombutton';
+import AssignModal from '@/Widgets/Shippings/Modal/AssignModal';
 
 
 const fetcher = (url: any) => fetchData(url).then((res) => res);
@@ -29,14 +31,17 @@ const Shipments = () => {
     const [shippingList, setShippingList] = useState<any>([])
     const [pending, startTransition] = useTransition();
     const [serachList, setSearchList] = useState<any>([]);
-
-
+    const [open, setopen] = useState<any>(false)
+    const [franchiseData, setfranchiseData] = useState<any>('')
+    
 
     const { data, error, isLoading } = useSWR(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
 
     useEffect(() => {
         if (data?.data?.data) {
             setShippingList(data?.data?.data)
+            console.log(data);
+            
         }
     }, [data?.data?.data])
 
@@ -48,6 +53,19 @@ const Shipments = () => {
         router.push(`/shipments/edit/${id}`)
     }
    
+    const openAssignModal= useCallback((row:any)=>{
+
+        setfranchiseData(row)
+
+
+   setopen(true) },
+   
+   
+    [open]
+    )
+    const handleCloseAddModal=useCallback(()=>{
+        setopen(false)
+    },[open])
   
 
     const columns: GridColDef[] = [
@@ -348,6 +366,19 @@ const Shipments = () => {
                                 cursor: 'pointer'
                             }}
                         />}
+                        <Custombutton
+                          disabled={loading}
+                          btncolor='blue'
+                          height={40}
+                          IconEnd={""}
+                          IconStart={''}
+                          startIcon={false}
+                          endIcon={false}
+                           onClick={()=>openAssignModal(row)}
+                          label='Assign' />
+                        
+
+                        
                     {/* <DeleteOutlineTwoToneIcon
 
                         sx={{
@@ -372,6 +403,8 @@ const Shipments = () => {
     
     const searchProducts = useCallback((value: any) => {
         let competitiions = data?.data?.data?.filter((com: any) => 
+       
+        
             (com?.order_id?.toString()?.toLowerCase().includes(value.toLowerCase()) ||
             com?.user?.mobile?.toString()?.toLowerCase().includes(value.toLowerCase()) ||
             com?.user?.name?.toString()?.toLowerCase().includes(value.toLowerCase()) ||
@@ -383,7 +416,7 @@ const Shipments = () => {
     }, [shippingList]);
     
     
-    
+   
     
 
     // const ShippingOrders = async () => {
@@ -430,6 +463,7 @@ const Shipments = () => {
   }
 
     return (
+       
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
@@ -438,9 +472,15 @@ const Shipments = () => {
                <CustomTable dashboard={false} columns={columns} rows={shippingList ? shippingList : []} id={"_id"}  bg={'#ffff'} label='Recent Activity' />  
                 </Box>
             </Box>
-
-
+            {open &&  <AssignModal
+            franchiseData={franchiseData}
+            open={open}
+            handleClose={handleCloseAddModal}
+        />
+        }
+         
         </Box>
+        
     )
 }
 

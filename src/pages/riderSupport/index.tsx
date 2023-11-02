@@ -77,7 +77,7 @@ const RiderSupport = () => {
 
         },
         {
-            field: 'status',
+            field: 'online_status',
             headerName: 'status',
             flex: 1,
             headerAlign: 'center',
