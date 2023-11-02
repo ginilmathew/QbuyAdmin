@@ -59,6 +59,7 @@ type IFormInput = {
     category_id: any;
 };
 const CustomerDetailsForm = ({ resData, view }: props) => {
+    console.log({ resData }, 'kkk')
     const idd = resData ? resData : view;
     const schema = yup.object().shape({
         name: yup.string().required("Customer Name is required"),
@@ -112,7 +113,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     const [customerBlock, setCustomerBlock] = useState<boolean>(false);
     const [customerAddress, setCustomerAddress] = useState<boolean>(false);
     const [customerList, setCustomerList] = useState<any>([]);
-    console.log({customerList},'ll')
+    console.log({ customerList }, 'll')
     const [loader, setLoader] = useState<boolean>(false);
     const [groupID, setGroupID] = useState<any>("");
     const router = useRouter();
@@ -411,7 +412,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                                     disabled={false}
                                     view={false}
                                     defaultValue={""}
-                                   
+
                                 />
                             </Grid>
                             <Grid item xs={12} lg={2}>

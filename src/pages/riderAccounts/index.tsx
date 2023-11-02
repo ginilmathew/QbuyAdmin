@@ -1,30 +1,56 @@
-import React from 'react'
+import { Box } from '@mui/material'
+import React, { useState, useEffect, useCallback, useTransition } from 'react'
+import { Stack, Typography } from '@mui/material';
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { Box, Stack } from '@mui/material';
-import CustomTableHeader from '@/Widgets/CustomTableHeader';
-import CustomTable from '@/components/CustomTable';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import moment from 'moment'
 import { useRouter } from 'next/router';
+import { fetchData } from '@/CustomAxios';
+import { toast } from 'react-toastify';
+import useSWR from 'swr';
+import dynamic from 'next/dynamic';
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
+const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
+const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
+const DeleteOutlineTwoToneIcon = dynamic(() => import('@mui/icons-material/DeleteOutlineTwoTone'), { ssr: false });
+const CustomDelete = dynamic(() => import('@/Widgets/CustomDelete'), { ssr: false });
+
+const fetcher = (url: any) => fetchData(url).then((res) => res);
 
 const RiderAccounts = () => {
+  const { data, error, isLoading, mutate } = useSWR(`admin/rider-account/list`, fetcher);
+  const router = useRouter()
+  const [rideraccountData, setRiderAccountData] = useState([]);
+  const [pending, startTransition] = useTransition();
+
+  useEffect(() => {
+    if (data?.data?.data) {
+      setRiderAccountData(data?.data?.data);
+      console.log("Riders Data:", data?.data?.data);
+    }
+  }, [data?.data?.data]);
+
+  const viewRiderAccount = (id: any) => {
+    router.push(`/riderAccounts/view/${id}`)
+  }
 
   const columns: GridColDef[] = [
     {
-      field: 'Customer ID',
-      headerName: 'Customer ID',
+      field: 'rider_id',
+      headerName: 'Rider ID',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
     },
     {
-      field: 'Customer Name',
-      headerName: 'Customer Name',
+      field: 'name',
+      headerName: 'Rider Name',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
     },
     {
-      field: 'Phone',
+      field: 'mobile',
       headerName: 'Phone',
       flex: 1,
       headerAlign: 'center',
@@ -32,16 +58,17 @@ const RiderAccounts = () => {
     },
 
     {
-      field: 'Total Orders',
-      headerName: 'Total Orders',
+      field: 'Franchisee',
+      headerName: 'Franchisee',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
 
     },
+
     {
       field: 'Total Order Amount',
-      headerName: 'Total Order Amount',
+      headerName: 'Last Salary Released Date',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
@@ -56,7 +83,7 @@ const RiderAccounts = () => {
       renderCell: ({ row }) => (
         <Stack alignItems={'center'} gap={1} direction={'row'}>
           <RemoveRedEyeIcon
-
+            onClick={() => viewRiderAccount(row?._id)}
             style={{
               color: '#58D36E',
               cursor: 'pointer'
@@ -66,25 +93,24 @@ const RiderAccounts = () => {
       )
     }
   ];
+  const searchProducts = useCallback((value: any) => {
+    let Results = data?.data?.data?.filter((com: any) =>
+        com?.rider_id.toString().includes(value) ||
+        com?.mobile.toString().includes(value) 
+    );
 
-  const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  ];
+    startTransition(() => {
+      setRiderAccountData(Results);
+    });
+}, [rideraccountData]);
+
 
   return (
     <Box px={5} py={2} pt={10} mt={0}>
       <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-        <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Rider' onClick={() => null} />
+        <CustomTableHeader addbtn={false} setState={searchProducts} imprtBtn={false} Headerlabel='Rider' onClick={() => null} />
         <Box py={5}>
-          <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+          <CustomTable dashboard={false} columns={columns} rows={rideraccountData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
         </Box>
       </Box>
     </Box>
