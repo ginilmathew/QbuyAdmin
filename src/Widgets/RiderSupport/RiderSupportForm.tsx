@@ -42,7 +42,7 @@ type Inputs = {
     branch: string;
     account_name: string;
     franchise_id: string;
-    status: string;
+    online_status: string;
     image: any,
 
 
@@ -70,7 +70,7 @@ type IFormInput = {
     account_number: string;
     branch: string;
     account_name: string;
-    status: string;
+    online_status: string;
     franchise_id: string;
     image: any,
 
@@ -118,7 +118,13 @@ const RiderSupportform = ({ res, view }: props) => {
 
     const schema = yup.object().shape({
         name: yup.string().required("Rider Name is required"),
-        mobile: yup.string().required("Phone Number is required"),
+        mobile: yup.string()
+        .required("Mobile Number is required")
+        .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
+        emergency_contact: yup.string()
+        .required("Mobile Number is required")
+        .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
+        gender: yup.string().required("Gender is required"),
 
     });
 
@@ -148,7 +154,7 @@ const RiderSupportform = ({ res, view }: props) => {
                 account_number: '',
                 branch: '',
                 account_name: '',
-                status: '',
+                online_status: '',
                 franchise_id: '',
             }
         });
@@ -253,7 +259,7 @@ const RiderSupportform = ({ res, view }: props) => {
             setValue('franchise_name', subOnboardingList?.primary_franchise?.franchise_name);
             setValue('franchise_id', subOnboardingList?.secondary_franchise?.franchise_id);
             setValue('franchise_name', subOnboardingList?.secondary_franchise?.franchise_name);
-            setStatusSelect(subOnboardingList?.status || '');
+            setStatusSelect(subOnboardingList?.online_status || '');
 
         }
     }, [subOnboardingList, idd]);
@@ -293,7 +299,7 @@ const RiderSupportform = ({ res, view }: props) => {
 
     const onSubmit = async (data: IFormInput) => {
         setLoading(true);
-        data.status = statusSelect;
+        data.online_status = statusSelect;
 
         try {
             const formData = new FormData();
@@ -306,7 +312,7 @@ const RiderSupportform = ({ res, view }: props) => {
             formData.append("emergency_contact", data.emergency_contact);
             formData.append("city", data.city);
             formData.append("vehicle_number", data.vehicle_number);
-            formData.append("status", data.status);
+            formData.append("status", data.online_status);
 
 
             const kycDetails = {
@@ -692,8 +698,8 @@ const RiderSupportform = ({ res, view }: props) => {
                             disabled={view ? true : false}
                             type='text'
                             control={control}
-                            error={errors.status}
-                            fieldName="status"
+                            error={errors.online_status}
+                            fieldName="online_status"
                             placeholder={``}
                             fieldLabel={"Status Change"}
                             selectvalue={""}

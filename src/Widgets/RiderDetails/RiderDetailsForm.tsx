@@ -110,7 +110,13 @@ const RiderDetailsform = ({ res, view }: props) => {
 
     const schema = yup.object().shape({
         name: yup.string().required("Rider Name is required"),
-        mobile: yup.string().required("Phone Number is required"),
+        mobile: yup.string()
+        .required("Mobile Number is required")
+        .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
+        emergency_contact: yup.string()
+        .required("Mobile Number is required")
+        .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
+        gender: yup.string().required("Gender is required"),
 
     });
 
@@ -162,6 +168,8 @@ const RiderDetailsform = ({ res, view }: props) => {
         setSelectedGender(e.target.value as string);
         setValue('gender', e.target.value as string);
     };
+   
+    
 
     const ChangeStatus = useCallback((e: any) => {
         const { value } = e.target;

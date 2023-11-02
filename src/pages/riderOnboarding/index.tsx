@@ -32,8 +32,15 @@ const RiderOnBoarding = () => {
 
     const schema = yup.object().shape({
         name: yup.string().required("Rider Name is required"),
-        mobile: yup.string().required("Mobile Number is required"),
+        mobile: yup.string()
+        .required("Mobile Number is required")
+        .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
+        emergency_contact: yup.string()
+        .required("Mobile Number is required")
+        .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
+        gender: yup.string().required("Gender is required"),
     });
+    
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [type, settype] = useState<string>("");
@@ -41,13 +48,6 @@ const RiderOnBoarding = () => {
     const [imagePreview, setImagePreview] = useState<any>(null)
 
 
-    // const { register,
-    //     handleSubmit,
-    //     control,
-    //     setError,
-    //     formState: { errors },
-    //     reset,
-    //     setValue, } = useForm<FormInputs>();
         
     const {
         register,
@@ -62,9 +62,14 @@ const RiderOnBoarding = () => {
     });
     
 
+    // const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     settype(e.target.value);
+    // }
     const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         settype(e.target.value);
+        setValue('gender', e.target.value); 
     }
+    
 
     const imageUploder = (file: any) => {
         if (file.size <= 1000000) {
