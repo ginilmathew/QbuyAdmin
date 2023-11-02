@@ -129,6 +129,7 @@ const Vendorform = ({ res, view, data }: props) => {
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const location = /^[0-9.]*$/
     const commissionvalidation = /^\d*\.?\d*$/
+    const emailRegExp=/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
     const schema = yup
         .object()
         .shape({
@@ -144,7 +145,16 @@ const Vendorform = ({ res, view, data }: props) => {
             // store_address: yup.string().required('Store Address is Required'),
             franchise_id: yup.string().required('Franchise is  Required'),
             category_id: yup.array().typeError('Category is Required').required('Category is Required'),
-           
+        
+            account_number:yup.number().typeError('Account numeber only contain numbers').nullable(),
+            branch:yup.string().max(30, "BranchName must be less than 30 characters").matches(
+                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+                'Branch Name can only contain alphabets letters.'
+            ).nullable(),
+            recipient_name:yup.string().max(30, "Name must be less than 30 characters").matches(
+                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+                'Name can only contain alphabets letters.'
+            ).nullable(),
             // start_time: yup.string().required('Required'),
             // end_time: yup.string().required('Required'),
             store_logo: yup
@@ -167,7 +177,7 @@ const Vendorform = ({ res, view, data }: props) => {
             longitude: yup.string().matches(location, 'please enter valid format').required('Longitude is required')
 
         })
-
+    
 
 
     const { register,
@@ -204,7 +214,6 @@ const Vendorform = ({ res, view, data }: props) => {
                 display_order: null,
             }
         });
-
 
 
 
@@ -493,6 +502,7 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
 
+
     const onChangeMultiple = async (event: any) => {
         const {
             target: { value },
@@ -511,6 +521,11 @@ const Vendorform = ({ res, view, data }: props) => {
             setValue('category_id', data)
             setError('category_id', { message: '' })
         }
+         if (data.length===0) {
+            setError('category_id', { message: 'Category is Requireda' })
+            setValue('category_id', null)
+            console.log("jj");
+             }     
 
         setPostArray(data)
         setMultipleArray(

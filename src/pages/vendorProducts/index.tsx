@@ -68,7 +68,7 @@ function VendorProducts() {
     const [modal, setModal] = useState<boolean>(false);
     const [rowid, setId] = useState<any>(null)
     const [setSerachList, setSearchList] = useState<any>([])
-
+    const [isApproving, setIsApproving] = useState(false);
 
     useEffect(() => {
         if (data?.data?.data) {
@@ -81,24 +81,27 @@ function VendorProducts() {
     //     getProductList()
     // }, [])
 
-    const OnchangeCheck = async (id: string) => {
+   const OnchangeCheck = async (id:any) => {
+        if (isApproving) {
+            return true; // Don't proceed if an approval is already in progress
+            console.log("l");
+            
+        }
 
         try {
-            setLoding(true)
-            const response = await fetchData(`/admin/temp-product-approve/${id}`)
-
+            console.log("kk");
+            
+            const response = await fetchData(`/admin/temp-product-approve/${id}`);
+            if(response){
+                setIsApproving(true); // Set to true to indicate approval is in progress
+            }
             let idd = response?.data?.data?._id;
-            // setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
-            router.push(`/products/edit/${idd}`)
-
-        }
-        catch (err: any) {
-            toast.warning(err?.message)
+            router.push(`/products/edit/${idd}`);
+        } catch (err:any) {
+            toast.warning(err?.message);
         } finally {
-            setLoding(false)
-
+             // Reset the state variable
         }
-
     }
 
 
@@ -203,7 +206,7 @@ function VendorProducts() {
             align: 'center',
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
-                    {(row?.approval_status === "rejected" || row?.approval_status === "approved") ? (          
+                    {(row?.approval_status === "rejected" || row?.approval_status === "approved" || loading===true) ? (          
                         <>
                             <Box
                                 style={{

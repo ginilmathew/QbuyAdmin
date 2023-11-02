@@ -207,7 +207,6 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
             if (product?.length > 0) {
                 const rate = product?.reduce((inital: any, price: any) => inital + (parseFloat(price?.unitPrice) * parseFloat(price?.quantity)), 0);
                 let pricedata = {
-                    // delivery_charge: productList?.delivery_charge,
                     delivery_charge: Math.ceil(highestDelivery),
                     grand_total: (parseInt(productList?.delivery_charge) + rate + productList?.platform_charge),
                     total_amount: rate,
@@ -217,6 +216,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                     ...pricedata,
                     productDetails: [...product],
                 });
+                
 
             } else {
                 let pricedata = {

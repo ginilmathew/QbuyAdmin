@@ -129,16 +129,25 @@ const AddProducts = () => {
             valueGetter: (params) => {
                 if (params?.row?.variants?.length > 0) {
                     let price = params?.row?.variants?.map((vari: any) => {
+                       
+                        
                         return parseFloat(vari.seller_price)
+                      
                     })
                     return `₹${min(price)} - ₹${max(price)} `
                 }
                 else if (moment(params?.row?.offer_date_from) < moment(params?.row?.to)) {
-                    return ` ₹${params?.row?.offer_price ? params?.row?.offer_price : 0}`
+                
+                    
+                    return ` ₹${params?.row?.offer_price ? params?.row?.offer_price : params?.row?.regular_price? params?.row?.regular_price:'0'}`
                 } else {
                     if (params?.row?.seller_price > 0) {
+                        console.log(params?.row?.seller_price ? params?.row?.seller_price : 0);
+                        
                         return `₹${params?.row?.seller_price ? params?.row?.seller_price : 0}`
                     } else {
+                       
+                        
                         return `₹${params?.row?.regular_price ? params?.row?.regular_price : 0}`
                     }
 

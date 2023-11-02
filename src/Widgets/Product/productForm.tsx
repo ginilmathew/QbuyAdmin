@@ -135,6 +135,7 @@ type props = {
 const ProductForm = ({ res, view }: props) => {
     let idd = res ? res : view;
 
+console.log(idd);
 
     const router = useRouter()
 
@@ -174,6 +175,7 @@ const ProductForm = ({ res, view }: props) => {
     const [offerDate_from, setOffer_Date_from] = useState<any>(null);
     const [offerDate_to, setOffer_Date_to] = useState<any>(null);
     const [statusSelect, setStatusSelect] = useState<any>(null)
+    const [time, settime] = useState<any>("")
     const [statusChange, setStatusChange] = useState<any>(
         [
             { value: 'Pending', name: 'pending' }
@@ -316,9 +318,10 @@ const ProductForm = ({ res, view }: props) => {
                 fixed_delivery_price: 0,
                 commission: 0
             }
+           
         });
 
-
+     
 
 
 
@@ -496,7 +499,7 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const onSelectStore = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setvendorSelect(e.target.value)
+        setvendorSelect(e.target.value)   
         let result = vendorList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
             {
                 commision: get?.additional_details ? get?.additional_details.commission : 0,
@@ -506,13 +509,20 @@ const ProductForm = ({ res, view }: props) => {
             }
 
         ))
-
+        
         setCategoryList(result?.[0]?.category)
-
+       
 
         let findresult = vendorList?.filter((res: any) => res?._id === e.target.value)
+        console.log(findresult);
+        
+        console.log(findresult?.approved_by)
+        console.log(findresult?.start_time)
+        console.log(findresult?.end_time)
+
+        
         setVendorListDirection(findresult)
-        // setValue('commission', result[0]?.commision)
+        // setValue('commission', result[0]?.commision)     
         setValue('store', e.target.value)
         setError('store', { message: '' })
     }
@@ -562,8 +572,28 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const addAtributes = () => {
+
+        let attributess = [];
+
+        if(attributes && attributes?.length > 0){
+            // attributes?.map((att: object, i: number) => {
+            //     attributess.push({
+            //         ...att,
+            //         id: i+1
+            //     })
+            // })
+
+            attributess=[...attributes, { id: `${moment().unix()}`, name: '', options: [], variant: false }]
+        }
+        else{
+            attributess = [{ id: `${moment().unix()}`, name: '', options: [], variant: false }]
+        }
+
+        setAttributes([...attributess])
+
+        console.log({attributess})
         // if(attributes?.length  < 2){
-        setAttributes([...attributes, { name: '', options: [], variant: false }])
+        //setAttributes((prev: any) => [...prev, { id: attributess?.length+1, name: '', options: [], variant: false }])
         // }
     }
 
@@ -599,14 +629,58 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const onChangeProductFrom = (e: any) => {
-        setValue('product_availability_from', e)
-
-    }
+        if(idd){
+            setValue('product_availability_from', e);
+        }
+        else{
+            const start_time = vendorlistDirection?.[0]?.start_time;
+            const end_time = vendorlistDirection?.[0]?.end_time;
+            
+          
+            const selectedTime = moment(e, 'ha');
+            const startTime = moment(start_time, 'ha'); 
+            const endTime = moment(end_time, 'ha');
+            
+           
+            if (selectedTime.isBetween(startTime, endTime, null, '[]')) {
+              
+                setValue('product_availability_from', e);
+            } else {
+                
+                toast.error("Selected time is not within the valid range. Please select a time between start and end times.");
+            }
+         
+        }
+       
+    }   
 
     const onChangeProductTo = (e: any) => {
-        setValue('product_availability_to', e)
-
+                
+        if(idd){
+            setValue('product_availability_to', e);
+            console.log("kk");
+        }
+        else{
+            const start_time = vendorlistDirection?.[0]?.start_time;
+            const end_time = vendorlistDirection?.[0]?.end_time;
+        
+           
+            const selectedEndTime = moment(e, 'ha'); 
+            const startTime = moment(start_time, 'ha'); 
+            const endTime = moment(end_time, 'ha'); 
+        
+         
+            if (selectedEndTime.isBefore(startTime) || selectedEndTime.isAfter(endTime)) {
+               
+                toast.error("Selected end time is not within the valid range. Please select a time between start and end times.");
+            } else {
+               
+                setValue('product_availability_to', e);
+            }
+        }
+       
     }
+    
 
 
     const onCheckPandasuggestion = (e: any) => {
@@ -661,7 +735,7 @@ const ProductForm = ({ res, view }: props) => {
         if (productList) {
             const getvendorlist = async (vendorId: any) => {
                 try {
-                    const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
+                    const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)                
                     const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${productList?.franchisee?._id}`)
 
                     let result = recomendedProduct?.data?.data.map((res: any) => ({
@@ -847,7 +921,7 @@ const ProductForm = ({ res, view }: props) => {
             attributes[i].variant = e;
             setAttributes([...attributes])
             //setAddVarient(e)
-            addvarients()
+            addvarients(attributes)
         }
 
     }
@@ -925,7 +999,8 @@ const ProductForm = ({ res, view }: props) => {
 
 
 
-    const addvarients = () => {
+    const addvarients = (attributes: any) => {
+        console.log({attributes}, "vari")
         if (attributes?.some((res: any) => res?.variant === true)) {
             const output = [];
             setValue('seller_price', '')
@@ -943,8 +1018,9 @@ const ProductForm = ({ res, view }: props) => {
 
             let combines = combine(attributesArray);
 
-            let attri = combines.map((val: any) => {
+            let attri = combines.map((val: any, i: number) => {
                 return {
+                    id: `${i}${moment().unix()}`,
                     title: val,
                     attributs: val.split(' '),
                     seller_price: '',
@@ -958,6 +1034,8 @@ const ProductForm = ({ res, view }: props) => {
                     fixed_delivery_price: 0
                 }
             })
+
+            console.log({attri})
             setVarientsArray([...attri])
         } else {
             setVarientsArray([])
@@ -968,8 +1046,8 @@ const ProductForm = ({ res, view }: props) => {
 
 
     useEffect(() => {
-        addvarients()
-    }, [index])
+        addvarients(attributes)
+    }, [index, attributes])
 
 
 
@@ -990,7 +1068,7 @@ const ProductForm = ({ res, view }: props) => {
     }
 
 
-    //seach_Tag..............................................................................................
+    //seach_T/admin/vendor-list/650d671e97a01b7e46078cb7/pandaag..............................................................................................
 
     const searchTagvalues = (res: any) => {
         setSearchTag(res)
@@ -1053,6 +1131,15 @@ const ProductForm = ({ res, view }: props) => {
                     setError("regular_price", { type: 'custom', message: ' Price must be a number' })
                     return false;
                 }
+            }
+          
+            if(data?.regular_price<=0){
+                setError("regular_price", { type: 'custom', message: 'Selling price must be a greater than 0' })
+                return false;
+            }
+            if(data?.commission<=0){
+                setError("commission", { type: 'custom', message: 'Commission  must be a greater than 0' })
+                return false;
             }
             if (!isEmpty(data?.offer_price)) {
                 if (isNaN(data?.offer_price)) {
@@ -1334,16 +1421,32 @@ const ProductForm = ({ res, view }: props) => {
         }
     }
 
-    const removeAttributes = async (i: any) => {
+    const removeAttributes = async (id: number) => {
         // console.log('FUCTION CALLED')
-        if (!res || !view) {
-            attributes[i].variant = false;
-            setAttributes([...attributes])
-            let attribute = await attributes?.filter((att: any, index: Number) => index !== i)
 
-            // console.log({ attribute })
-            setAttributes([...attribute])
-            addvarients()
+        if (!res || !view) {
+            let newAttri = await attributes?.filter((att: any) => att.id !==id)
+            // attributes[i].variant = false;
+            // setAttributes([...attributes])
+            // let attribute = await attributes?.filter((att: any, index: Number) => index !== i)
+
+            // let attribu: Array<any> = [];
+
+            // await newAttri?.map((att: any, index: number) => {
+            //     attribu.push({
+            //         ...att,
+            //         id: index + 1
+            //     })
+
+            // })
+
+
+            //console.log({attribu})
+            //setAttributes(null)
+
+            await setAttributes([...newAttri])
+            addvarients(newAttri)
+            
         }
 
 
@@ -1712,6 +1815,7 @@ const ProductForm = ({ res, view }: props) => {
                                 changeValue={onChangeProductFrom}
                                 fieldName='product_availability_from'
                                 control={control}
+                               
                                 error={errors.product_availability_from}
                                 fieldLabel={'Product Availability'} />
                         </Grid>}
@@ -1808,7 +1912,7 @@ const ProductForm = ({ res, view }: props) => {
 
                         {defaultImage.length > 0 && !view &&
                             <>
-                                <Box display={'flex'} gap={2} >
+                                <Box display={'flex'} gap={2} style={{ height: '200px', overflow: 'auto' }} >
                                     {defaultImage && defaultImage?.map((res: any, i: number) => (
                                         <Box position={'relative'}>
                                             <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 100, height: 100, }} />
@@ -1896,7 +2000,7 @@ const ProductForm = ({ res, view }: props) => {
                 {!res && !view &&
                     <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
-                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} closeIcon={idd ? false : true} removeAttributes={!productList ? () => removeAttributes(i) : null} />
+                    <Attributes key={res?.id} item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} closeIcon={idd ? false : true} removeAttributes={!productList ? removeAttributes : null} />
                 )}
             </CustomBox>
 
@@ -1998,7 +2102,7 @@ const ProductForm = ({ res, view }: props) => {
                 </Grid>
             </CustomBox>}
             {varientsarray && varientsarray.length > 0 && <CustomBox title='Add Variant & Price'>
-                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient view={view} deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} stock={stock} />)}
+                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient key={varian?.id} view={view} deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} stock={stock} />)}
             </CustomBox>}
 
             {/* {attributes?.some((res: any) => res.varient === true) &&
