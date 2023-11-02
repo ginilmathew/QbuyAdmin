@@ -54,7 +54,7 @@ const RiderLifecyle = () => {
                 
                 if (status === 'active' ||status === 'Active' ) {
                     return 'active-status';
-                } else if (status === 'Terminated') {
+                } else if (status === 'Online') {
                     return 'terminated-status';
                 } else if (status === 'Pending') {
                     return 'pending-status';
