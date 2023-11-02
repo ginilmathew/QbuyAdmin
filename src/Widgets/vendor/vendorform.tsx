@@ -52,7 +52,8 @@ type Inputs = {
     longitude: any,
     order_status: any,
     approval_status: any,
-    subCategory_id: any
+    subCategory_id: any,
+    account_type: string
 };
 
 
@@ -85,7 +86,8 @@ type IFormInput = {
     longitude: any,
     order_status: any,
     approval_status: any,
-    subCategory_id: any
+    subCategory_id: any,
+    account_type: string
 };
 
 type props = {
@@ -119,6 +121,7 @@ const Vendorform = ({ res, view, data }: props) => {
     const [statusSelect, setStatusSelect] = useState<any>(null);
     const [subcategorylist, setSubcategoryList] = useState<any>([]);
     const [multpleArraySub, setMultipleArraySub] = useState<any>([]);
+    const [accounttype, setAccountType] = useState<any>([]);
 
 
     console.log({ vendorList })
@@ -129,7 +132,7 @@ const Vendorform = ({ res, view, data }: props) => {
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const location = /^[0-9.]*$/
     const commissionvalidation = /^\d*\.?\d*$/
-    const emailRegExp=/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    const emailRegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
     const schema = yup
         .object()
         .shape({
@@ -144,14 +147,15 @@ const Vendorform = ({ res, view, data }: props) => {
             store_name: yup.string().max(60, 'Maximum Character Exceeds').required('Store Name is Required'),
             // store_address: yup.string().required('Store Address is Required'),
             franchise_id: yup.string().required('Franchise is  Required'),
+            account_type: yup.string().required('Account Type is  Required'),
             category_id: yup.array().typeError('Category is Required').required('Category is Required'),
-        
-            account_number:yup.number().typeError('Account numeber only contain numbers').nullable(),
-            branch:yup.string().max(30, "BranchName must be less than 30 characters").matches(
+
+            account_number: yup.number().typeError('Account numeber only contain numbers').nullable(),
+            branch: yup.string().max(30, "BranchName must be less than 30 characters").matches(
                 /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
                 'Branch Name can only contain alphabets letters.'
             ).nullable(),
-            recipient_name:yup.string().max(30, "Name must be less than 30 characters").matches(
+            recipient_name: yup.string().max(30, "Name must be less than 30 characters").matches(
                 /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
                 'Name can only contain alphabets letters.'
             ).nullable(),
@@ -177,7 +181,7 @@ const Vendorform = ({ res, view, data }: props) => {
             longitude: yup.string().matches(location, 'please enter valid format').required('Longitude is required')
 
         })
-    
+
 
 
     const { register,
@@ -332,6 +336,17 @@ const Vendorform = ({ res, view, data }: props) => {
 
     }
 
+    const onChangeSelectAccountType = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+        setAccountType(value);
+        console.log(value, 'account Type')
+        setValue('account_type', value)
+        setError('account_type', { message: '' })
+
+
+    }
+
+
     const getFranchiseList = async () => {
         try {
             setLoading(true)
@@ -431,6 +446,8 @@ const Vendorform = ({ res, view, data }: props) => {
             setValue('store_address', vendorList?.store_address);
             setValue('franchise_id', vendorList?.franchise_id);
             setFranchise(vendorList?.franchise_id);
+            setAccountType(vendorList?.account_type);
+            setValue('account_type', vendorList?.account_type)
 
             setValue('category_id', vendorList?.category_id);
             setCategory(vendorList?.category_id);
@@ -521,11 +538,11 @@ const Vendorform = ({ res, view, data }: props) => {
             setValue('category_id', data)
             setError('category_id', { message: '' })
         }
-         if (data.length===0) {
+        if (data.length === 0) {
             setError('category_id', { message: 'Category is Requireda' })
             setValue('category_id', null)
             console.log("jj");
-             }     
+        }
 
         setPostArray(data)
         setMultipleArray(
@@ -570,11 +587,11 @@ const Vendorform = ({ res, view, data }: props) => {
 
         if (data.category_id.length === 0) {
             setError('category_id', { message: 'Category is Required' });
-            return; 
+            return;
         } else {
-            setError('category_id', { message: '' }); 
+            setError('category_id', { message: '' });
         }
-    
+
         const URL_CREATE = '/admin/vendor/create'
         const URL_EDIT = '/admin/vendor/update'
         let kyc_details = {
@@ -607,6 +624,7 @@ const Vendorform = ({ res, view, data }: props) => {
         formData.append("vendor_email", data?.vendor_email);
         formData.append("vendor_mobile", data?.vendor_mobile);
         formData.append("store_name", data?.store_name);
+        formData.append("account_type", data?.account_type);
         formData.append("store_address", data?.store_address);
         formData.append("franchise_id", data?.franchise_id);
         formData.append("category_id", JSON.stringify(data?.category_id));
@@ -681,6 +699,18 @@ const Vendorform = ({ res, view, data }: props) => {
             getStatuslist()
         }
     }, [idd])
+
+
+    const accountType: any = [
+        {
+            id: 1,
+            value: 'Ready Cash',
+        },
+        {
+            id: 2,
+            value: 'Credit',
+        },
+    ]
 
 
 
@@ -809,55 +839,58 @@ const Vendorform = ({ res, view, data }: props) => {
                                 ))}
                             </Customselect>
                         </Grid>
-                        <Grid item xs={12} lg={4}>
-                            <div style={{ width: '260px' }}>
-                                <CustomMultiselect
+                        <Grid item xs={12} lg={2}>
 
-                                    multiple={true}
-                                    control={control}
-                                    error={errors.category_id}
-                                    fieldName="category_id"
-                                    placeholder={``}
-                                    fieldLabel={"Category"}
-                                    readOnly={view ? true : false}
-                                    value={multpleArray}
-                                    onChangeValue={onChangeMultiple}
-                                    type=''
-                                >
-                                    <MenuItem value="" disabled >
-                                        <>Select Category</>
-                                    </MenuItem>
-                                    {getcategory && getcategory.map((res: any) => (
-                                        <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
-                                    ))}
-                                </CustomMultiselect>
-
-                            </div>
-                        </Grid>
-                        {/* <Grid item xs={12} lg={2}>
                             <CustomMultiselect
 
                                 multiple={true}
                                 control={control}
-                                error={errors.subCategory_id}
-                                fieldName="subCategory_id"
+                                error={errors.category_id}
+                                fieldName="category_id"
                                 placeholder={``}
-                                fieldLabel={"SubCategory"}
+                                fieldLabel={"Category"}
                                 readOnly={view ? true : false}
-                                value={multpleArraySub}
-                                onChangeValue={onChangeSelectSubCategory}
+                                value={multpleArray}
+                                onChangeValue={onChangeMultiple}
                                 type=''
                             >
-                                <MenuItem  disabled >
-                                    <>Select SubCategory</>
+                                <MenuItem value="" disabled >
+                                    <>Select Category</>
                                 </MenuItem>
-                                {subcategorylist && subcategorylist?.map((res: any) => (
+                                {getcategory && getcategory.map((res: any) => (
                                     <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
                                 ))}
                             </CustomMultiselect>
 
+                        </Grid>
+                        <Grid item xs={12} lg={2}>
+                            <Customselect
+                                disabled={view ? true : false}
+                                type='text'
+                                control={control}
+                                error={errors.account_type}
+                                fieldName="account_type"
+                                placeholder={``}
+                                fieldLabel={"Account Type"}
+                                selectvalue={""}
+                                height={40}
+                                label={''}
+                                size={16}
+                                value={accounttype}
+                                options={''}
+                                onChangeValue={onChangeSelectAccountType}
+                                background={'#fff'}
+                            >
+                                <MenuItem value="" disabled >
+                                    <>Account Type</>
+                                </MenuItem>
+                                {accountType?.map((res: any) => (
+                                    <MenuItem key={res?._id} value={res?.value}>{res?.value}</MenuItem>
+                                ))}
+                            </Customselect>
 
-                        </Grid> */}
+
+                        </Grid>
                         <Grid item xs={12} lg={1.6}>
                             <CustomTimepicker
                                 disabled={view ? true : false}

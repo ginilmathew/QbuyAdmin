@@ -18,6 +18,8 @@ import CustomViewInput from '@/components/CustomViewInput';
 import Custombutton from '@/components/Custombutton';
 import { useRouter } from 'next/router';
 import Spinner from '@/components/Spinner';
+import AmountSettlementModal from './AmountSettlements';
+import RiderLogsModal from './RiderLogModal';
 
 
 type Inputs = {
@@ -53,43 +55,6 @@ const RiderAccountsform = ({ view, res }: props) => {
     console.log({ RiderSingleList }, 'PP')
 
 
-    const OpenAccountModal = useCallback(() => {
-        setOpen(true)
-    }, [open])
-
-    const OpenLogModal = useCallback((data: any) => {
-        setdateSelect(data)
-        setOpenLog(true)
-    }, [openLog])
-
-
-    const vendorEarningSelect = (item: any) => {
-        let result = vendorEarningList?.filter((res: any) => item?.includes(res?._id))
-        let totalPrice = result.reduce((accumulator: any, total: any) => accumulator + parseInt(total.payout), 0);
-        setSelectChecked(result)
-        setTotal(totalPrice)
-    }
-
-    const viewRider = useCallback(async () => {
-        try {
-            setLoading(true)
-            const res = await fetchData(`admin/rider-account/show/${idd}`);
-            console.log({ res }, 'kkk')
-            setRiderSinglelist(res?.data?.data)
-
-            setLoading(false)
-        } catch (err: any) {
-            setLoading(false)
-        }
-    }, [idd])
-
-
-    useEffect(() => {
-        if (idd) {
-            viewRider();
-
-        }
-    }, [idd])
 
 
     const columns: GridColDef[] = [
@@ -251,14 +216,67 @@ const RiderAccountsform = ({ view, res }: props) => {
             },
         });
 
+    const OpenAccountModal = useCallback(() => {
+        setOpen(true)
+    }, [open])
 
+
+
+    const vendorEarningSelect = (item: any) => {
+        let result = vendorEarningList?.filter((res: any) => item?.includes(res?._id))
+        let totalPrice = result.reduce((accumulator: any, total: any) => accumulator + parseInt(total.payout), 0);
+        setSelectChecked(result)
+        setTotal(totalPrice)
+    }
+
+    const viewRider = useCallback(async () => {
+        try {
+            setLoading(true)
+            const res = await fetchData(`admin/rider-account/show/${idd}`);
+            setRiderSinglelist(res?.data?.data)
+            setLoading(false)
+        } catch (err: any) {
+            setLoading(false)
+        }
+    }, [idd])
+
+
+    useEffect(() => {
+        if (idd) {
+            viewRider();
+
+        }
+    }, [idd])
+
+
+    const onCloseAccount = useCallback(() => {
+        setOpen(false)
+
+        viewRider()
+    }, [open])
+
+
+    const onCloseLogModal = useCallback(() => {
+        setOpenLog(false)
+        setdateSelect('')
+    }, [openLog])
+
+
+    const OpenLogModal = useCallback((data: any) => {
+        setdateSelect(data)
+        setOpenLog(true)
+    }, [openLog])
+
+    // if (!RiderSingleList) {
+    //     return <><Spinner /></>
+    // }
 
     return (
         <Box>
             <CustomBox title='Rider Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={3}>
-                    <CustomInput
+                        <CustomInput
                             type='text'
                             control={control}
                             error={errors.name}
@@ -310,9 +328,6 @@ const RiderAccountsform = ({ view, res }: props) => {
                     </Grid>
                 </Grid>
             </CustomBox>
-
-
-
             <CustomBox title='Rider  Earnings'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={1.5}>
@@ -357,18 +372,7 @@ const RiderAccountsform = ({ view, res }: props) => {
                 </Box>
             </CustomBox>
             <CustomBox title='Deductions'>
-                <Grid item xs={12} lg={1.5}>
-                    <Typography mb={3}></Typography>
-                    <Custombutton label='Settle Payment'
-                        btncolor='#F71C1C'
-                        onClick={OpenAccountModal}
-                        endIcon={false}
-                        startIcon={false}
-                        IconStart={''}
-                        IconEnd={''}
-                        height={''}
-                    />
-                </Grid>
+
                 <Box py={3}>
                     <CustomTable
                         dashboard={false}
@@ -396,6 +400,19 @@ const RiderAccountsform = ({ view, res }: props) => {
                     <CustomTable dashboard={false} columns={column3} rows={vendorSettlementList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </CustomBox>
+            {open && <AmountSettlementModal
+                onClose={onCloseAccount}
+                open={open}
+                price={total}
+                data={selectChecked}
+                id={idd}
+                setVendorSinglelist={setVendorSinglelist}
+                viewRider={viewRider}
+                setTotal={setTotal}
+
+
+            />}
+            {openLog && <RiderLogsModal onClose={onCloseLogModal} open={openLog} id={idd} date={dateSelect} />}
         </Box>
     )
 }

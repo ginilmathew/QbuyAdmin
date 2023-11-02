@@ -1,7 +1,7 @@
 
 import { Box, Stack, Typography } from '@mui/material'
 import React, { useEffect, useState, useCallback, useTransition } from 'react'
-import {GridColDef} from '@mui/x-data-grid';
+import { GridColDef } from '@mui/x-data-grid';
 import { useRouter } from 'next/router';
 import { fetchData, postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
@@ -119,6 +119,7 @@ const VendorSignup = () => {
             align: 'center',
 
         },
+
         {
             field: 'display_order',
             headerName: 'Order',

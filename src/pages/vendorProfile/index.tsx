@@ -94,6 +94,14 @@ const VendorProfile = () => {
       align: 'center',
     },
     {
+      field: 'account_type',
+      headerName: 'Account Type',
+      flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+
+    },
+    {
       field: 'display_order',
       headerName: 'Order',
       flex: 1,
