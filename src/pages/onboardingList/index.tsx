@@ -1,59 +1,83 @@
-import CustomTableHeader from '@/Widgets/CustomTableHeader'
-import { Box } from '@mui/system'
-import { useRouter } from 'next/router'
-import React from 'react'
-import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import CustomTable from '@/components/CustomTable';
-import { Stack } from '@mui/material';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 
+import { Box } from '@mui/material'
+import React, { useState, useEffect, useCallback, useTransition } from 'react'
+import { Stack, Typography } from '@mui/material';
+import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import moment from 'moment'
+import { useRouter } from 'next/router';
+import { fetchData } from '@/CustomAxios';
+import { toast } from 'react-toastify';
+import useSWR from 'swr';
+import dynamic from 'next/dynamic';
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
+const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
+const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
+const DeleteOutlineTwoToneIcon = dynamic(() => import('@mui/icons-material/DeleteOutlineTwoTone'), { ssr: false });
+const CustomDelete = dynamic(() => import('@/Widgets/CustomDelete'), { ssr: false });
+
+const fetcher = (url: any) => fetchData(url).then((res) => res);
 
 const OnBoardingList = () => {
+    const { data, error, isLoading, mutate } = useSWR(`admin/onboarding/list`, fetcher);
     const router = useRouter()
+    const [riderData, setRiderData] = useState([]);
+    const [pending, startTransition] = useTransition();
+  
+
+    useEffect(() => {
+        if (data?.data?.data) {
+            setRiderData(data?.data?.data);
+            console.log("Rider Data:", data?.data?.data); 
+        }
+    }, [data?.data?.data]);
+    
+    const editRider = (id: any) => {
+        router.push(`/onboardingList/edit/${id}`)
+    }
+    const viewRider = (id: any) => {
+        router.push(`/onboardingList/view/${id}`)
+    }
 
     const columns: GridColDef[] = [
-
-        { field: 'Rider ID', headerName: 'Rider ID', flex: 1, },
+        { field: 'rider_id', headerName: 'Rider ID', flex: 1 },
         {
-            field: 'Rider Name',
+            field: 'name',
             headerName: 'Rider Name',
             flex: 1,
         },
         {
-            field: 'Contact No.',
+            field: 'mobile',
             headerName: 'Contact No.',
             flex: 1,
         },
         {
-            field: 'Franchise',
+            field: 'franchise_name',
             headerName: 'Franchise',
             flex: 1,
-
+            valueGetter: (params) => params?.row?.primary_franchise?.franchise_name,
         },
         {
-            field: 'City',
+            field: 'city',
             headerName: 'City',
             flex: 1,
-
         },
         {
-            field: 'PAN',
+            field: 'pan_card_number',
             headerName: 'PAN',
             flex: 1,
-
+            valueGetter: (params) => params?.row?.kyc_details?.pan_card_number, 
         },
+        
         {
-            field: 'Vehicle No.',
+            field: 'vehicle_number',
             headerName: 'Vehicle No.',
             flex: 1,
-
         },
         {
-            field: 'Onboarding status',
+            field: 'status',
             headerName: 'Onboarding status',
             flex: 1,
-
         },
         {
             field: 'Action',
@@ -64,43 +88,59 @@ const OnBoardingList = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }} />
-                    <BorderColorTwoToneIcon
-
+                    onClick={() => viewRider(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
                         }}
                     />
-
+                    <BorderColorTwoToneIcon
+                            onClick={() => editRider(row?._id)}
+                        style={{
+                            color: '#58D36E',
+                            cursor: 'pointer'
+                        }}
+                    />
                 </Stack>
-            )
+            ),
         }
     ];
+    
+   
+    const searchProducts = useCallback((value: any) => {
+        let Results = data?.data?.data?.filter((com: any) =>
+            com?.rider_id.toString().includes(value) ||
+            com?.mobile.toString().includes(value) 
+        );
 
-    const rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-    ];
+        startTransition(() => {
+            setRiderData(Results);
+        });
+    }, [riderData]);
 
+
+    
+  if(isLoading){
+    <Box px={5} py={2} pt={10} mt={0}>
+            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
+                <CustomTableHeader  addbtn={false} imprtBtn={false} Headerlabel='Riders'  onClick={() => null} />
+                <Box py={5}>
+                    <CustomTable dashboard={false} columns={columns} rows={[]} loading={true} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                </Box>
+            </Box>
+        </Box>
+  }
+  if (error) {
+    toast.error(error?.message);
+}
     return (
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader imprtBtn={false} Headerlabel='Riders' onClick={() => null} addbtn={true} />
+                <CustomTableHeader setState={searchProducts}  imprtBtn={false} Headerlabel='Riders' onClick={() => null} addbtn={true} />
                 <Box py={5}>
-                    <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                <CustomTable dashboard={false} columns={columns} rows={riderData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+
                 </Box>
             </Box>
         </Box>

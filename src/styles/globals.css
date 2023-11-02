@@ -208,6 +208,27 @@ a {
     opacity: 0;
   }
 }
+
+    .completed-order {
+        background-color: rgb(239, 176, 14);
+        color: white;
+    }
+
+    .pending-order{
+      background-color: #787f79;
+        color: white;
+    }
+
+    .cancelled-order{
+      background-color: red;
+        color: white;
+    }
+    
+    .created-order{
+      background-color: green;
+        color: white;
+    }
+    
 .active-status {
 
   color:green;
