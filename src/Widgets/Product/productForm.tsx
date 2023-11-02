@@ -499,14 +499,7 @@ console.log(idd);
 
 
     const onSelectStore = (e: React.ChangeEvent<HTMLInputElement>) => {
-<<<<<<< HEAD
-        const vendor=vendorList?.start_name;
-        console.log(vendor);
-        
-        setvendorSelect(e.target.value)
-=======
         setvendorSelect(e.target.value)   
->>>>>>> syami_1_11
         let result = vendorList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
             {
                 commision: get?.additional_details ? get?.additional_details.commission : 0,
@@ -524,8 +517,8 @@ console.log(idd);
         console.log(findresult);
         
         console.log(findresult?.approved_by)
-       console.log(findresult?.start_time)
-       console.log(findresult?.end_time)
+        console.log(findresult?.start_time)
+        console.log(findresult?.end_time)
 
         
         setVendorListDirection(findresult)
