@@ -32,30 +32,31 @@ type props = {
     open: boolean,
 }
 type Inputs = {
-   
+
     rate: string,
 
 };
 type IFormInput = {
     rate: string,
 }
-
+type RateCardItem = {
+    rate: string;
+    
+  };
+  
 const RateCardTab = ({ res, view, handleClose, open }: props) => {
 
     const idd = res ? res : view;
     const [ratePerOrder, setRatePerOrder] = useState('');
     const router = useRouter();
     const { data, error, isLoading, mutate } = useSWR(`admin/rider-support/ratecard/list/${res}`, fetcher);
-    const [ratecardData, setRateCardData] = useState([]);
     const [pending, startTransition] = useTransition();
     const [loading, setLoading] = useState<boolean>(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [ratecardData, setRateCardData] = useState<RateCardItem[]>([]);
     const currentRate = ratecardData[0]?.rate;
 
 
-    const schema = yup.object().shape({
-        rate: yup.string().required('Rate is required'), 
-      });
 
     const {
         register,
@@ -67,9 +68,8 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
         setError,
         setValue,
     } = useForm({
-        resolver: yupResolver(schema),
         defaultValues: {
-            rate:'',
+            rate: '',
         },
     });
 
@@ -82,7 +82,7 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
         }
     }, [data?.data?.data]);
 
-  
+
 
     const columns: GridColDef[] = [
         {
@@ -112,7 +112,7 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
         try {
             const payload = {
                 rider_id: idd,
-                rate: data['Rate Per Order'],
+                rate: data.rate,
             };
             const response = await postData('admin/rider-support/ratecard/create', payload);
             console.log({ response })
@@ -136,7 +136,6 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
                         <CustomInput
                             type=''
                             control={control}
-                            error={errors.rate}
                             fieldName="Current Rate Per Order"
                             placeholder={currentRate}
                             fieldLabel={"Current Rate Per Order"}
@@ -145,6 +144,7 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
                         />
                     </Grid>
                 </Grid>
+
 
 
                 <Box p={.5} >
@@ -207,7 +207,6 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
                     </Box>
                     <DialogContent>
                         <Grid container>
-
                             <Grid item xs={12} lg={12}>
                                 <CustomInput
                                     type='text'
@@ -219,6 +218,7 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
                                     disabled={false}
                                     defaultValue=""
                                 />
+
                             </Grid>
                         </Grid>
                         <Box py={1} display={'flex'} justifyContent={'center'}>
