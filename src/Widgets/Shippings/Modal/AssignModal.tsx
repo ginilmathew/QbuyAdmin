@@ -45,7 +45,7 @@ const AddProductModal = ({ handleClose, open,franchiseData }: props) => {
     const [loading, setLoading] = useState<boolean>(false);
   
     const schema = yup.object().shape({
-      rider: yup.string().required('Rider Field is Required').typeError("Delivery Location Required"),
+      rider: yup.string().required('Rider field is required').typeError("Rider field is required"),
     });
     
 
@@ -125,7 +125,7 @@ const Submit = async (data: any) => {
 
       if (response.status === 201 || response.status === 200) {
         handleClose(true)
-          toast.success("Rider assignde added");
+          toast.success("Rider Assigned Successfully");
           reset();
 
       } else {
@@ -216,7 +216,7 @@ const Submit = async (data: any) => {
                                 error={errors.rider}
                                 fieldName="rider"
                                 placeholder={``}
-                                fieldLabel={"Rider"}
+                                fieldLabel={"Choose Rider"}
                                 selectvalue={""}
                                 height={40}
                                 label={''}
