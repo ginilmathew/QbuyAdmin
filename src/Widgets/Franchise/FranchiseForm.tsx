@@ -91,8 +91,9 @@ const FranchiseForm = ({ res, view, data }: props) => {
     const commissionvalidation: any = /^\d*\.?\d*$/
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-
-
+   
+    const emailRegExp=/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+     
     const schema = yup
         .object()
         .shape({
@@ -108,7 +109,7 @@ const FranchiseForm = ({ res, view, data }: props) => {
             )
                 // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
                 .required('Owner Name is Required'),
-            email: yup.string().max(30, 'Maximum Character Exceeds').email('Not a valid email').required('Email is Required'),
+            email: yup.string().max(30, 'Maximum Character Exceeds').email('Not a valid email').required('Email is Required').matches(emailRegExp,'Email is not valid'),
             mobile: yup.string().required('Mobile Number is Required').matches(phoneRegExp, 'Mobile number is not valid').min(10, 'Mobile Number must be minimum 10 digit').max(10, 'Mobile number is not valid'),
             //address: yup.string().required('Address is Required'),
             coordinates: yup.array().required("Delivery Location Required").typeError("Delivery Location Required"),

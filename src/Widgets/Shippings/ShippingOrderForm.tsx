@@ -32,7 +32,7 @@ type Inputs = {
     order_type: string,
     payment_address_pickup_address: string,
     shipping_address_delivery_address: string,
-    payment_method: string,
+    payment_type: string,
     order_status: string,
     comment: string;
     order_id: string;
@@ -49,7 +49,7 @@ type props = {
 const ShippingOrderForm = ({ view, res, edit }: props) => {
     const router = useRouter()
 
-    const idd = view ? view : res;
+    const idd = view ? view : res;    
     const [orderhistory, setOrderhistory] = useState<any>()
     const [customerGroupSelect, setCustomerGroupSelect] = useState<string>('')
     const [paymentMethodList, setPaymentMethodList] = useState<any>([
@@ -131,7 +131,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
     const paymentMethodChange = (e: any) => {
         const { value } = e.target;
-        setValue("payment_method", value)
+        setValue("payment_type", value)
         setPaymentMethodSelect(value)
 
     }
@@ -269,7 +269,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             ${orderviewList?.shipaddress?.mobile ? `${'Mob:'}${orderviewList?.shipaddress?.mobile}` : ''}`)
             setPaymentMethodSelect(orderviewList?.payment_type);
             setPaymentStatusSelect(orderviewList?.payment_status);
-            setValue("payment_method", orderviewList.payment_type);
+            setValue("payment_type", orderviewList.payment_type);
             setValue("payment_status", orderviewList?.payment_status);
             SetDeliveryCharge(orderviewList?.delivery_charge)
             setVendorStatusP([...orderviewList?.vendor_status])
@@ -466,8 +466,8 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                             disabled={view ? true : false}
                             type='text'
                             control={control}
-                            error={errors.payment_method}
-                            fieldName="payment_method"
+                            error={errors.payment_type}
+                            fieldName="payment_type"
                             placeholder={``}
                             fieldLabel={"Payment Method"}
                             selectvalue={""}
@@ -529,11 +529,10 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                             placeholder={``}
                             fieldLabel={"Invoice No."}
                             disabled={false}
-                            view={view ? true : false}
+                            view={true}
                             defaultValue={''}
                         />
-
-                    </Grid>
+                   </Grid>
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
@@ -543,7 +542,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                             placeholder={``}
                             fieldLabel={"Reward Points Received"}
                             disabled={false}
-                            view={false}
+                            view={true}
                             defaultValue={''}
                         />
 
