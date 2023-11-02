@@ -8,6 +8,7 @@ import { fetchData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import dynamic from 'next/dynamic';
+import Custombutton from '@/components/Custombutton';
 const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
 const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
 const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
@@ -24,10 +25,10 @@ const DeliveryRiders = () => {
     useEffect(() => {
         if (data?.data?.data) {
             setDeliveryRiderData(data?.data?.data);
-            console.log("RiderData:", data?.data?.data); 
+            console.log("RiderData:", data?.data?.data);
         }
     }, [data?.data?.data]);
-    
+
     const columns: GridColDef[] = [
         {
             field: 'rider_attendance_id',
@@ -42,6 +43,7 @@ const DeliveryRiders = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params.row.rider_details?.name,
         },
         {
             field: 'Contact No.',
@@ -49,6 +51,7 @@ const DeliveryRiders = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params.row.rider_details?.mobile,
         },
 
         {
@@ -65,6 +68,7 @@ const DeliveryRiders = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params.row.rider_details?.city,
 
         },
         {
@@ -73,33 +77,47 @@ const DeliveryRiders = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params.row.rider_details?.status,
 
         },
         {
-            field: 'Logout',
+            field: 'Action',
             headerName: 'Logout',
-            flex: 1,
+            width: 200,
             headerAlign: 'center',
             align: 'center',
-
-        },
-       
+            renderCell: ({ row }) => (
+                <Stack alignItems={'center'} gap={1} direction={'row'}>
+                    <Custombutton
+                        disabled={false}
+                        btncolor='#f96060'
+                        IconEnd={''}
+                        IconStart={''}
+                        endIcon={false}
+                        startIcon={false}
+                        height={''}
+                        label={"Logout"}
+                        onClick={null}
+                    />
+                </Stack>
+            )
+        }
     ];
 
-    
-  if(isLoading){
-    <Box px={5} py={2} pt={10} mt={0}>
+
+    if (isLoading) {
+        <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader  addbtn={false} imprtBtn={false} Headerlabel='Riders'  onClick={() => null} />
+                <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Riders' onClick={() => null} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={[]} loading={true} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
         </Box>
-  }
-  if (error) {
-    toast.error(error?.message);
-} 
+    }
+    if (error) {
+        toast.error(error?.message);
+    }
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>

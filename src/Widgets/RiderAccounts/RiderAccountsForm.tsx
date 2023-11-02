@@ -36,7 +36,7 @@ type props = {
 };
 const RiderAccountsform = ({ view, res }: props) => {
     const idd = view ? view : res;
-    console.log(idd);
+
     const router = useRouter()
 
     const [loading, setLoading] = useState<boolean>(false);
@@ -208,12 +208,7 @@ const RiderAccountsform = ({ view, res }: props) => {
         setError,
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
-            defaultValues: {
-                name: RiderSingleList?.name || '', // Set default value from API response
-                mobile: RiderSingleList?.mobile || '', // Set default value from API response
-                email: RiderSingleList?.email || '', // Set default value from API response
-                franchise: '', // Add other default values here
-            },
+
         });
 
     const OpenAccountModal = useCallback(() => {
@@ -233,12 +228,25 @@ const RiderAccountsform = ({ view, res }: props) => {
         try {
             setLoading(true)
             const res = await fetchData(`admin/rider-account/show/${idd}`);
+
             setRiderSinglelist(res?.data?.data)
             setLoading(false)
         } catch (err: any) {
             setLoading(false)
         }
     }, [idd])
+
+
+    useEffect(() => {
+
+        if (RiderSingleList) {
+            setValue('name', RiderSingleList?.name);
+            setValue('vendor_email', RiderSingleList?.vendor_email);
+            setValue('mobile', RiderSingleList?.mobile);
+
+
+        }
+    }, [RiderSingleList])
 
 
     useEffect(() => {
@@ -331,16 +339,16 @@ const RiderAccountsform = ({ view, res }: props) => {
             <CustomBox title='Rider  Earnings'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Orders' text={vendorSingleList?.order_count} color='#1675C8' />
+                        <CustomViewInput fieldLabel='Total Orders' text={RiderSingleList?.order_count} color='#1675C8' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Earnings' text={vendorSingleList?.total_earnings} color='#2EA10C' />
+                        <CustomViewInput fieldLabel='Total Earnings' text={RiderSingleList?.total_earnings} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Deduction' text={vendorSingleList?.promotion_cost} color='#FF7B7B' />
+                        <CustomViewInput fieldLabel='Deduction' text={RiderSingleList?.deduction} color='#FF7B7B' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Payable' text={vendorSingleList?.total_outstanding} color='#2EA10C' />
+                        <CustomViewInput fieldLabel='Total Payable' text={RiderSingleList?.total_payable} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
                         <Typography mb={3}></Typography>
