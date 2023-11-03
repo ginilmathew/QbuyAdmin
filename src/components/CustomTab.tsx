@@ -3,16 +3,16 @@ import RiderSupportform from '@/Widgets/RiderSupport/RiderSupportForm';
 import { useRouter } from 'next/router';
 import ShipmentSupport from '@/pages/shipmenttab';
 import RateCardTab from '@/pages/RateCradTab';
+import WorkDetailsTab from '@/pages/WorkDetailsTab';
+
 const Tabs = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const router = useRouter();
   const { id } = router.query;
-  // Define open and handleClose functions
   const [open, setOpen] = useState(false);
   const handleClose = () => {
     setOpen(false);
   };
-
 
   const handleTabClick = (tabName: string) => {
     setActiveTab(tabName);
@@ -22,69 +22,52 @@ const Tabs = () => {
     <div>
       <ul>
         <li
-          className={activeTab === 'profile' ? 'active' : ''}
+          className={`tab-item ${activeTab === 'profile' ? 'active' : ''}`}
           onClick={() => handleTabClick('profile')}
-          style={{
-            cursor: 'pointer',
-            padding: '10px 20px',
-            backgroundColor: '#f0f0f0',
-            marginRight: '5px',
-            border: '1px solid #ccc',
-          }}
         >
           Profile
         </li>
         <li
-          className={activeTab === 'shipments' ? 'active' : ''}
+          className={`tab-item ${activeTab === 'shipments' ? 'active' : ''}`}
           onClick={() => handleTabClick('shipments')}
-          style={{
-            cursor: 'pointer',
-            padding: '10px 20px',
-            backgroundColor: '#f0f0f0',
-            marginRight: '5px',
-            border: '1px solid #ccc',
-          }}
         >
           Shipments
         </li>
         <li
-          className={activeTab === 'fraud' ? 'active' : ''}
+          className={`tab-item ${activeTab === 'fraud' ? 'active' : ''}`}
           onClick={() => handleTabClick('fraud')}
-          style={{
-            cursor: 'pointer',
-            padding: '10px 20px',
-            backgroundColor: '#f0f0f0',
-            marginRight: '5px',
-            border: '1px solid #ccc',
-          }}
         >
           Fraud
         </li>
         <li
-          className={activeTab === 'tickets' ? 'active' : ''}
+          className={`tab-item ${activeTab === 'tickets' ? 'active' : ''}`}
           onClick={() => handleTabClick('tickets')}
-          style={{
-            cursor: 'pointer',
-            padding: '10px 20px',
-            backgroundColor: '#f0f0f0',
-            marginRight: '5px',
-            border: '1px solid #ccc',
-          }}
         >
           Tickets
         </li>
         <li
-          className={activeTab === 'ratecard' ? 'active' : ''}
+          className={`tab-item ${activeTab === 'payout' ? 'active' : ''}`}
+          onClick={() => handleTabClick('payout')}
+        >
+          Payout
+        </li>
+        <li
+          className={`tab-item ${activeTab === 'cash' ? 'active' : ''}`}
+          onClick={() => handleTabClick('cash')}
+        >
+          Cash in Hand
+        </li>
+        <li
+          className={`tab-item ${activeTab === 'ratecard' ? 'active' : ''}`}
           onClick={() => handleTabClick('ratecard')}
-          style={{
-            cursor: 'pointer',
-            padding: '10px 20px',
-            backgroundColor: '#f0f0f0',
-            marginRight: '5px',
-            border: '1px solid #ccc',
-          }}
         >
           Rate Card
+        </li>
+        <li
+          className={`tab-item ${activeTab === 'workdetails' ? 'active' : ''}`}
+          onClick={() => handleTabClick('workdetails')}
+        >
+          Work Details
         </li>
       </ul>
 
@@ -93,32 +76,48 @@ const Tabs = () => {
         {activeTab === 'shipments' && <ShipmentSupport res={id} />}
         {activeTab === 'fraud' && <div>Fraud content</div>}
         {activeTab === 'tickets' && <div>Tickets content</div>}
+        {activeTab === 'payout' && <div>Payout</div>}
+        {activeTab === 'cash' && <div>Cash in Hand</div>}
+        {activeTab === 'workdetails' && <WorkDetailsTab res={id} />}
         {activeTab === 'ratecard' && (
           <div>
-            <h3 style={{ marginLeft: '40px' }}>Rate Log</h3>
+            <h3>Rate Log</h3>
             <RateCardTab res={id} handleClose={handleClose} open={open} />
           </div>
         )}
-
-
-
+           {activeTab === 'reservations' && <div>Reservations</div>}
       </div>
 
+
       <style jsx>{`
-        ul {
-          list-style: none;
-          display: flex;
-        }
+  ul {
+    list-style: none;
+    display: flex;
+    gap: 10px; 
+  }
 
-        li.active {
-          background-color: #0070f3;
-          color: white;
-        }
+  .tab-item {
+    padding: 10px 20px;
+    margin-right: 5px;
+    border: 1px solid #58D36E;
+    background-color: #fff;
+    color: #000;
+    cursor: pointer;
+    border-radius: 15px;
+    font: normal 18px/27px Poppins; 
+    letter-spacing: 0px;
+  }
 
-        .tab-content {
-          margin-top: 20px;
-        }
-      `}</style>
+  .tab-item.active {
+    background-color: #58D36E;
+    color: #fff;
+  }
+
+  .tab-content {
+    margin-top: 20px;
+  }
+`}</style>
+
     </div>
   );
 };

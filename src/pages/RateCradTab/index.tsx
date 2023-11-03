@@ -33,17 +33,18 @@ type props = {
 }
 type Inputs = {
 
-    rate: string,
+    rate: any,
 
 };
 type IFormInput = {
-    rate: string,
+    rate: any,
 }
 type RateCardItem = {
     rate: string;
-    
+
   };
   
+
 const RateCardTab = ({ res, view, handleClose, open }: props) => {
 
     const idd = res ? res : view;
@@ -57,7 +58,11 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
     const currentRate = ratecardData[0]?.rate;
 
 
-
+    const schema = yup.object().shape({
+        // rate: yup
+        //     .string()
+        //     .required('Rate Per Order is required'), 
+    });
     const {
         register,
         handleSubmit,
@@ -67,11 +72,16 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
         getValues,
         setError,
         setValue,
-    } = useForm({
+    } = useForm<Inputs>({
+        resolver: yupResolver(schema),
         defaultValues: {
             rate: '',
         },
-    });
+      
+    }
+   
+    );
+    console.log({errors})
 
 
 
@@ -112,7 +122,7 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
         try {
             const payload = {
                 rider_id: idd,
-                rate: data.rate,
+                rate: data['Rate Per Order'],
             };
             const response = await postData('admin/rider-support/ratecard/create', payload);
             console.log({ response })
@@ -144,7 +154,6 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
                         />
                     </Grid>
                 </Grid>
-
 
 
                 <Box p={.5} >
@@ -218,7 +227,6 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
                                     disabled={false}
                                     defaultValue=""
                                 />
-
                             </Grid>
                         </Grid>
                         <Box py={1} display={'flex'} justifyContent={'center'}>
