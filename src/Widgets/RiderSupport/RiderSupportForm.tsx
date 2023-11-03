@@ -42,7 +42,7 @@ type Inputs = {
     branch: string;
     account_name: string;
     franchise_id: string;
-    status: string;
+    //status: string;
     image: any,
 
 
@@ -70,7 +70,7 @@ type IFormInput = {
     account_number: string;
     branch: string;
     account_name: string;
-    status: string;
+    //status: string;
     franchise_id: string;
     image: any,
 
@@ -111,7 +111,7 @@ const RiderSupportform = ({ res, view }: props) => {
     const [selectedFranchisees, setSelectedFranchisees] = useState<string[]>(['']);
     const [selectedFranchiseName, setSelectedFranchiseName] = useState("");
     const [selectedFranchiseNames, setSelectedFranchiseNames] = useState<string[]>([]);
-    const [statusSelect, setStatusSelect] = useState<any>(null)
+   // const [statusSelect, setStatusSelect] = useState<any>(null)
 
 
 
@@ -171,7 +171,7 @@ const RiderSupportform = ({ res, view }: props) => {
                 account_number: '',
                 branch: '',
                 account_name: '',
-                status: '',
+               // status: '',
                 franchise_id: '',
             }
         });
@@ -183,12 +183,12 @@ const RiderSupportform = ({ res, view }: props) => {
         { value: 'other', name: 'Other' },
     ];
 
-    const [statusChange, setStatusChange] = useState<any>(
-        [
-            { value: 'online', name: 'online' },
-            { value: 'offline', name: 'offline' },
-            { value: 'logged out', name: 'logged out' }
-        ])
+    // const [statusChange, setStatusChange] = useState<any>(
+    //     [
+    //         { value: 'online', name: 'online' },
+    //         { value: 'offline', name: 'offline' },
+    //         { value: 'logged out', name: 'logged out' }
+    //     ])
 
 
     const onChangeSelect = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
@@ -196,10 +196,10 @@ const RiderSupportform = ({ res, view }: props) => {
         setValue('gender', e.target.value as string);
     };
 
-    const ChangeStatus = useCallback((e: any) => {
-        const { value } = e.target;
-        setStatusSelect(value)
-    }, [])
+    // const ChangeStatus = useCallback((e: any) => {
+    //     const { value } = e.target;
+    //     setStatusSelect(value)
+    // }, [])
 
     const addMoreFranchisee = () => {
         setSelectedFranchisees([...selectedFranchisees, '']);
@@ -276,7 +276,7 @@ const RiderSupportform = ({ res, view }: props) => {
             setValue('franchise_name', subOnboardingList?.primary_franchise?.franchise_name);
             setValue('franchise_id', subOnboardingList?.secondary_franchise?.franchise_id);
             setValue('franchise_name', subOnboardingList?.secondary_franchise?.franchise_name);
-            setStatusSelect(subOnboardingList?.status || '');
+            //setStatusSelect(subOnboardingList?.status || '');
 
         }
     }, [subOnboardingList, idd]);
@@ -316,7 +316,7 @@ const RiderSupportform = ({ res, view }: props) => {
 
     const onSubmit = async (data: IFormInput) => {
         setLoading(true);
-        data.status = statusSelect;
+        //data.status = statusSelect;
 
         try {
             const formData = new FormData();
@@ -329,7 +329,7 @@ const RiderSupportform = ({ res, view }: props) => {
             formData.append("emergency_contact", data.emergency_contact);
             formData.append("city", data.city);
             formData.append("vehicle_number", data.vehicle_number);
-            formData.append("online_status", data.status);
+            //formData.append("online_status", data.status);
 
 
             const kycDetails = {
@@ -705,11 +705,7 @@ const RiderSupportform = ({ res, view }: props) => {
 
                 </CustomBox>
 
-                <Box py={2}>
-                    <Divider />
-
-                </Box>
-                <Grid container spacing={2}>
+                {/* <Grid container spacing={2}>
                     <Grid item lg={2} md={2} xs={12}>
                         <Customselect
                             disabled={view ? true : false}
@@ -736,7 +732,7 @@ const RiderSupportform = ({ res, view }: props) => {
                             ))}
                         </Customselect>
                     </Grid>
-                </Grid>
+                </Grid> */}
 
 
             </CustomBox>

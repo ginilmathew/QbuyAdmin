@@ -10,6 +10,7 @@ import { fetchData, postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
+import { useRouter } from 'next/router';
 
 
 type FormInputs = {
@@ -26,6 +27,7 @@ type FormInputs = {
     ifsc: string;
     branch: string;
     account_name: string;
+    boot_cash_limit: string;
 };
 
 const RiderOnBoarding = () => {
@@ -36,7 +38,6 @@ const RiderOnBoarding = () => {
             .required("Mobile Number is required")
             .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
         emergency_contact: yup.string()
-            .required("Emergency Contact is required")
             .matches(/^[0-9]{10}$/, "Emergency Contact must be 10 digits long and contain only numeric characters"),
         gender: yup.string().required("Gender is required"),
         aadhar_card_number: yup.string()
@@ -47,15 +48,15 @@ const RiderOnBoarding = () => {
             .max(13, "Account Number should not exceed 13 characters"),
         account_name: yup.string().matches(/^[A-Za-z]+$/, "Account Name should contain only characters"),
     });
-    
+
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [type, settype] = useState<string>("");
     const [loading, setLoading] = useState(false)
     const [imagePreview, setImagePreview] = useState<any>(null)
+    const router = useRouter();
 
 
-        
     const {
         register,
         handleSubmit,
@@ -67,16 +68,16 @@ const RiderOnBoarding = () => {
     } = useForm<FormInputs>({
         resolver: yupResolver(schema),
     });
-    
+
 
     // const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     //     settype(e.target.value);
     // }
     const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         settype(e.target.value);
-        setValue('gender', e.target.value); 
+        setValue('gender', e.target.value);
     }
-    
+
 
     const imageUploder = (file: any) => {
         if (file.size <= 1000000) {
@@ -117,6 +118,7 @@ const RiderOnBoarding = () => {
             formData.append('mobile', data.mobile);
             formData.append('emergency_contact', data.emergency_contact);
             formData.append('gender', type);
+            formData.append('boot_cash_limit', data.boot_cash_limit);
             if (imagefile) {
                 formData.append("image", data?.image);
             }
@@ -143,6 +145,7 @@ const RiderOnBoarding = () => {
 
                 toast.success("Rider successfully added");
                 reset();
+                router.push("/onboardingList");
             } else {
 
                 toast.error("Failed");
@@ -368,6 +371,23 @@ const RiderOnBoarding = () => {
                             disabled={false}
                             view={false}
                             defaultValue={''}
+                        />
+                    </Grid>
+                    <Box my={3}>
+                        <Divider />
+                    </Box>
+                   
+                    <Grid item xs={11} lg={3}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.boot_cash_limit}
+                            fieldName="boot_cash_limit"
+                            placeholder={``}
+                            fieldLabel={"Boot Cash Limit"}
+                            disabled={false}
+                            view={false}
+
                         />
                     </Grid>
                 </Grid>

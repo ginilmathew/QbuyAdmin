@@ -42,6 +42,7 @@ type Inputs = {
     franchise_id: string;
     status: string;
     image: any,
+    boot_cash_limit:string;
 
 
 };
@@ -68,6 +69,7 @@ type IFormInput = {
     account_name: string;
     status: string;
     franchise_id: string;
+    boot_cash_limit:string;
     image: any,
 
 
@@ -108,24 +110,13 @@ const RiderDetailsform = ({ res, view }: props) => {
     const [isGenderModified, setIsGenderModified] = useState(false);
 
 
-    // const schema = yup.object().shape({
-    //     name: yup.string().required("Rider Name is required"),
-    //     mobile: yup.string()
-    //     .required("Mobile Number is required")
-    //     .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
-    //     emergency_contact: yup.string()
-    //     .required("Mobile Number is required")
-    //     .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
-    //     gender: yup.string().required("Gender is required"),
-
-    // });
+    
     const schema = yup.object().shape({
         name: yup.string().matches(/^[A-Za-z]+$/, "Rider Name should contain only characters").required("Rider Name is required"),
         mobile: yup.string()
             .required("Mobile Number is required")
             .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
         emergency_contact: yup.string()
-            .required("Emergency Contact is required")
             .matches(/^[0-9]{10}$/, "Emergency Contact must be 10 digits long and contain only numeric characters"),
         // gender: yup.string().required("Gender is required"),
         aadhar_card_number: yup.string()
@@ -136,7 +127,7 @@ const RiderDetailsform = ({ res, view }: props) => {
             .max(13, "Account Number should not exceed 13 characters"),
         account_name: yup.string().matches(/^[A-Za-z]+$/, "Account Name should contain only characters"),
     });
-
+  
 
     const { register,
         handleSubmit,
@@ -164,6 +155,7 @@ const RiderDetailsform = ({ res, view }: props) => {
                 account_name: '',
                 status: '',
                 franchise_id: '',
+                boot_cash_limit: '',
             }
         });
 
@@ -249,6 +241,7 @@ const RiderDetailsform = ({ res, view }: props) => {
             setValue('mobile', subOnboardingList?.mobile);
             setValue('emergency_contact', subOnboardingList?.emergency_contact);
             setValue('city', subOnboardingList?.city);
+            setValue('boot_cash_limit', subOnboardingList?.boot_cash_limit);
             setValue('vehicle_number', subOnboardingList?.vehicle_number);
             setValue('aadhar_card_number', subOnboardingList?.kyc_details?.aadhar_card_number);
             setValue('ifsc', subOnboardingList?.bank_account_details?.ifsc);
@@ -736,6 +729,19 @@ const RiderDetailsform = ({ res, view }: props) => {
                     </Grid>
                 </Grid> */}
                 <Grid container spacing={2}>
+                <Grid item xs={11} lg={3}>
+                            <CustomInput
+                                type='text'
+                                control={control}
+                                error={errors.boot_cash_limit}
+                                fieldName="boot_cash_limit"
+                                placeholder={``}
+                                fieldLabel={"Boot Cash Limit"}
+                                disabled={false}
+                                view={view ? true : false}
+
+                            />
+                        </Grid>
                     <Grid item lg={2} md={2} xs={12}>
                         <Customselect
                             disabled={view ? true : false}
