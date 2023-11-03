@@ -225,10 +225,15 @@ const RiderDetailsform = ({ res, view }: props) => {
         }
     };
 
-
     useEffect(() => {
-        getOnboardingList()
-    }, [])
+        getdatas()
+    }, []);
+
+    const getdatas = async() => {
+        await fetchFranchiseList();
+        await getOnboardingList();
+    }
+
 
     const getOnboardingList = async () => {
         try {
@@ -245,25 +250,50 @@ const RiderDetailsform = ({ res, view }: props) => {
 
     useEffect(() => {
         if (subOnboardingList && idd) {
-            setValue('name', subOnboardingList?.name);
-            setValue('mobile', subOnboardingList?.mobile);
-            setValue('emergency_contact', subOnboardingList?.emergency_contact);
-            setValue('city', subOnboardingList?.city);
-            setValue('vehicle_number', subOnboardingList?.vehicle_number);
-            setValue('aadhar_card_number', subOnboardingList?.kyc_details?.aadhar_card_number);
-            setValue('ifsc', subOnboardingList?.bank_account_details?.ifsc);
-            setValue('driving_license', subOnboardingList?.kyc_details?.driving_license);
-            setValue('pan_card_number', subOnboardingList?.kyc_details?.pan_card_number);
-            setValue('rc_book_number', subOnboardingList?.kyc_details?.rc_book_number);
-            setValue('account_number', subOnboardingList?.bank_account_details?.account_number)
-            setValue('branch', subOnboardingList?.bank_account_details?.branch);
-            setValue('account_name', subOnboardingList?.bank_account_details?.account_name);
+
+            let data = {
+                name: subOnboardingList?.name,
+                mobile: subOnboardingList?.mobile,
+                gender: subOnboardingList?.gender,
+                emergency_contact: subOnboardingList?.emergency_contact,
+                city: subOnboardingList?.city,
+                vehicle_number: subOnboardingList?.vehicle_number,
+                aadhar_card_number: subOnboardingList?.kyc_details?.aadhar_card_number,
+                franchise_name: '',
+                ifsc: subOnboardingList?.bank_account_details?.ifsc,
+                driving_license: subOnboardingList?.kyc_details?.driving_license,
+                pan_card_number: subOnboardingList?.kyc_details?.pan_card_number,
+                rc_book_number: subOnboardingList?.kyc_details?.rc_book_number,
+                account_number: subOnboardingList?.bank_account_details?.account_number,
+                branch: subOnboardingList?.bank_account_details?.branch,
+                account_name: subOnboardingList?.bank_account_details?.account_name,
+                status: subOnboardingList?.status,
+                franchise_id: subOnboardingList?.primary_franchise?.franchise_id,
+            }
+
+            
+
+
+            // setValue('name', subOnboardingList?.name);
+            // setValue('mobile', subOnboardingList?.mobile);
+            // setValue('emergency_contact', subOnboardingList?.emergency_contact);
+            // setValue('city', subOnboardingList?.city);
+            // setValue('vehicle_number', subOnboardingList?.vehicle_number);
+            // setValue('aadhar_card_number', subOnboardingList?.kyc_details?.aadhar_card_number);
+            // setValue('ifsc', subOnboardingList?.bank_account_details?.ifsc);
+            // setValue('driving_license', subOnboardingList?.kyc_details?.driving_license);
+            // setValue('pan_card_number', subOnboardingList?.kyc_details?.pan_card_number);
+            // setValue('rc_book_number', subOnboardingList?.kyc_details?.rc_book_number);
+            // setValue('account_number', subOnboardingList?.bank_account_details?.account_number)
+            // setValue('branch', subOnboardingList?.bank_account_details?.branch);
+            // setValue('account_name', subOnboardingList?.bank_account_details?.account_name);
             setImagePreview(`${IMAGE_URL}${subOnboardingList?.image}`)
             setSelectedGender(subOnboardingList?.gender);
             setSelectedValue(subOnboardingList?.primary_franchise?.franchise_id || '');
-            setValue('franchise_id', subOnboardingList?.primary_franchise?.franchise_id);
-            setValue('franchise_name', subOnboardingList?.primary_franchise?.franchise_name);
+            // setValue('franchise_id', subOnboardingList?.primary_franchise?.franchise_id);
+            // setValue('franchise_name', subOnboardingList?.primary_franchise?.franchise_name);
             setStatusSelect(subOnboardingList?.status || '');
+            reset(data);
         }
     }, [subOnboardingList, idd]);
 
@@ -289,16 +319,18 @@ const RiderDetailsform = ({ res, view }: props) => {
             const franchiseListData = response.data.data;
             console.log("Franchise List API Response:", franchiseListData);
             setFranchiseList(franchiseListData);
+            if (subOnboardingList && idd) {
+                console.log("in", subOnboardingList)
+                setSelectedValue(subOnboardingList?.primary_franchise?.franchise_id);
+            }
+
         } catch (error) {
             console.error("Failed to fetch franchise list:", error);
             toast.error("Failed to fetch franchise list");
         }
     };
 
-    useEffect(() => {
-
-        fetchFranchiseList();
-    }, []);
+    
 
 
 

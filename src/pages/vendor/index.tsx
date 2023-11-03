@@ -128,7 +128,19 @@ const VendorSignup = () => {
             align: 'center',
 
         },
+        {
+            field: 'account_type',
+            headerName: 'Account Type',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            renderCell: ({ row }) => (
+                <Stack>
+                    <Typography variant="body1"  fontSize={14} letterSpacing={.5} >{row?.account_type}</Typography>
+                </Stack>
+            )
 
+        },
         // {
         //     field: 'delivery_location',
         //     headerName: 'Location',
@@ -150,6 +162,7 @@ const VendorSignup = () => {
             )
 
         },
+        
         // {
         //     field: 'status',
         //     headerName: 'Status',

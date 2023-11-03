@@ -87,6 +87,7 @@ const Customselect = ({
                         onBlur={onBlur}
                         value={value}
                         label={label}
+                        defaultValue={value}
                         IconComponent={() => (
                             <>
                                 {!disabled &&
