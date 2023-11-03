@@ -222,8 +222,11 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             setError('quantity', { message: 'Quantity is Required' })
             return false;
         }
-
-
+        else {
+            setError('quantity',{message:""})
+        }
+      
+        
         let stock = selectProduct?.stock;
 
         if (selectProduct?.available) {

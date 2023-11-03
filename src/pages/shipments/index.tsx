@@ -54,6 +54,7 @@ const Shipments = () => {
     }
    
     const openAssignModal= useCallback((row:any)=>{
+console.log("kk");
 
         setfranchiseData(row)
 
@@ -75,23 +76,8 @@ const Shipments = () => {
             headerAlign: 'center',
             align: 'center',
             width: matches ? 180 : 200,
-            cellClassName: (params) => {
-                if (params.row.payment_status === 'completed') {
-                    
-                    return 'completed-order';
-                }
-                else if(params.row.payment_status === 'pending'){
-                    return 'pending-order'
-                }
-                else if(params.row.payment_status === 'cancelled')
-                {
-                    return 'cancelled-order'
-                }
-                else if(params.row.payment_status === 'created'   ){
-                    return 'created-order'
-                }
-                return ''; 
-            }
+     
+         
         
         },
         {
@@ -101,23 +87,7 @@ const Shipments = () => {
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => (moment(params?.row?.created_at).format('DD/MM/YYYY hh:mm A')),
-            cellClassName: (params) => {
-                if (params.row.payment_status === 'completed') {
-                    
-                    return 'completed-order';
-                }
-                else if(params.row.payment_status === 'pending'){
-                    return 'pending-order'
-                }
-                else if(params.row.payment_status === 'cancelled')
-                {
-                    return 'cancelled-order'
-                }
-                else if(params.row.payment_status === 'created'   ){
-                    return 'created-order'
-                }
-                return ''; 
-            }
+            
         },
         {
             field: 'Customer Name ',
@@ -126,23 +96,7 @@ const Shipments = () => {
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => params.row.user?.name ? params.row.user?.name : '-',
-            cellClassName: (params) => {
-                if (params.row.payment_status === 'completed') {
-                    
-                    return 'completed-order';
-                }
-                else if(params.row.payment_status === 'pending'){
-                    return 'pending-order'
-                }
-                else if(params.row.payment_status === 'cancelled')
-                {
-                    return 'cancelled-order'
-                }
-                else if(params.row.payment_status === 'created'   ){
-                    return 'created-order'
-                }
-                return ''; 
-            }
+           
         },
         {
             field: 'grand_total',
@@ -151,23 +105,7 @@ const Shipments = () => {
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => params.row.grand_total?.toFixed(2),
-            cellClassName: (params) => {
-                if (params.row.payment_status === 'completed') {
-                    
-                    return 'completed-order';
-                }
-                else if(params.row.payment_status === 'pending'){
-                    return 'pending-order'
-                }
-                else if(params.row.payment_status === 'cancelled')
-                {
-                    return 'cancelled-order'
-                }
-                else if(params.row.payment_status === 'created'   ){
-                    return 'created-order'
-                }
-                return ''; 
-            }
+           
         },
 
         {
@@ -177,23 +115,7 @@ const Shipments = () => {
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => params.row.franchisee?.franchise_name ? params.row.franchisee?.franchise_name : '-',
-            cellClassName: (params) => {
-                if (params.row.payment_status === 'completed') {
-                    
-                    return 'completed-order';
-                }
-                else if(params.row.payment_status === 'pending'){
-                    return 'pending-order'
-                }
-                else if(params.row.payment_status === 'cancelled')
-                {
-                    return 'cancelled-order'
-                }
-                else if(params.row.payment_status === 'created'   ){
-                    return 'created-order'
-                }
-                return ''; 
-            }
+          
         },
 
         {
@@ -202,23 +124,7 @@ const Shipments = () => {
             width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
-            cellClassName: (params) => {
-                if (params.row.payment_status === 'completed') {
-                    
-                    return 'completed-order';
-                }
-                else if(params.row.payment_status === 'pending'){
-                    return 'pending-order'
-                }
-                else if(params.row.payment_status === 'cancelled')
-                {
-                    return 'cancelled-order'
-                }
-                else if(params.row.payment_status === 'created'   ){
-                    return 'created-order'
-                }
-                return ''; 
-            }
+           
         
         },
 
@@ -229,23 +135,7 @@ const Shipments = () => {
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => params.row.user?.mobile ? params.row.user?.mobile : '-',
-            cellClassName: (params) => {
-                if (params.row.payment_status === 'completed') {
-                    
-                    return 'completed-order';
-                }
-                else if(params.row.payment_status === 'pending'){
-                    return 'pending-order'
-                }
-                else if(params.row.payment_status === 'cancelled')
-                {
-                    return 'cancelled-order'
-                }
-                else if(params.row.payment_status === 'created'   ){
-                    return 'created-order'
-                }
-                return ''; 
-            }
+           
         
         },
 
@@ -257,23 +147,7 @@ const Shipments = () => {
             headerAlign: 'center',
             align: 'center',
             
-            cellClassName: (params) => {
-                if (params.row.payment_status === 'completed') {
-                    
-                    return 'completed-order';
-                }
-                else if(params.row.payment_status === 'pending'){
-                    return 'pending-order'
-                }
-                else if(params.row.payment_status === 'cancelled')
-                {
-                    return 'cancelled-order'
-                }
-                else if(params.row.payment_status === 'created'   ){
-                    return 'created-order'
-                }
-                return ''; 
-            }
+            
         
         },
         {
@@ -282,23 +156,7 @@ const Shipments = () => {
             width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
-            cellClassName: (params) => {
-                if (params.row.payment_status === 'completed') {
-                    
-                    return 'completed-order';
-                }
-                else if(params.row.payment_status === 'pending'){
-                    return 'pending-order'
-                }
-                else if(params.row.payment_status === 'cancelled')
-                {
-                    return 'cancelled-order'
-                }
-                else if(params.row.payment_status === 'created'   ){
-                    return 'created-order'
-                }
-                return ''; 
-            }
+          
         
         },
         {
@@ -307,6 +165,7 @@ const Shipments = () => {
             width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
+         
             cellClassName: (params) => {
                 if (params.row.payment_status === 'completed') {
                     
@@ -331,62 +190,88 @@ const Shipments = () => {
             headerName: 'Actions',
             width: 200,
             headerAlign: 'center',
-            align: 'center',   cellClassName: (params) => {
-                if (params.row.payment_status === 'completed') {
-                    
-                    return 'completed-order';
-                }
-                else if(params.row.payment_status === 'pending'){
-                    return 'pending-order'
-                }
-                else if(params.row.payment_status === 'cancelled')
-                {
-                    return 'cancelled-order'
-                }
-                else if(params.row.payment_status === 'created'   ){
-                    return 'created-order'
-                }
-                return ''; 
-            },
+            align: 'center', 
         
-            renderCell: ({ row }) => (
-                <Stack alignItems={'center'} gap={1} direction={'row'}>
-                    <RemoveRedEyeIcon
-                        onClick={() => ShippmentView(row?._id)}
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }} />
+           renderCell: ({ row }) => (
+            <Stack alignItems={'center'} gap={1} justifyContent={'space-evenly'} direction={'column'} padding={10}>
+     <Stack alignItems={'center'} gap={1} direction={'row'} paddingTop={"20px"} >
+      <RemoveRedEyeIcon
+        onClick={() => ShippmentView(row?._id)}
+        style={{
+          color: '#58D36E',
+          cursor: 'pointer'
+        
+        }}
+      />
+      {(!['completed', 'cancelled'].includes(row?.status)) && (
+        <BorderColorTwoToneIcon
+          onClick={() => ShippmentEdit(row?._id)}
+          style={{
+            color: '#58D36E',
+            cursor: 'pointer'
+          }}
+        />
+      )}
 
-                    {(!['completed', 'cancelled'].includes(row?.status)) &&
-                        <BorderColorTwoToneIcon
-                            onClick={() => ShippmentEdit(row?._id)}
-                            style={{
-                                color: '#58D36E',
-                                cursor: 'pointer'
-                            }}
-                        />}
-                        <Custombutton
-                          disabled={loading}
-                          btncolor='blue'
-                          height={40}
-                          IconEnd={""}
-                          IconStart={''}
-                          startIcon={false}
-                          endIcon={false}
-                           onClick={()=>openAssignModal(row)}
-                          label='Assign' />
-                        
+</Stack>
+<Stack display={'flex'} alignItems={'center'} gap={1} direction={'column'} paddingBottom={"20px"}>
+{
+   
+       (row?.rider_each_order_settlement ===null  && (
+        (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
+        (row?.payment_status === 'completed' && row?.payment_type === 'online')
+      )) ? (
+        <Custombutton
+          disabled={loading}
+          btncolor='blue'
+          height={25}
+          IconEnd={""}
+          IconStart={''}
+          startIcon={false}
+          endIcon={false}
+          onClick={() => openAssignModal(row)}
+          label='Assign'
+        />
+      ) :
+      (row?.rider_each_order_settlement?.rider_status==="active"||row?.rider_each_order_settlement?.rider_status==="completed"
+       || row?.rider_each_order_settlement?.rider_status==="cancelled" || row?.rider_each_order_settlement?.rider_status==="onTheWay"&& (
+        (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
+        (row?.payment_status === 'completed' && row?.payment_type === 'online')
+      )) ? (
+        <Custombutton
+          disabled={true}
+          btncolor='blue'
+          height={25}
+          IconEnd={""}
+          IconStart={''}
+          startIcon={false}
+          endIcon={false}
+          onClick={() => openAssignModal(row)}
+          label='Assign'
+        />
+      ) : (row?.rider_each_order_settlement?.rider_status==="new" && (
+        (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
+        (row?.payment_status === 'completed' && row?.payment_type === 'online')
+      )) ? (
+        <Custombutton
+          disabled={loading}
+          btncolor='#F71C1C'
+          height={25}
+          IconEnd={""}
+          IconStart={''}
+          startIcon={false}
+          endIcon={false}
+          onClick={() => openAssignModal(row)}
+          label='Reassign'
+        />
+      ) : null
+      }
+    </Stack>
 
-                        
-                    {/* <DeleteOutlineTwoToneIcon
-
-                        sx={{
-                            color: '#58D36E',
-                            cursor: 'pointer',
-                        }} />  */}
-                </Stack>
-            )
+     
+    </Stack>
+  )
+  
         }
     ];
 
@@ -485,3 +370,5 @@ const Shipments = () => {
 }
 
 export default Shipments
+
+

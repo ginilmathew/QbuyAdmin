@@ -43,6 +43,7 @@ const AddProductModal = ({ handleClose, open,franchiseData }: props) => {
     const [SelectedValue, setSelectedValue] = useState<any>('');
     const [franchiseList, setFranchiseList] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [franchase_id, setfranchase_id] = useState<any>('')
   
     const schema = yup.object().shape({
       rider: yup.string().required('Rider field is required').typeError("Rider field is required"),
@@ -106,22 +107,29 @@ const Submit = async (data: any) => {
 
 
   // ))
-      const formData = new FormData();
-      console.log(franchiseData);
-      console.log(SelectedValue);
+
+  let data = {
+    order_id: franchiseData?._id,
+    rider_id: SelectedValue,
+    franchise_id:franchase_id
+   
+  }
+    //   const formData = new FormData();
+    //   console.log(franchiseData);
+    //   console.log(SelectedValue);
       
    
-      formData.append('order_id', franchiseData?._id);
+    //   formData.append('order_id', JSON.stringify(franchiseData?._id));
     
    
 
     
      
-      formData.append('rider_id', JSON.stringify(SelectedValue));
+    //   formData.append('rider_id', JSON.stringify(SelectedValue));
 
   
 
-      const response = await postData('admin/shipment/assign-riders', formData);
+      const response = await postData('admin/shipment/assign-riders', data);
 
       if (response.status === 201 || response.status === 200) {
         handleClose(true)
@@ -132,9 +140,9 @@ const Submit = async (data: any) => {
 
           toast.error("Failed");
       }
-  } catch (error) {
-      console.error(error);
-      toast.error('An error occurred');
+  } catch (error:any) {
+    //   console.error(error.message ,"l");
+      toast.error(error?.message);
   } finally {
       setLoading(false);
   }
@@ -145,7 +153,7 @@ const Submit = async (data: any) => {
     const riderBasedOnFranchasee = async (franchiseData:any) => {
       try {
         let franchase_id=(franchiseData?.franchisee?._id);
-        
+        setfranchase_id(franchase_id)
           setLoading(true)
           const response = await fetchData(`admin/onboarding/riders/${franchase_id}`)
           setFranchiseList(response?.data?.data)

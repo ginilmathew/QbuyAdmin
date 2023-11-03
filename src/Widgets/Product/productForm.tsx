@@ -629,12 +629,14 @@ console.log(idd);
 
 
     const onChangeProductFrom = (e: any) => {
+        const customId = "custom-id-yes"; 
         if(idd){
             setValue('product_availability_from', e);
         }
-        else{
+        else if(franchiseSelect){
             const start_time = vendorlistDirection?.[0]?.start_time;
             const end_time = vendorlistDirection?.[0]?.end_time;
+            console.log(start_time);
             
           
             const selectedTime = moment(e, 'ha');
@@ -646,21 +648,28 @@ console.log(idd);
               
                 setValue('product_availability_from', e);
             } else {
-                
-                toast.error("Selected time is not within the valid range. Please select a time between start and end times.");
+                toast.error("Selected end time is not within the valid range. Please select a time on store time!", {
+                    toastId: customId
+                  });
+               
             }
          
+        }
+        else {
+            toast.error("Please select a store!", {
+                toastId: customId
+              });
         }
        
     }   
 
     const onChangeProductTo = (e: any) => {
-                
+        const customId = "custom-id-yes";   
         if(idd){
             setValue('product_availability_to', e);
             console.log("kk");
         }
-        else{
+        else if(franchiseSelect){
             const start_time = vendorlistDirection?.[0]?.start_time;
             const end_time = vendorlistDirection?.[0]?.end_time;
         
@@ -670,13 +679,21 @@ console.log(idd);
             const endTime = moment(end_time, 'ha'); 
         
          
-            if (selectedEndTime.isBefore(startTime) || selectedEndTime.isAfter(endTime)) {
+            if (selectedEndTime.isBetween(startTime, endTime, null, '[]'))  {
                
-                toast.error("Selected end time is not within the valid range. Please select a time between start and end times.");
+                toast.error("Selected end time is not within the valid range. Please select a time on store time!", {
+                    toastId: customId
+                  });
+               
             } else {
                
                 setValue('product_availability_to', e);
             }
+        }
+        else {
+            toast.error("Please select a store!", {
+                toastId: customId
+              });
         }
        
     }
