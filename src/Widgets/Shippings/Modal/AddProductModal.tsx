@@ -222,6 +222,9 @@ const [stockvl, setstockvl] = useState<any>(null)
             setError('quantity',{ message: 'Quantity is Required' })
             return false;
         }
+        else {
+            setError('quantity',{message:""})
+        }
       
         
         let stock = selectProduct?.stock;
