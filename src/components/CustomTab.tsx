@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import ShipmentSupport from '@/pages/shipmenttab';
 import RateCardTab from '@/pages/RateCradTab';
 import WorkDetailsTab from '@/pages/WorkDetailsTab';
-import Cashinhand from '@/pages/cashinhand/cashinhand';
+import Cashinhand from '@/pages/Cashinhand/cashinhand';
 
 const Tabs = () => {
   const [activeTab, setActiveTab] = useState('profile');
