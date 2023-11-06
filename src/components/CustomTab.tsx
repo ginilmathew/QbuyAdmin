@@ -90,7 +90,10 @@ const Tabs = () => {
         {activeTab === 'shipments' && <ShipmentSupport res={id} />}
         {activeTab === 'fraud' && <div>Fraud content</div>}
         {activeTab === 'tickets' && <div>Tickets content</div>}
-        {activeTab === 'payout' && <div>Payout</div>}
+        {activeTab === 'payout' && <div>
+          <h3>Settlements</h3>
+            <Payout res={id}/>
+        </div>}
         {activeTab === 'cash' && <div><Cashinhand res={id}/></div>}
         {activeTab === 'workdetails' && <WorkDetailsTab res={id} />}
         {activeTab === 'ratecard' && (
