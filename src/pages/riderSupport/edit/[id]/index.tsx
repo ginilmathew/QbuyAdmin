@@ -7,21 +7,24 @@ import React, { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import CustomTab from '@/components/CustomTab'
 
-
-const RiderSuppotEdit = () => {
+const RiderSupportEdit = () => {
     const router = useRouter()
-    const { id } = router.query
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false);
+    const [riderId, setRiderId] = useState<string | null>(null);
 
-
-
+    useEffect(() => {
+        const storedRiderId = sessionStorage.getItem('rider_id');
+        if (storedRiderId) {
+            setRiderId(storedRiderId);
+        }
+    }, []);
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
-               <CustomHeaderBack backlabel={`#`} />
+            <CustomHeaderBack backlabel={`#FA${riderId}`} />
             <CustomTab />
         </Box>
-    )
-}
+    );
+};
 
-export default RiderSuppotEdit
+export default RiderSupportEdit;
