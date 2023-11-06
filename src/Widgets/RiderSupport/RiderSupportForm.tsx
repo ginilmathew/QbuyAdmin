@@ -84,6 +84,7 @@ const RiderSupportform = ({ res, view }: props) => {
     const idd = res ? res : view;
 
     const router = useRouter();
+console.log(idd);
 
     const [imagefile, setImagefile] = useState<null | File>(null)
     const [imagePreview, setImagePreview] = useState<any>(null)
