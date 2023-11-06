@@ -115,6 +115,11 @@ const OnChangePriority=(event:any)=>{
     setValue("transaction_id",newValue)
     settransaction_id(newValue)
 }
+const OnChangePriorityy=(event:any)=>{
+    // const newValue = event.target.value;
+    // setValue("transaction_id",newValue)
+    // settransaction_id(newValue)
+}
 
 const Submit = async (data: any) => {
     setLoading(true);
@@ -233,7 +238,7 @@ const Submit = async (data: any) => {
                     <Grid container spacing={2} display={'flex'} flexDirection={'row'} justifyItems={'center'}>
                     <Grid item xs={12} xl={4}>
                             <CustomInput
-                                onChangeValue={OnChangePriority}
+                                onChangeValue={OnChangePriorityy}
                                 type='text'
                                 control={control}
                                 error={errors.cash_in_hand}
