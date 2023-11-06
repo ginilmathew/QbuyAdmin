@@ -16,7 +16,8 @@ import dynamic from 'next/dynamic';
 import { useForm, SubmitHandler, set } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
-const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+import CustomDatePickers from '@/components/CustomDatePickers';
+
 const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
 const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
 const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
@@ -32,37 +33,44 @@ type props = {
     open: boolean,
 }
 type Inputs = {
-
     rate: any,
-
+    fromDate: Date | null,
+    toDate: Date | null,
 };
+
 type IFormInput = {
     rate: any,
 }
 type RateCardItem = {
     rate: string;
 
-  };
-  
+};
 
-const RateCardTab = ({ res, view, handleClose, open }: props) => {
+
+const RateCardTab = ({ res, view, open }: props) => {
 
     const idd = res ? res : view;
     const [ratePerOrder, setRatePerOrder] = useState('');
     const router = useRouter();
     const { data, error, isLoading, mutate } = useSWR(`admin/rider-support/ratecard/list/${res}`, fetcher);
+    console.log({ data }, 'll')
     const [pending, startTransition] = useTransition();
     const [loading, setLoading] = useState<boolean>(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [ratecardData, setRateCardData] = useState<RateCardItem[]>([]);
     const currentRate = ratecardData[0]?.rate;
+    const [fromDate, setFromDate] = useState(null);
+    const [toDate, setToDate] = useState(null);
+    const commonDateLabel = 'Date Filter';
 
 
     const schema = yup.object().shape({
-        // rate: yup
-        //     .string()
-        //     .required('Rate Per Order is required'), 
+        rate: yup
+            .string()
+            .required('Rate Per Order is required')
+
     });
+
     const {
         register,
         handleSubmit,
@@ -76,14 +84,18 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
         resolver: yupResolver(schema),
         defaultValues: {
             rate: '',
+            fromDate: null,
+            toDate: null,
         },
-      
+
     }
-   
+
     );
-    console.log({errors})
+    console.log({ errors })
 
-
+    const handleClose = () => {
+        setIsDialogOpen(false);
+    };
 
     useEffect(() => {
         if (data?.data?.data) {
@@ -95,6 +107,7 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
 
 
     const columns: GridColDef[] = [
+
         {
             field: 'created_at',
             headerName: 'Date',
@@ -117,46 +130,110 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
     };
 
 
-    const Submit = async (data: any) => {
+
+    const Submit = async (formData: IFormInput) => {
         setLoading(true);
         try {
             const payload = {
                 rider_id: idd,
-                rate: data['Rate Per Order'],
+                rate: formData.rate, // Make sure to use the correct field name from the form
             };
             const response = await postData('admin/rider-support/ratecard/create', payload);
             console.log({ response })
-            reset();
-            handleClose()
-            setIsDialogOpen(false);
-        } catch (err) {
 
+        } catch (err) {
+            console.error(err);
         } finally {
             setLoading(false);
+            handleClose();
         }
     };
 
+    const submitDateRange = async () => {
+        if (fromDate && toDate) {
+            const formattedFromDate = moment(fromDate).format('YYYY-MM-DD');
+            const formattedToDate = moment(toDate).format('YYYY-MM-DD');
+
+            const payload = {
+                from_date: formattedFromDate,
+                to_date: formattedToDate,
+                rider_id: idd,
+            };
+
+            setLoading(true);
+
+            try {
+                const response = await postData('/admin/rider-support/ratecard/listbasedondate', payload);
+                if (response.data && Array.isArray(response.data.data)) {
+                    setRateCardData(response.data.data);
+                } else {
+                    setRateCardData([]);
+                }
+            } catch (error) {
+                toast.error('Failed to filter data.');
+            } finally {
+                setLoading(false);
+            }
+        } else {
+
+        }
+    };
+
+    useEffect(() => {
+        submitDateRange();
+    }, [fromDate, toDate]);
+
+
+    useEffect(() => {
+        console.log('Rate card data has been updated:', ratecardData);
+    }, [ratecardData]);
 
     return (
-        <Box px={5} py={2} pt={1} mt={0}>
+        <Box px={0} py={1} pt={1} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='' onClick={() => null} />
-                <Grid container>
-                    <Grid item xs={6} lg={3}>
+                {/* <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='' onClick={() => null} /> */}
+                <Grid container spacing={2}>
+                    <Grid item xs={12} lg={6}>
                         <CustomInput
                             type=''
                             control={control}
+                            error={''}
                             fieldName="Current Rate Per Order"
                             placeholder={currentRate}
                             fieldLabel={"Current Rate Per Order"}
-                            disabled={false}
-                            view={view ? true : false}
+                            disabled={true}
+                            view={true}
                         />
+                    </Grid>
+                    <Grid item xs={12} lg={6} container justifyContent="flex-end">
+                        <Stack direction="row" spacing={2} alignItems="center">
+                        <div style={{ width: '150px' }}>
+                            <CustomDatePickers
+                                fieldName='fromDate'
+                                control={control}
+                                error={''}
+                                fieldLabel={commonDateLabel}
+                                values={fromDate}
+                                changeValue={(date) => setFromDate(date)}
+                            />
+                            </div>
+                            <div style={{ width: '150px', marginTop: '20px' }}>
+                            <CustomDatePickers
+                                fieldName='toDate'
+                                control={control}
+                                error={''}
+                                fieldLabel={''}
+                                values={toDate}
+                                changeValue={(date) => setToDate(date)}
+                            />
+                            </div>
+                        </Stack>
                     </Grid>
                 </Grid>
 
 
-                <Box p={.5} >
+
+                <Box p={2} >
                     <CustomTable dashboard={false} columns={columns} rows={ratecardData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
 
@@ -177,8 +254,8 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
             <Dialog
                 onClose={handleClose}
                 open={isDialogOpen}
-                maxWidth='sm'
-                fullWidth
+                maxWidth='md'
+                //fullWidth
             >
                 <Box>
                     <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
@@ -199,7 +276,7 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
                             }}>{'Rate Card'}</Typography>
                         </Box>
                         <Box onClick={handleClose}>
-                            {/* <Box
+                            <Box
                                 width={25}
                                 height={25}
                                 sx={{
@@ -211,7 +288,7 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
                                     alignItems: 'center',
                                     cursor: 'pointer'
                                 }}>
-                                <HighlightOffIcon style={{ color: 'white', fontSize: 16 }} /></Box> */}
+                                <HighlightOffIcon style={{ color: 'white', fontSize: 16 }} /></Box>
                         </Box>
                     </Box>
                     <DialogContent>
@@ -221,12 +298,17 @@ const RateCardTab = ({ res, view, handleClose, open }: props) => {
                                     type='text'
                                     control={control}
                                     error={errors.rate}
-                                    fieldName="Rate Per Order"
+                                    fieldName="rate"
                                     placeholder=""
                                     fieldLabel="Rate Per Order"
                                     disabled={false}
                                     defaultValue=""
+                                    view={false}
+                                    {...register('rate')}
                                 />
+
+
+
                             </Grid>
                         </Grid>
                         <Box py={1} display={'flex'} justifyContent={'center'}>

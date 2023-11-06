@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import ShipmentSupport from '@/pages/shipmenttab';
 import RateCardTab from '@/pages/RateCradTab';
 import WorkDetailsTab from '@/pages/WorkDetailsTab';
+import Cashinhand from '@/pages/Cashinhand';
+import Payout from '@/pages/Payout';
 
 const Tabs = () => {
   const [activeTab, setActiveTab] = useState('profile');
@@ -69,6 +71,18 @@ const Tabs = () => {
         >
           Work Details
         </li>
+        <li
+          className={`tab-item ${activeTab === 'reservation' ? 'active' : ''}`}
+          onClick={() => handleTabClick('reservation')}
+        >
+          Reservation
+        </li>
+        <li
+          className={`tab-item ${activeTab === 'telecom' ? 'active' : ''}`}
+          onClick={() => handleTabClick('telecom')}
+        >
+          Telecom
+        </li>
       </ul>
 
       <div className="tab-content">
@@ -76,8 +90,13 @@ const Tabs = () => {
         {activeTab === 'shipments' && <ShipmentSupport res={id} />}
         {activeTab === 'fraud' && <div>Fraud content</div>}
         {activeTab === 'tickets' && <div>Tickets content</div>}
-        {activeTab === 'payout' && <div>Payout</div>}
-        {activeTab === 'cash' && <div>Cash in Hand</div>}
+        {activeTab === 'payout' && (
+          <div>
+            <h3>Settlements</h3>
+            <Payout res={id}/>
+          </div>
+        )}
+        {activeTab === 'cash' && <Cashinhand res={id} />}
         {activeTab === 'workdetails' && <WorkDetailsTab res={id} />}
         {activeTab === 'ratecard' && (
           <div>
@@ -85,27 +104,51 @@ const Tabs = () => {
             <RateCardTab res={id} handleClose={handleClose} open={open} />
           </div>
         )}
-           {activeTab === 'reservations' && <div>Reservations</div>}
+        {activeTab === 'reservations' && <div>Reservations</div>}
+        {activeTab === 'telecom' && <div>telecom content</div>}
       </div>
 
-
       <style jsx>{`
+  .tabs-container {
+    position: relative;
+    margin-top: 20px;
+    padding-left: 0;
+  }
+
   ul {
     list-style: none;
     display: flex;
-    gap: 10px; 
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-left: 0;
+    margin-left: 0;
+    align-items: center; 
+    justify-content: flex-start;
   }
 
   .tab-item {
-    padding: 10px 20px;
-    margin-right: 5px;
-    border: 1px solid #58D36E;
-    background-color: #fff;
+    flex: 1; 
+    min-width: 120px; 
+    max-width: 146px; 
+    padding: 10px;
+    margin-right: 10px;
+    border: 3px solid #58D36E;
+    background-color: #FFFFFF;
     color: #000;
     cursor: pointer;
     border-radius: 15px;
-    font: normal 18px/27px Poppins; 
+    font: normal 14px/27px Poppins;
     letter-spacing: 0px;
+    box-shadow: 0px 3px 6px #00000029;
+    opacity: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center; 
+  }
+
+  .tab-item:last-child {
+    margin-right: 0;
   }
 
   .tab-item.active {
@@ -116,7 +159,21 @@ const Tabs = () => {
   .tab-content {
     margin-top: 20px;
   }
+
+  @media (max-width: 768px) {
+    .tab-item {
+      font-size: 10px; 
+      padding: 5px 10px; 
+    }
+
+    ul {
+      justify-content: space-around;
+    }
+  }
 `}</style>
+
+
+
 
     </div>
   );

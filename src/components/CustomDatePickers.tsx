@@ -19,7 +19,7 @@ type props = {
 }
 
 
-const CustomDatePicker = ({
+const CustomDatePickers = ({
     fieldName,
     control,
     fieldLabel,
@@ -29,10 +29,17 @@ const CustomDatePicker = ({
     changeValue,
 }: props) => {
     const tomorrow = dayjs().add(1, 'day');
+
+    const datePickerStyle = {
+        marginTop: "20px", 
+    };
     return (
         <>
             <FormGroup>
-                <Typography letterSpacing={.5} px={'3px'} mb={'1px'}
+                <Typography
+                    letterSpacing={0.5}
+                    px={"3px"}
+                    mb={"1px"}
                     sx={{
                         fontSize: {
                             lg: 16,
@@ -42,28 +49,22 @@ const CustomDatePicker = ({
                         },
                         fontFamily: `'Poppins' sans-serif`,
                     }}
-                >{fieldLabel}
+                >
+                    {fieldLabel}
                 </Typography>
                 <Controller
                     name={fieldName}
                     control={control}
                     render={({ field: { value, onChange, onBlur } }) => (
                         <LocalizationProvider dateAdapter={AdapterMoment}>
-                            <DatePicker
-                                //disablePast
-                                format='DD/MM/YYYY'
-                                disabled={disabled}
-                                sx={{
-                                    "& .MuiInputBase-input": {
-                                        height: "8px" // Set your height here.
-                                    }
-                                }}
-
-                                value={values ? values : value}
-                                onChange={changeValue ? (e: any) => changeValue(e) : onChange}
-                            />
-
-
+                            <Box style={datePickerStyle}> 
+                                <DatePicker
+                                    format="DD/MM/YYYY"
+                                    disabled={disabled}
+                                    value={values ? values : value}
+                                    onChange={changeValue ? (e: any) => changeValue(e) : onChange}
+                                />
+                            </Box>
                         </LocalizationProvider>
                     )}
                 />
@@ -88,4 +89,4 @@ const CustomDatePicker = ({
     )
 }
 
-export default CustomDatePicker
+export default CustomDatePickers
