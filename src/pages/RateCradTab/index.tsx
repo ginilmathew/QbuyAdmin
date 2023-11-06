@@ -16,7 +16,8 @@ import dynamic from 'next/dynamic';
 import { useForm, SubmitHandler, set } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
-import CustomDatePickers from '@/components/CustomDatePickers';
+import CustomDatePicker from '@/components/CustomDatePicker';
+import CustomLoader from '@/components/CustomLoader';
 
 const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
 const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
@@ -207,25 +208,25 @@ const RateCardTab = ({ res, view, open }: props) => {
                     </Grid>
                     <Grid item xs={12} lg={6} container justifyContent="flex-end">
                         <Stack direction="row" spacing={2} alignItems="center">
-                        <div style={{ width: '150px' }}>
-                            <CustomDatePickers
-                                fieldName='fromDate'
-                                control={control}
-                                error={''}
-                                fieldLabel={commonDateLabel}
-                                values={fromDate}
-                                changeValue={(date) => setFromDate(date)}
-                            />
+                            <div>
+                                <CustomDatePicker
+                                    fieldName='fromDate'
+                                    control={control}
+                                    error={''}
+                                    fieldLabel={commonDateLabel}
+                                    values={fromDate}
+                                    changeValue={(date) => setFromDate(date)}
+                                />
                             </div>
-                            <div style={{ width: '150px', marginTop: '20px' }}>
-                            <CustomDatePickers
-                                fieldName='toDate'
-                                control={control}
-                                error={''}
-                                fieldLabel={''}
-                                values={toDate}
-                                changeValue={(date) => setToDate(date)}
-                            />
+                            <div style={{ marginTop: '20px' }}>
+                                <CustomDatePicker
+                                    fieldName='toDate'
+                                    control={control}
+                                    error={''}
+                                    fieldLabel={''}
+                                    values={toDate}
+                                    changeValue={(date) => setToDate(date)}
+                                />
                             </div>
                         </Stack>
                     </Grid>
@@ -234,7 +235,11 @@ const RateCardTab = ({ res, view, open }: props) => {
 
 
                 <Box p={2} >
-                    <CustomTable dashboard={false} columns={columns} rows={ratecardData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    {isLoading ? (
+                        <CustomLoader />
+                    ) : (
+                        <CustomTable dashboard={false} columns={columns} rows={ratecardData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    )}
                 </Box>
 
             </Box>
@@ -255,7 +260,7 @@ const RateCardTab = ({ res, view, open }: props) => {
                 onClose={handleClose}
                 open={isDialogOpen}
                 maxWidth='md'
-                //fullWidth
+            //fullWidth
             >
                 <Box>
                     <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
