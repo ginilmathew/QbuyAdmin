@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Grid, Stack } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
 import axios from 'axios';
-import { fetchData } from '@/CustomAxios';
+import { fetchData, postData } from '@/CustomAxios';
 import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -15,6 +15,8 @@ import Custombutton from '@/components/Custombutton';
 import CashClearInHandModal from '@/Widgets/Shippings/Modal/CashClearInHandModal';
 import BootCashModal from '@/Widgets/Shippings/Modal/BootCashModal';
 import { set } from 'lodash';
+import CustomDatePicker from '@/components/CustomDatePicker';
+import moment from 'moment';
 
 type props = {
     res?: any,
@@ -38,6 +40,8 @@ const Cashinhand =({ res, view }: props)=> {
       const [loading, setLoading] = useState<boolean>(false)
       const [addOpen, setaddOpen] = useState<any>(false)
       const [openBootModal, setopenBootModal] = useState(false)
+  
+
       const [fromDate, setFromDate] = useState<Date | null>(null);
       const [toDate, setToDate] = useState<Date | null>(null);
       const { register,
@@ -131,7 +135,7 @@ const Cashinhand =({ res, view }: props)=> {
                     return ''; 
                 },
             },
-          
+       
          
         ];
         const Cashinhand = async () => {
@@ -175,6 +179,29 @@ const Cashinhand =({ res, view }: props)=> {
         //     const newValue = event.target.value;
        
         // }
+        // useEffect(() => {
+        //     if (fromDate && toDate) {
+        //         fetchFilteredData();
+        //     }
+        // }, [fromDate, toDate]);
+        // const fetchFilteredData = async () => {
+        //     const formattedFromDate = moment(fromDate).format('YYYY-MM-DD');
+        //     const formattedToDate = moment(toDate).format('YYYY-MM-DD');
+        //     const payload = {
+        //         rider_id: res,
+        //         from_date: formattedFromDate,
+        //         to_date: formattedToDate,
+        //     };
+        //     try {
+        //         const response = await postData('admin/rider-support/cash-in-hand/list-filter', payload);
+        //         console.log(response?.data?.data?.order_list);
+                
+        //         // setCashInHandList(response.data.data);
+        //     } catch (error) {
+        //         toast.error('Failed to filter data.');
+        //     }
+        // };
+    
   return (
     <Box>
             <CustomBox title='Cash in Hand Log'>
@@ -182,6 +209,28 @@ const Cashinhand =({ res, view }: props)=> {
             
              
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
+            {/* <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="center" mt={3}>
+                    <div >
+                        <CustomDatePicker
+                            fieldName='fromDate'
+                            control={control}
+                            error={''}
+                            fieldLabel={''}
+                            values={fromDate}
+                            changeValue={(date) => setFromDate(date)}
+                        />
+                    </div>
+                    <div >
+                        <CustomDatePicker
+                            fieldName='toDate'
+                            control={control}
+                            error={''}
+                            fieldLabel={''}
+                            values={toDate}
+                            changeValue={(date) => setToDate(date)}
+                        />
+                    </div>
+                </Stack> */}
                     <Grid container spacing={2}>
                
 

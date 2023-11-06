@@ -48,7 +48,6 @@ type props = {
 
 const ShippingOrderForm = ({ view, res, edit }: props) => {
     const router = useRouter()
-
     const idd = view ? view : res;    
     const [orderhistory, setOrderhistory] = useState<any>()
     const [customerGroupSelect, setCustomerGroupSelect] = useState<string>('')
@@ -260,10 +259,13 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
     useEffect(() => {
         if (orderviewList) {
+       
+            
             setValue('name', orderviewList?.user?.name)
             setValue('mobile', orderviewList?.user?.mobile)
             setValue('email', orderviewList?.user?.email)
             setValue('order_id', orderviewList?.order_id)
+            // setValue('ridername',)
             // setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name ? orderviewList?.billaddress?.name : ''},${orderviewList?.billaddress?.area?.address ? orderviewList?.billaddress?.area?.address : ''},${orderviewList?.billaddress?.pincode ? orderviewList?.billaddress?.pincode : ''},${orderviewList?.billaddress?.mobile ? `${'Mob:'}${orderviewList?.billaddress?.mobile}` : ''}`)
             setValue('shipping_address_delivery_address', `${orderviewList?.shipaddress?.name ? orderviewList?.shipaddress?.name : ''},${orderviewList?.shipaddress?.area?.address ? orderviewList?.shipaddress?.area?.address : ''},${orderviewList?.shipaddress?.pincode ? orderviewList?.shipaddress?.pincode : ''},
             ${orderviewList?.shipaddress?.mobile ? `${'Mob:'}${orderviewList?.shipaddress?.mobile}` : ''}`)
@@ -456,6 +458,19 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
+                    {/* <Grid item xs={12} lg={2.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.order_id}
+                            fieldName="order_id"
+                            placeholder={``}
+                            fieldLabel={"Rider Name"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
+                    </Grid> */}
                 </Grid>
 
             </CustomBox>

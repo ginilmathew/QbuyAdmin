@@ -51,10 +51,14 @@ console.log("cashmodal");
     const [transaction_id, settransaction_id] = useState<any>('')
   
     const schema = yup.object().shape({
-    //   rider: yup.string().required('Rider field is required').typeError("Rider field is required"),
+        cash_in_hand: yup.string().required('Total Cash in Hand is required'),
+         payment_method: yup.string().required('Payment Method is required'),
+        // transaction_id: yup.string().when('payment_method', {
+        //     is: "upi",
+        //     then: yup.string().required('Transaction ID is required'),
+        //     otherwise: yup.string().notRequired()
+        // })
     });
-    
-
 
     const { register,
         handleSubmit,
@@ -72,11 +76,7 @@ console.log("cashmodal");
                 transaction_id:''
 
             },
-
-
-        }
-       
-       );
+       });
         
 
        useEffect(() => {

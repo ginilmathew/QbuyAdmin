@@ -35,7 +35,7 @@ const Shipments = () => {
     const [franchiseData, setfranchiseData] = useState<any>('')
     
 
-    const { data, error, isLoading } = useSWR(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
+    const { data, error, isLoading, mutate } = useSWR(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
 
     useEffect(() => {
         if (data?.data?.data) {
@@ -66,6 +66,7 @@ console.log("kk");
     )
     const handleCloseAddModal=useCallback(()=>{
         setopen(false)
+        mutate()
     },[open])
   
 
@@ -158,6 +159,15 @@ console.log("kk");
             align: 'center',
           
         
+        },
+        {
+            field: 'name',
+            headerName: 'Rider',
+            width: matches ? 150 : 200,
+            headerAlign: 'center',
+            align: 'center',
+          
+            valueGetter: (params) => params.row.rider_each_order_settlement?.rider?.name ?params.row.rider_each_order_settlement?.rider?.name : '-'
         },
         {
             field: 'status',
