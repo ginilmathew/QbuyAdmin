@@ -96,6 +96,8 @@ const Tabs = () => {
             <Payout res={id}/>
           </div>
         )}
+
+        
         {activeTab === 'cash' && <Cashinhand res={id} />}
         {activeTab === 'workdetails' && <WorkDetailsTab res={id} />}
         {activeTab === 'ratecard' && (
