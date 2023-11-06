@@ -31,15 +31,24 @@ const RiderSupport = () => {
         }
     }, [data?.data?.data]);
 
-    const editRiderSupport = (id: any) => {
-        router.push(`/riderSupport/edit/${id}`)
-    }
+    // const editRiderSupport = (id: any) => {
+    //     router.push(`/riderSupport/edit/${id}`)
+    // }
    
     
-    const viewRiderSupport = (id: any) => {
-        router.push(`/riderSupport/view/${id}`)
-    }
-   
+    // const viewRiderSupport = (id: any) => {
+    //     router.push(`/riderSupport/view/${id}`)
+    // }
+    const editRiderSupport = (id:any, rider_id:any) => {
+        sessionStorage.setItem('rider_id', rider_id); 
+        router.push(`/riderSupport/edit/${id}`);
+    };
+    
+    const viewRiderSupport = (id:any, rider_id:any) => {
+        sessionStorage.setItem('rider_id', rider_id);
+        router.push(`/riderSupport/view/${id}`);
+    };
+    
     
     const columns: GridColDef[] = [
         { field: 'rider_id', headerName: 'Rider ID', flex: 1, valueGetter: (params) => `#FA${params.row.rider_id || ''}`, },
@@ -93,13 +102,15 @@ const RiderSupport = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-                        onClick={() => viewRiderSupport(row?._id)}
+                        //onClick={() => viewRiderSupport(row?._id)}
+                        onClick={() => viewRiderSupport(row?._id, row?.rider_id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
                         }} />
                     <BorderColorTwoToneIcon
-                        onClick={() => editRiderSupport(row?._id)}
+                       // onClick={() => editRiderSupport(row?._id)}
+                       onClick={() => editRiderSupport(row?._id, row?.rider_id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'

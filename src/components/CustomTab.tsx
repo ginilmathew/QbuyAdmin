@@ -94,7 +94,9 @@ const Tabs = () => {
           <h3>Settlements</h3>
             <Payout res={id}/>
         </div>}
-        {activeTab === 'cash' && <div><Cashinhand res={id}/></div>}
+
+        
+        {activeTab === 'cash' && <Cashinhand res={id} />}
         {activeTab === 'workdetails' && <WorkDetailsTab res={id} />}
         {activeTab === 'ratecard' && (
           <div>
