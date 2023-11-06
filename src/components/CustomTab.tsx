@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import ShipmentSupport from '@/pages/shipmenttab';
 import RateCardTab from '@/pages/RateCradTab';
 import WorkDetailsTab from '@/pages/WorkDetailsTab';
+import Cashinhand from '@/pages/cashinhand/cashinhand';
 
 const Tabs = () => {
   const [activeTab, setActiveTab] = useState('profile');
@@ -77,7 +78,7 @@ const Tabs = () => {
         {activeTab === 'fraud' && <div>Fraud content</div>}
         {activeTab === 'tickets' && <div>Tickets content</div>}
         {activeTab === 'payout' && <div>Payout</div>}
-        {activeTab === 'cash' && <div>Cash in Hand</div>}
+        {activeTab === 'cash' && <div><Cashinhand res={id}/></div>}
         {activeTab === 'workdetails' && <WorkDetailsTab res={id} />}
         {activeTab === 'ratecard' && (
           <div>

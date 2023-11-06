@@ -16,37 +16,41 @@ import CustomSingleSearch from '@/components/CustomSingleSearch';
 import { getProduct } from '../../../helpers/productHelper/productHelper';
 import { loadGetInitialProps } from 'next/dist/shared/lib/utils';
 import { constants } from 'fs';
+import { FormInputs } from '@/utilities/types';
 
 
 type props = {
     handleClose: any;
     open: boolean;
-    franchiseData: { _id: string };
-  
+     cashInHandDetails: { total_cash_in_hand: string };
+     rider_id:{rider_id:string}
 
 
 
 }
 type Inputs = {
-    rider: any;
-    priority: any;
+    cash_in_hand: any;
+    payment_method: any;
+    rider_id:any;
+    transaction_id:any
 
 
 
 };
 
-const AssignModal = ({ handleClose, open,franchiseData }: props) => {
+const CashClearInHandModal = ({ handleClose, open ,cashInHandDetails,rider_id}: props) => {
 
+console.log("cashmodal");
 
 
 
     const [SelectedValue, setSelectedValue] = useState<any>('');
     const [franchiseList, setFranchiseList] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const [franchase_id, setfranchase_id] = useState<any>('')
+    const [transaction_id, settransaction_id] = useState<any>('')
   
     const schema = yup.object().shape({
-      rider: yup.string().required('Rider field is required').typeError("Rider field is required"),
+    //   rider: yup.string().required('Rider field is required').typeError("Rider field is required"),
     });
     
 
@@ -61,115 +65,126 @@ const AssignModal = ({ handleClose, open,franchiseData }: props) => {
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
             defaultValues: {
-              rider: null,
-              priority: null,
+                cash_in_hand: '',
+                payment_method: '',
+                rider_id:'',
+                transaction_id:''
 
             },
 
 
         }
        
-       ); console.log(errors)
+       );
         
 
+       useEffect(() => {
+        setValue('cash_in_hand',cashInHandDetails?.total_cash_in_hand)
+    
+       }, [cashInHandDetails])
+       
 
 
   const onselectRider = (event: any) => {
     const newValue = event.target.value;
     if(newValue){
-      setError('rider',{message:""})
+      setError('payment_method',{message:""})
     }
-    console.log(newValue);
-    setValue('rider',newValue)
+ 
+    setValue('payment_method',newValue)
     setSelectedValue(newValue);
   
 };
 
 
+const [genderOptions, setGenderOptions] = useState<any>([
+    {
+        value: 'upi',
+        name: 'UPI'
+    },
+    {
+        value: 'cash',
+        name: 'CASH'
+    },
+  
+]);
 
  
-const OnChangePriority=()=>{
-
+const OnChangePriority=(event:any)=>{
+    const newValue = event.target.value;
+    setValue("transaction_id",newValue)
+    settransaction_id(newValue)
 }
 
 const Submit = async (data: any) => {
-  setLoading(true);
+    setLoading(true);
+    console.log(data);
+  
+    try {
+    //   let result = franchiseList?.filter((res: any) => res?._id ===SelectedValue).map((get: any) => (
+    //     {
+    //         name: get?.name,
+    //         _id: get?._id,
+    //         mobile: get?.mobile,
+            
+    //     }
+  
+  
+    // ))
  
-
-  try {
-  //   let result = franchiseList?.filter((res: any) => res?._id ===SelectedValue).map((get: any) => (
-  //     {
-  //         name: get?.name,
-  //         _id: get?._id,
-  //         mobile: get?.mobile,
-          
-  //     }
-
-
-  // ))
-
-  let data = {
-    order_id: franchiseData?._id,
-    rider_id: SelectedValue,
-    franchise_id:franchase_id
-   
-  }
-    //   const formData = new FormData();
-    //   console.log(franchiseData);
-    //   console.log(SelectedValue);
-      
-   
-    //   formData.append('order_id', JSON.stringify(franchiseData?._id));
-    
-   
-
-    
+  
+    let data = {
+    //   order_id: franchiseData?._id,
+      rider_id: rider_id,
+     payment_method:SelectedValue,
+     cash_in_hand:cashInHandDetails?.total_cash_in_hand,
+     transaction_id:transaction_id
      
-    //   formData.append('rider_id', JSON.stringify(SelectedValue));
-
+    }
+    
+  
+        const response = await postData('admin/rider-support/cash-in-hand-settlement/create', data);
+  
+        if (response.status === 201 || response.status === 200) {
+          handleClose(true)
+            toast.success("Cash In Hand Successfuly cleared");
+            reset();
+  
+        } else {
+  
+            toast.error("Failed");
+        }
+    } catch (error:any) {
+      //   console.error(error.message ,"l");
+        toast.error(error?.message);
+    } finally {
+        setLoading(false);
+    }
+  };
   
 
-      const response = await postData('admin/shipment/assign-riders', data);
-
-      if (response.status === 201 || response.status === 200) {
-        handleClose(true)
-          toast.success("Rider Assigned Successfully");
-          reset();
-
-      } else {
-
-          toast.error("Failed");
-      }
-  } catch (error:any) {
-    //   console.error(error.message ,"l");
-      toast.error(error?.message);
-  } finally {
-      setLoading(false);
-  }
-};
 
 
+//     const riderBasedOnFranchasee = async (franchiseData:any) => {
+//       try {
+//         let franchase_id=(franchiseData?.franchisee?._id);
+//         setfranchase_id(franchase_id)
+//           setLoading(true)
+//           const response = await fetchData(`admin/onboarding/riders/${franchase_id}`)
+//           setFranchiseList(response?.data?.data)
 
-    const riderBasedOnFranchasee = async (franchiseData:any) => {
-      try {
-        let franchase_id=(franchiseData?.franchisee?._id);
-        setfranchase_id(franchase_id)
-          setLoading(true)
-          const response = await fetchData(`admin/onboarding/riders/${franchase_id}`)
-          setFranchiseList(response?.data?.data)
-
-      } catch (err: any) {
-          toast.error(err?.message)
-          setLoading(false)
-      } finally {
-          setLoading(false)
-      }
-  }
+//       } catch (err: any) {
+//           toast.error(err?.message)
+//           setLoading(false)
+//       } finally {
+//           setLoading(false)
+//       }
+//   }
 
 
-    useEffect(() => {
-      riderBasedOnFranchasee(franchiseData);
-  }, []);
+//     useEffect(() => {
+//       riderBasedOnFranchasee(franchiseData);
+//   }, []);
 
 
     return (
@@ -177,7 +192,7 @@ const Submit = async (data: any) => {
             onClose={handleClose}
 
             open={open}
-            maxWidth={'xs'}
+            maxWidth={'md'}
             fullWidth
         >
             <Box p={1} >
@@ -196,7 +211,7 @@ const Submit = async (data: any) => {
                             fontWeight: 'bold',
                             letterSpacing: 1,
                             fontFamily: `'Poppins' sans-serif`,
-                        }}>{'Assign Rider'}</Typography>
+                        }}>{'Clear Cash in Hand'}</Typography>
                     </Box>
                     <Box onClick={handleClose}>
                         <Box
@@ -215,59 +230,78 @@ const Submit = async (data: any) => {
                     </Box>
                 </Box>
                 <DialogContent>
-                    <Grid container spacing={2} display={'flex'} flexDirection={'column'} justifyItems={'center'}>
-                        <Grid item xs={12} lg={12}>
+                    <Grid container spacing={2} display={'flex'} flexDirection={'row'} justifyItems={'center'}>
+                    <Grid item xs={12} xl={4}>
+                            <CustomInput
+                                onChangeValue={OnChangePriority}
+                                type='text'
+                                control={control}
+                                error={errors.cash_in_hand}
+                                fieldName="cash_in_hand"
+                                placeholder={``}
+                                fieldLabel={"Total Cash in Hand"}
+                                disabled={false}
+                                view={true}
+                              
+                                defaultValue={''}
+                            />
+                        </Grid>
+                        <Grid item xs={12} xl={4}>
                             <Customselect
                                 disabled={false}
                                 type='text'
                                 control={control}
-                                error={errors.rider}
-                                fieldName="rider"
+                                error={errors.payment_method}
+                                fieldName="payment_method"
                                 placeholder={``}
-                                fieldLabel={"Choose Rider"}
+                                fieldLabel={"Payment Method "}
                                 selectvalue={""}
                                 height={40}
                                 label={''}
                                 size={16}
                                 value={SelectedValue}
-                                options={''}
+                                options={genderOptions}
                                 onChangeValue={onselectRider}
                                 background={'#fff'}
                             >
                                 <MenuItem value="" disabled >
                                     <>Select Rider</>
                                 </MenuItem>
-                                {franchiseList && franchiseList?.map((res: any) => (
-                                    <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
-                                ))}
+                                {genderOptions.map((option: any) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                    {option.name}
+                                </MenuItem>
+                            ))}
+                          
                             </Customselect>
+                     
                         </Grid>
                  
-                        {/* <Grid item xs={12} lg={12}>
+                        <Grid item xs={12} xl={4}>
                             <CustomInput
                                 onChangeValue={OnChangePriority}
                                 type='text'
                                 control={control}
-                                error={errors.priority}
-                                fieldName="priority"
+                                error={errors.transaction_id}
+                                fieldName="transaction_id"
                                 placeholder={``}
-                                fieldLabel={"Priority"}
+                                fieldLabel={"Transaction ID"}
                                 disabled={false}
                                 view={false}
                               
                                 defaultValue={''}
                             />
-                        </Grid> */}
+                        </Grid>
                       </Grid>
                     <Box py={1} display={'flex'} justifyContent={'center'}>
-                        <Custombutton
+                    <Custombutton
                             btncolor=''
                             IconEnd={''}
                             IconStart={''}
                             endIcon={false}
                             startIcon={false}
                             height={''}
-                            label={'Add'}
+                            label={'Update'}
                             disabled={loading}
                             onClick={handleSubmit(Submit)} />
                     </Box>
@@ -279,4 +313,4 @@ const Submit = async (data: any) => {
     )
 }
 
-export default AssignModal
+export default CashClearInHandModal
