@@ -48,7 +48,7 @@ console.log("bootmodal");
     const [bootcash, setBootCash] = useState<any>('')
   
     const schema = yup.object().shape({
-    //   rider: yup.string().required('Rider field is required').typeError("Rider field is required"),
+        bootcash: yup.number().typeError("BootCash must be a number").required('BootCash is required'),
     });
     
 
@@ -76,7 +76,7 @@ console.log("bootmodal");
 
        useEffect(() => {
         setValue('bootcash',cashInHandDetails?.boot_cash_limit)
-        setBootCash(cashInHandDetails?.boot_cash_limit)
+        setBootCash(cashInHandDetails?.boot_cash_limit)       
        }, [cashInHandDetails])
        
 
@@ -93,7 +93,11 @@ const OnChangePriority=(event:any)=>{
 const Submit = async (data: any) => {
     setLoading(true);
     console.log(data);
-  
+    if (data.bootcash < 0) {
+        toast.error("BootCash cannot be a negative value.");
+        setLoading(false);
+        return;
+    }
     try {
     //   let result = franchiseList?.filter((res: any) => res?._id ===SelectedValue).map((get: any) => (
     //     {

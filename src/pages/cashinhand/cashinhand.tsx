@@ -34,6 +34,7 @@ const Cashinhand =({ res, view }: props)=> {
    
       };
       const [CashInHandList, setCashInHandList] = useState<any>([])
+      const [CashInHandData, setCashInHandData] = useState<any>()
       const [loading, setLoading] = useState<boolean>(false)
       const [addOpen, setaddOpen] = useState<any>(false)
       const [openBootModal, setopenBootModal] = useState(false)
@@ -141,6 +142,7 @@ const Cashinhand =({ res, view }: props)=> {
                 const response = await fetchData(`admin/rider-support/cash-in-hand/list/${res}`);
               
                 setCashInHandList(response?.data?.data?.order_list)
+                setCashInHandData(response?.data?.data)
               console.log(CashInHandList);
               console.log(response?.data?.data);
               
@@ -259,14 +261,14 @@ const Cashinhand =({ res, view }: props)=> {
                 // order_id={id}
                 // SetDeliveryCharge={SetDeliveryCharge}
                  rider_id={res}
-                cashInHandDetails={CashInHandList}
+                cashInHandDetails={CashInHandData}
                 open={addOpen}
                 handleClose={handleCloseAddModal}
             />}
             {openBootModal&&
             <BootCashModal
             rider_id={res}
-            cashInHandDetails={CashInHandList}
+            cashInHandDetails={CashInHandData}
             open={openBootModal}
             handleClose={colseBootModalHere}
             />
