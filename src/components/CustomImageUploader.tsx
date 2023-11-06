@@ -25,7 +25,8 @@ type props = {
     previewEditimage: any,
     myid: string,
     viewImage?: any,
-    format?: any
+    format?: any,
+    disabled?: boolean
 
 }
 

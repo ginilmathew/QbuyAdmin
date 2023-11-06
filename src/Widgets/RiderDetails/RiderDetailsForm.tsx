@@ -42,7 +42,7 @@ type Inputs = {
     franchise_id: string;
     status: string;
     image: any,
-    boot_cash_limit:string;
+    //boot_cash_limit: string;
 
 
 };
@@ -69,7 +69,7 @@ type IFormInput = {
     account_name: string;
     status: string;
     franchise_id: string;
-    boot_cash_limit:string;
+    //boot_cash_limit: string;
     image: any,
 
 
@@ -110,24 +110,35 @@ const RiderDetailsform = ({ res, view }: props) => {
     const [isGenderModified, setIsGenderModified] = useState(false);
 
 
-    
+
     const schema = yup.object().shape({
-        name: yup.string().matches(/^[A-Za-z]+$/, "Rider Name should contain only characters").required("Rider Name is required"),
+        name: yup.string()
+            .matches(/^[A-Za-z]+(?: [A-Za-z]+)*$/, "Rider Name should contain only characters")
+            .required("Rider Name is required"),
         mobile: yup.string()
             .required("Mobile Number is required")
             .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
         emergency_contact: yup.string()
-            .matches(/^[0-9]{10}$/, "Emergency Contact must be 10 digits long and contain only numeric characters"),
-        // gender: yup.string().required("Gender is required"),
+            .matches(/(^[0-9]{10}$)|^$/, "Emergency Contact must be 10 digits long and contain only numeric characters")
+            .nullable()
+            .notRequired(),
+
         aadhar_card_number: yup.string()
-            .matches(/^[0-9]+$/, "Adhaar Number should contain only numeric characters")
-            .max(13, "Adhaar Number should not exceed 13 characters"),
+            .matches(/^$|^[0-9]{12}$/, "Aadhaar Number should be 12 digits long and contain only numeric characters")
+            .nullable()
+            .notRequired(),
+
         account_number: yup.string()
-            .matches(/^[0-9]+$/, "Account Number should contain only numeric characters")
-            .max(13, "Account Number should not exceed 13 characters"),
-        account_name: yup.string().matches(/^[A-Za-z]+$/, "Account Name should contain only characters"),
+            .matches(/^$|^[0-9]+$/, "Account Number should contain only numeric characters")
+            .max(13, "Account Number should not exceed 13 characters")
+            .nullable()
+            .notRequired(),
+        account_name: yup.string()
+            .matches(/^[A-Za-z]*$/, "Account Name should contain only characters")
+            .nullable()
+            .notRequired(),
     });
-  
+
 
     const { register,
         handleSubmit,
@@ -155,7 +166,7 @@ const RiderDetailsform = ({ res, view }: props) => {
                 account_name: '',
                 status: '',
                 franchise_id: '',
-                boot_cash_limit: '',
+                // boot_cash_limit: '',
             }
         });
 
@@ -179,6 +190,7 @@ const RiderDetailsform = ({ res, view }: props) => {
 
 
 
+
     const ChangeStatus = useCallback((e: any) => {
         const { value } = e.target;
         setStatusSelect(value)
@@ -187,9 +199,10 @@ const RiderDetailsform = ({ res, view }: props) => {
     const addMoreFranchisee = () => {
         setSelectedFranchisees([...selectedFranchisees, '']);
     };
+
     const handleFranchiseSelects = (index: number, e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
         const selectedFranchiseId = e.target.value as string;
-        const selectedFranchise = franchiseList.find((franchise) => franchise.franchise_id === selectedFranchiseId);
+        const selectedFranchise = franchiseList.find((franchise) => franchise._id === selectedFranchiseId);
 
         if (selectedFranchise) {
             setSelectedFranchisees((prevSelectedFranchisees: string[]) => {
@@ -205,11 +218,17 @@ const RiderDetailsform = ({ res, view }: props) => {
             });
         }
     };
+
+
     const handleFranchiseSelect = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
         const selectedFranchiseId = e.target.value as string;
-        const selectedFranchise = franchiseList.find((franchise) => franchise.franchise_id === selectedFranchiseId);
+        console.log({ selectedFranchiseId })
+        const selectedFranchise = franchiseList.find((franchise) => franchise._id === selectedFranchiseId);
+        console.log({ franchiseList })
+        console.log({ selectedFranchise })
 
         if (selectedFranchise) {
+            console.log('hello')
             setSelectedValue(selectedFranchiseId);
             setSelectedFranchiseName(selectedFranchise.franchise_name);
             setValue('franchise_id', selectedFranchiseId);
@@ -231,6 +250,7 @@ const RiderDetailsform = ({ res, view }: props) => {
         try {
             setLoader(true)
             const response = await fetchData(`admin/onboarding/show/${idd}`)
+            console.log({ response }, 'ppp')
             setOnboardingList(response?.data?.data)
         } catch (err: any) {
             toast.success(err.message)
@@ -242,52 +262,50 @@ const RiderDetailsform = ({ res, view }: props) => {
 
     useEffect(() => {
         if (subOnboardingList && idd) {
+            setValue('name', subOnboardingList?.name);
+            setValue('mobile', subOnboardingList?.mobile);
+            setValue('emergency_contact', subOnboardingList?.emergency_contact);
+            setValue('city', subOnboardingList?.city);
+            //setValue('boot_cash_limit', subOnboardingList?.boot_cash_limit);
+            setValue('vehicle_number', subOnboardingList?.vehicle_number);
+            setValue('aadhar_card_number', subOnboardingList?.kyc_details?.aadhar_card_number);
+            setValue('ifsc', subOnboardingList?.bank_account_details?.ifsc);
+            setValue('driving_license', subOnboardingList?.kyc_details?.driving_license);
+            setValue('pan_card_number', subOnboardingList?.kyc_details?.pan_card_number);
+            setValue('rc_book_number', subOnboardingList?.kyc_details?.rc_book_number);
+            setValue('account_number', subOnboardingList?.bank_account_details?.account_number)
+            setValue('branch', subOnboardingList?.bank_account_details?.branch);
+            setValue('account_name', subOnboardingList?.bank_account_details?.account_name);
+            setImagePreview(`${IMAGE_URL}${subOnboardingList?.image}`)
+            setValue('gender', subOnboardingList?.gender);
+            setSelectedGender(subOnboardingList?.gender);
+            setStatusSelect(subOnboardingList?.status || '');
+            console.log('Primary franchise ID:', subOnboardingList.primary_franchise);
+            console.log('Secondary franchises:', subOnboardingList.secondary_franchise);
+            if (subOnboardingList.primary_franchise) {
+                console.log('haii')
+                setValue('franchise_id', subOnboardingList?.primary_franchise?.franchise_id);
+                setValue('franchise_name', subOnboardingList?.primary_franchise?.franchise_name);
+                setSelectedValue(subOnboardingList.primary_franchise?.franchise_id);
+                setSelectedFranchiseName(subOnboardingList.primary_franchise?.franchise_name);
 
-            let data = {
-                name: subOnboardingList?.name,
-                mobile: subOnboardingList?.mobile,
-                gender: subOnboardingList?.gender,
-                emergency_contact: subOnboardingList?.emergency_contact,
-                city: subOnboardingList?.city,
-                vehicle_number: subOnboardingList?.vehicle_number,
-                aadhar_card_number: subOnboardingList?.kyc_details?.aadhar_card_number,
-                franchise_name: '',
-                ifsc: subOnboardingList?.bank_account_details?.ifsc,
-                driving_license: subOnboardingList?.kyc_details?.driving_license,
-                pan_card_number: subOnboardingList?.kyc_details?.pan_card_number,
-                rc_book_number: subOnboardingList?.kyc_details?.rc_book_number,
-                account_number: subOnboardingList?.bank_account_details?.account_number,
-                branch: subOnboardingList?.bank_account_details?.branch,
-                account_name: subOnboardingList?.bank_account_details?.account_name,
-                status: subOnboardingList?.status,
-                franchise_id: subOnboardingList?.primary_franchise?.franchise_id,
+            }
+            if (subOnboardingList.secondary_franchise?.length > 0) {
+                const selectedFranchiseIds = subOnboardingList.secondary_franchise.map((i: any) => i.franchise_id)
+                setSelectedFranchisees(selectedFranchiseIds);
+
+
+
+
+                // setSelectedFranchiseNames((prevSelectedFranchiseNames: string[]) => {
+                //     const updatedFranchiseNames = [...prevSelectedFranchiseNames];
+                //     updatedFranchiseNames[index] = selectedFranchise.franchise_name;
+                //     return updatedFranchiseNames;
+                // });
             }
 
-            
-
-
-            // setValue('name', subOnboardingList?.name);
-            // setValue('mobile', subOnboardingList?.mobile);
-            // setValue('emergency_contact', subOnboardingList?.emergency_contact);
-            // setValue('city', subOnboardingList?.city);
-            // setValue('vehicle_number', subOnboardingList?.vehicle_number);
-            // setValue('aadhar_card_number', subOnboardingList?.kyc_details?.aadhar_card_number);
-            // setValue('ifsc', subOnboardingList?.bank_account_details?.ifsc);
-            // setValue('driving_license', subOnboardingList?.kyc_details?.driving_license);
-            // setValue('pan_card_number', subOnboardingList?.kyc_details?.pan_card_number);
-            // setValue('rc_book_number', subOnboardingList?.kyc_details?.rc_book_number);
-            // setValue('account_number', subOnboardingList?.bank_account_details?.account_number)
-            // setValue('branch', subOnboardingList?.bank_account_details?.branch);
-            // setValue('account_name', subOnboardingList?.bank_account_details?.account_name);
-            setImagePreview(`${IMAGE_URL}${subOnboardingList?.image}`)
-            setSelectedGender(subOnboardingList?.gender);
-            setSelectedValue(subOnboardingList?.primary_franchise?.franchise_id || '');
-            // setValue('franchise_id', subOnboardingList?.primary_franchise?.franchise_id);
-            // setValue('franchise_name', subOnboardingList?.primary_franchise?.franchise_name);
-            setStatusSelect(subOnboardingList?.status || '');
-            reset(data);
         }
-    }, [subOnboardingList, idd]);
+    }, [subOnboardingList, idd, setValue]);
 
 
 
@@ -362,15 +380,7 @@ const RiderDetailsform = ({ res, view }: props) => {
             };
             formData.append("bank_account_details", JSON.stringify(bankAccountDetails));
 
-
-
-            // const primaryFranchise = franchiseList.find((franchise) => franchise.franchise_id === selectedValue);
-            // if (primaryFranchise) {
-            //     data.franchise_id = primaryFranchise._id; 
-            //     formData.append("franchise_name", primaryFranchise.franchise_name);
-            //     formData.append("franchise_id", primaryFranchise._id);
-            // }
-            const primaryFranchise = franchiseList.find((franchise) => franchise.franchise_id === selectedValue);
+            const primaryFranchise = franchiseList.find((franchise) => franchise._id === selectedValue);
 
             if (primaryFranchise) {
                 const primaryFranchiseData = {
@@ -383,13 +393,16 @@ const RiderDetailsform = ({ res, view }: props) => {
 
 
             const secondaryFranchises = selectedFranchisees.map((franchiseId, index) => {
+                const franchise = franchiseList.find(fr => fr._id === franchiseId);
                 return {
-                    franchise_id: franchiseId,
+                    franchise_id: franchise ? franchise._id : '',
                     franchise_name: selectedFranchiseNames[index],
                 };
             });
 
             formData.append("secondary_franchise", JSON.stringify(secondaryFranchises));
+
+
 
             if (data.image) {
                 formData.append("image", data.image);
@@ -419,34 +432,43 @@ const RiderDetailsform = ({ res, view }: props) => {
     return (
         <Box>
             <CustomBox title='Rider Details'>
-                <Box display={'flex'}>
 
-                    <Grid item xs={11} lg={3}>
-
-                        <Box flex={.3} sx={{}}>
-                            <CustomImageUploader
-                                ICON={""}
-                                viewImage={imagePreview}
-                                error={errors.image}
-                                fieldName="image"
-                                placeholder={``}
-                                fieldLabel={"Profile Picture"}
-                                control={control}
-                                height={150}
-                                max={5}
-                                onChangeValue={imageUploder}
-                                preview={imagefile}
-                                previewEditimage={""}
-                                type={"file"}
-                                background="#e7f5f7"
-                                myid="contained-button-file"
-                                width={"150%"}
-
-                            />
+                <Grid container>
+                    <Grid item xs={12} lg={3}>
+                        <Box width={230} height={190} sx={{}}>
+                            {view ? (
+                                <Avatar
+                                    src={imagePreview}
+                                    alt="Profile Picture"
+                                    sx={{ width: '100%', height: '100%' }}
+                                />
+                            ) : (
+                                <CustomImageUploader
+                                    ICON={""}
+                                    viewImage={imagePreview}
+                                    error={errors.image}
+                                    fieldName="image"
+                                    placeholder={``}
+                                    fieldLabel={"Profile Picture"}
+                                    control={control}
+                                    height={150}
+                                    max={5}
+                                    onChangeValue={imageUploder}
+                                    preview={imagefile}
+                                    previewEditimage={""}
+                                    type={"file"}
+                                    background="#e7f5f7"
+                                    myid="contained-button-file"
+                                    width={"100%"}
+                                    disabled={view}
+                                />
+                            )}
                         </Box>
                     </Grid>
-                    <Grid container flex={0.9} spacing={2} sx={{ paddingTop: '22px', marginLeft: "65px" }}>
-                        <Grid item xs={11} lg={3}>
+
+
+                    <Grid container xs={12} lg={8} spacing={1.5}>
+                        <Grid item xs={12} lg={3}>
                             <CustomInput
                                 type='text'
                                 control={control}
@@ -460,7 +482,7 @@ const RiderDetailsform = ({ res, view }: props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={11} lg={3}>
+                        <Grid item xs={12} lg={3}>
                             <CustomInput
                                 type='text'
                                 control={control}
@@ -472,7 +494,7 @@ const RiderDetailsform = ({ res, view }: props) => {
                                 view={view ? true : false}
                             />
                         </Grid>
-                        <Grid item xs={11} lg={3}>
+                        <Grid item xs={12} lg={3}>
                             <CustomInput
                                 type='text'
                                 control={control}
@@ -484,7 +506,7 @@ const RiderDetailsform = ({ res, view }: props) => {
                                 view={view ? true : false}
                             />
                         </Grid>
-                        <Grid item xs={12} lg={2.4}>
+                        <Grid item xs={12} lg={3}>
                             <Customselect
                                 type="text"
                                 control={control}
@@ -499,6 +521,7 @@ const RiderDetailsform = ({ res, view }: props) => {
                                 onChangeValue={onChangeSelect}
                                 background="#fff"
                                 options={genderOptions}
+                                disabled={view ? true : false}
                                 size={20}
                             >
                                 {genderOptions.map((option: any) => (
@@ -510,7 +533,7 @@ const RiderDetailsform = ({ res, view }: props) => {
 
                         </Grid>
 
-                        <Grid item xs={11} lg={3}>
+                        <Grid item xs={12} lg={3}>
                             <CustomInput
                                 type='text'
                                 control={control}
@@ -523,7 +546,7 @@ const RiderDetailsform = ({ res, view }: props) => {
 
                             />
                         </Grid>
-                        <Grid item xs={11} lg={3}>
+                        <Grid item xs={12} lg={3}>
                             <CustomInput
                                 type='text'
                                 control={control}
@@ -536,7 +559,7 @@ const RiderDetailsform = ({ res, view }: props) => {
 
                             />
                         </Grid>
-                        <Grid item xs={11} lg={3}>
+                        <Grid item xs={12} lg={3}>
                             <Customselect
                                 type="text"
                                 control={control}
@@ -544,65 +567,97 @@ const RiderDetailsform = ({ res, view }: props) => {
                                 fieldName="franchise_id"
                                 placeholder={``}
                                 fieldLabel={"Primary Franchisee"}
-                                selectvalue={selectedValues}
+                                selectvalue={selectedValue}
                                 height={40}
                                 label={""}
                                 size={16}
                                 value={selectedValue}
                                 onChangeValue={handleFranchiseSelect}
                                 background={"#fff"}
+                                disabled={view ? true : false}
                                 options={franchiseList}
                             >
                                 {franchiseList.map((franchise) => (
                                     <MenuItem
                                         key={franchise._id}
-                                        value={franchise.franchise_id}
+                                        value={franchise._id}
                                     >
                                         {franchise?.franchise_name}
                                     </MenuItem>
                                 ))}
                             </Customselect>
                         </Grid>
+                        {selectedFranchisees.map((franchiseId, index) => (
+                            <Grid item xs={12} lg={3} key={index}>
+                                <Customselect
+                                    type="text"
+                                    control={control}
+                                    error={errors.franchise_id}
+                                    fieldName={`franchise_id_${index}`}
+                                    placeholder={``}
+                                    fieldLabel={`Secondary Franchisee `}
+                                    selectvalue={selectedFranchisees[index]}
+                                    height={40}
+                                    label={""}
+                                    size={16}
+                                    value={selectedFranchisees[index]}
+                                    onChangeValue={(e: any) => handleFranchiseSelects(index, e)}
 
-                        <Grid container spacing={2} sx={{ paddingTop: '22px', marginLeft: '1px' }}>
-                            {selectedFranchisees.map((franchiseId, index) => (
-                                <Grid item xs={11} lg={3} key={index}>
-                                    <Customselect
-                                        type="text"
-                                        control={control}
-                                        error={errors.franchise_id}
-                                        fieldName={`franchise_id_${index}`}
-                                        placeholder={``}
-                                        fieldLabel={`Secondary Franchisee `}
-                                        selectvalue={selectedFranchisees[index]}
-                                        height={40}
-                                        label={""}
-                                        size={16}
-                                        value={selectedFranchisees[index]}
-                                        onChangeValue={(e:any) => handleFranchiseSelects(index, e)}
+                                    background={"#fff"}
+                                    disabled={view ? true : false}
+                                    options={franchiseList}
+                                >
+                                    {franchiseList.map((franchise) => (
+                                        <MenuItem
+                                            key={franchise._id}
+                                            value={franchise._id}
+                                        >
+                                            {franchise?.franchise_name}
+                                        </MenuItem>
+                                    ))}
+                                </Customselect>
+                            </Grid>
+                        ))}
 
-                                        background={"#fff"}
-                                        options={franchiseList}
-                                    >
-                                        {franchiseList.map((franchise) => (
-                                            <MenuItem
-                                                key={franchise._id}
-                                                value={franchise.franchise_id}
-                                            >
-                                                {franchise?.franchise_name}
-                                            </MenuItem>
-                                        ))}
-                                    </Customselect>
-                                </Grid>
-                            ))}
-                        </Grid>
-                        <button onClick={addMoreFranchisee} style={{ color: 'white', backgroundColor: 'red', marginTop: '30px', marginLeft: '15px' }}>
-                            Add More Franchisee
-                        </button>
+
 
                     </Grid>
+                    {!view &&
+                        <Grid container direction={"row-reverse"}>
+                            {/* <button
+                                onClick={addMoreFranchisee}
+                                style={{
+                                    color: 'white',
+                                    backgroundColor: '#F71C1C',
+                                    //width: '226px',
+                                    height: '40px',
+                                    marginTop: '30px',
+                                    //marginLeft: '15px',
+                                    boxShadow: '0px 3px 6px #00000014',
+                                    borderRadius: '5px',
+                                    border: 'none',
+                                }}
+                            >
+                                Add More Franchisee
+                            </button> */}
+                         
+                            <Custombutton
+                                btncolor='#F71C1C'
+                                IconEnd={''}
+                                IconStart={''}
+                                endIcon={false}
+                                startIcon={false}
+                                height={'40'}
+                                label={'Add More Franchisee'}
+                                onClick={addMoreFranchisee}
+                                disabled={loading}
+                            />
+                        </Grid>
 
-                </Box>
+                    }
+                </Grid>
+
+
                 <Box py={2}>
                     <Divider />
 
@@ -610,7 +665,7 @@ const RiderDetailsform = ({ res, view }: props) => {
 
                 <CustomBox title='KYC '>
                     <Grid container spacing={2}>
-                        <Grid item xs={12} lg={2.5}>
+                        <Grid item xs={12} lg={2}>
                             <CustomInput
                                 type='text'
                                 control={control}
@@ -760,19 +815,19 @@ const RiderDetailsform = ({ res, view }: props) => {
                     </Grid>
                 </Grid> */}
                 <Grid container spacing={2}>
-                <Grid item xs={11} lg={3}>
-                            <CustomInput
-                                type='text'
-                                control={control}
-                                error={errors.boot_cash_limit}
-                                fieldName="boot_cash_limit"
-                                placeholder={``}
-                                fieldLabel={"Boot Cash Limit"}
-                                disabled={false}
-                                view={view ? true : false}
+                    {/* <Grid item xs={11} lg={3}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.boot_cash_limit}
+                            fieldName="boot_cash_limit"
+                            placeholder={``}
+                            fieldLabel={"Boot Cash Limit"}
+                            disabled={false}
+                            view={view ? true : false}
 
-                            />
-                        </Grid>
+                        />
+                    </Grid> */}
                     <Grid item lg={2} md={2} xs={12}>
                         <Customselect
                             disabled={view ? true : false}

@@ -40,7 +40,7 @@ const OnBoardingList = () => {
     }
 
     const columns: GridColDef[] = [
-        { field: 'rider_id', headerName: 'Rider ID', flex: 1 },
+        { field: 'rider_id', headerName: 'Rider ID', flex: 1 ,valueGetter: (params: GridValueGetterParams) => `#FA${params.row.rider_id || ''}`},
         {
             field: 'name',
             headerName: 'Rider Name',

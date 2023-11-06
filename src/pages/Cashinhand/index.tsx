@@ -8,7 +8,7 @@ import { fetchData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import dynamic from 'next/dynamic';
-const CustomTableHeaders = dynamic(() => import('@/Widgets/CustomTableHeaders'), { ssr: false });
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
 const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
 const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
 const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
@@ -22,7 +22,7 @@ type props = {
     view?: any
 
 }
-const ShipmentSupport = ({ res, view }: props) => {
+const Cashinhand = ({ res, view }: props) => {
 
     console.log({ res })
     const idd = res ? res : view;
@@ -47,7 +47,7 @@ const ShipmentSupport = ({ res, view }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => `#FA${params?.row?.orders?.order_id}`,
+            valueGetter: (params) => params?.row?.orders?.order_id,
         },
         {
             field: 'created_at',
@@ -105,16 +105,15 @@ const ShipmentSupport = ({ res, view }: props) => {
     }, [shippmentData]);
 
     return (
-        <Box px={0} py={1} pt={1} mt={0}>
+        <Box px={5} py={2} pt={1} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeaders addbtn={false} setState={searchProducts} imprtBtn={false} Headerlabel='' onClick={() => null} />
+                <CustomTableHeader addbtn={false} setState={searchProducts} imprtBtn={false} Headerlabel='' onClick={() => null} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={shippmentData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
         </Box>
-
     )
 }
 
-export default ShipmentSupport
+export default Cashinhand

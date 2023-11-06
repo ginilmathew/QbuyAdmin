@@ -42,7 +42,7 @@ const RiderSupport = () => {
    
     
     const columns: GridColDef[] = [
-        { field: 'rider_id', headerName: 'Rider ID', flex: 1, },
+        { field: 'rider_id', headerName: 'Rider ID', flex: 1, valueGetter: (params) => `#FA${params.row.rider_id || ''}`, },
         {
             field: 'name',
             headerName: 'Rider Name',

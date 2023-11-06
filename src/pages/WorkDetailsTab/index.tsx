@@ -8,7 +8,7 @@ import { fetchData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import dynamic from 'next/dynamic';
-const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTableHeaders = dynamic(() => import('@/Widgets/CustomTableHeaders'), { ssr: false });
 const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
 const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
 const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
@@ -105,9 +105,9 @@ const WorkDetailsTab = ({ res, view }: props) => {
 
 
     return (
-        <Box px={5} py={2} pt={3} mt={0}>
+        <Box px={0} py={1} pt={1} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader addbtn={false} setState={searchProducts} imprtBtn={false} Headerlabel='' onClick={() => null} />
+                <CustomTableHeaders addbtn={false} setState={searchProducts} imprtBtn={false} Headerlabel='' onClick={() => null} />
                 <Box py={1}>
                     <CustomTable dashboard={false} columns={columns} rows={workdetailsData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
