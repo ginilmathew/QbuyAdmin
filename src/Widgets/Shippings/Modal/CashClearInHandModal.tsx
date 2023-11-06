@@ -46,6 +46,7 @@ console.log("cashmodal");
 
     const [SelectedValue, setSelectedValue] = useState<any>('');
     const [franchiseList, setFranchiseList] = useState<any>([]);
+
     const [loading, setLoading] = useState<boolean>(false);
     const [transaction_id, settransaction_id] = useState<any>('')
   
@@ -90,10 +91,11 @@ console.log("cashmodal");
     if(newValue){
       setError('payment_method',{message:""})
     }
- 
+     
     setValue('payment_method',newValue)
     setSelectedValue(newValue);
-  
+   
+    
 };
 
 
@@ -191,6 +193,7 @@ const Submit = async (data: any) => {
 //       riderBasedOnFranchasee(franchiseData);
 //   }, []);
 
+console.log(SelectedValue);
 
     return (
         <Dialog
@@ -270,7 +273,7 @@ const Submit = async (data: any) => {
                                 background={'#fff'}
                             >
                                 <MenuItem value="" disabled >
-                                    <>Select Rider</>
+                                    <>Select Payment Method</>
                                 </MenuItem>
                                 {genderOptions.map((option: any) => (
                                 <MenuItem key={option.value} value={option.value}>
@@ -282,7 +285,7 @@ const Submit = async (data: any) => {
                      
                         </Grid>
                  
-                        <Grid item xs={12} xl={4}>
+                     {SelectedValue === "upi" &&   <Grid item xs={12} xl={4}>
                             <CustomInput
                                 onChangeValue={OnChangePriority}
                                 type='text'
@@ -296,7 +299,7 @@ const Submit = async (data: any) => {
                               
                                 defaultValue={''}
                             />
-                        </Grid>
+                        </Grid>}
                       </Grid>
                     <Box py={1} display={'flex'} justifyContent={'center'}>
                     <Custombutton
