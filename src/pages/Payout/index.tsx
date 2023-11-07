@@ -1,4 +1,5 @@
 import { Box } from '@mui/material'
+import CustomLoader from '@/components/CustomLoader';
 import React, { useState, useEffect, useCallback, useTransition } from 'react'
 import { Stack, Typography } from '@mui/material';
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
@@ -9,7 +10,7 @@ import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import { fetchData, postData } from '@/CustomAxios';
 import dynamic from 'next/dynamic';
-import CustomDatePickers from '@/components/CustomDatePickers';
+import CustomDatePicker from '@/components/CustomDatePicker';
 import { useForm, SubmitHandler, set } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
@@ -109,10 +110,13 @@ const Payout = ({ res, view }: props) => {
             to_date: formattedToDate,
         };
         try {
+            mutate(undefined, true);
             const response = await postData('admin/rider-support/payout/list', payload);
             setPayoutData(response.data.data);
         } catch (error) {
             toast.error('Failed to filter data.');
+        }finally {
+            mutate(undefined, false);
         }
     };
 
@@ -122,8 +126,8 @@ const Payout = ({ res, view }: props) => {
         <Box px={0} py={1} pt={0} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
                 <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="center" mt={3}>
-                    <div style={{ width: '150px' }}>
-                        <CustomDatePickers
+                    <div >
+                        <CustomDatePicker
                             fieldName='fromDate'
                             control={control}
                             error={''}
@@ -132,8 +136,8 @@ const Payout = ({ res, view }: props) => {
                             changeValue={(date) => setFromDate(date)}
                         />
                     </div>
-                    <div style={{ width: '150px', marginTop: '20px' }}>
-                        <CustomDatePickers
+                    <div style={{ marginTop: '20px' }}>
+                        <CustomDatePicker
                             fieldName='toDate'
                             control={control}
                             error={''}
@@ -143,9 +147,16 @@ const Payout = ({ res, view }: props) => {
                         />
                     </div>
                 </Stack>
-
+{/* 
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={payoutData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                </Box> */}
+                <Box py={5}>
+                    {isLoading ? (
+                        <CustomLoader />
+                    ) : (
+                        <CustomTable dashboard={false} columns={columns} rows={payoutData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    )}
                 </Box>
             </Box>
         </Box>
