@@ -424,7 +424,7 @@ console.log(idd);
 
 
     return (
-        <Box>
+        <Box> 
             <CustomBox title='Rider Details'>
 
                 <Grid container>

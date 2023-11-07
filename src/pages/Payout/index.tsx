@@ -88,6 +88,7 @@ const Payout = ({ res, view }: props) => {
             align: 'center',
         },
     ];
+
     useEffect(() => {
         if (data?.data?.data) {
             setPayoutData(data?.data?.data);
@@ -95,12 +96,14 @@ const Payout = ({ res, view }: props) => {
         }
     }, [data?.data?.data]);
 
+
     useEffect(() => {
         if (fromDate && toDate) {
             fetchFilteredData();
         }
     }, [fromDate, toDate]);
 
+    
     const fetchFilteredData = async () => {
         const formattedFromDate = moment(fromDate).format('YYYY-MM-DD');
         const formattedToDate = moment(toDate).format('YYYY-MM-DD');
