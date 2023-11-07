@@ -35,18 +35,8 @@ const Tabs = () => {
         >
           Shipments
         </li>
-        <li
-          className={`tab-item ${activeTab === 'fraud' ? 'active' : ''}`}
-          onClick={() => handleTabClick('fraud')}
-        >
-          Fraud
-        </li>
-        <li
-          className={`tab-item ${activeTab === 'tickets' ? 'active' : ''}`}
-          onClick={() => handleTabClick('tickets')}
-        >
-          Tickets
-        </li>
+      
+    
         <li
           className={`tab-item ${activeTab === 'payout' ? 'active' : ''}`}
           onClick={() => handleTabClick('payout')}
@@ -71,25 +61,14 @@ const Tabs = () => {
         >
           Work Details
         </li>
-        <li
-          className={`tab-item ${activeTab === 'reservation' ? 'active' : ''}`}
-          onClick={() => handleTabClick('reservation')}
-        >
-          Reservation
-        </li>
-        <li
-          className={`tab-item ${activeTab === 'telecom' ? 'active' : ''}`}
-          onClick={() => handleTabClick('telecom')}
-        >
-          Telecom
-        </li>
+      
       </ul>
 
       <div className="tab-content">
         {activeTab === 'profile' && <RiderSupportform res={id} />}
         {activeTab === 'shipments' && <ShipmentSupport res={id} />}
-        {activeTab === 'fraud' && <div>Fraud content</div>}
-        {activeTab === 'tickets' && <div>Tickets content</div>}
+        
+       
         {activeTab === 'payout' && <div>
           <h3>Settlements</h3>
             <Payout res={id}/>
@@ -104,8 +83,7 @@ const Tabs = () => {
             <RateCardTab res={id} handleClose={handleClose} open={open} />
           </div>
         )}
-        {activeTab === 'reservations' && <div>Reservations</div>}
-        {activeTab === 'telecom' && <div>telecom content</div>}
+      
       </div>
 
       <style jsx>{`
