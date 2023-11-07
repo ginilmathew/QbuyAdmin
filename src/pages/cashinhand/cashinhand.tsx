@@ -19,11 +19,10 @@ import CustomDatePicker from '@/components/CustomDatePicker';
 import moment from 'moment';
 
 type props = {
-    res?: any,
-    view?: any
+    res?: any
 
 }
-const Cashinhand =({ res, view }: props)=> {
+const Cashinhand =({ res }: props)=> {
     
 
     const schema = yup.object().shape({
