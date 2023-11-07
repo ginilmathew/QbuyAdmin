@@ -96,7 +96,8 @@ const RiderAccounts = () => {
   const searchProducts = useCallback((value: any) => {
     let Results = data?.data?.data?.filter((com: any) =>
       com?.rider_id.toString().includes(value) ||
-      com?.mobile.toString().includes(value)
+      com?.mobile.toString().includes(value) ||
+      com?.name.toString().includes(value) 
     );
 
     startTransition(() => {

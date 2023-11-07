@@ -40,7 +40,7 @@ const OnBoardingList = () => {
     }
 
     const columns: GridColDef[] = [
-        { field: 'rider_id', headerName: 'Rider ID', flex: 1 },
+        { field: 'rider_id', headerName: 'Rider ID', flex: 1 ,valueGetter: (params: GridValueGetterParams) => `#${params.row.rider_id || ''}`},
         {
             field: 'name',
             headerName: 'Rider Name',
@@ -107,17 +107,21 @@ const OnBoardingList = () => {
     ];
     
    
+   
     const searchProducts = useCallback((value: any) => {
         let Results = data?.data?.data?.filter((com: any) =>
             com?.rider_id.toString().includes(value) ||
-            com?.mobile.toString().includes(value) 
+            com?.mobile.toString().includes(value) ||
+            com?.name.toString().includes(value) ||
+            com?.primary_franchise?.franchise_name?.toLowerCase().includes(value.toLowerCase())
         );
-
+    
         startTransition(() => {
             setRiderData(Results);
         });
     }, [riderData]);
-
+    
+    
 
     
   if(isLoading){

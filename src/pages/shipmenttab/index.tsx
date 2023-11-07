@@ -8,7 +8,7 @@ import { fetchData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import dynamic from 'next/dynamic';
-const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTableHeaders = dynamic(() => import('@/Widgets/CustomTableHeaders'), { ssr: false });
 const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
 const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
 const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
@@ -47,7 +47,7 @@ const ShipmentSupport = ({ res, view }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => params?.row?.orders?.order_id,
+            valueGetter: (params) => `#FA${params?.row?.orders?.order_id}`,
         },
         {
             field: 'created_at',
@@ -105,14 +105,15 @@ const ShipmentSupport = ({ res, view }: props) => {
     }, [shippmentData]);
 
     return (
-        <Box px={5} py={2} pt={1} mt={0}>
+        <Box px={0} py={1} pt={1} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader addbtn={false} setState={searchProducts} imprtBtn={false} Headerlabel='' onClick={() => null} />
+                <CustomTableHeaders addbtn={false} setState={searchProducts} imprtBtn={false} Headerlabel='' onClick={() => null} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={shippmentData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
         </Box>
+
     )
 }
 

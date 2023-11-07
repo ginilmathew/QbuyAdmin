@@ -31,18 +31,27 @@ const RiderSupport = () => {
         }
     }, [data?.data?.data]);
 
-    const editRiderSupport = (id: any) => {
-        router.push(`/riderSupport/edit/${id}`)
-    }
+    // const editRiderSupport = (id: any) => {
+    //     router.push(`/riderSupport/edit/${id}`)
+    // }
    
     
-    const viewRiderSupport = (id: any) => {
-        router.push(`/riderSupport/view/${id}`)
-    }
-   
+    // const viewRiderSupport = (id: any) => {
+    //     router.push(`/riderSupport/view/${id}`)
+    // }
+    const editRiderSupport = (id:any, rider_id:any) => {
+        sessionStorage.setItem('rider_id', rider_id); 
+        router.push(`/riderSupport/edit/${id}`);
+    };
+    
+    const viewRiderSupport = (id:any, rider_id:any) => {
+        sessionStorage.setItem('rider_id', rider_id);
+        router.push(`/riderSupport/view/${id}`);
+    };
+    
     
     const columns: GridColDef[] = [
-        { field: 'rider_id', headerName: 'Rider ID', flex: 1, },
+        { field: 'rider_id', headerName: 'Rider ID', flex: 1, valueGetter: (params) => `#${params.row.rider_id || ''}`, },
         {
             field: 'name',
             headerName: 'Rider Name',
@@ -93,13 +102,15 @@ const RiderSupport = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-                        onClick={() => viewRiderSupport(row?._id)}
+                        //onClick={() => viewRiderSupport(row?._id)}
+                        onClick={() => viewRiderSupport(row?._id, row?.rider_id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
                         }} />
                     <BorderColorTwoToneIcon
-                        onClick={() => editRiderSupport(row?._id)}
+                       // onClick={() => editRiderSupport(row?._id)}
+                       onClick={() => editRiderSupport(row?._id, row?.rider_id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -114,7 +125,9 @@ const RiderSupport = () => {
     const searchProducts = useCallback((value: any) => {
         let Results = data?.data?.data?.filter((com: any) =>
             com?.rider_id.toString().includes(value) ||
-            com?.mobile.toString().includes(value)
+            com?.mobile.toString().includes(value) ||
+            com?.name.toString().includes(value) ||
+            com?.primary_franchise?.franchise_name?.toLowerCase().includes(value.toLowerCase())
         );
 
         startTransition(() => {

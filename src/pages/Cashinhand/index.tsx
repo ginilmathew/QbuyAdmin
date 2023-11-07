@@ -21,13 +21,12 @@ import moment from 'moment';
 import useSWR from 'swr';
 
 type props = {
-    res?: any,
-    view?: any
+    res?: any
 
 
 }
 const fetcher = (url: any) => fetchData(url).then((res) => res);
-const Cashinhand =({ res, view }: props)=> {
+const Cashinhand =({ res }: props)=> {
     
     const { data, error, isLoading, mutate } = useSWR(`admin/rider-support/cash-in-hand/list/${res}`, fetcher);
     const schema = yup.object().shape({

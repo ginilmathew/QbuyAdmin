@@ -27,26 +27,42 @@ type FormInputs = {
     ifsc: string;
     branch: string;
     account_name: string;
-    boot_cash_limit: string;
+    //boot_cash_limit: string;
 };
 
 const RiderOnBoarding = () => {
 
     const schema = yup.object().shape({
-        name: yup.string().matches(/^[A-Za-z]+$/, "Rider Name should contain only characters").required("Rider Name is required"),
+        name: yup.string()
+            .matches(/^[A-Za-z]+(?: [A-Za-z]+)*$/, "Rider Name should contain only characters")
+            .required("Rider Name is required"),
         mobile: yup.string()
             .required("Mobile Number is required")
             .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
-        emergency_contact: yup.string()
-            .matches(/^[0-9]{10}$/, "Emergency Contact must be 10 digits long and contain only numeric characters"),
         gender: yup.string().required("Gender is required"),
+        emergency_contact: yup.string()
+            .matches(/(^[0-9]{10}$)|^$/, "Emergency Contact must be 10 digits long and contain only numeric characters")
+            .nullable()
+            .notRequired(),
+
         aadhar_card_number: yup.string()
-            .matches(/^[0-9]+$/, "Adhaar Number should contain only numeric characters")
-            .max(13, "Adhaar Number should not exceed 13 characters"),
+            .matches(/^$|^[0-9]{12}$/, "Aadhaar Number should be 12 digits long and contain only numeric characters")
+            .nullable()
+            .notRequired(),
+
         account_number: yup.string()
-            .matches(/^[0-9]+$/, "Account Number should contain only numeric characters")
-            .max(13, "Account Number should not exceed 13 characters"),
-        account_name: yup.string().matches(/^[A-Za-z]+$/, "Account Name should contain only characters"),
+            .matches(/^$|^[0-9]+$/, "Account Number should contain only numeric characters")
+            .max(13, "Account Number should not exceed 13 characters")
+            .nullable()
+            .notRequired(),
+
+
+        account_name: yup.string()
+            .matches(/^[A-Za-z]*$/, "Account Name should contain only characters")
+            .nullable()
+            .notRequired(),
+
+
     });
 
 
@@ -61,6 +77,7 @@ const RiderOnBoarding = () => {
         register,
         handleSubmit,
         control,
+        trigger,
         setError,
         formState: { errors },
         reset,
@@ -73,9 +90,26 @@ const RiderOnBoarding = () => {
     // const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     //     settype(e.target.value);
     // }
+
+    const [genderOptions, setGenderOptions] = useState<any>([
+        {
+            value: 'male',
+            name: 'Male'
+        },
+        {
+            value: 'female',
+            name: 'Female'
+        },
+        {
+            value: 'others',
+            name: 'Others'
+        }
+    ]);
     const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        settype(e.target.value);
-        setValue('gender', e.target.value);
+        const selectedGender = e.target.value;
+        settype(selectedGender);
+        setValue('gender', selectedGender, { shouldValidate: true });
+        trigger('gender');
     }
 
 
@@ -93,21 +127,6 @@ const RiderOnBoarding = () => {
         }
     }
 
-    const [genderOptions, setGenderOptions] = useState<any>([
-        {
-            value: 'male',
-            name: 'Male'
-        },
-        {
-            value: 'female',
-            name: 'Female'
-        },
-        {
-            value: 'others',
-            name: 'Others'
-        }
-    ]);
-
 
     const onSubmit = async (data: FormInputs) => {
         setLoading(true);
@@ -118,7 +137,7 @@ const RiderOnBoarding = () => {
             formData.append('mobile', data.mobile);
             formData.append('emergency_contact', data.emergency_contact);
             formData.append('gender', type);
-            formData.append('boot_cash_limit', data.boot_cash_limit);
+            //formData.append('boot_cash_limit', data.boot_cash_limit);
             if (imagefile) {
                 formData.append("image", data?.image);
             }
@@ -164,7 +183,7 @@ const RiderOnBoarding = () => {
             <Typography py={2} sx={{ color: '#58D36E', fontFamily: `'Poppins' sans-serif`, fontSize: 30, fontWeight: 'bold' }}>Onboarding</Typography>
             <CustomBox title='Rider Details'>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} lg={2.4}>
+                <Grid item xs={12} sm={6} md={4} lg={2.4}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -178,7 +197,7 @@ const RiderOnBoarding = () => {
                         />
 
                     </Grid>
-                    <Grid item xs={12} lg={2.4}>
+                    <Grid item xs={12} sm={6} md={4} lg={2.4}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -192,7 +211,7 @@ const RiderOnBoarding = () => {
                         />
 
                     </Grid>
-                    <Grid item xs={12} lg={2.4}>
+                    <Grid item xs={12} sm={6} md={4} lg={2.4}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -206,7 +225,7 @@ const RiderOnBoarding = () => {
                         />
 
                     </Grid>
-                    <Grid item xs={12} lg={2.4}>
+                    <Grid item xs={12} sm={6} md={4} lg={2.4}>
                         <Customselect
                             type="text"
                             control={control}
@@ -232,7 +251,7 @@ const RiderOnBoarding = () => {
                     </Grid>
 
 
-                    <Grid item xs={12} lg={2}>
+                    <Grid item xs={12} sm={6} md={4} lg={2.4}>
                         <CustomImageUploader
                             ICON={""}
                             error={errors.image}
@@ -376,8 +395,8 @@ const RiderOnBoarding = () => {
                     <Box my={3}>
                         <Divider />
                     </Box>
-                   
-                    <Grid item xs={11} lg={3}>
+
+                    {/* <Grid item xs={11} lg={3}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -389,7 +408,7 @@ const RiderOnBoarding = () => {
                             view={false}
 
                         />
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </CustomBox>
             <Box py={3}>
