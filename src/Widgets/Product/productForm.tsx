@@ -629,74 +629,16 @@ console.log(idd);
 
 
     const onChangeProductFrom = (e: any) => {
-        const customId = "custom-id-yes"; 
-        if(idd){
+    
             setValue('product_availability_from', e);
-        }
-        else if(franchiseSelect){
-            const start_time = vendorlistDirection?.[0]?.start_time;
-            const end_time = vendorlistDirection?.[0]?.end_time;
-            console.log(start_time);
-            
-          
-            const selectedTime = moment(e, 'ha');
-            const startTime = moment(start_time, 'ha'); 
-            const endTime = moment(end_time, 'ha');
-            
-           
-            if (selectedTime.isBetween(startTime, endTime, null, '[]')) {
-              
-                setValue('product_availability_from', e);
-            } else {
-                toast.error("Selected end time is not within the valid range. Please select a time on store time!", {
-                    toastId: customId
-                  });
-               
-            }
-         
-        }
-        else {
-            toast.error("Please select a store!", {
-                toastId: customId
-              });
-        }
+       
        
     }   
 
     const onChangeProductTo = (e: any) => {
-        const customId = "custom-id-yes";   
-        if(idd){
-            setValue('product_availability_to', e);
-            console.log("kk");
-        }
-        else if(franchiseSelect){
-            const start_time = vendorlistDirection?.[0]?.start_time;
-            const end_time = vendorlistDirection?.[0]?.end_time;
-        
-           
-            const selectedEndTime = moment(e, 'ha'); 
-            const startTime = moment(start_time, 'ha'); 
-            const endTime = moment(end_time, 'ha'); 
-        
-         
-            if (selectedEndTime.isBetween(startTime, endTime, null, '[]'))  {
-               
-                toast.error("Selected end time is not within the valid range. Please select a time on store time!", {
-                    toastId: customId
-                  });
-               
-            } else {
-               
-                setValue('product_availability_to', e);
-            }
-        }
-        else {
-            toast.error("Please select a store!", {
-                toastId: customId
-              });
-        }
        
-    }
+            setValue('product_availability_to', e);
+            }
     
 
 
