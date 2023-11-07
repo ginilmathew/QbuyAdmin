@@ -5,7 +5,7 @@ import ShipmentSupport from '@/pages/shipmenttab';
 import RateCardTab from '@/pages/RateCradTab';
 import WorkDetailsTab from '@/pages/WorkDetailsTab';
 import Payout from '@/pages/Payout';
-import Cashinhand from '@/pages/Cashinhand/Cashinhand';
+import Cashinhand from '@/pages/Cashinhand';
 
 const Tabs = () => {
   const [activeTab, setActiveTab] = useState('profile');
