@@ -36,6 +36,7 @@ type Inputs = {
     order_status: string,
     comment: string;
     order_id: string;
+    ridername:string,
     payment_status: string;
     vendor_status: any
 };
@@ -259,13 +260,14 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
     useEffect(() => {
         if (orderviewList) {
+       console.log({orderviewList});
        
             
             setValue('name', orderviewList?.user?.name)
             setValue('mobile', orderviewList?.user?.mobile)
             setValue('email', orderviewList?.user?.email)
             setValue('order_id', orderviewList?.order_id)
-            // setValue('ridername',)
+             setValue('ridername',orderviewList?.rider_each_order_settlement?.rider?.name)
             // setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name ? orderviewList?.billaddress?.name : ''},${orderviewList?.billaddress?.area?.address ? orderviewList?.billaddress?.area?.address : ''},${orderviewList?.billaddress?.pincode ? orderviewList?.billaddress?.pincode : ''},${orderviewList?.billaddress?.mobile ? `${'Mob:'}${orderviewList?.billaddress?.mobile}` : ''}`)
             setValue('shipping_address_delivery_address', `${orderviewList?.shipaddress?.name ? orderviewList?.shipaddress?.name : ''},${orderviewList?.shipaddress?.area?.address ? orderviewList?.shipaddress?.area?.address : ''},${orderviewList?.shipaddress?.pincode ? orderviewList?.shipaddress?.pincode : ''},
             ${orderviewList?.shipaddress?.mobile ? `${'Mob:'}${orderviewList?.shipaddress?.mobile}` : ''}`)
@@ -458,19 +460,19 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    {/* <Grid item xs={12} lg={2.5}>
+                <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
                             control={control}
-                            error={errors.order_id}
-                            fieldName="order_id"
+                            error={errors.ridername}
+                            fieldName="ridername"
                             placeholder={``}
                             fieldLabel={"Rider Name"}
                             disabled={false}
                             view={true}
                             defaultValue={''}
                         />
-                    </Grid> */}
+                    </Grid>
                 </Grid>
 
             </CustomBox>
