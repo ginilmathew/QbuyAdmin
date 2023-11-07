@@ -194,7 +194,7 @@ const Cashinhand =({ res, view }: props)=> {
         //     };
         //     try {
         //         const response = await postData('admin/rider-support/cash-in-hand/list-filter', payload);
-        //         console.log(response?.data?.data?.order_list);
+        //         console.log(response?.data?.data);
                 
         //         // setCashInHandList(response.data.data);
         //     } catch (error) {
@@ -230,7 +230,7 @@ const Cashinhand =({ res, view }: props)=> {
                             changeValue={(date) => setToDate(date)}
                         />
                     </div>
-                </Stack> */}
+                </Stack>  */}
                     <Grid container spacing={2}>
                
 
