@@ -23,8 +23,8 @@ type props = {
     handleClose: any;
     open: boolean;
      cashInHandDetails: { boot_cash_limit: string };
-     rider_id:{rider_id:string}
-
+     rider_id:{rider_id:string},
+     mutate:any
 
 
 }
@@ -36,7 +36,7 @@ type Inputs = {
 
 };
 
-const BootCashModal = ({ handleClose, open ,cashInHandDetails,rider_id}: props) => {
+const BootCashModal = ({ handleClose, open ,cashInHandDetails,rider_id,mutate}: props) => {
 
 console.log("bootmodal");
 
@@ -121,15 +121,13 @@ const Submit = async (data: any) => {
   
         const response = await postData('admin/rider-support/cash-in-hand/update-bootcash', data);
   
-        if (response.status === 201 || response.status === 200) {
+       
           handleClose(true)
             toast.success("BootCash Limit Successfuly Updated");
             reset();
+            mutate()
   
-        } else {
-  
-            toast.error("Failed");
-        }
+        
     } catch (error:any) {
       //   console.error(error.message ,"l");
         toast.error(error?.message);
