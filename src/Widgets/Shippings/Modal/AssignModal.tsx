@@ -237,9 +237,12 @@ const Submit = async (data: any) => {
                                 <MenuItem value="" disabled >
                                     <>Select Rider</>
                                 </MenuItem>
-                                {franchiseList && franchiseList?.map((res: any) => (
-                                    <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
-                                ))}
+                                {franchiseList && franchiseList
+        .filter((res:any) => res.online_status === "online")
+        .map((res :any) => (
+            <MenuItem key={res._id} value={res._id}>{res.name}</MenuItem>
+        ))
+    }
                             </Customselect>
                         </Grid>
                  

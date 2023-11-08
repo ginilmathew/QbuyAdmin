@@ -2037,6 +2037,7 @@ console.log(idd);
                             values={offerDate_from ? offerDate_from : getValues('offer_date_from')}
                             changeValue={onChangeOffer_date_from}
                             fieldName='offer_date_from'
+                            past={false}
                             control={control}
                             error={errors.offer_date_from}
                             fieldLabel={'Offer From'}
@@ -2050,6 +2051,7 @@ console.log(idd);
                             changeValue={onChangeOffer_date_to}
                             fieldName='offer_date_to'
                             control={control}
+                            past={false}
                             error={errors.offer_date_to}
                             fieldLabel={'Offer To'}
                         />

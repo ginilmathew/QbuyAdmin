@@ -146,13 +146,13 @@ const Cashinhand =({ res }: props)=> {
         ];
          const CashinhandFunction = async () => {
             setCashInHandList(data?.data?.data?.order_list)
-           setCashInHandData(data?.data)
+           setCashInHandData(data?.data?.data)
           setValue('cashinhand',data?.data?.data?.total_cash_in_hand)
           setValue('bootcash',data?.data?.data?.boot_cash_limit)
             
          }
         useEffect(() => {
-            if (data?.data?.data?.order_list.length>0) {
+            if (data?.data?.data) {
               
                 CashinhandFunction();
                }
