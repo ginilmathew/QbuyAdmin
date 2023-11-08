@@ -304,7 +304,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             id: idd,
             delivery_charge: Math.ceil(deliveryCharge),
             ...data,
-            payment_method:data?.payment_type,
+            payment_method : data?.payment_type,
             vendor_status: vendor_statusP,
             platform_charge: orderviewList?.platform_charge,
         }
