@@ -22,6 +22,7 @@ import CustomLoader from '@/components/CustomLoader';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import ShippingTable from './shippingViewTable';
 import HistoryTable from './shippingViewTable/History';
+import RefundModal from './Modal/RefundModal';
 
 
 type Inputs = {
@@ -77,9 +78,9 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     const [orderviewList, setOrderViewList] = useState<any>(null)
     const [vendor_statusP, setVendorStatusP] = useState<any>(null)
     const [defaultStatus, setDefaultStatus] = useState<any>(null)
+    const [refundModal, setRefundModal] = useState<boolean>(false);
 
 
-    console.log({ orderviewList })
 
     const [orderStatusSelect, setOrderStatus] = useState<any>([
         {
@@ -247,7 +248,16 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     //     }
     // }
 
+    const HandleopenRefund = useCallback(() => {
+        setRefundModal(true)
+    }, [refundModal])
 
+    const HandleCloserefund = useCallback(() => {
+        setRefundModal(false)
+    }, [refundModal]);
+
+
+    
 
     useEffect(() => {
         vendorStatus();
@@ -260,7 +270,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
     useEffect(() => {
         if (orderviewList) {
-            console.log({ orderviewList });
+         
 
 
             setValue('name', orderviewList?.user?.name)
@@ -304,11 +314,11 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             id: idd,
             delivery_charge: Math.ceil(deliveryCharge),
             ...data,
-            payment_method : data?.payment_type,
+            payment_method: data?.payment_type,
             vendor_status: vendor_statusP,
             platform_charge: orderviewList?.platform_charge,
         }
-    
+
         try {
 
             await postData('admin/order/update', result);
@@ -476,9 +486,20 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                         />
                     </Grid>
                 </Grid>
-                <Box>
+                {orderviewList?.refundAmount &&
+                <Box display={'flex'} justifyContent={'flex-end'} alignItems={'center'} py={1}>
 
-                </Box>
+                    <Custombutton
+                        btncolor='#d39a58'
+                        IconEnd={''}
+                        IconStart={''}
+                        endIcon={false}
+                        startIcon={false}
+                        height={''}
+                        label={'Refund'}
+                        disabled={false}
+                        onClick={HandleopenRefund} />
+                </Box>}
 
             </CustomBox>
             <CustomBox title='Payment Details'>
@@ -695,6 +716,8 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                     disabled={loading}
                     onClick={handleSubmit(SubmitOrder)} />
             </Box>}
+
+            {refundModal && <RefundModal open={refundModal} handleClose={HandleCloserefund} res={orderviewList} functioncall={getVenderListShow}/>}
         </Box>
     )
 }
