@@ -40,7 +40,7 @@ type Inputs = {
 
 const CashClearInHandModal = ({ handleClose, open ,cashInHandDetails,rider_id}: props) => {
 
-console.log("cashmodal");
+
 
 
 
@@ -51,7 +51,7 @@ console.log("cashmodal");
     const [transaction_id, settransaction_id] = useState<any>('')
   
     const schema = yup.object().shape({
-        cash_in_hand: yup.string().required('Total Cash in Hand is required'),
+        // cash_in_hand: yup.string().required('Total Cash in Hand is required'),
          payment_method: yup.string().required('Payment Method is required'),
         // transaction_id: yup.string().when('payment_method', {
         //     is: "upi",

@@ -84,7 +84,6 @@ const Cashinhand =({ res }: props)=> {
             setopenBootModal(false)
             mutate()
         }, [openBootModal])
-        console.log(openBootModal);
         
         const columns: GridColDef[] = [
 
@@ -131,7 +130,7 @@ const Cashinhand =({ res }: props)=> {
               
                 cellClassName: (params) => {
                     const status = params.value as string;
-                    console.log(status);
+                    
                     
                     if (status === 'created' ) {
                         return 'active-status';
@@ -152,11 +151,11 @@ const Cashinhand =({ res }: props)=> {
             
          }
         useEffect(() => {
-            if (data?.data?.data) {
+            if (data?.data?.data && !isDateFilterApplied) {
               
                 CashinhandFunction();
                }
-        }, [data?.data?.data])
+        }, [data?.data?.data,isDateFilterApplied])
     
       
         useEffect(() => {
@@ -182,7 +181,7 @@ const Cashinhand =({ res }: props)=> {
                
                 const isFilterApplied = fromDate !== null && toDate !== null;
                 setIsDateFilterApplied(isFilterApplied);
-        
+             
                 setCashInHandList(filteredData);
             } catch (error) {
                 toast.error('Failed to filter data.');
@@ -190,12 +189,12 @@ const Cashinhand =({ res }: props)=> {
         };
         
         
-        useEffect(() => {
-            if (!isDateFilterApplied) {
+        // useEffect(() => {
+        //     if (!isDateFilterApplied) {
                
-                CashinhandFunction();
-            }
-        }, [isDateFilterApplied]);
+        //         CashinhandFunction();
+        //     }
+        // }, [isDateFilterApplied]);
 
         
       if (isLoading) {

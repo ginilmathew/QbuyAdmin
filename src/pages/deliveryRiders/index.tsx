@@ -68,11 +68,12 @@ const DeliveryRiders = () => {
 
     const columns: GridColDef[] = [
         {
-            field: 'rider_attendance_id',
+            field: 'rider_id',
             headerName: 'Rider ID',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter:(params)=>params.row.rider_details?.rider_id
         },
         {
             field: 'Rider Name',
