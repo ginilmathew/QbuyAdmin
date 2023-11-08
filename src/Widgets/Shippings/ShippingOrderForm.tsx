@@ -218,7 +218,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
     const vendorStatus = async () => {
         try {
-            const fetch = await fetchData('common/order-status-list');
+            const fetch = await fetchData('common/vendor-order-status-list');
 
             setVendorStatusList(fetch?.data?.data)
 
@@ -257,7 +257,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     }, [refundModal]);
 
 
-    
+
 
     useEffect(() => {
         vendorStatus();
@@ -270,9 +270,6 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
     useEffect(() => {
         if (orderviewList) {
-         
-
-
             setValue('name', orderviewList?.user?.name)
             setValue('mobile', orderviewList?.user?.mobile)
             setValue('email', orderviewList?.user?.email)
@@ -487,19 +484,19 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                     </Grid>
                 </Grid>
                 {orderviewList?.refundAmount &&
-                <Box display={'flex'} justifyContent={'flex-end'} alignItems={'center'} py={1}>
+                    <Box display={'flex'} justifyContent={'flex-end'} alignItems={'center'} py={1}>
 
-                    <Custombutton
-                        btncolor='#d39a58'
-                        IconEnd={''}
-                        IconStart={''}
-                        endIcon={false}
-                        startIcon={false}
-                        height={''}
-                        label={'Refund'}
-                        disabled={false}
-                        onClick={HandleopenRefund} />
-                </Box>}
+                        <Custombutton
+                            btncolor='#d39a58'
+                            IconEnd={''}
+                            IconStart={''}
+                            endIcon={false}
+                            startIcon={false}
+                            height={''}
+                            label={'Refund'}
+                            disabled={false}
+                            onClick={HandleopenRefund} />
+                    </Box>}
 
             </CustomBox>
             <CustomBox title='Payment Details'>
@@ -717,7 +714,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                     onClick={handleSubmit(SubmitOrder)} />
             </Box>}
 
-            {refundModal && <RefundModal open={refundModal} handleClose={HandleCloserefund} res={orderviewList} functioncall={getVenderListShow}/>}
+            {refundModal && <RefundModal open={refundModal} handleClose={HandleCloserefund} res={orderviewList} functioncall={getVenderListShow} />}
         </Box>
     )
 }
