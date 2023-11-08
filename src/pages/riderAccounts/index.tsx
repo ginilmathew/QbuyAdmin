@@ -58,16 +58,16 @@ const RiderAccounts = () => {
     },
 
     {
-      field: 'Franchisee',
+      field: 'franchise_name',
       headerName: 'Franchisee',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
-
+      valueGetter: (params) => params?.row?.primary_franchise?.franchise_name,
     },
 
     {
-      field: 'Total Order Amount',
+      field: 'last_salary_date',
       headerName: 'Last Salary Released Date',
       flex: 1,
       headerAlign: 'center',
@@ -97,7 +97,8 @@ const RiderAccounts = () => {
     let Results = data?.data?.data?.filter((com: any) =>
       com?.rider_id.toString().includes(value) ||
       com?.mobile.toString().includes(value) ||
-      com?.name.toString().includes(value) 
+      com?.name.toString().includes(value) ||
+      com?.primary_franchise?.franchise_name?.toLowerCase().includes(value.toLowerCase())
     );
 
     startTransition(() => {

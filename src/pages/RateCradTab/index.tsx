@@ -137,7 +137,7 @@ const RateCardTab = ({ res, view, open }: props) => {
         try {
             const payload = {
                 rider_id: idd,
-                rate: formData.rate, // Make sure to use the correct field name from the form
+                rate: formData.rate, 
             };
             const response = await postData('admin/rider-support/ratecard/create', payload);
             console.log({ response })
