@@ -91,14 +91,21 @@ console.log("kk");
             
         },
         {
-            field: 'Customer Name ',
-            headerName: 'Customer Name',
-            width: matches ? 150 : 200,
+            field: 'customerNameAndAddress',
+            headerName: 'Customer Name and Address',
+            width: matches ? 300 : 200,
             headerAlign: 'center',
-            align: 'center',
-            valueGetter: (params) => params.row.user?.name ? params.row.user?.name : '-',
-           
+            align: "left",
+            valueGetter: (params) => {
+                const customerName = params?.row?.user?.name ? params.row.user?.name : '-';
+                const customerAddress = params?.row?.customer_address?.address ? params?.row?.customer_address?.address : '-'; 
+                return `${customerName}\n${customerAddress}`;
+            },
+            renderCell: (params) => (
+                <div style={{ whiteSpace: 'pre-line' }}>{params.value}</div>
+            ),
         },
+        
         {
             field: 'grand_total',
             headerName: 'Order Total',
@@ -147,9 +154,6 @@ console.log("kk");
             width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
-            
-            
-        
         },
         {
             field: 'payment_type',
@@ -202,85 +206,87 @@ console.log("kk");
             headerAlign: 'center',
             align: 'center', 
         
-           renderCell: ({ row }) => (
-            <Stack alignItems={'center'} gap={1} justifyContent={'space-evenly'} direction={'column'} padding={10}>
-     <Stack alignItems={'center'} gap={1} direction={'row'} paddingTop={"20px"} >
-      <RemoveRedEyeIcon
-        onClick={() => ShippmentView(row?._id)}
-        style={{
-          color: '#58D36E',
-          cursor: 'pointer'
-        
-        }}
-      />
-      {(!['completed', 'cancelled'].includes(row?.status)) && (
-        <BorderColorTwoToneIcon
-          onClick={() => ShippmentEdit(row?._id)}
-          style={{
-            color: '#58D36E',
-            cursor: 'pointer'
-          }}
-        />
-      )}
-
-</Stack>
-<Stack display={'flex'} alignItems={'center'} gap={1} direction={'column'} paddingBottom={"20px"}>
-{
-   
-       (row?.rider_each_order_settlement ===null  && (
-        (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
-        (row?.payment_status === 'completed' && row?.payment_type === 'online')
-      )) ? (
-        <Custombutton
-          disabled={loading}
-          btncolor='blue'
-          height={25}
-          IconEnd={""}
-          IconStart={''}
-          startIcon={false}
-          endIcon={false}
-          onClick={() => openAssignModal(row)}
-          label='Assign'
-        />
-      ) :
-      (row?.rider_each_order_settlement?.rider_status==="active"||row?.rider_each_order_settlement?.rider_status==="completed"
-       || row?.rider_each_order_settlement?.rider_status==="cancelled" || row?.rider_each_order_settlement?.rider_status==="onTheWay"&& (
-        (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
-        (row?.payment_status === 'completed' && row?.payment_type === 'online')
-      )) ? (
-        <Custombutton
-          disabled={true}
-          btncolor='blue'
-          height={25}
-          IconEnd={""}
-          IconStart={''}
-          startIcon={false}
-          endIcon={false}
-          onClick={() => openAssignModal(row)}
-          label='Assign'
-        />
-      ) : (row?.rider_each_order_settlement?.rider_status==="new" && (
-        (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
-        (row?.payment_status === 'completed' && row?.payment_type === 'online')
-      )) ? (
-        <Custombutton
-          disabled={loading}
-          btncolor='#F71C1C'
-          height={25}
-          IconEnd={""}
-          IconStart={''}
-          startIcon={false}
-          endIcon={false}
-          onClick={() => openAssignModal(row)}
-          label='Reassign'
-        />
-      ) : null
-      }
-    </Stack>
-
-     
-    </Stack>
-  )
+            renderCell: ({ row }) => (
+                <Stack alignItems={'center'} gap={1} justifyContent={'space-evenly'} direction={'column'} padding={10}>
+                  <Stack alignItems={'center'} gap={1} direction={'row'} paddingTop={"20px"}>
+                    <RemoveRedEyeIcon
+                      onClick={() => ShippmentView(row?._id)}
+                      style={{
+                        color: '#58D36E',
+                        cursor: 'pointer'
+                      }}
+                    />
+                    {(!['completed', 'cancelled'].includes(row?.status)) && (
+                      <BorderColorTwoToneIcon
+                        onClick={() => ShippmentEdit(row?._id)}
+                        style={{
+                          color: '#58D36E',
+                          cursor: 'pointer'
+                        }}
+                      />
+                    )}
+                  </Stack>
+                  <Stack display={'flex'} alignItems={'center'} gap={1} direction={'column'} paddingBottom={"20px"}>
+                    {row?.status !== 'cancelled' && row?.status !== 'completed' && (
+                      // Add the condition here to show Assign and Reassign buttons
+                      (row?.rider_each_order_settlement === null && (
+                        (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
+                        (row?.payment_status === 'completed' && row?.payment_type === 'online')
+                      )) ? (
+                        <Custombutton
+                          disabled={loading}
+                          btncolor='blue'
+                          height={25}
+                          IconEnd={""}
+                          IconStart={''}
+                          startIcon={false}
+                          endIcon={false}
+                          onClick={() => openAssignModal(row)}
+                          label='Assign'
+                        />
+                      ) : (
+                        (row?.rider_each_order_settlement?.rider_status === "active" ||
+                          row?.rider_each_order_settlement?.rider_status === "completed" ||
+                          row?.rider_each_order_settlement?.rider_status === "cancelled" ||
+                          row?.rider_each_order_settlement?.rider_status === "onTheWay") && (
+                          (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
+                          (row?.payment_status === 'completed' && row?.payment_type === 'online')
+                        )
+                      ) ? (
+                        <Custombutton
+                          disabled={true}
+                          btncolor='blue'
+                          height={25}
+                          IconEnd={""}
+                          IconStart={''}
+                          startIcon={false}
+                          endIcon={false}
+                          onClick={() => openAssignModal(row)}
+                          label='Assign'
+                        />
+                      ) : (
+                        row?.rider_each_order_settlement?.rider_status === "new" && (
+                          (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
+                          (row?.payment_status === 'completed' && row?.payment_type === 'online')
+                        )
+                      ) ? (
+                        <Custombutton
+                          disabled={loading}
+                          btncolor='#F71C1C'
+                          height={25}
+                          IconEnd={""}
+                          IconStart={''}
+                          startIcon={false}
+                          endIcon={false}
+                          onClick={() => openAssignModal(row)}
+                          label='Reassign'
+                        />
+                      ) : null
+                    )}
+                  </Stack>
+                </Stack>
+              )
+              
   
         }
     ];
@@ -364,7 +370,7 @@ console.log("kk");
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
                 <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='Orders' onClick={addOrderShipmets} addbtn={false} />
                 <Box py={5}>
-               <CustomTable dashboard={false} columns={columns} rows={shippingList ? shippingList : []} id={"_id"}  bg={'#ffff'} label='Recent Activity' />  
+               <CustomTable rowheight={110} dashboard={false} columns={columns} rows={shippingList ? shippingList : []} id={"_id"}  bg={'#ffff'} label='Recent Activity' />  
                 </Box>
             </Box>
             {open &&  <AssignModal
@@ -382,3 +388,5 @@ console.log("kk");
 export default Shipments
 
 
+
+  

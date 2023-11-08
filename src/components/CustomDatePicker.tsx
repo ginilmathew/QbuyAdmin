@@ -14,7 +14,8 @@ type props = {
     error: any,
     changeValue: (value: any) => void,
     values: any,
-    disabled?: boolean
+    disabled?: boolean,
+    past:any
 
 }
 
@@ -23,6 +24,7 @@ const CustomDatePicker = ({
     fieldName,
     control,
     fieldLabel,
+    past,
     error,
     values,
     disabled,
@@ -50,12 +52,12 @@ const CustomDatePicker = ({
                     render={({ field: { value, onChange, onBlur } }) => (
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                             <DatePicker
-                                //disablePast
+                                disablePast={past? false :true}
                                 format='DD/MM/YYYY'
                                 disabled={disabled}
                                 sx={{
                                     "& .MuiInputBase-input": {
-                                        height: "8px" // Set your height here.
+                                        height: "8px" 
                                     }
                                 }}
 
