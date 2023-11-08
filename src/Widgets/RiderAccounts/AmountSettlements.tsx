@@ -31,7 +31,8 @@ export interface SimpleDialogProps {
   data: any,
   price: any,
   id: string,
-  setVendorSinglelist: any,
+  setRiderSinglelist: any,
+  RiderSingleList:any,
   viewRider: any,
   setTotal: any
 
@@ -39,8 +40,9 @@ export interface SimpleDialogProps {
 
 
 const AmountSettlementModal = (props: SimpleDialogProps) => {
-  const { onClose, data, open, price, id, setVendorSinglelist, viewRider, setTotal } = props;
-
+  const { onClose, data, open, price, id, setRiderSinglelist,viewRider, setTotal} = props;
+  console.log('datass:', data);
+ 
   const router = useRouter()
 
 
@@ -110,27 +112,25 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
   }
 
 
-
-
-
-  const submitData = useCallback(async (item: any) => {
+  const submitData = useCallback(async (formData: Inputs) => {
     let orderId = data?.reduce((acc: any, obj: any) => acc.concat(obj.order_id_array), []);
-
+    const amountValue = formData.amount || price?.toString();
     let value = {
       order_ids: orderId,
-      vendor_id: id,
-      transaction_date: moment(time).format('YYYY-MM-DD HH:mm A'),
-      amount: price?.toString(),
+      rider_id: id,
+      transaction_date: moment(time).format('YYYY-DD-MM'),
+      amount: amountValue,
       payment_mode: paymentSelect,
-      transaction_id: item?.transaction_id,
+      transaction_id: formData?.transaction_id,
 
     }
 
     try {
       setLoading(true)
-      await postData('admin/account/vendors-settlement/create', value)
+      await postData('admin/rider-account/rider-settlement/create', value)
+      console.log({value},'valuepayment')
       setLoading(false)
-      setVendorSinglelist(null)
+      setRiderSinglelist(null)
       viewRider()
       setTotal(null)
       closeModal()
@@ -141,6 +141,7 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
     }
 
   }, [data, paymentSelect, time])
+
 
   const closeModal = () => {
     reset()
@@ -208,7 +209,7 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
                   placeholder={``}
                   fieldLabel={"Amount"}
                   disabled={false}
-                  view={true}
+                  view={false}
                   defaultValue={''}
                 />
               </Grid>
