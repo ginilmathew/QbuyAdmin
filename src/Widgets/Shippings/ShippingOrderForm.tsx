@@ -308,6 +308,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             vendor_status: vendor_statusP,
             platform_charge: orderviewList?.platform_charge,
         }
+    
         try {
 
             await postData('admin/order/update', result);
