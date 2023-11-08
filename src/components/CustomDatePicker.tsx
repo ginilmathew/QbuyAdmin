@@ -15,7 +15,7 @@ type props = {
     changeValue: (value: any) => void,
     values: any,
     disabled?: boolean,
-    past:any
+    past?:any
 
 }
 
