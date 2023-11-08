@@ -36,7 +36,7 @@ type Inputs = {
     order_status: string,
     comment: string;
     order_id: string;
-    ridername:string,
+    ridername: string,
     payment_status: string;
     vendor_status: any
 };
@@ -49,7 +49,7 @@ type props = {
 
 const ShippingOrderForm = ({ view, res, edit }: props) => {
     const router = useRouter()
-    const idd = view ? view : res;    
+    const idd = view ? view : res;
     const [orderhistory, setOrderhistory] = useState<any>()
     const [customerGroupSelect, setCustomerGroupSelect] = useState<string>('')
     const [paymentMethodList, setPaymentMethodList] = useState<any>([
@@ -260,14 +260,14 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
     useEffect(() => {
         if (orderviewList) {
-       console.log({orderviewList});
-       
-            
+            console.log({ orderviewList });
+
+
             setValue('name', orderviewList?.user?.name)
             setValue('mobile', orderviewList?.user?.mobile)
             setValue('email', orderviewList?.user?.email)
             setValue('order_id', orderviewList?.order_id)
-             setValue('ridername',orderviewList?.rider_each_order_settlement?.rider?.name)
+            setValue('ridername', orderviewList?.rider_each_order_settlement?.rider?.name)
             // setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name ? orderviewList?.billaddress?.name : ''},${orderviewList?.billaddress?.area?.address ? orderviewList?.billaddress?.area?.address : ''},${orderviewList?.billaddress?.pincode ? orderviewList?.billaddress?.pincode : ''},${orderviewList?.billaddress?.mobile ? `${'Mob:'}${orderviewList?.billaddress?.mobile}` : ''}`)
             setValue('shipping_address_delivery_address', `${orderviewList?.shipaddress?.name ? orderviewList?.shipaddress?.name : ''},${orderviewList?.shipaddress?.area?.address ? orderviewList?.shipaddress?.area?.address : ''},${orderviewList?.shipaddress?.pincode ? orderviewList?.shipaddress?.pincode : ''},
             ${orderviewList?.shipaddress?.mobile ? `${'Mob:'}${orderviewList?.shipaddress?.mobile}` : ''}`)
@@ -304,6 +304,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             id: idd,
             delivery_charge: Math.ceil(deliveryCharge),
             ...data,
+            payment_method:data?.payment_type,
             vendor_status: vendor_statusP,
             platform_charge: orderviewList?.platform_charge,
         }
@@ -460,7 +461,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                <Grid item xs={12} lg={2.5}>
+                    <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -474,6 +475,9 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                         />
                     </Grid>
                 </Grid>
+                <Box>
+
+                </Box>
 
             </CustomBox>
             <CustomBox title='Payment Details'>
@@ -549,7 +553,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                             view={true}
                             defaultValue={''}
                         />
-                   </Grid>
+                    </Grid>
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
