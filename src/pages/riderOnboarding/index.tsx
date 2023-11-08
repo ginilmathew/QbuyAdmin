@@ -42,9 +42,8 @@ const RiderOnBoarding = () => {
         gender: yup.string().required("Gender is required"),
         emergency_contact: yup.string()
             .matches(/(^[0-9]{10}$)|^$/, "Emergency Contact must be 10 digits long and contain only numeric characters")
-            .nullable()
-            .notRequired(),
-
+          .required("Emergency Contact Number is required "),
+         
         aadhar_card_number: yup.string()
             .matches(/^$|^[0-9]{12}$/, "Aadhaar Number should be 12 digits long and contain only numeric characters")
             .nullable()
@@ -93,11 +92,11 @@ const RiderOnBoarding = () => {
 
     const [genderOptions, setGenderOptions] = useState<any>([
         {
-            value: 'male',
+            value: 'Male',
             name: 'Male'
         },
         {
-            value: 'female',
+            value: 'Female',
             name: 'Female'
         },
         {

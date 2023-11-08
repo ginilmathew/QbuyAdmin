@@ -55,7 +55,7 @@ const ShipmentSupport = ({ res, view }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => moment(params?.row?.created_at, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+            valueGetter: (params) => moment(params?.row?.orders?.created_at, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
         },
         {
             field: 'grand_total',
@@ -94,20 +94,20 @@ const ShipmentSupport = ({ res, view }: props) => {
         },
 
     ];
-    const searchProducts = useCallback((value: any) => {
-        let Results = data?.data?.data?.filter((com: any) =>
-            com?.orders?.order_id.toString().includes(value) || com?.orders?.status.includes(value)
-        );
+    // const searchProducts = useCallback((value: any) => {
+    //     let Results = data?.data?.data?.filter((com: any) =>
+    //         com?.orders?.order_id.toString().includes(value) || com?.orders?.status.includes(value)
+    //     );
 
-        startTransition(() => {
-            setShippmentData(Results);
-        });
-    }, [shippmentData]);
+    //     startTransition(() => {
+    //         setShippmentData(Results);
+    //     });
+    // }, [shippmentData]);
 
     return (
         <Box px={0} py={1} pt={1} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeaders addbtn={false} setState={searchProducts} imprtBtn={false} Headerlabel='' onClick={() => null} />
+                {/* <CustomTableHeaders addbtn={false} setState={searchProducts} imprtBtn={false} Headerlabel='' onClick={() => null} /> */}
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={shippmentData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>

@@ -115,13 +115,18 @@ const RiderDetailsform = ({ res, view }: props) => {
         name: yup.string()
             .matches(/^[A-Za-z]+(?: [A-Za-z]+)*$/, "Rider Name should contain only characters")
             .required("Rider Name is required"),
+            city: yup.string()
+            
+            .required("city is required"),
+            vehicle_number: yup.string()
+            
+            .required("vehicle number  is required"),
         mobile: yup.string()
             .required("Mobile Number is required")
             .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
         emergency_contact: yup.string()
             .matches(/(^[0-9]{10}$)|^$/, "Emergency Contact must be 10 digits long and contain only numeric characters")
-            .nullable()
-            .notRequired(),
+          .required("Emergency Contact is required"),
 
         aadhar_card_number: yup.string()
             .matches(/^$|^[0-9]{12}$/, "Aadhaar Number should be 12 digits long and contain only numeric characters")
@@ -171,8 +176,8 @@ const RiderDetailsform = ({ res, view }: props) => {
         });
 
     const genderOptions = [
-        { value: 'male', name: 'Male' },
-        { value: 'female', name: 'Female' },
+        { value: 'Male', name: 'Male' },
+        { value: 'Female', name: 'Female' },
         { value: 'other', name: 'Other' },
     ];
     const [statusChange, setStatusChange] = useState<any>(
@@ -348,7 +353,9 @@ const RiderDetailsform = ({ res, view }: props) => {
     const onSubmit = async (data: IFormInput) => {
         setLoading(true);
         data.status = statusSelect;
-
+    
+    console.log(data.city);
+    
         try {
             const formData = new FormData();
             const URL_UPDATE = "/admin/onboarding/update";
@@ -541,6 +548,7 @@ const RiderDetailsform = ({ res, view }: props) => {
                                 fieldName="city"
                                 placeholder={``}
                                 fieldLabel={"City"}
+                                defaultValue={''}
                                 disabled={false}
                                 view={view ? true : false}
 
@@ -555,6 +563,7 @@ const RiderDetailsform = ({ res, view }: props) => {
                                 placeholder={``}
                                 fieldLabel={"Vehicle No"}
                                 disabled={false}
+                                defaultValue={''}
                                 view={view ? true : false}
 
                             />

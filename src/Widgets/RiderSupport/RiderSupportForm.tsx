@@ -121,9 +121,13 @@ console.log(idd);
             .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
         emergency_contact: yup.string()
             .matches(/(^[0-9]{10}$)|^$/, "Emergency Contact must be 10 digits long and contain only numeric characters")
-            .nullable()
-            .notRequired(),
-
+            .required("Emergency Number is required"),
+            city: yup.string()
+            
+            .required("city is required"),
+            vehicle_number: yup.string()
+            
+            .required("vehicle number  is required"),
         aadhar_card_number: yup.string()
             .matches(/^$|^[0-9]{12}$/, "Aadhaar Number should be 12 digits long and contain only numeric characters")
             .nullable()
@@ -172,8 +176,8 @@ console.log(idd);
         });
 
     const genderOptions = [
-        { value: 'male', name: 'Male' },
-        { value: 'female', name: 'Female' },
+        { value: 'Male', name: 'Male' },
+        { value: 'Female', name: 'Female' },
         { value: 'other', name: 'Other' },
     ];
     // const [statusChange, setStatusChange] = useState<any>(
