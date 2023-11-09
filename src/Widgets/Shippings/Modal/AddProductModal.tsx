@@ -25,7 +25,7 @@ type props = {
     setaddProductList: any,
     SetDeliveryCharge?: any,
     order_id: string,
-
+    setStoreList: any
 
 
 }
@@ -41,9 +41,10 @@ type Inputs = {
     product_id: any;
 
 
+
 };
 
-const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id }: props) => {
+const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id, setStoreList }: props) => {
 
 
 
@@ -223,10 +224,10 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             return false;
         }
         else {
-            setError('quantity',{message:""})
+            setError('quantity', { message: "" })
         }
-      
-        
+
+
         let stock = selectProduct?.stock;
 
         if (selectProduct?.available) {
@@ -277,7 +278,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         let quntityValidation = parseInt(data?.quantity)
         let stock = selectProduct?.stock;
 
-        console.log(selectProduct);
+        console.log(selectProduct, 'SLECTED PRODUCT');
 
         let stk = selectProduct?.stockValue;
         if (stock) {
@@ -390,6 +391,10 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                 productDetails: [...AllProducts.productDetails]
             }
             await postData('admin/order/edit', publishValue);
+
+            let find = publishValue?.productDetails?.map((res) => (res?.vendor?._id));
+            setStoreList(find)
+
             toast.success('Product Added Successfully')
             setLoading(false)
             setaddProductList(AllProducts);

@@ -79,6 +79,10 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     const [vendor_statusP, setVendorStatusP] = useState<any>(null)
     const [defaultStatus, setDefaultStatus] = useState<any>(null)
     const [refundModal, setRefundModal] = useState<boolean>(false);
+    const [storeList,setStoreList]=useState<any>(null)
+
+
+    console.log({storeList},'STORE FORMMM')
 
 
 
@@ -305,8 +309,9 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
 
     const SubmitOrder = async (data: any) => {
-
-
+       
+        let uniqueStore: any[] = Array.from(new Set(storeList));
+    
         let result = {
             id: idd,
             delivery_charge: Math.ceil(deliveryCharge),
@@ -314,8 +319,9 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             payment_method: data?.payment_type,
             vendor_status: vendor_statusP,
             platform_charge: orderviewList?.platform_charge,
+            store:uniqueStore,
         }
-
+          
         try {
 
             await postData('admin/order/update', result);
@@ -591,7 +597,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             </CustomBox>
             <CustomBox title='Product Details'>
                 {orderviewList &&
-                    <ShippingTable res={orderviewList} readonly={res} id={idd} SetDeliveryCharge={SetDeliveryCharge} />}
+                    <ShippingTable res={orderviewList} readonly={res} id={idd} SetDeliveryCharge={SetDeliveryCharge} setStoreList={setStoreList}/>}
             </CustomBox>
 
             <CustomBox title='Vendor Status'>
