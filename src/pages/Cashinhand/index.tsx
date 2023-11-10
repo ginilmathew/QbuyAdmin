@@ -93,7 +93,7 @@ const Cashinhand =({ res }: props)=> {
                 flex: 1,
                 headerAlign: 'center',
                 align: 'center',
-    
+                valueGetter: (params) => moment(params?.row?.delivery_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
             },
     
             {

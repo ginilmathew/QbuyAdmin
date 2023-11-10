@@ -19,6 +19,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import useSWR from 'swr'
 import Custombutton from '@/components/Custombutton';
 import AssignModal from '@/Widgets/Shippings/Modal/AssignModal';
+import RefundModal from '@/Widgets/Shippings/Modal/RefundModal';
 
 
 const fetcher = (url: any) => fetchData(url).then((res) => res);
@@ -32,6 +33,7 @@ const Shipments = () => {
     const [pending, startTransition] = useTransition();
     const [serachList, setSearchList] = useState<any>([]);
     const [open, setopen] = useState<any>(false)
+    const [refundModal, setreFundModal] = useState<any>(false)
     const [franchiseData, setfranchiseData] = useState<any>('')
     
 
@@ -54,21 +56,24 @@ const Shipments = () => {
     }
    
     const openAssignModal= useCallback((row:any)=>{
-console.log("kk");
-
-        setfranchiseData(row)
-
-
-   setopen(true) },
-   
-   
-    [open]
-    )
+       setfranchiseData(row)
+       setopen(true) },
+      [open]
+       )
     const handleCloseAddModal=useCallback(()=>{
-        setopen(false)
+      setopen(false)
         mutate()
     },[open])
-  
+    
+    const openRefundModal= useCallback((row:any)=>{
+          setfranchiseData(row)
+          setreFundModal(true) },
+          [refundModal]
+          )
+          const handleCloseRefundModal=useCallback(()=>{
+            setreFundModal(false)
+             mutate()
+          },[refundModal])
 
     const columns: GridColDef[] = [
         {
@@ -227,9 +232,25 @@ console.log("kk");
                     )}
                   </Stack>
                   <Stack display={'flex'} alignItems={'center'} gap={1} direction={'column'} paddingBottom={"20px"}>
+                    {(
+                        (row?.refundAmount
+                        )
+                      ) ? (
+                        <Custombutton
+                          
+                        btncolor='#d39a58'
+                          height={25}
+                          IconEnd={""}
+                          IconStart={''}
+                          startIcon={false}
+                          endIcon={false}
+                          onClick={() => openRefundModal(row)}
+                          label='Refund'
+                        />
+                      ):null}
                     {row?.status !== 'cancelled' && row?.status !== 'completed' && (
                       // Add the condition here to show Assign and Reassign buttons
-                      (row?.rider_each_order_settlement === null && (
+                      (row?.rider_each_order_settlement === null  && (
                         (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
                         (row?.payment_status === 'completed' && row?.payment_type === 'online')
                       )) ? (
@@ -265,7 +286,7 @@ console.log("kk");
                           label='Assign'
                         />
                       ) : (
-                        row?.rider_each_order_settlement?.rider_status === "new" && (
+                        row?.rider_each_order_settlement?.rider_status === "new"&& (
                           (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
                           (row?.payment_status === 'completed' && row?.payment_type === 'online')
                         )
@@ -281,12 +302,16 @@ console.log("kk");
                           onClick={() => openAssignModal(row)}
                           label='Reassign'
                         />
-                      ) : null
-                    )}
+                      )  
+                      : null
+                    )
+                    
+                    
+                    }
                   </Stack>
                 </Stack>
               )
-              
+            
   
         }
     ];
@@ -379,6 +404,7 @@ console.log("kk");
             handleClose={handleCloseAddModal}
         />
         }
+           {refundModal && <RefundModal open={refundModal} handleClose={handleCloseRefundModal} res={franchiseData} functioncall={handleCloseRefundModal} />}
          
         </Box>
         

@@ -168,9 +168,9 @@ const RiderOnBoarding = () => {
 
                 toast.error("Failed");
             }
-        } catch (error) {
+        } catch (error:any) {
             console.error(error);
-            toast.error('An error occurred');
+            toast.error(error?.message);
         } finally {
             setLoading(false);
         }
