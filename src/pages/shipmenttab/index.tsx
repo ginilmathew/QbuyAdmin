@@ -64,8 +64,9 @@ const ShipmentSupport = ({ res, view }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => params?.row?.orders?.grand_total,
+            valueGetter: (params) => parseFloat(params?.row?.orders?.grand_total).toFixed(2),
         },
+        
 
         {
             field: 'rider_amount',
