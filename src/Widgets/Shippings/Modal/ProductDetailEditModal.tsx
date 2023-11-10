@@ -202,7 +202,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                 platform_charge: allProduct?.platform_charge,
                 productDetails: [...response?.data?.data?.productDetails]
             };
-    
+           
             setProductList(resetValue);
             toast.success('Order edit Successfully');
             handleClose();

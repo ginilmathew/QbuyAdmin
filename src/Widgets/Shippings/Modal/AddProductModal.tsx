@@ -91,9 +91,6 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                 total: null
 
             },
-
-
-
         },
         );
 
@@ -278,7 +275,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         let quntityValidation = parseInt(data?.quantity)
         let stock = selectProduct?.stock;
 
-        console.log(selectProduct, 'SLECTED PRODUCT');
+
 
         let stk = selectProduct?.stockValue;
         if (stock) {

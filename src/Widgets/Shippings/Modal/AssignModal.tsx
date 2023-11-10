@@ -65,11 +65,9 @@ const AssignModal = ({ handleClose, open,franchiseData }: props) => {
               priority: null,
 
             },
-
-
         }
        
-       ); console.log(errors)
+       ); 
         
 
 
@@ -87,10 +85,7 @@ const AssignModal = ({ handleClose, open,franchiseData }: props) => {
 
 
 
- 
-const OnChangePriority=()=>{
 
-}
 
 const Submit = async (data: any) => {
   setLoading(true);
