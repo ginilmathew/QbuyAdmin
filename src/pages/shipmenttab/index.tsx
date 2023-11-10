@@ -55,7 +55,8 @@ const ShipmentSupport = ({ res, view }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => moment(params?.row?.orders?.created_at, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+            valueGetter: (params) => moment(params?.row?.delivery_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+            // valueGetter: (params) => moment(params?.row?.orders?.created_at, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
         },
         {
             field: 'grand_total',
@@ -63,8 +64,9 @@ const ShipmentSupport = ({ res, view }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => params?.row?.orders?.grand_total,
+            valueGetter: (params) => parseFloat(params?.row?.orders?.grand_total).toFixed(2),
         },
+        
 
         {
             field: 'rider_amount',
@@ -77,12 +79,16 @@ const ShipmentSupport = ({ res, view }: props) => {
 
         {
             field: 'delivery_date',
-            headerName: 'Ordered Completed Date & Time',
+            headerName: 'Completed Date & Time',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => moment(params?.row?.delivery_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
-
+            valueGetter: (params) => {
+                const orderStatus = params?.row?.orders?.status;
+                return (orderStatus === "completed" || orderStatus === "cancelled") ?
+                    moment(params?.row?.orders?.delivered_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A") :
+                    '-';
+            }
         },
         {
             field: 'status',

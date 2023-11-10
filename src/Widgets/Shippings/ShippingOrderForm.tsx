@@ -82,7 +82,6 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     const [storeList,setStoreList]=useState<any>(null)
 
 
-    console.log({storeList},'STORE FORMMM')
 
 
 

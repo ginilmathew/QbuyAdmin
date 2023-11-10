@@ -71,7 +71,7 @@ const CustomTable = ({ columns, rows, id, bg, label, dashboard, rowheight, check
                     initialState={{
                         pagination: {
                             paginationModel: {
-                                pageSize: 10,
+                                pageSize: 50,
                             },
                         },
                     }}
@@ -79,7 +79,7 @@ const CustomTable = ({ columns, rows, id, bg, label, dashboard, rowheight, check
                     disableRowSelectionOnClick
                     checkboxSelection={checked ? checked : false}
                     onRowSelectionModelChange={checked ? (itm) => selectCheckItem(itm) : () => null}
-                    pageSizeOptions={[10]}
+                    pageSizeOptions={[50]}
                     getRowId={row => row[id]}
                     
 
