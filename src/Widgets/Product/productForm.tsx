@@ -794,8 +794,9 @@ console.log(idd);
 
                     })
 
-                    setAttributes([...attributesArray])
+                    
                 })
+                setAttributes([...attributesArray])
             }
 
             let myvaarientArray: { title: any; variant_id: string; attributs: any; seller_price: any; regular_price: string; offer_price: string; offer_date_from: any; offer_date_to: any; stock: boolean; stock_value: string; commission: number; fixed_delivery_price: number; }[] = []
@@ -809,15 +810,20 @@ console.log(idd);
                         seller_price: item?.seller_price,
                         regular_price: item?.regular_price,
                         offer_price: item?.offer_price,
-                        offer_date_from: item?.offer_date_from ? moment(item?.offer_date_from, 'YYYY-MM-DD') : null,
-                        offer_date_to: item?.offer_date_to ? moment(item?.offer_date_to, 'YYYY-MM-DD') : null,
+                        offer_date_from: (item?.offer_date_from && moment(item?.offer_date_from, 'YYYY-MM-DD').isValid()) ?  moment(item?.offer_date_from, 'YYYY-MM-DD') : null,
+                        offer_date_to: (item?.offer_date_to && moment(item?.offer_date_to, 'YYYY-MM-DD').isValid()) ? moment(item?.offer_date_to, 'YYYY-MM-DD') : null,
                         stock: item?.stock,
                         stock_value: item?.stock_value,
                         commission: item?.commission,
                         fixed_delivery_price: item?.fixed_delivery_price
                     })
-                    setVarientsArray(myvaarientArray)
+                    
                 })
+
+                setTimeout(() => {
+                    setVarientsArray(myvaarientArray)
+                }, 500);
+                
             }
             setValue('commission', productList?.commission ? productList?.commission : 0)
             setValue('regular_price', productList?.regular_price ? productList?.regular_price : 0)
