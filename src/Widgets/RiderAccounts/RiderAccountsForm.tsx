@@ -460,6 +460,7 @@ const RiderAccountsform = ({ view, res }: props) => {
                                 fieldName='fromDate'
                                 control={control}
                                 error={''}
+                                past={false}
                                 fieldLabel={commonDateLabel}
                                 values={fromDate}
                                 changeValue={(date) => setFromDate(date)}
@@ -470,6 +471,7 @@ const RiderAccountsform = ({ view, res }: props) => {
                                 fieldName='toDate'
                                 control={control}
                                 error={''}
+                                past={false}
                                 fieldLabel={''}
                                 values={toDate}
                                 changeValue={(date) => setToDate(date)}
@@ -512,6 +514,7 @@ const RiderAccountsform = ({ view, res }: props) => {
                                 fieldName='fromDates'
                                 control={control}
                                 error={''}
+                                past={false}
                                 fieldLabel={commonDateLabel}
                                 values={fromDates}
                                 changeValue={(date) => setFromDates(date)}
@@ -520,6 +523,7 @@ const RiderAccountsform = ({ view, res }: props) => {
                         <div style={{ marginTop: '22px' }}>
                             <CustomDatePicker
                                 fieldName='toDates'
+                                past={false}
                                 control={control}
                                 error={''}
                                 fieldLabel={''}

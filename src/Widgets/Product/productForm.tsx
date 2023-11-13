@@ -236,7 +236,7 @@ console.log(idd);
                 .mixed()
                 .required("Product Image is Required"),
             stock_value: (stock === true && varientsarray?.length === 0) ? yup.string().matches(orderValidation, 'Accept only positive number').required("Stock value required").typeError("Stock value must be a number") : yup.string().nullable(),
-            // regular_price: attributes?.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
+            // regular_price: 
 
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
             minimum_qty: yup.string().matches(orderValidation, 'Accept only positive number').nullable(),
@@ -244,11 +244,22 @@ console.log(idd);
             //     /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s/0-9]*)$/gi,
             //     'Only contain alphabets letters.'
             // ).nullable()
-            weight: yup.string()
-                .max(30, "Name must be less than 30 characters")
-                .matches(/^(\d+(\.\d*)?|\.\d+)$/, 'Only contain valid numerical values.')
-                .nullable()
-            // regular_price: yup
+            // weight: yup.string()
+            //     .max(30, "Name must be less than 30 characters")
+            //     .matches(/^(\d+(\.\d*)?|\.\d+)$/, 'Only contain valid numerical values.')
+            //     .nullable()
+            regular_price: yup.string()
+        .test('is-greater-than-zero', 'Regular Price must be greater than 0', function (value) {
+            // Check if regular_price is provided and greater than 0
+            return !value || (parseFloat(value) > 0);
+        })
+        .nullable(),
+        commission: yup.string()
+        .test('is-greater-than-zero', 'commission must be greater than 0', function (value) {
+            // Check if regular_price is provided and greater than 0
+            return !value || (parseFloat(value) > 0);
+        })
+        .nullable(),
             //     .string()
             //     .required('Selling Price is Required')
             //     .test('is-greater-than-purchase', 'Selling Price should not be less than Purchase Price', function (value) {
@@ -306,17 +317,17 @@ console.log(idd);
                 video_link: '',
                 related_products: null,
                 image: null,
-                regular_price: 0,
-                offer_price: 0,
+                regular_price: null,
+                offer_price: null,
                 offer_date_from: null,
                 offer_date_to: null,
-                seller_price: 0,
+                seller_price: null,
                 minimum_qty: '',
                 delivery_locations: null,
                 product_availability_from: null,
                 product_availability_to: null,
                 fixed_delivery_price: 0,
-                commission: 0
+                commission: null
             }
            
         });
@@ -1098,23 +1109,20 @@ console.log(idd);
                 }
             }
           
-            if(data?.regular_price<=0){
-                setError("regular_price", { type: 'custom', message: 'Selling price must be a greater than 0' })
-                return false;
-            }
-            if(data?.commission<=0){
-                setError("commission", { type: 'custom', message: 'Commission  must be a greater than 0' })
-                return false;
-            }
+            // if(data?.regular_price<=0){
+            //     setError("regular_price", { type: 'custom', message: 'Selling price must be a greater than 0' })
+            //     return false;
+            // }
+            // if(data?.commission<=0){
+            //     setError("commission", { type: 'custom', message: 'Commission  must be a greater than 0' })
+            //     return false;
+            // }
             if (!isEmpty(data?.offer_price)) {
                 if (isNaN(data?.offer_price)) {
                     setError("offer_price", { type: 'custom', message: 'Offer price must be a number' })
                     return false;
                 }
-                else if (data?.offer_price <= 0) {
-                    setError("offer_price", { type: 'custom', message: 'Offer price must be a greater than 0' })
-                    return false;
-                }
+             
                 // else if (!data?.offer_date_from || !data?.offer_date_to) {
                 //     toast.warning("Offer From date and to date required")
                 //     return false;

@@ -21,14 +21,15 @@ type props = {
     readonly: any,
     id: any,
     SetDeliveryCharge: any,
+    setStoreList: any
 
 }
 
 
-const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
+const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: props) => {
 
 
-    console.log({ res })
+
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalDelete, setModalDelete] = useState(false);
@@ -38,7 +39,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [productList, setProductList] = useState<any>(null);
 
 
-    console.log({ productList }, 'PRODUCT LIT')
+
 
     const handleClose = useCallback(() => {
         setModalOpen(false);
@@ -61,7 +62,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
         setAddOpen(false)
     }, [addOpen])
 
-    
+
 
     const handleOpenDeleteModal = useCallback(() => {
         setModalDelete(true)
@@ -108,7 +109,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 ...pricedata,
                 productDetails
             }
-
+            setProductList(Combine);
             // const result = productDetails?.map((res: any) => res?.vendor)
             // setVendorStatus(productDetails?.map((res: any) => ({ "vendor_id": "", "status": "" })))
 
@@ -120,8 +121,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
             // const uniqueNames = Array.from(new Set(result.map(res => res)));
 
 
-
-            setProductList(Combine);
+            let store = productDetails?.map((res: any) => (res?.vendor?._id));
+            setStoreList(store)
 
         }
 
@@ -147,7 +148,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     }, [productList])
 
 
-   
+
 
     useEffect(() => {
         if (productList) {
@@ -216,7 +217,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                     ...pricedata,
                     productDetails: [...product],
                 });
-                
+                let store = product?.map((res: any) => (res?.vendor?._id));
+                setStoreList(store)
 
             } else {
                 let pricedata = {
@@ -228,6 +230,9 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                     ...pricedata,
                     productDetails: [...product],
                 });
+
+                let store = product?.map((res: any) => (res?.vendor?._id));
+                setStoreList(store)
             }
         }
     }
@@ -331,7 +336,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                             /></TableCell>}
                         </TableRow>
 
-                       
+
                         <TableRow>
                             <TableCell colSpan={2}></TableCell>
                             <TableCell align="right">Platform Charge</TableCell>
@@ -364,6 +369,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
                 />}
             {addOpen &&
                 <AddProductModal
+                    setStoreList={setStoreList}
                     order_id={id}
                     SetDeliveryCharge={SetDeliveryCharge}
                     allProduct={productList}

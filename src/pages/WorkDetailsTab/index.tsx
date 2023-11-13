@@ -73,8 +73,8 @@ const WorkDetailsTab = ({ res, view }: props) => {
         },
 
         {
-            field: 'COD',
-            headerName: 'COD',
+            field: 'cod',
+            headerName: 'Order Total',
             flex: 1,
             headerAlign: 'center',
             align: 'center',

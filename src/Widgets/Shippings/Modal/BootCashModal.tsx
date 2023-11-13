@@ -22,23 +22,23 @@ import { FormInputs } from '@/utilities/types';
 type props = {
     handleClose: any;
     open: boolean;
-     cashInHandDetails: { boot_cash_limit: string };
-     rider_id:{rider_id:string},
-     mutate:any
+    cashInHandDetails: { boot_cash_limit: string };
+    rider_id: { rider_id: string },
+    mutate: any
 
 
 }
 type Inputs = {
     bootcash: any;
-  
+
 
 
 
 };
 
-const BootCashModal = ({ handleClose, open ,cashInHandDetails,rider_id,mutate}: props) => {
+const BootCashModal = ({ handleClose, open, cashInHandDetails, rider_id, mutate }: props) => {
 
-console.log("bootmodal");
+
 
 
 
@@ -46,11 +46,11 @@ console.log("bootmodal");
     const [franchiseList, setFranchiseList] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [bootcash, setBootCash] = useState<any>('')
-  
+
     const schema = yup.object().shape({
         bootcash: yup.number().typeError("BootCash must be a number").required('BootCash is required'),
     });
-    
+
 
 
     const { register,
@@ -64,101 +64,101 @@ console.log("bootmodal");
             resolver: yupResolver(schema),
             defaultValues: {
                 bootcash: '',
-             
+
 
             },
 
 
         }
-       
-       );
-        
 
-       useEffect(() => {
-        setValue('bootcash',cashInHandDetails?.boot_cash_limit)
-        setBootCash(cashInHandDetails?.boot_cash_limit)       
-       }, [cashInHandDetails])
-       
+        );
 
+
+    useEffect(() => {
+        setValue('bootcash', cashInHandDetails?.boot_cash_limit)
+        setBootCash(cashInHandDetails?.boot_cash_limit)
+    }, [cashInHandDetails])
 
 
 
- 
-const OnChangePriority=(event:any)=>{
-    const newValue = event.target.value;
-    setValue("bootcash",newValue)
-    setBootCash(newValue)
-}
 
-const Submit = async (data: any) => {
-    setLoading(true);
-    console.log(data);
-    if (data.bootcash < 0) {
-        toast.error("BootCash cannot be a negative value.");
-        setLoading(false);
-        return;
+
+
+    const OnChangePriority = (event: any) => {
+        const newValue = event.target.value;
+        setValue("bootcash", newValue)
+        setBootCash(newValue)
     }
-    try {
-    //   let result = franchiseList?.filter((res: any) => res?._id ===SelectedValue).map((get: any) => (
-    //     {
-    //         name: get?.name,
-    //         _id: get?._id,
-    //         mobile: get?.mobile,
-            
-    //     }
-  
-  
-    // ))
- 
-  
-    let data = {
-    //   order_id: franchiseData?._id,
-      rider_id: rider_id,
-      bootcash:bootcash
-     
-    }
-    
-  
-        const response = await postData('admin/rider-support/cash-in-hand/update-bootcash', data);
-  
-       
-          handleClose(true)
+
+    const Submit = async (data: any) => {
+        setLoading(true);
+        console.log(data);
+        if (data.bootcash < 0) {
+            toast.error("BootCash cannot be a negative value.");
+            setLoading(false);
+            return;
+        }
+        try {
+            //   let result = franchiseList?.filter((res: any) => res?._id ===SelectedValue).map((get: any) => (
+            //     {
+            //         name: get?.name,
+            //         _id: get?._id,
+            //         mobile: get?.mobile,
+
+            //     }
+
+
+            // ))
+
+
+            let data = {
+                //   order_id: franchiseData?._id,
+                rider_id: rider_id,
+                bootcash: bootcash
+
+            }
+
+
+            const response = await postData('admin/rider-support/cash-in-hand/update-bootcash', data);
+
+
+            handleClose(true)
             toast.success("BootCash Limit Successfuly Updated");
             reset();
             mutate()
-  
-        
-    } catch (error:any) {
-      //   console.error(error.message ,"l");
-        toast.error(error?.message);
-    } finally {
-        setLoading(false);
-    }
-  };
-  
+
+
+        } catch (error: any) {
+            //   console.error(error.message ,"l");
+            toast.error(error?.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
 
-//     const riderBasedOnFranchasee = async (franchiseData:any) => {
-//       try {
-//         let franchase_id=(franchiseData?.franchisee?._id);
-//         setfranchase_id(franchase_id)
-//           setLoading(true)
-//           const response = await fetchData(`admin/onboarding/riders/${franchase_id}`)
-//           setFranchiseList(response?.data?.data)
 
-//       } catch (err: any) {
-//           toast.error(err?.message)
-//           setLoading(false)
-//       } finally {
-//           setLoading(false)
-//       }
-//   }
+    //     const riderBasedOnFranchasee = async (franchiseData:any) => {
+    //       try {
+    //         let franchase_id=(franchiseData?.franchisee?._id);
+    //         setfranchase_id(franchase_id)
+    //           setLoading(true)
+    //           const response = await fetchData(`admin/onboarding/riders/${franchase_id}`)
+    //           setFranchiseList(response?.data?.data)
+
+    //       } catch (err: any) {
+    //           toast.error(err?.message)
+    //           setLoading(false)
+    //       } finally {
+    //           setLoading(false)
+    //       }
+    //   }
 
 
-//     useEffect(() => {
-//       riderBasedOnFranchasee(franchiseData);
-//   }, []);
+    //     useEffect(() => {
+    //       riderBasedOnFranchasee(franchiseData);
+    //   }, []);
 
 
     return (
@@ -205,7 +205,7 @@ const Submit = async (data: any) => {
                 </Box>
                 <DialogContent>
                     <Grid container spacing={2} display={'flex'} flexDirection={'row'} justifyItems={'center'}>
-                    <Grid item xs={12} lg={12}>
+                        <Grid item xs={12} lg={12}>
                             <CustomInput
                                 onChangeValue={OnChangePriority}
                                 type='text'
@@ -216,14 +216,14 @@ const Submit = async (data: any) => {
                                 fieldLabel={"BootCash"}
                                 disabled={false}
                                 view={false}
-                              
+
                                 defaultValue={''}
                             />
                         </Grid>
-                      
-                      </Grid>
+
+                    </Grid>
                     <Box py={1} display={'flex'} justifyContent={'center'}>
-                    <Custombutton
+                        <Custombutton
                             btncolor=''
                             IconEnd={''}
                             IconStart={''}
@@ -234,7 +234,7 @@ const Submit = async (data: any) => {
                             disabled={loading}
                             onClick={handleSubmit(Submit)} />
                     </Box>
-              
+
                 </DialogContent>
             </Box>
 
