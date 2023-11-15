@@ -253,13 +253,13 @@ console.log(idd);
             // Check if regular_price is provided and greater than 0
             return !value || (parseFloat(value) > 0);
         })
-        .nullable(),
+        .nullable().transform((_, val) => val === Number(val) ? val : null),
         commission: yup.string()
         .test('is-greater-than-zero', 'commission must be greater than 0', function (value) {
             // Check if regular_price is provided and greater than 0
             return !value || (parseFloat(value) > 0);
         })
-        .nullable(),
+        .nullable().transform((_, val) => val === Number(val) ? val : null) ,
             //     .string()
             //     .required('Selling Price is Required')
             //     .test('is-greater-than-purchase', 'Selling Price should not be less than Purchase Price', function (value) {
@@ -477,6 +477,7 @@ console.log(idd);
         }
     }
 
+    
 
 
     const onselectFranchise = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -488,15 +489,18 @@ console.log(idd);
         try {
             setLoading(true)
             const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
-            const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${e.target.value}`)
+            //const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${e.target.value}`)
             setVendorList(response?.data?.data)
-            let result = recomendedProduct?.data?.data.map((res: any) => ({
-                _id: res?._id,
-                title: `${res?.name}-${res?.product_id}`,
-                product_id: res?.product_id,
-                store: res?.store?.name
-            }))
-            setRecomendedProductList(result)
+            if(response?.data?.data?.length === 1){
+                getRecomentedProducts(response?.data?.data?.[0]?._id)
+            }
+            // let result = recomendedProduct?.data?.data.map((res: any) => ({
+            //     _id: res?._id,
+            //     title: `${res?.name}-${res?.product_id}`,
+            //     product_id: res?.product_id,
+            //     store: res?.store?.name
+            // }))
+            // setRecomendedProductList(result)
         } catch (err: any) {
             toast.error(err.message)
             setLoading(false)
@@ -509,11 +513,15 @@ console.log(idd);
     }
 
 
+    
+
+
     const onSelectStore = (e: React.ChangeEvent<HTMLInputElement>) => {
+        getRecomentedProducts(e.target.value)
         setvendorSelect(e.target.value)   
         let result = vendorList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
             {
-                commision: get?.additional_details ? get?.additional_details.commission : 0,
+                commision: get?.additional_details ? get?.additional_details.commission : null,
                 id: get?._id,
                 name: get?.store_name,
                 category: get?.category_id
@@ -531,6 +539,9 @@ console.log(idd);
         console.log(findresult?.start_time)
         console.log(findresult?.end_time)
 
+        // if(findresult?.length > 0){
+        //     getRecomentedProducts(findresult?.[0]?._id)
+        // }
         
         setVendorListDirection(findresult)
         // setValue('commission', result[0]?.commision)     
@@ -701,20 +712,31 @@ console.log(idd);
         setProductCategorySelect(value)
     }
 
+    const getRecomentedProducts = async(id: any) => {
+        const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${id}`)
+        let result = recomendedProduct?.data?.data.map((res: any) => ({
+            _id: res?._id,
+            title: `${res?.name}-${res?.product_id}`,
+            product_id: res?.product_id,
+            store: res?.store?.name
+        }))
+        setRecomendedProductList(result)
+    }
+
     useEffect(() => {
         if (productList) {
             const getvendorlist = async (vendorId: any) => {
                 try {
                     const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)                
-                    const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${productList?.franchisee?._id}`)
+                    // const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${productList?.franchisee?._id}`)
 
-                    let result = recomendedProduct?.data?.data.map((res: any) => ({
-                        _id: res?._id,
-                        title: `${res?.name}-${res?.product_id}`,
-                        product_id: res?.product_id,
-                        store: res?.store?.name
-                    }))
-                    setRecomendedProductList(result)
+                    // let result = recomendedProduct?.data?.data.map((res: any) => ({
+                    //     _id: res?._id,
+                    //     title: `${res?.name}-${res?.product_id}`,
+                    //     product_id: res?.product_id,
+                    //     store: res?.store?.name
+                    // }))
+                    // setRecomendedProductList(result)
                     setVendorList(response?.data?.data)
                     let vendor = response?.data?.data?.find((ven: any) => ven?._id === vendorId)
                     if (vendor) {
@@ -738,6 +760,7 @@ console.log(idd);
             }
             getSubcategory()
             getvendorlist(productList?.store?._id)
+            getRecomentedProducts(productList?.store?._id)
             setCategorySelect(productList?.category?._id)
 
 
@@ -819,14 +842,14 @@ console.log(idd);
                         title: item?.title,
                         attributs: item?.attributs,
                         seller_price: item?.seller_price,
-                        regular_price: item?.regular_price,
-                        offer_price: item?.offer_price,
+                        regular_price: (item?.regular_price && item?.regular_price > 0) ? item?.regular_price : null,
+                        offer_price: (item?.offer_price && item?.offer_price > 0) ? item?.offer_price : null, 
                         offer_date_from: (item?.offer_date_from && moment(item?.offer_date_from, 'YYYY-MM-DD').isValid()) ?  moment(item?.offer_date_from, 'YYYY-MM-DD') : null,
                         offer_date_to: (item?.offer_date_to && moment(item?.offer_date_to, 'YYYY-MM-DD').isValid()) ? moment(item?.offer_date_to, 'YYYY-MM-DD') : null,
                         stock: item?.stock,
                         stock_value: item?.stock_value,
-                        commission: item?.commission,
-                        fixed_delivery_price: item?.fixed_delivery_price
+                        commission: (item?.commission && item?.commission > 0) ? item?.commission : null,
+                        fixed_delivery_price: (item?.fixed_delivery_price && item?.fixed_delivery_price > 0) ? item?.fixed_delivery_price : null
                     })
                     
                 })
@@ -836,10 +859,10 @@ console.log(idd);
                 }, 500);
                 
             }
-            setValue('commission', productList?.commission ? productList?.commission : 0)
-            setValue('regular_price', productList?.regular_price ? productList?.regular_price : 0)
-            setValue('seller_price', productList?.seller_price ? productList?.seller_price : 0)
-            setValue('offer_price', productList?.offer_price ? productList?.offer_price : 0)
+            setValue('commission', productList?.commission ? productList?.commission : null)
+            setValue('regular_price', productList?.regular_price ? productList?.regular_price : null)
+            setValue('seller_price', productList?.seller_price ? productList?.seller_price : null)
+            setValue('offer_price', productList?.offer_price ? productList?.offer_price : null)
             // setOffer_Date_from(moment(productList?.offer_date_from, 'YYYY-MM-DD'))
             // setOffer_Date_to(moment(productList?.offer_date_from, 'YYYY-MM-DD'))
             setValue('offer_date_from', productList?.offer_date_from ? moment(productList?.offer_date_from, 'YYYY-MM-DD') : null)
@@ -918,7 +941,7 @@ console.log(idd);
             setValue('seller_price', '')
             setValue('offer_price', '')
             setValue('offer_date_from', '')
-            setValue('regular_price', '')
+            setValue('regular_price', null)
             setValue('offer_date_to', '')
             setValue('fixed_delivery_price', '')
             // Filter attributes array to only include those with variant true
@@ -937,14 +960,14 @@ console.log(idd);
                     title: val,
                     attributs: val.split(' '),
                     seller_price: '',
-                    regular_price: '',
+                    regular_price: null,
                     offer_price: '',
                     offer_date_from: '',
                     offer_date_to: '',
                     stock: stock,
                     stock_value: '',
-                    commission: 0,
-                    fixed_delivery_price: 0
+                    commission: null,
+                    fixed_delivery_price: null
                 }
             })
 
@@ -982,7 +1005,7 @@ console.log(idd);
             setValue('seller_price', '')
             setValue('offer_price', '')
             setValue('offer_date_from', '')
-            setValue('regular_price', '')
+            setValue('regular_price', null)
             setValue('offer_date_to', '')
             setValue('fixed_delivery_price', '')
             // Filter attributes array to only include those with variant true
@@ -1000,13 +1023,13 @@ console.log(idd);
                     title: val,
                     attributs: val.split(' '),
                     seller_price: '',
-                    regular_price: '',
+                    regular_price: null,
                     offer_price: '',
                     offer_date_from: '',
                     offer_date_to: '',
                     stock: stock,
                     stock_value: '',
-                    commission: '',
+                    commission: null,
                     fixed_delivery_price: 0
                 }
             })
@@ -1077,13 +1100,15 @@ console.log(idd);
 
     }
 
+    console.log({errors})
+
     //posting products ...................................................................................................
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
 
 
-        // console.log({ data })
+        //console.log({ data })
         //Check All Attributes have values
         let attributeCheck = attributes?.find((att: any) => isEmpty(att?.name) || att?.options?.length === 0);
         // console.log({ attributeCheck, attributes })
@@ -1102,7 +1127,7 @@ console.log(idd);
             }
             let regularPrice = parseInt(data?.regular_price);
             // console.log({ regularPrice })
-            if (data?.regular_price !== "") {
+            if (data?.regular_price) {
                 if (isNaN(regularPrice)) {
                     setError("regular_price", { type: 'custom', message: ' Price must be a number' })
                     return false;
@@ -1228,7 +1253,7 @@ console.log(idd);
 
         let vendorData = vendorList?.filter((res: any) => res?._id === vendorSelect).map((get: any) => (
             {
-                commision: get?.additional_details ? get?.additional_details.commission : 0,
+                commision: get?.additional_details ? get?.additional_details.commission : null,
                 id: get?._id,
                 name: get?.store_name
             }
@@ -1353,7 +1378,7 @@ console.log(idd);
             regular_price: data?.regular_price,
             seller_price: data?.seller_price,
             offer_price: data?.offer_price,
-            commission: data?.commission ? data?.commission : 0,
+            commission: data?.commission ? data?.commission : null,
             fixed_delivery_price: data?.fixed_delivery_price,
             offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
