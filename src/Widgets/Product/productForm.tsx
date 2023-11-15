@@ -1118,9 +1118,9 @@ console.log(idd);
         }
         let pattern = /^[0-9]+$/
         //Check Any Variants
-        let variantsChe = attributes?.find((att: any) => att.variant === true);
+        let variantsChe = attributes?.find((att: any) => att.variant === true );
         // console.log({ length: attributes.length, price: isEmpty(data?.seller_price) })
-        if (!variantsChe) {
+        if (!variantsChe && varientsarray?.length === 0) {
             if (isNaN(data?.seller_price) || data?.seller_price <= 0) {
                 setError("seller_price", { type: 'custom', message: 'Purchase price must be greater than 0' })
                 return false;
