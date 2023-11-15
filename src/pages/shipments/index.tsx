@@ -83,6 +83,7 @@ const Shipments = () => {
     }, [refundModal])
 
     const columns: GridColDef[] = [
+<<<<<<< HEAD
         {
             field: 'order_id',
             headerName: 'Order ID',
@@ -208,6 +209,9 @@ const Shipments = () => {
             }
 
         },
+=======
+    
+>>>>>>> ab1b24af696a4a07fae40acc06a3fb5693e682a9
         {
             field: 'Actions',
             headerName: 'Actions',
@@ -313,7 +317,134 @@ const Shipments = () => {
             )
 
 
-        }
+        },
+        {
+            field: 'status',
+            headerName: 'Status',
+            width: matches ? 150 : 200,
+            headerAlign: 'center',
+            align: 'center',
+
+            cellClassName: (params) => {
+                if (params.row.payment_status === 'completed') {
+
+                    return 'completed-order';
+                }
+                else if (params.row.payment_status === 'pending') {
+                    return 'pending-order'
+                }
+                else if (params.row.payment_status === 'cancelled') {
+                    return 'cancelled-order'
+                }
+                else if (params.row.payment_status === 'created') {
+                    return 'created-order'
+                }
+                return '';
+            }
+
+        },
+        {
+            field: 'order_id',
+            headerName: 'Order ID',
+            headerAlign: 'center',
+            align: 'center',
+            width: matches ? 180 : 200,
+        },
+        {
+            field: 'created_at',
+            headerName: 'Date & Time',
+            width: matches ? 180 : 200,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => (moment(params?.row?.created_at).format('DD/MM/YYYY hh:mm A')),
+
+        },
+        {
+            field: 'customerNameAndAddress',
+            headerName: 'Customer Name and Address',
+            width: matches ? 300 : 200,
+            headerAlign: 'center',
+            align: "left",
+            valueGetter: (params) => {
+                const customerName =params?.row?.customer_address?.name ? params?.row?.customer_address?.name : '-';
+                const customerAddress = params?.row?.customer_address?.area?.address ? params?.row?.customer_address?.area?.address : '-';
+                const customerphone=params?.row?.customer_address?.mobile?params?.row?.customer_address?.mobile:'-';
+                return `${customerName}\n${customerAddress} \n ${customerphone}`;
+            },
+            renderCell: (params) => (
+                <div style={{ whiteSpace: 'pre-line' }}>{params.value}</div>
+            ),
+        },
+
+        {
+            field: 'grand_total',
+            headerName: 'Order Total',
+            width: matches ? 150 : 200,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => params.row.grand_total?.toFixed(2),
+
+        },
+
+        {
+            field: 'Franchisee',
+            headerName: 'Franchisee',
+            width: matches ? 150 : 200,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => params.row.franchisee?.franchise_name ? params.row.franchisee?.franchise_name : '-',
+
+        },
+
+        {
+            field: 'delivery_type',
+            headerName: 'Order Type',
+            width: matches ? 150 : 200,
+            headerAlign: 'center',
+            align: 'center',
+
+
+        },
+
+        {
+            field: 'mobile',
+            headerName: 'Mobile',
+            width: matches ? 150 : 200,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => params.row.user?.mobile ? params.row.user?.mobile : '-',
+
+
+        },
+
+
+        {
+            field: 'payment_status',
+            headerName: 'payment Status',
+            width: matches ? 150 : 200,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
+            field: 'payment_type',
+            headerName: 'payment Method',
+            width: matches ? 150 : 200,
+            headerAlign: 'center',
+            align: 'center',
+
+
+        },
+        {
+            field: 'name',
+            headerName: 'Rider',
+            width: matches ? 150 : 200,
+            headerAlign: 'center',
+            align: 'center',
+
+            valueGetter: (params) => params.row.rider_each_order_settlement?.rider?.name ? params.row.rider_each_order_settlement?.rider?.name : '-'
+        },
+     
+      
     ];
 
 
