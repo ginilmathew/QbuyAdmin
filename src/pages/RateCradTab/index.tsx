@@ -96,6 +96,7 @@ const RateCardTab = ({ res, view, open }: props) => {
 
     const handleClose = () => {
         setIsDialogOpen(false);
+        mutate()
     };
 
     useEffect(() => {

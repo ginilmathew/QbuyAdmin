@@ -83,6 +83,142 @@ const Shipments = () => {
     }, [refundModal])
 
     const columns: GridColDef[] = [
+      {
+        field: 'Actions',
+        headerName: 'Actions',
+        width: 200,
+        headerAlign: 'center',
+        align: 'center', 
+    
+        renderCell: ({ row }) => (
+            <Stack alignItems={'center'} gap={1} justifyContent={'space-evenly'} direction={'column'} padding={10}>
+              <Stack alignItems={'center'} gap={1} direction={'row'} paddingTop={"20px"}>
+                <RemoveRedEyeIcon
+                  onClick={() => ShippmentView(row?._id)}
+                  style={{
+                    color: '#58D36E',
+                    cursor: 'pointer'
+                  }}
+                />
+                {(!['completed', 'cancelled'].includes(row?.status)) && (
+                  <BorderColorTwoToneIcon
+                    onClick={() => ShippmentEdit(row?._id)}
+                    style={{
+                      color: '#58D36E',
+                      cursor: 'pointer'
+                    }}
+                  />
+                )}
+              </Stack>
+              <Stack display={'flex'} alignItems={'center'} gap={1} direction={'column'} paddingBottom={"20px"}>
+                {(
+                    (row?.refundAmount
+                    )
+                  ) ? (
+                    <Custombutton
+                      
+                    btncolor='#d39a58'
+                      height={25}
+                      IconEnd={""}
+                      IconStart={''}
+                      startIcon={false}
+                      endIcon={false}
+                      onClick={() => openRefundModal(row)}
+                      label='Refund'
+                    />
+                  ):null}
+                {row?.status !== 'cancelled' && row?.status !== 'completed' && (
+                  // Add the condition here to show Assign and Reassign buttons
+                  (row?.rider_each_order_settlement === null  && (
+                    (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
+                    (row?.payment_status === 'completed' && row?.payment_type === 'online')
+                  )) ? (
+                    <Custombutton
+                      disabled={loading}
+                      btncolor='blue'
+                      height={25}
+                      IconEnd={""}
+                      IconStart={''}
+                      startIcon={false}
+                      endIcon={false}
+                      onClick={() => openAssignModal(row)}
+                      label='Assign'
+                    />
+                  ) : (
+                    (row?.rider_each_order_settlement?.rider_status === "active" ||
+                      row?.rider_each_order_settlement?.rider_status === "completed" ||
+                      row?.rider_each_order_settlement?.rider_status === "cancelled" ||
+                      row?.rider_each_order_settlement?.rider_status === "onTheWay") && (
+                      (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
+                      (row?.payment_status === 'completed' && row?.payment_type === 'online')
+                    )
+                  ) ? (
+                    <Custombutton
+                      disabled={true}
+                      btncolor='blue'
+                      height={25}
+                      IconEnd={""}
+                      IconStart={''}
+                      startIcon={false}
+                      endIcon={false}
+                      onClick={() => openAssignModal(row)}
+                      label='Assign'
+                    />
+                  ) : (
+                    row?.rider_each_order_settlement?.rider_status === "new"&& (
+                      (row?.payment_status === 'created' && row?.payment_type === 'COD') ||
+                      (row?.payment_status === 'completed' && row?.payment_type === 'online')
+                    )
+                  ) ? (
+                    <Custombutton
+                      disabled={loading}
+                      btncolor='#F71C1C'
+                      height={25}
+                      IconEnd={""}
+                      IconStart={''}
+                      startIcon={false}
+                      endIcon={false}
+                      onClick={() => openAssignModal(row)}
+                      label='Reassign'
+                    />
+                  )  
+                  : null
+                )
+                
+                
+                }
+              </Stack>
+            </Stack>
+          )
+        
+
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      width: matches ? 150 : 200,
+      headerAlign: 'center',
+      align: 'center',
+   
+      cellClassName: (params) => {
+          if (params.row.payment_status === 'completed') {
+              
+              return 'completed-order';
+          }
+          else if(params.row.payment_status === 'pending'){
+              return 'pending-order'
+          }
+          else if(params.row.payment_status === 'cancelled')
+          {
+              return 'cancelled-order'
+          }
+          else if(params.row.payment_status === 'created'   ){
+              return 'created-order'
+          }
+          return ''; 
+      }
+  
+  },
         {
             field: 'Actions',
             headerName: 'Actions',
@@ -313,8 +449,8 @@ const Shipments = () => {
 
             valueGetter: (params) => params.row.rider_each_order_settlement?.rider?.name ? params.row.rider_each_order_settlement?.rider?.name : '-'
         },
-        
-        
+     
+      
     ];
 
 
