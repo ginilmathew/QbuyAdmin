@@ -55,7 +55,7 @@ const Shipments = () => {
     }
 
     const openAssignModal = useCallback((row: any) => {
-        console.log("kk");
+
 
         setfranchiseData(row)
 
@@ -188,6 +188,7 @@ const Shipments = () => {
             width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
+        
 
             cellClassName: (params) => {
                 if (params.row.payment_status === 'completed') {
