@@ -33,7 +33,7 @@ type Input = {
 
 const CustomProductVarient = ({ content, index, deafultCommission, onChange, state, view, stock }: props) => {
 
-    console.log("VARIENNNN")
+    console.log(content, state)
    
 
     const { register,

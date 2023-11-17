@@ -8,11 +8,16 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 const Attributes = ({item, index, onChange, enableVariant, removeAttributes,closeIcon}) => {
 
-    // console.log({item},'ITEM IN ')
+    console.log({item},'ITEM IN ')
 
     const saveTagValues = (value) => {
        
         onChange(value, index, 'options')
+    }
+
+
+    const removeCurrentAttributes = () => {
+        removeAttributes(item?.id)
     }
 
   return (
@@ -37,7 +42,7 @@ const Attributes = ({item, index, onChange, enableVariant, removeAttributes,clos
             <CustomCheckBox isChecked={item.variant} label='' onChange={(e) => enableVariant(e, index)} title='Add Variant' />
         </Grid>
         {removeAttributes && <Grid item xs={12} lg={2} display={"flex"} alignItems={"center"}>
-            <DeleteOutlineIcon style={{ color: 'red' }} onClick={removeAttributes} />
+            <DeleteOutlineIcon style={{ color: 'red' }} onClick={removeCurrentAttributes} />
         </Grid>}
     </Grid>
   )

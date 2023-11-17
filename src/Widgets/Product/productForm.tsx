@@ -18,7 +18,7 @@ import * as yup from 'yup';
 import moment from 'moment'
 import CustomDatePicker from '@/components/CustomDatePicker';
 import Maps from '../../components/maps/maps'
-import { isEmpty, isNull, isNumber } from 'lodash';
+import { isEmpty, isNull, isNumber, truncate } from 'lodash';
 import Polygon from '@/components/maps/Polygon';
 import { IMAGE_URL } from '../../Config/index';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
@@ -135,6 +135,7 @@ type props = {
 const ProductForm = ({ res, view }: props) => {
     let idd = res ? res : view;
 
+console.log(idd);
 
     const router = useRouter()
 
@@ -174,6 +175,7 @@ const ProductForm = ({ res, view }: props) => {
     const [offerDate_from, setOffer_Date_from] = useState<any>(null);
     const [offerDate_to, setOffer_Date_to] = useState<any>(null);
     const [statusSelect, setStatusSelect] = useState<any>(null)
+    const [time, settime] = useState<any>("")
     const [statusChange, setStatusChange] = useState<any>(
         [
             { value: 'Pending', name: 'pending' }
@@ -186,12 +188,12 @@ const ProductForm = ({ res, view }: props) => {
             name: 'Breakfast'
         },
         {
-            value: 'dinner',
-            name: 'Dinner'
-        },
-        {
             value: 'lunch',
             name: 'Lunch'
+        },
+        {
+            value: 'dinner',
+            name: 'Dinner'
         },
 
     ]);
@@ -213,6 +215,7 @@ const ProductForm = ({ res, view }: props) => {
     const [multpleArrayProductTag, setMultipleArrayProductTag] = useState<any>([]);
     const [multpleArrayFoodType, setMultipleArrayFoodType] = useState<any>([]);
 
+
     const orderValidation = /^[0-9]*$/
     const schema = yup
         .object()
@@ -233,15 +236,52 @@ const ProductForm = ({ res, view }: props) => {
                 .mixed()
                 .required("Product Image is Required"),
             stock_value: (stock === true && varientsarray?.length === 0) ? yup.string().matches(orderValidation, 'Accept only positive number').required("Stock value required").typeError("Stock value must be a number") : yup.string().nullable(),
-            // regular_price: attributes?.every((res: any) => res?.varients === false) ? yup.string().required('Purchase Price is Required') : yup.string()
+            // regular_price: 
 
             // meta_tags: yup.array().typeError('Meta Tags is Required').required('Meta Tag is Required')
             minimum_qty: yup.string().matches(orderValidation, 'Accept only positive number').nullable(),
-            weight: yup.string().max(30, "Name must be less than 30 characters").matches(
-                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s/0-9]*)$/gi,
-                'Only contain alphabets letters.'
-            ).nullable()
+            // weight: yup.string().max(30, "Name must be less than 30 characters").matches(
+            //     /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s/0-9]*)$/gi,
+            //     'Only contain alphabets letters.'
+            // ).nullable()
+            // weight: yup.string()
+            //     .max(30, "Name must be less than 30 characters")
+            //     .matches(/^(\d+(\.\d*)?|\.\d+)$/, 'Only contain valid numerical values.')
+            //     .nullable()
+            regular_price: yup.string()
+        .test('is-greater-than-zero', 'Regular Price must be greater than 0', function (value) {
+            // Check if regular_price is provided and greater than 0
+            return !value || (parseFloat(value) > 0);
+        })
+        .nullable().transform((_, val) => val === Number(val) ? val : null),
+        commission: yup.string()
+        .test('is-greater-than-zero', 'commission must be greater than 0', function (value) {
+            // Check if regular_price is provided and greater than 0
+            return !value || (parseFloat(value) > 0);
+        })
+        .nullable().transform((_, val) => val === Number(val) ? val : null) ,
+            //     .string()
+            //     .required('Selling Price is Required')
+            //     .test('is-greater-than-purchase', 'Selling Price should not be less than Purchase Price', function (value) {
+            //         const purchasePrice = this.parent.seller_price;
+            //         return parseFloat(value) >= parseFloat(purchasePrice);
+            //     }),
+
+            // seller_price: yup
+            //     .string()
+            //     .required('Purchase Price is Required'),
+
+            // offer_price: yup
+            //     .string()
+            //     .required('Offer Price is Required')
+            //     .test('is-greater-than-purchase', 'Offer Price should not be less than Purchase Price', function (value) {
+            //         const purchasePrice = this.parent.seller_price;
+            //         return parseFloat(value) >= parseFloat(purchasePrice);
+            //     }),
+
+
             // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
+
 
         })
         .required();
@@ -277,21 +317,22 @@ const ProductForm = ({ res, view }: props) => {
                 video_link: '',
                 related_products: null,
                 image: null,
-                regular_price: 0,
-                offer_price: 0,
+                regular_price: null,
+                offer_price: null,
                 offer_date_from: null,
                 offer_date_to: null,
-                seller_price: 0,
+                seller_price: null,
                 minimum_qty: '',
                 delivery_locations: null,
                 product_availability_from: null,
                 product_availability_to: null,
                 fixed_delivery_price: 0,
-                commission: 0
+                commission: null
             }
+           
         });
 
-
+     
 
 
 
@@ -299,6 +340,7 @@ const ProductForm = ({ res, view }: props) => {
         try {
             setLoader(true)
             const response = await fetchData(`admin/product/show/${idd}`)
+            console.log({ response }, 'hai')
             setProductList(response?.data?.data)
         } catch (err: any) {
             toast.error(err.message)
@@ -332,7 +374,6 @@ const ProductForm = ({ res, view }: props) => {
 
 
 
-
     // const onChangeSelectType = (e: React.ChangeEvent<HTMLInputElement>) => {
     //     setSelectType(e.target.value)
     //     setValue('type', e.target.value)
@@ -340,7 +381,7 @@ const ProductForm = ({ res, view }: props) => {
 
     // }
 
-
+   
     const StockCheck = (e: any) => {
         if (!view) {
             setValue('stock', e)
@@ -415,6 +456,7 @@ const ProductForm = ({ res, view }: props) => {
         setError('image', { message: '' })
     }
 
+    
 
     // console.log({ errors })
 
@@ -435,6 +477,7 @@ const ProductForm = ({ res, view }: props) => {
         }
     }
 
+    
 
 
     const onselectFranchise = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -446,15 +489,18 @@ const ProductForm = ({ res, view }: props) => {
         try {
             setLoading(true)
             const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
-            const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${e.target.value}`)
+            //const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${e.target.value}`)
             setVendorList(response?.data?.data)
-            let result = recomendedProduct?.data?.data.map((res: any) => ({
-                _id: res?._id,
-                title: `${res?.name}-${res?.product_id}`,
-                product_id: res?.product_id,
-                store: res?.store?.name
-            }))
-            setRecomendedProductList(result)
+            if(response?.data?.data?.length === 1){
+                getRecomentedProducts(response?.data?.data?.[0]?._id)
+            }
+            // let result = recomendedProduct?.data?.data.map((res: any) => ({
+            //     _id: res?._id,
+            //     title: `${res?.name}-${res?.product_id}`,
+            //     product_id: res?.product_id,
+            //     store: res?.store?.name
+            // }))
+            // setRecomendedProductList(result)
         } catch (err: any) {
             toast.error(err.message)
             setLoading(false)
@@ -466,24 +512,39 @@ const ProductForm = ({ res, view }: props) => {
 
     }
 
+
+    
+
+
     const onSelectStore = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setvendorSelect(e.target.value)
+        getRecomentedProducts(e.target.value)
+        setvendorSelect(e.target.value)   
         let result = vendorList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
             {
-                commision: get?.additional_details ? get?.additional_details.commission : 0,
+                commision: get?.additional_details ? get?.additional_details.commission : null,
                 id: get?._id,
                 name: get?.store_name,
                 category: get?.category_id
             }
 
         ))
-
+        
         setCategoryList(result?.[0]?.category)
-
+       
 
         let findresult = vendorList?.filter((res: any) => res?._id === e.target.value)
+        console.log(findresult);
+        
+        console.log(findresult?.approved_by)
+        console.log(findresult?.start_time)
+        console.log(findresult?.end_time)
+
+        // if(findresult?.length > 0){
+        //     getRecomentedProducts(findresult?.[0]?._id)
+        // }
+        
         setVendorListDirection(findresult)
-        // setValue('commission', result[0]?.commision)
+        // setValue('commission', result[0]?.commision)     
         setValue('store', e.target.value)
         setError('store', { message: '' })
     }
@@ -533,8 +594,28 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const addAtributes = () => {
+
+        let attributess = [];
+
+        if(attributes && attributes?.length > 0){
+            // attributes?.map((att: object, i: number) => {
+            //     attributess.push({
+            //         ...att,
+            //         id: i+1
+            //     })
+            // })
+
+            attributess=[...attributes, { id: `${moment().unix()}`, name: '', options: [], variant: false }]
+        }
+        else{
+            attributess = [{ id: `${moment().unix()}`, name: '', options: [], variant: false }]
+        }
+
+        setAttributes([...attributess])
+
+        console.log({attributess})
         // if(attributes?.length  < 2){
-        setAttributes([...attributes, { name: '', options: [], variant: false }])
+        //setAttributes((prev: any) => [...prev, { id: attributess?.length+1, name: '', options: [], variant: false }])
         // }
     }
 
@@ -570,14 +651,17 @@ const ProductForm = ({ res, view }: props) => {
 
 
     const onChangeProductFrom = (e: any) => {
-        setValue('product_availability_from', e)
-
-    }
+    
+            setValue('product_availability_from', e);
+       
+       
+    }   
 
     const onChangeProductTo = (e: any) => {
-        setValue('product_availability_to', e)
-
-    }
+       
+            setValue('product_availability_to', e);
+            }
+    
 
 
     const onCheckPandasuggestion = (e: any) => {
@@ -599,6 +683,7 @@ const ProductForm = ({ res, view }: props) => {
         setValue('offer_date_to', e)
 
     }
+
 
 
     const onChangeMultipleFoodType = (event: any) => {
@@ -627,25 +712,37 @@ const ProductForm = ({ res, view }: props) => {
         setProductCategorySelect(value)
     }
 
+    const getRecomentedProducts = async(id: any) => {
+        const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${id}`)
+        let result = recomendedProduct?.data?.data.map((res: any) => ({
+            _id: res?._id,
+            title: `${res?.name}-${res?.product_id}`,
+            product_id: res?.product_id,
+            store: res?.store?.name
+        }))
+        setRecomendedProductList(result)
+    }
+
     useEffect(() => {
         if (productList) {
             const getvendorlist = async (vendorId: any) => {
                 try {
-                    const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
-                    const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${productList?.franchisee?._id}`)
-                    let result = recomendedProduct?.data?.data.map((res: any) => ({
-                        _id: res?._id,
-                        title: `${res?.name}-${res?.product_id}`,
-                        product_id: res?.product_id,
-                        store: res?.store?.name
-                    }))
-                    setRecomendedProductList(result)
+                    const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)                
+                    // const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${productList?.franchisee?._id}`)
+
+                    // let result = recomendedProduct?.data?.data.map((res: any) => ({
+                    //     _id: res?._id,
+                    //     title: `${res?.name}-${res?.product_id}`,
+                    //     product_id: res?.product_id,
+                    //     store: res?.store?.name
+                    // }))
+                    // setRecomendedProductList(result)
                     setVendorList(response?.data?.data)
                     let vendor = response?.data?.data?.find((ven: any) => ven?._id === vendorId)
-                    if(vendor){
+                    if (vendor) {
                         setCategoryList(vendor?.category_id);
                     }
-                    
+
 
                     setValue('franchisee', productList?.franchisee?._id)
                 } catch (err: any) {
@@ -663,6 +760,7 @@ const ProductForm = ({ res, view }: props) => {
             }
             getSubcategory()
             getvendorlist(productList?.store?._id)
+            getRecomentedProducts(productList?.store?._id)
             setCategorySelect(productList?.category?._id)
 
 
@@ -730,8 +828,9 @@ const ProductForm = ({ res, view }: props) => {
 
                     })
 
-                    setAttributes([...attributesArray])
+                    
                 })
+                setAttributes([...attributesArray])
             }
 
             let myvaarientArray: { title: any; variant_id: string; attributs: any; seller_price: any; regular_price: string; offer_price: string; offer_date_from: any; offer_date_to: any; stock: boolean; stock_value: string; commission: number; fixed_delivery_price: number; }[] = []
@@ -743,22 +842,27 @@ const ProductForm = ({ res, view }: props) => {
                         title: item?.title,
                         attributs: item?.attributs,
                         seller_price: item?.seller_price,
-                        regular_price: item?.regular_price,
-                        offer_price: item?.offer_price,
-                        offer_date_from: item?.offer_date_from ? moment(item?.offer_date_from, 'YYYY-MM-DD') : null,
-                        offer_date_to: item?.offer_date_to ? moment(item?.offer_date_to, 'YYYY-MM-DD') : null,
+                        regular_price: (item?.regular_price && item?.regular_price > 0) ? item?.regular_price : null,
+                        offer_price: (item?.offer_price && item?.offer_price > 0) ? item?.offer_price : null, 
+                        offer_date_from: (item?.offer_date_from && moment(item?.offer_date_from, 'YYYY-MM-DD').isValid()) ?  moment(item?.offer_date_from, 'YYYY-MM-DD') : null,
+                        offer_date_to: (item?.offer_date_to && moment(item?.offer_date_to, 'YYYY-MM-DD').isValid()) ? moment(item?.offer_date_to, 'YYYY-MM-DD') : null,
                         stock: item?.stock,
                         stock_value: item?.stock_value,
-                        commission: item?.commission,
-                        fixed_delivery_price: item?.fixed_delivery_price
+                        commission: (item?.commission && item?.commission > 0) ? item?.commission : null,
+                        fixed_delivery_price: (item?.fixed_delivery_price && item?.fixed_delivery_price > 0) ? item?.fixed_delivery_price : null
                     })
-                    setVarientsArray(myvaarientArray)
+                    
                 })
+
+                setTimeout(() => {
+                    setVarientsArray(myvaarientArray)
+                }, 500);
+                
             }
-            setValue('commission', productList?.commission ? productList?.commission : 0)
-            setValue('regular_price', productList?.regular_price ? productList?.regular_price : 0)
-            setValue('seller_price', productList?.seller_price ? productList?.seller_price : 0)
-            setValue('offer_price', productList?.offer_price ? productList?.offer_price : 0)
+            setValue('commission', productList?.commission ? productList?.commission : null)
+            setValue('regular_price', productList?.regular_price ? productList?.regular_price : null)
+            setValue('seller_price', productList?.seller_price ? productList?.seller_price : null)
+            setValue('offer_price', productList?.offer_price ? productList?.offer_price : null)
             // setOffer_Date_from(moment(productList?.offer_date_from, 'YYYY-MM-DD'))
             // setOffer_Date_to(moment(productList?.offer_date_from, 'YYYY-MM-DD'))
             setValue('offer_date_from', productList?.offer_date_from ? moment(productList?.offer_date_from, 'YYYY-MM-DD') : null)
@@ -816,7 +920,7 @@ const ProductForm = ({ res, view }: props) => {
             attributes[i].variant = e;
             setAttributes([...attributes])
             //setAddVarient(e)
-            addvarients()
+            addvarients(attributes)
         }
 
     }
@@ -837,7 +941,7 @@ const ProductForm = ({ res, view }: props) => {
             setValue('seller_price', '')
             setValue('offer_price', '')
             setValue('offer_date_from', '')
-            setValue('regular_price', '')
+            setValue('regular_price', null)
             setValue('offer_date_to', '')
             setValue('fixed_delivery_price', '')
             // Filter attributes array to only include those with variant true
@@ -856,14 +960,14 @@ const ProductForm = ({ res, view }: props) => {
                     title: val,
                     attributs: val.split(' '),
                     seller_price: '',
-                    regular_price: '',
+                    regular_price: null,
                     offer_price: '',
                     offer_date_from: '',
                     offer_date_to: '',
                     stock: stock,
                     stock_value: '',
-                    commission: 0,
-                    fixed_delivery_price: 0
+                    commission: null,
+                    fixed_delivery_price: null
                 }
             })
 
@@ -894,13 +998,14 @@ const ProductForm = ({ res, view }: props) => {
 
 
 
-    const addvarients = () => {
+    const addvarients = (attributes: any) => {
+        console.log({attributes}, "vari")
         if (attributes?.some((res: any) => res?.variant === true)) {
             const output = [];
             setValue('seller_price', '')
             setValue('offer_price', '')
             setValue('offer_date_from', '')
-            setValue('regular_price', '')
+            setValue('regular_price', null)
             setValue('offer_date_to', '')
             setValue('fixed_delivery_price', '')
             // Filter attributes array to only include those with variant true
@@ -912,21 +1017,24 @@ const ProductForm = ({ res, view }: props) => {
 
             let combines = combine(attributesArray);
 
-            let attri = combines.map((val: any) => {
+            let attri = combines.map((val: any, i: number) => {
                 return {
+                    id: `${i}${moment().unix()}`,
                     title: val,
                     attributs: val.split(' '),
                     seller_price: '',
-                    regular_price: '',
+                    regular_price: null,
                     offer_price: '',
                     offer_date_from: '',
                     offer_date_to: '',
                     stock: stock,
                     stock_value: '',
-                    commission: '',
+                    commission: null,
                     fixed_delivery_price: 0
                 }
             })
+
+            console.log({attri})
             setVarientsArray([...attri])
         } else {
             setVarientsArray([])
@@ -937,8 +1045,8 @@ const ProductForm = ({ res, view }: props) => {
 
 
     useEffect(() => {
-        addvarients()
-    }, [index])
+        addvarients(attributes)
+    }, [index, attributes])
 
 
 
@@ -959,7 +1067,7 @@ const ProductForm = ({ res, view }: props) => {
     }
 
 
-    //seach_Tag..............................................................................................
+    //seach_T/admin/vendor-list/650d671e97a01b7e46078cb7/pandaag..............................................................................................
 
     const searchTagvalues = (res: any) => {
         setSearchTag(res)
@@ -992,13 +1100,15 @@ const ProductForm = ({ res, view }: props) => {
 
     }
 
+    console.log({errors})
+
     //posting products ...................................................................................................
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
 
 
-        // console.log({ data })
+        //console.log({ data })
         //Check All Attributes have values
         let attributeCheck = attributes?.find((att: any) => isEmpty(att?.name) || att?.options?.length === 0);
         // console.log({ attributeCheck, attributes })
@@ -1008,33 +1118,36 @@ const ProductForm = ({ res, view }: props) => {
         }
         let pattern = /^[0-9]+$/
         //Check Any Variants
-        let variantsChe = attributes?.find((att: any) => att.variant === true);
+        let variantsChe = attributes?.find((att: any) => att.variant === true );
         // console.log({ length: attributes.length, price: isEmpty(data?.seller_price) })
-        if (!variantsChe) {
+        if (!variantsChe && varientsarray?.length === 0) {
             if (isNaN(data?.seller_price) || data?.seller_price <= 0) {
                 setError("seller_price", { type: 'custom', message: 'Purchase price must be greater than 0' })
                 return false;
             }
-
             let regularPrice = parseInt(data?.regular_price);
             // console.log({ regularPrice })
-            if (data?.regular_price !== "") {
+            if (data?.regular_price) {
                 if (isNaN(regularPrice)) {
                     setError("regular_price", { type: 'custom', message: ' Price must be a number' })
                     return false;
                 }
             }
-
-
+          
+            // if(data?.regular_price<=0){
+            //     setError("regular_price", { type: 'custom', message: 'Selling price must be a greater than 0' })
+            //     return false;
+            // }
+            // if(data?.commission<=0){
+            //     setError("commission", { type: 'custom', message: 'Commission  must be a greater than 0' })
+            //     return false;
+            // }
             if (!isEmpty(data?.offer_price)) {
                 if (isNaN(data?.offer_price)) {
                     setError("offer_price", { type: 'custom', message: 'Offer price must be a number' })
                     return false;
                 }
-                else if (data?.offer_price <= 0) {
-                    setError("offer_price", { type: 'custom', message: 'Offer price must be a greater than 0' })
-                    return false;
-                }
+             
                 // else if (!data?.offer_date_from || !data?.offer_date_to) {
                 //     toast.warning("Offer From date and to date required")
                 //     return false;
@@ -1049,6 +1162,7 @@ const ProductForm = ({ res, view }: props) => {
                 }
 
             }
+
 
             if (isNaN(data?.fixed_delivery_price) || isEmpty(data?.fixed_delivery_price) || data?.fixed_delivery_price < 0) {
                 setError("fixed_delivery_price", { type: 'custom', message: 'delivery price required' })
@@ -1139,7 +1253,7 @@ const ProductForm = ({ res, view }: props) => {
 
         let vendorData = vendorList?.filter((res: any) => res?._id === vendorSelect).map((get: any) => (
             {
-                commision: get?.additional_details ? get?.additional_details.commission : 0,
+                commision: get?.additional_details ? get?.additional_details.commission : null,
                 id: get?._id,
                 name: get?.store_name
             }
@@ -1264,7 +1378,7 @@ const ProductForm = ({ res, view }: props) => {
             regular_price: data?.regular_price,
             seller_price: data?.seller_price,
             offer_price: data?.offer_price,
-            commission: data?.commission ? data?.commission : 0,
+            commission: data?.commission ? data?.commission : null,
             fixed_delivery_price: data?.fixed_delivery_price,
             offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
@@ -1305,16 +1419,32 @@ const ProductForm = ({ res, view }: props) => {
         }
     }
 
-    const removeAttributes = async (i: any) => {
+    const removeAttributes = async (id: number) => {
         // console.log('FUCTION CALLED')
-        if (!res || !view) {
-            attributes[i].variant = false;
-            setAttributes([...attributes])
-            let attribute = await attributes?.filter((att: any, index: Number) => index !== i)
 
-            // console.log({ attribute })
-            setAttributes([...attribute])
-            addvarients()
+        if (!res || !view) {
+            let newAttri = await attributes?.filter((att: any) => att.id !==id)
+            // attributes[i].variant = false;
+            // setAttributes([...attributes])
+            // let attribute = await attributes?.filter((att: any, index: Number) => index !== i)
+
+            // let attribu: Array<any> = [];
+
+            // await newAttri?.map((att: any, index: number) => {
+            //     attribu.push({
+            //         ...att,
+            //         id: index + 1
+            //     })
+
+            // })
+
+
+            //console.log({attribu})
+            //setAttributes(null)
+
+            await setAttributes([...newAttri])
+            addvarients(newAttri)
+            
         }
 
 
@@ -1416,80 +1546,77 @@ const ProductForm = ({ res, view }: props) => {
                         />
                     </Grid>
 
+                    {process?.env?.NEXT_PUBLIC_TYPE === "panda" && <>
+                        <Grid item xs={12} lg={3}>
+                            <CustomMultiselect
+                                multiple={true}
+                                control={control}
+                                error={errors.food_type}
+                                fieldName="food_type"
+                                placeholder={``}
+                                fieldLabel={"Food Type"}
+                                readOnly={view ? true : false}
+                                value={multpleArrayFoodType}
+                                onChangeValue={onChangeMultipleFoodType}
+                                type=''
+                            >
+                                <MenuItem value="" disabled >
+                                    <>Select Category</>
+                                </MenuItem>
+                                {productType && productType.map((res: any) => (
+                                    <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                                ))}
+                            </CustomMultiselect>
+                        </Grid>
 
-                    {/* <Grid item xs={12} lg={3}>
-                        <CustomMultiselect
+                        <Grid item xs={12} lg={3}>
+                            <CustomMultiselect
 
-                            multiple={true}
-                            control={control}
-                            error={errors.food_type}
-                            fieldName="food_type"
-                            placeholder={``}
-                            fieldLabel={"Food Type"}
-                            readOnly={view ? true : false}
-                            value={multpleArrayFoodType}
-                            onChangeValue={onChangeMultipleFoodType}
-                            type=''
-                        >
-                            <MenuItem value="" disabled >
-                                <>Select Category</>
-                            </MenuItem>
-                            {productType && productType.map((res: any) => (
-                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
-                            ))}
-                        </CustomMultiselect>
-                    </Grid> */}
+                                multiple={true}
+                                control={control}
+                                error={errors.product_tags}
+                                fieldName="product_tags"
+                                placeholder={``}
+                                fieldLabel={"Product Tags"}
+                                readOnly={view ? true : false}
+                                value={multpleArrayProductTag}
+                                onChangeValue={onChangeMultipleProductTag}
+                                type=''
+                            >
+                                <MenuItem value="" disabled >
+                                    <>Select Category</>
+                                </MenuItem>
+                                {productTagList && productTagList.map((res: any) => (
+                                    <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
+                                ))}
+                            </CustomMultiselect>
+                        </Grid>
+                        <Grid item xs={12} lg={3}>
+                            <Customselect
+                                type='text'
+                                control={control}
+                                error={errors.category_type}
+                                fieldName="category_type"
+                                placeholder={``}
+                                fieldLabel={"Category Type"}
+                                selectvalue={""}
+                                height={40}
+                                label={''}
+                                size={16}
+                                value={productCategorySelect}
+                                options={''}
+                                onChangeValue={onSelectCategoryType}
+                                background={'#fff'}
+                                disabled={view ? true : false}
+                            >
+                                <MenuItem value="">select Category Type</MenuItem>
+                                {product_category?.map((res: any) => (
+                                    <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                                ))}
 
-                    {/* <Grid item xs={12} lg={3}>
-                        <CustomMultiselect
-
-                            multiple={true}
-                            control={control}
-                            error={errors.product_tags}
-                            fieldName="product_tags"
-                            placeholder={``}
-                            fieldLabel={"Product Tags"}
-                            readOnly={view ? true : false}
-                            value={multpleArrayProductTag}
-                            onChangeValue={onChangeMultipleProductTag}
-                            type=''
-                        >
-                            <MenuItem value="" disabled >
-                                <>Select Category</>
-                            </MenuItem>
-                            {productTagList && productTagList.map((res: any) => (
-                                <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
-                            ))}
-                        </CustomMultiselect>
-                    </Grid> */}
-{/* 
-                    <Grid item xs={12} lg={3}>
-                        <Customselect
-                            type='text'
-                            control={control}
-                            error={errors.category_type}
-                            fieldName="category_type"
-                            placeholder={``}
-                            fieldLabel={"Category Type"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={productCategorySelect}
-                            options={''}
-                            onChangeValue={onSelectCategoryType}
-                            background={'#fff'}
-                            disabled={view ? true : false}
-                        >
-                            <MenuItem value="">select Category Type</MenuItem>
-                            {product_category?.map((res: any) => (
-                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
-                            ))}
-
-                        </Customselect>
-                    </Grid> */}
-
-
+                            </Customselect>
+                        </Grid>
+                    </>}
                     <Grid item xs={12} lg={1.5}>
                         <CustomInput
                             type='text'
@@ -1542,6 +1669,7 @@ const ProductForm = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
+
 
                     {vendorSelect &&
                         <Grid item xs={12} lg={3}>
@@ -1685,6 +1813,7 @@ const ProductForm = ({ res, view }: props) => {
                                 changeValue={onChangeProductFrom}
                                 fieldName='product_availability_from'
                                 control={control}
+                               
                                 error={errors.product_availability_from}
                                 fieldLabel={'Product Availability'} />
                         </Grid>}
@@ -1781,7 +1910,7 @@ const ProductForm = ({ res, view }: props) => {
 
                         {defaultImage.length > 0 && !view &&
                             <>
-                                <Box display={'flex'} gap={2} >
+                                <Box display={'flex'} gap={2} style={{ height: '200px', overflow: 'auto' }} >
                                     {defaultImage && defaultImage?.map((res: any, i: number) => (
                                         <Box position={'relative'}>
                                             <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 100, height: 100, }} />
@@ -1793,39 +1922,42 @@ const ProductForm = ({ res, view }: props) => {
                             </>
                         }
 
+
                         {view &&
-                            <>
-                                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
-                                    sx={{
-                                        fontSize: {
-                                            lg: 16,
-                                            md: 14,
-                                            sm: 12,
-                                            xs: 11,
-                                        },
-                                        fontFamily: `'Poppins' sans-serif`,
-
-                                    }}
-                                >{'Additional Images'}
-
-                                </Typography>
-                                <Box display={'flex'} gap={2} >
-
-                                    {defaultImage && defaultImage?.map((res: any, i: number) => (
-                                        <Box>
-                                            <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 130, height: 130, }} />
-                                        </Box>
-                                    ))}
-                                </Box>
-                            </>
+                            <div style={{ height: '200px', overflow: 'auto' }}>
+                                <>
+                                    <Typography letterSpacing={0.5} px={3} mb={3}
+                                        sx={{
+                                            fontSize: {
+                                                lg: 16,
+                                                md: 14,
+                                                sm: 12,
+                                                xs: 11,
+                                            },
+                                            fontFamily: `'Poppins' sans-serif`,
+                                        }}
+                                    >{'Additional Images'}</Typography>
+                                    <Box display="flex" gap={2}>
+                                        {defaultImage && defaultImage.map((res: any, i: number) => (
+                                            <Box key={i}>
+                                                <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 130, height: 130 }} />
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                </>
+                            </div>
                         }
 
-                        {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />}
+                        {/* {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />} */}
+                        <div style={{ height: '200px', overflow: 'auto' }}>
+                            {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />}
+                        </div>
+
                     </Grid>
                     <Grid item xs={12} lg={6}>
                         {view &&
                             <>
-              <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
                                     sx={{
                                         fontSize: {
                                             lg: 16,
@@ -1846,7 +1978,7 @@ const ProductForm = ({ res, view }: props) => {
                                 </Box>
                             </>
                         }
-     {productList &&
+                        {productList &&
                             <>
                                 <Box display={'flex'} sx={{ gap: 1 }} flexWrap={'wrap'} py={1} >
                                     {recomendedProductEditList?.map((res: any) => (
@@ -1866,7 +1998,7 @@ const ProductForm = ({ res, view }: props) => {
                 {!res && !view &&
                     <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={'Add'} onClick={addAtributes} IconEnd={''} IconStart={AddIcon} />}
                 {attributes && attributes?.map((res: any, i: any) =>
-                    <Attributes item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} closeIcon={idd ? false : true} removeAttributes={!productList ? () => removeAttributes(i) : null} />
+                    <Attributes key={res?.id} item={res} index={i} onChange={onChangeAttributes} enableVariant={enableVariant} closeIcon={idd ? false : true} removeAttributes={!productList ? removeAttributes : null} />
                 )}
             </CustomBox>
 
@@ -1944,6 +2076,7 @@ const ProductForm = ({ res, view }: props) => {
                             values={offerDate_from ? offerDate_from : getValues('offer_date_from')}
                             changeValue={onChangeOffer_date_from}
                             fieldName='offer_date_from'
+                            past={false}
                             control={control}
                             error={errors.offer_date_from}
                             fieldLabel={'Offer From'}
@@ -1957,15 +2090,19 @@ const ProductForm = ({ res, view }: props) => {
                             changeValue={onChangeOffer_date_to}
                             fieldName='offer_date_to'
                             control={control}
+                            past={false}
                             error={errors.offer_date_to}
                             fieldLabel={'Offer To'}
                         />
 
                     </Grid>
+
+
+
                 </Grid>
             </CustomBox>}
             {varientsarray && varientsarray.length > 0 && <CustomBox title='Add Variant & Price'>
-                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient view={view} deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} stock={stock} />)}
+                {varientsarray?.map((varian: any, i: number) => <CustomProductVarient key={varian?.id} view={view} deafultCommission={getValues('commission')} content={varian} index={i} onChange={(value: any, key: string) => changeAttributeValues(i, key, value)} setState={undefined} state={varientsarray} stock={stock} />)}
             </CustomBox>}
 
             {/* {attributes?.some((res: any) => res.varient === true) &&

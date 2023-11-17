@@ -1,19 +1,24 @@
-import CustomTableHeader from '@/Widgets/CustomTableHeader'
-import CustomTable from '@/components/CustomTable'
+
 import { Box } from '@mui/material'
 import React, { useState, useEffect, useCallback, useTransition } from 'react'
 import { Stack, Typography } from '@mui/material';
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
-import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
 import moment from 'moment'
 import { useRouter } from 'next/router';
 import { fetchData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
-import CustomDelete from '@/Widgets/CustomDelete';
+import dynamic from 'next/dynamic';
+import useSWR from 'swr';
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
+const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
+const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
+const DeleteOutlineTwoToneIcon = dynamic(() => import('@mui/icons-material/DeleteOutlineTwoTone'), { ssr: false });
+const CustomDelete = dynamic(() => import('@/Widgets/CustomDelete'), { ssr: false });
 
+const fetcher = (url: any) => fetchData(url).then((res) => res);
 const SubCategory = () => {
+    const { data, error, isLoading, mutate } = useSWR(`admin/subcategory/list/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
     const router = useRouter()
 
     const [loading, setLoading] = useState<boolean>(false);
@@ -23,6 +28,12 @@ const SubCategory = () => {
     const [serachList, setSearchList] = useState<any>([])
     const [pending, startTransition] = useTransition();
 
+
+    useEffect(() => {
+        if (data?.data?.data) {
+            setSubCategoryList(data?.data?.data)
+        }
+    }, [data?.data?.data])
 
 
 
@@ -48,26 +59,26 @@ const SubCategory = () => {
     }
 
 
-    const fetchsubCategory = async () => {
-        try {
-            setLoading(true)
-            const response = await fetchData(`admin/subcategory/list/${process.env.NEXT_PUBLIC_TYPE}`)
-            setSubCategoryList(response?.data?.data)
-            setSearchList(response?.data?.data)
-        } catch (err: any) {
-            toast.error(err.message)
-            setLoading(false)
-        }
-        finally {
-            setLoading(false)
-        }
-    }
+    // const fetchsubCategory = async () => {
+    //     try {
+    //         setLoading(true)
+    //         const response = await fetchData(`admin/subcategory/list/${process.env.NEXT_PUBLIC_TYPE}`)
+    //         setSubCategoryList(response?.data?.data)
+    //         setSearchList(response?.data?.data)
+    //     } catch (err: any) {
+    //         toast.error(err.message)
+    //         setLoading(false)
+    //     }
+    //     finally {
+    //         setLoading(false)
+    //     }
+    // }
 
 
 
-    useEffect(() => {
-        fetchsubCategory()
-    }, [])
+    // useEffect(() => {
+    //     fetchsubCategory()
+    // }, [])
 
 
     const columns: GridColDef[] = [
@@ -137,12 +148,31 @@ const SubCategory = () => {
 
 
     const searchProducts = useCallback((value: any) => {
-        let Results = serachList?.filter((com: any) => com?.name.toString().toLowerCase().includes(value.toLowerCase())
+        let Results = data?.data?.data?.filter((com: any) => com?.name.toString().toLowerCase().includes(value.toLowerCase())
         )
         startTransition(() => {
             setSubCategoryList(Results)
         })
-    }, [subCategoryList])
+    }, [subCategoryList]);
+
+
+    if (isLoading) {
+        <Box px={5} py={2} pt={10} mt={0}>
+            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
+                <CustomTableHeader setState={searchProducts} imprtBtn={false} Headerlabel='SubCategory' onClick={addSubCategory} addbtn={true} />
+                <Box py={3}>
+                    <CustomTable dashboard={false} columns={columns} rows={[]} id={"id"} loading={true} bg={"#ffff"} label='Recent Activity' />
+                </Box>
+            </Box>
+
+        </Box>
+    }
+
+    if(error){
+        toast.error(error?.message);
+    }
+
+
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>

@@ -208,3 +208,43 @@ a {
     opacity: 0;
   }
 }
+
+    .completed-order {
+        color: rgb(239, 176, 14);
+        font-weight: bold;
+        font-size: larger;
+    }
+
+    .pending-order{
+     color: #787f79;
+     font-weight: bold;
+     font-size: larger;
+    }
+
+    .cancelled-order{
+    color: red;
+    font-weight: bold;
+    font-size: larger;
+    }
+    
+    .created-order{
+   color: green;
+   font-weight: bold;
+   font-size: larger;
+    }
+    
+    
+.active-status {
+
+  color:green;
+ font-weight: bold;
+}
+.pending-status{
+  font-weight: bold;
+  color: blue;
+}
+.terminated-status{
+  color:red;
+  font-weight: bold;
+}
+

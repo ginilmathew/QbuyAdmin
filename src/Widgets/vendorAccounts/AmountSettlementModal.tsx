@@ -54,7 +54,12 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
     const schema = yup
         .object()
         .shape({
-            transaction_id: yup.string().required('Transaction Id Required').matches(/^[0-9-a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ\s\-\/]+$/, 'Not Valid').nullable(),
+            // transaction_id: yup.string().required('Transaction Id Required').matches(/^[0-9-a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ\s\-\/]+$/, 'Not Valid').nullable(),
+            transaction_id: yup.string()
+            .required('Transaction Id Required')
+            .matches(/^[a-zA-Z0-9]+$/, 'Only contains numeric and alphabetic values')
+            .nullable(),
+          
             payment_mode: yup.string().required('Payment Mode is Required'),
             transaction_date_time: yup.string().required('Date & Time is Required')
         })

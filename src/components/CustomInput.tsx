@@ -82,6 +82,7 @@ const CustomInput = (
                                     height: "40px",
                                     letterSpacing: "1px",
                                     fontWeight: '700px',
+                                    borderRadius:"4px",
                                     border: 'none',
                                     fontFamily: `'Poppins' sans-serif`,
                                 },

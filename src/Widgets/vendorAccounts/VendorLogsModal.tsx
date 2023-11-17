@@ -5,6 +5,7 @@ import { DialogProps } from '@mui/material/Dialog';
 import useEnhancedEffect from '@mui/material/utils/useEnhancedEffect';
 import { GridCloseIcon, GridColDef } from '@mui/x-data-grid';
 import React, { useCallback, useEffect, useState } from 'react'
+import moment from 'moment';
 
 export interface SimpleDialogProps {
     open: boolean;
@@ -36,7 +37,8 @@ const VendorLogsModal = (props: SimpleDialogProps) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-
+            valueGetter: (params) => (moment(params?.row?.date).format('DD/MM/YYYY hh:mm A')),
+           
         },
         {
             field: 'sales_amount',
@@ -47,19 +49,16 @@ const VendorLogsModal = (props: SimpleDialogProps) => {
 
         },
         {
-            field: 'Promotion Amount',
+            field: 'delivered_date',
             headerName: 'Order Completed Date & Time',
             width: 300,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => moment(params?.row?.delivered_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
 
         },
 
     ];
-
-
-
-
 
 
     const rows = [
@@ -116,7 +115,7 @@ const VendorLogsModal = (props: SimpleDialogProps) => {
         setListLog([])
         onClose()
     }
-    
+   
     return (
         <Box>
             <Dialog onClose={clearData} open={open} fullWidth={true}

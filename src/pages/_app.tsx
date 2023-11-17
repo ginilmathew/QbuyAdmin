@@ -1,23 +1,24 @@
 import '@/styles/globals.css'
-import Header from '@/Widgets/Header';
+import dynamic from 'next/dynamic';
+
+const Header = dynamic(() => import('@/Widgets/Header'), { ssr: false });
+const UserProvider = dynamic(() => import('@/helpers/user/UserContext'), { ssr: false });
+const ProtectedRoute = dynamic(() => import('@/Routes/protectedRoutes'), { ssr: false });
+const LinearProgress = dynamic(() => import('@mui/material/LinearProgress'), { ssr: false });
+const Stack = dynamic(() => import('@mui/material/Stack'), { ssr: false });
+
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import { Poppins } from 'next/font/google';
-import { StandaloneSearchBox, LoadScript } from "@react-google-maps/api";
-import UserProvider from '@/helpers/user/UserContext';
-import ProtectedRoute from '@/Routes/protectedRoutes';
 import React, { useEffect } from 'react';
 import Router from 'next/router';
-import LinearProgress from '@mui/material/LinearProgress';
-import Stack from '@mui/material/Stack';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { SessionProvider, useSession } from "next-auth/react"
-import HeaderProvider from '@/helpers/header/HeaderContext';
+import { SessionProvider } from "next-auth/react"
 import type { NextComponentType } from 'next'
 
-import PushNotificationLayout from '@/components/PushNotificationLayout';
-import VendorStatusProvider from '@/helpers/shippingStatus/VendorStatusContext';
+// import PushNotificationLayout from '@/components/PushNotificationLayout';
+// import VendorStatusProvider from '@/helpers/shippingStatus/VendorStatusContext';
 
 const poppins = Poppins({
 	subsets: ['latin'],
@@ -61,14 +62,6 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 		)}
 		<SessionProvider session={session}>
 			<UserProvider>
-
-				<LoadScript
-					id="script-loader"
-					googleMapsApiKey={`${process.env.NEXT_PUBLIC_GOOGLEKEY}`}
-					language="en"
-					region="us"
-					libraries={["drawing"]}
-				>
 					{Component.auth ? (
 						<Component {...pageProps} />
 					) : (
@@ -84,10 +77,8 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 						</ProtectedRoute>
 					)}
 					<ToastContainer />
-				</LoadScript>
 			</UserProvider>
 		</SessionProvider>
-		{/* </LoadScript> */}
 	</main>
 
 

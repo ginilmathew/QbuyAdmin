@@ -1,70 +1,92 @@
 import { useRouter } from 'next/router'
 import React, { useState, useEffect, useTransition, useCallback } from 'react'
-import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { GridColDef } from '@mui/x-data-grid';
 import { Avatar, Box, Stack } from '@mui/material';
-import CustomTableHeader from '@/Widgets/CustomTableHeader';
-import CustomTable from '@/components/CustomTable';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
-import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
-import CustomSwitch from '@/components/CustomSwitch';
-import CustomDelete from '@/Widgets/CustomDelete';
+import dynamic from 'next/dynamic';
 import { toast } from "react-toastify";
 import moment from 'moment'
 import { fetchData, postData } from '@/CustomAxios';
 import Image from 'next/image';
 import { IMAGE_URL } from '@/Config';
 import { getServerSession } from "next-auth/next"
-import { authOptions } from '../api/auth/[...nextauth]'
-
+import { authOptions } from '../api/auth/[...nextauth]';
+const CustomDelete = dynamic(() => import('@/Widgets/CustomDelete'), { ssr: false });
+const CustomSwitch = dynamic(() => import('@/components/CustomSwitch'), { ssr: false });
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
+const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false })
+const DeleteOutlineTwoToneIcon = dynamic(() => import('@mui/icons-material/DeleteOutlineTwoTone'), { ssr: false })
+import useSWR from 'swr';
 
 type props = {
     req: any,
     res: any
 }
 
-type datapr = {
-    data: any
-}
+// type datapr = {
+//     data: any
+// }
 
-// This gets called on every request
-export async function getServerSideProps({ req, res }: props) {
-    // Fetch data from external API
-    //const res = await fetch(`https://.../data`);
-    //const data = await res.json();
+// // This gets called on every request
+// export async function getServerSideProps({ req, res }: props) {
+//     // Fetch data from external API
+//     //const res = await fetch(`https://.../data`);
+//     //const data = await res.json();
 
-    let session = await getServerSession(req, res, authOptions)
+//     let session = await getServerSession(req, res, authOptions)
 
-    let token = session?.user?.accessToken
+//     let token = session?.user?.accessToken
 
-    const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/slider/list/${process.env.NEXT_PUBLIC_TYPE}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-    });
+//     const resu = await fetch(`${process.env.NEXT_BASE_URL}admin/slider/list/${process.env.NEXT_PUBLIC_TYPE}`, {
+//         method: 'GET',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Authorization': `Bearer ${token}`,
+//         },
+//     });
 
-    const data = await resu.json();
-
-
-
-    // Pass data to the page via props
-    return { props: { data: data } };
-}
+//     const data = await resu.json();
 
 
-const SliderManagement = ({ data }: datapr) => {
+
+//     // Pass data to the page via props
+//     return { props: { data: data } };
+// }
+const fetcher = (url: any) => fetchData(url).then((res) => res);
+
+const SliderManagement = () => {
     const router = useRouter()
-
+    const { data, error, isLoading, mutate } = useSWR(`admin/slider/list/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
 
     const [open, setOpen] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false);
-    const [sliderList, setSliderList] = useState<any>(data ? data?.data : [])
+    const [sliderList, setSliderList] = useState<any>([])
     const [_id, set_id] = useState<string>('');
-    const [serachList, setSearchList] = useState<any>(data ? data?.data : [])
+    // const [serachList, setSearchList] = useState<any>([])
     const [pending, startTransition] = useTransition();
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [searchResults, setSearchResults] = useState<any[]>([]);
 
+    useEffect(() => {
+        if (data?.data?.data) {
+            setSliderList(data?.data?.data);
+        }
+    }, [data?.data?.data]);
+
+
+    useEffect(() => {
+        if (searchQuery) {
+            const filteredResults = sliderList.filter((item: any) =>
+                item.franchise?.franchise_name
+                    .toString()
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())
+            );
+            setSearchResults(filteredResults);
+        } else {
+            setSearchResults(sliderList);
+        }
+    }, [searchQuery, sliderList]);
 
 
     const handleClose = () => {
@@ -110,7 +132,7 @@ const SliderManagement = ({ data }: datapr) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => params?.row?.screentype === "null" ||  params?.row?.screentype === "undefined" ? '_' : params?.row?.screentype,
+            valueGetter: (params) => params?.row?.screentype === "null" || params?.row?.screentype === "undefined" ? '_' : params?.row?.screentype,
 
         },
         {
@@ -193,7 +215,7 @@ const SliderManagement = ({ data }: datapr) => {
         try {
             setLoading(true)
             await postData('admin/slider/status', value)
-            getSlider()
+            mutate()
         }
         catch (err: any) {
             toast.warning(err?.message)
@@ -205,28 +227,44 @@ const SliderManagement = ({ data }: datapr) => {
     }
 
     const searchVendor = useCallback((value: any) => {
-        let Result = serachList?.filter((com: any) => com?.franchise?.franchise_name
-            .toString().toLowerCase().includes(value.toLowerCase()))
+        setSearchQuery(value);
+        let Result = data?.data?.data?.filter((com: any) => com?.franchise?.franchise_name
+            .toString().toLowerCase().includes(value.toLowerCase()));
         startTransition(() => {
-            setSliderList(Result)
-        })
-    }, [sliderList])
+            setSliderList(Result);
+        });
+    }, [data?.data?.data]);
+
+    // const getSlider = async () => {
+    //     try {
+    //         setLoading(true)
+    //         const response = await fetchData(`admin/slider/list/${process.env.NEXT_PUBLIC_TYPE}`);
+    //         setSliderList(response?.data?.data)
+    //         setSearchList(response?.data?.data)
+    //     } catch (err: any) {
+    //         toast.error(err?.message)
+    //         setLoading(false)
+    //     } finally {
+    //         setLoading(false)
+    //     }
+    // }
 
 
+    if (isLoading) {
+        <Box px={5} py={2} pt={10} mt={0}>
+            <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
+                <CustomTableHeader setState={searchVendor} imprtBtn={false} Headerlabel='Slider Management' onClick={addSlider} addbtn={true} />
+                <Box py={5}>
+                    <CustomTable dashboard={false} columns={columns} rows={[]} id={"id"} bg={"#ffff"} loading={true} rowheight={80} label='Recent Activity' />
+                </Box>
+            </Box>
+
+        </Box>
+    }
 
 
-    const getSlider = async () => {
-        try {
-            setLoading(true)
-            const response = await fetchData(`admin/slider/list/${process.env.NEXT_PUBLIC_TYPE}`);
-            setSliderList(response?.data?.data)
-            setSearchList(response?.data?.data)
-        } catch (err: any) {
-            toast.error(err?.message)
-            setLoading(false)
-        } finally {
-            setLoading(false)
-        }
+    if (error) {
+        toast.error(error?.message)
     }
 
     // useEffect(() => {
@@ -241,7 +279,15 @@ const SliderManagement = ({ data }: datapr) => {
             <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
                 <CustomTableHeader setState={searchVendor} imprtBtn={false} Headerlabel='Slider Management' onClick={addSlider} addbtn={true} />
                 <Box py={5}>
-                    <CustomTable dashboard={false} columns={columns} rows={sliderList ? sliderList : []} id={"_id"} bg={"#ffff"} rowheight={80} label='Recent Activity' />
+                    <CustomTable
+                        dashboard={false}
+                        columns={columns}
+                        rows={searchResults}
+                        id="_id"
+                        bg="#ffff"
+                        rowheight={80}
+                        label="Recent Activity"
+                    />
                 </Box>
             </Box>
             {open && <CustomDelete

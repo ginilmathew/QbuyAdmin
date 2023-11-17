@@ -5,24 +5,26 @@ import React, { useCallback, useEffect, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add';
 import CustomTable from '@/components/CustomTable';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import CustomInput from '@/components/CustomInput';
 import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { fetchData, postData } from '@/CustomAxios';
 import { toast } from 'react-toastify';
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
-
+import dynamic from 'next/dynamic';
+import useSWR from 'swr';
+const CustomInput = dynamic(() => import('@/components/CustomInput'), { ssr: false });
 type FormInputs = {
   platformCharge: string
 }
 
-
+const fetcher = (url: any) => fetchData(url).then((res) => res);
 const PlatformCharges = () => {
+
+  const { data, error, isLoading, mutate } = useSWR(`common/platformcharge`, fetcher);
 
 
 
@@ -30,6 +32,11 @@ const PlatformCharges = () => {
   const [platformList, setplatformList] = useState<any>([]);
 
 
+  useEffect(() => {
+    if (data?.data?.data) {
+      setplatformList([data?.data?.data])
+    }
+  }, [data?.data?.data])
 
 
 
@@ -90,16 +97,16 @@ const PlatformCharges = () => {
 
 
 
-  const GetPlatformCharge = async () => {
-    try {
+  // const GetPlatformCharge = async () => {
+  //   try {
 
-      const response = await fetchData('common/platformcharge')
-      setplatformList([response?.data?.data])
+  //     const response = await fetchData('common/platformcharge')
+  //     setplatformList([response?.data?.data])
 
-    } catch (err) {
+  //   } catch (err) {
 
-    }
-  }
+  //   }
+  // }
 
 
 
@@ -112,7 +119,7 @@ const PlatformCharges = () => {
       await postData('admin/setting', Value);
       toast.success('Platform Charge Added');
       setValue('platformCharge', "")
-      GetPlatformCharge();
+      mutate();
       HandleClose();
     } catch (err: any) {
       toast.error(err?.message)
@@ -121,11 +128,37 @@ const PlatformCharges = () => {
 
 
 
-  useEffect(() => {
-    GetPlatformCharge()
-  }, [])
+  // useEffect(() => {
+  //   GetPlatformCharge()
+  // }, [])
 
+  if (isLoading) {
+    <Box px={5} py={2} pt={10} mt={0}>
+      <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'100%'}>
+        <Box
+          display={'flex'}
+          justifyContent={'space-between'}
+          alignItems={'center'} height={60}>
+          <Typography
+            fontSize={30}
+            fontWeight={'bold'}
+            color="#58D36E"
+            letterSpacing={1}
+            sx={{ fontFamily: `'Poppins' sans-serif`, }}>Platform Charge</Typography>
+          <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} gap={3}>
+            <Custombutton btncolor='' height={40} endIcon={false} startIcon={true} label={platformList?.length > 0 ? 'Update' : 'Add'} onClick={HandleOpen} IconEnd={''} IconStart={AddIcon} />
+          </Box>
+        </Box>
+      </Box>
+      <Box py={3}>
+        <CustomTable dashboard={false} columns={columns} rows={[]} loading={true} id={"id"} bg={"#ffff"} label='Recent Activity' />
+      </Box>
+    </Box>
+  }
 
+  if (error) {
+    toast.error(error?.message)
+  }
 
 
   return (

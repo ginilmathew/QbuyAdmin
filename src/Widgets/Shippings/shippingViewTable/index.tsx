@@ -21,14 +21,15 @@ type props = {
     readonly: any,
     id: any,
     SetDeliveryCharge: any,
+    setStoreList: any
 
 }
 
 
-const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
+const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: props) => {
 
 
-    console.log({ res })
+
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalDelete, setModalDelete] = useState(false);
@@ -38,7 +39,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge }: props) => {
     const [productList, setProductList] = useState<any>(null);
 
 
-console.log({productList},'PRODUCT LIT')
+
 
     const handleClose = useCallback(() => {
         setModalOpen(false);
@@ -52,6 +53,7 @@ console.log({productList},'PRODUCT LIT')
         setMode(mode)
     }, [modalOpen, singleList, mode]);
 
+
     const handleOpenAddModal = useCallback(() => {
         setAddOpen(true)
     }, [addOpen])
@@ -61,6 +63,7 @@ console.log({productList},'PRODUCT LIT')
     }, [addOpen])
 
 
+
     const handleOpenDeleteModal = useCallback(() => {
         setModalDelete(true)
     }, [modalDelete])
@@ -68,6 +71,8 @@ console.log({productList},'PRODUCT LIT')
     const handleCloseDeleteModal = useCallback(() => {
         setModalDelete(false)
     }, [modalDelete])
+
+
 
     useEffect(() => {
         if (res) {
@@ -104,7 +109,7 @@ console.log({productList},'PRODUCT LIT')
                 ...pricedata,
                 productDetails
             }
-
+            setProductList(Combine);
             // const result = productDetails?.map((res: any) => res?.vendor)
             // setVendorStatus(productDetails?.map((res: any) => ({ "vendor_id": "", "status": "" })))
 
@@ -116,8 +121,8 @@ console.log({productList},'PRODUCT LIT')
             // const uniqueNames = Array.from(new Set(result.map(res => res)));
 
 
-
-            setProductList(Combine);
+            let store = productDetails?.map((res: any) => (res?.vendor?._id));
+            setStoreList(store)
 
         }
 
@@ -143,6 +148,8 @@ console.log({productList},'PRODUCT LIT')
     }, [productList])
 
 
+
+
     useEffect(() => {
         if (productList) {
             let value = {
@@ -153,9 +160,6 @@ console.log({productList},'PRODUCT LIT')
         }
 
     }, [productList])
-
-
-
 
 
     const removeItemApi = async (pdct_id: any) => {
@@ -182,8 +186,6 @@ console.log({productList},'PRODUCT LIT')
             toast.warning('You have to add atleast Two Product !..')
             return false;
         }
-
-
         let product: any[] = []
         if (row?.type === "variant") {
             product = productList?.productDetails?.filter((res: any) => res?.variant_id !== row?.variant_id);
@@ -191,9 +193,6 @@ console.log({productList},'PRODUCT LIT')
             product = productList?.productDetails?.filter((res: any) => res?.product_id !== row?.product_id);
 
         }
-
-
-
 
         const highestDelivery = product.reduce((highest: any, delivery: any) => {
             return Math.max(highest, delivery.deliveryPrice);
@@ -209,7 +208,6 @@ console.log({productList},'PRODUCT LIT')
             if (product?.length > 0) {
                 const rate = product?.reduce((inital: any, price: any) => inital + (parseFloat(price?.unitPrice) * parseFloat(price?.quantity)), 0);
                 let pricedata = {
-                    // delivery_charge: productList?.delivery_charge,
                     delivery_charge: Math.ceil(highestDelivery),
                     grand_total: (parseInt(productList?.delivery_charge) + rate + productList?.platform_charge),
                     total_amount: rate,
@@ -219,6 +217,8 @@ console.log({productList},'PRODUCT LIT')
                     ...pricedata,
                     productDetails: [...product],
                 });
+                let store = product?.map((res: any) => (res?.vendor?._id));
+                setStoreList(store)
 
             } else {
                 let pricedata = {
@@ -230,6 +230,9 @@ console.log({productList},'PRODUCT LIT')
                     ...pricedata,
                     productDetails: [...product],
                 });
+
+                let store = product?.map((res: any) => (res?.vendor?._id));
+                setStoreList(store)
             }
         }
     }
@@ -286,7 +289,9 @@ console.log({productList},'PRODUCT LIT')
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
-                                    {row?.name}  {row.title ? (row.title) : ''}
+                                    {/* {row?.name}  {row.title ? (row.title) : ''} */}
+                                    {row?.name}  {row.title ? `(${row.title})` : ''}
+
                                 </TableCell>
                                 <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor?.vendor_mobile}{ }</TableCell>
                                 <TableCell align="center">{row.quantity}</TableCell>
@@ -330,11 +335,16 @@ console.log({productList},'PRODUCT LIT')
                                 }}
                             /></TableCell>}
                         </TableRow>
+
+
                         <TableRow>
                             <TableCell colSpan={2}></TableCell>
                             <TableCell align="right">Platform Charge</TableCell>
-                            <TableCell align="center">₹ {parseFloat(productList?.platform_charge)}</TableCell>
+                            <TableCell align="center">
+                                ₹ {isNaN(productList?.platform_charge) ? 'Nil' : parseFloat(productList?.platform_charge).toFixed(2)}
+                            </TableCell>
                         </TableRow>
+
                         <TableRow>
                             <TableCell colSpan={2}></TableCell>
                             <TableCell align="right">Total</TableCell>
@@ -359,6 +369,7 @@ console.log({productList},'PRODUCT LIT')
                 />}
             {addOpen &&
                 <AddProductModal
+                    setStoreList={setStoreList}
                     order_id={id}
                     SetDeliveryCharge={SetDeliveryCharge}
                     allProduct={productList}

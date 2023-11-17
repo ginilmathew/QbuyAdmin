@@ -20,11 +20,11 @@ type props = {
     rowheight?: number,
     checked?: boolean,
     selectCheck?: any,
-
+    loading?: any
 
 
 }
-const CustomTable = ({ columns, rows, id, bg, label, dashboard, rowheight, checked, selectCheck }: props) => {
+const CustomTable = ({ columns, rows, id, bg, label, dashboard, rowheight, checked, selectCheck, loading }: props) => {
 
  
 
@@ -71,14 +71,15 @@ const CustomTable = ({ columns, rows, id, bg, label, dashboard, rowheight, check
                     initialState={{
                         pagination: {
                             paginationModel: {
-                                pageSize: 10,
+                                pageSize: 50,
                             },
                         },
                     }}
+                    loading={loading}
                     disableRowSelectionOnClick
                     checkboxSelection={checked ? checked : false}
                     onRowSelectionModelChange={checked ? (itm) => selectCheckItem(itm) : () => null}
-                    pageSizeOptions={[10]}
+                    pageSizeOptions={[50]}
                     getRowId={row => row[id]}
                     
 

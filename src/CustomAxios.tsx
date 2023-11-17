@@ -84,7 +84,13 @@ async function errorHandler(error: any) {
     localStorage.clear()
     //await userContext.setUser(response.data.user)
   }
-  throw new Error(error.response.data.message);
+  if(error.response.data.message){
+    throw new Error(error.response.data.message);
+  }
+  else{
+    throw new Error(error);
+  }
+  //throw new Error(error.response.data.message);
 }
 
 export { axiosInstance, fetchData, postData,deleteData };

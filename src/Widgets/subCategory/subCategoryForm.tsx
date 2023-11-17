@@ -260,20 +260,6 @@ const SubCategoryForm = ({ res, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    {/* <Grid item xs={12} lg={2.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.order_number}
-                            fieldName="order_number"
-                            placeholder={``}
-                            fieldLabel={"Display Order"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid> */}
-
                     {!view &&
                         <Grid item xs={12} lg={2.5}>
                             <CustomImageUploader

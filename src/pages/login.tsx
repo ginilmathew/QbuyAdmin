@@ -36,6 +36,7 @@ const Login = () => {
         email: string,
         password: string | number,
     }
+    const customId = "custom-id-yes";
 
 
     const schema = yup
@@ -70,7 +71,7 @@ const Login = () => {
     })
 
 
-    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const onSubmit: SubmitHandler<IFormInput> = async (data) => {    
         try {
             const res = await signIn('credentials', {
                 redirect: false,
@@ -79,8 +80,10 @@ const Login = () => {
                 callbackUrl: `${window.location.origin}`,
             });
 
-            if (res?.error) {
-                toast.error(res.error)
+            if (res?.error==="Unauthorized") {
+            toast.error("invalid username or password", {
+                    toastId: customId
+                  });
             } else {
                 if (res?.url) {
                     //auth.setUser(session?.user)

@@ -6,7 +6,7 @@ import { useForm, SubmitHandler, set } from "react-hook-form";
 import Custombutton from '@/components/Custombutton';
 import CustomImageUploader from '@/components/CustomImageUploader';
 import Customselect from '@/components/Customselect';
-import { useJsApiLoader } from "@react-google-maps/api";
+//import { useJsApiLoader } from "@react-google-maps/api";
 import { fetchData } from '@/CustomAxios';
 import CustomTimepicker from '@/components/CustomTimepicker';
 import { postData } from '@/CustomAxios';
@@ -52,7 +52,8 @@ type Inputs = {
     longitude: any,
     order_status: any,
     approval_status: any,
-    subCategory_id: any
+    subCategory_id: any,
+    account_type: string
 };
 
 
@@ -85,7 +86,8 @@ type IFormInput = {
     longitude: any,
     order_status: any,
     approval_status: any,
-    subCategory_id: any
+    subCategory_id: any,
+    account_type: string
 };
 
 type props = {
@@ -119,9 +121,10 @@ const Vendorform = ({ res, view, data }: props) => {
     const [statusSelect, setStatusSelect] = useState<any>(null);
     const [subcategorylist, setSubcategoryList] = useState<any>([]);
     const [multpleArraySub, setMultipleArraySub] = useState<any>([]);
+    const [accounttype, setAccountType] = useState<any>([]);
 
 
-    console.log({vendorList})
+    console.log({ vendorList })
 
 
     const orderValidation = /^[0-9]*$/
@@ -129,6 +132,7 @@ const Vendorform = ({ res, view, data }: props) => {
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const location = /^[0-9.]*$/
     const commissionvalidation = /^\d*\.?\d*$/
+    const emailRegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
     const schema = yup
         .object()
         .shape({
@@ -143,7 +147,18 @@ const Vendorform = ({ res, view, data }: props) => {
             store_name: yup.string().max(60, 'Maximum Character Exceeds').required('Store Name is Required'),
             // store_address: yup.string().required('Store Address is Required'),
             franchise_id: yup.string().required('Franchise is  Required'),
+            account_type: yup.string().required('Account Type is  Required'),
             category_id: yup.array().typeError('Category is Required').required('Category is Required'),
+
+            account_number: yup.number().typeError('Account numeber only contain numbers').nullable(),
+            branch: yup.string().max(30, "BranchName must be less than 30 characters").matches(
+                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+                'Branch Name can only contain alphabets letters.'
+            ).nullable(),
+            recipient_name: yup.string().max(30, "Name must be less than 30 characters").matches(
+                /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+                'Name can only contain alphabets letters.'
+            ).nullable(),
             // start_time: yup.string().required('Required'),
             // end_time: yup.string().required('Required'),
             store_logo: yup
@@ -209,20 +224,19 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
 
+    // const getVendorlist = async () => {
+    //     try {
+    //         setLoader(true)
+    //         const response = await fetchData(`admin/vendor/show/${idd}`)
+    //         setVendorList(response?.data?.data)
 
-    const getVendorlist = async () => {
-        try {
-            setLoader(true)
-            const response = await fetchData(`admin/vendor/show/${idd}`)
-            setVendorList(response?.data?.data)
-
-        } catch (err: any) {
-            toast.success(err.message)
-            setLoader(false)
-        } finally {
-            setLoader(false)
-        }
-    }
+    //     } catch (err: any) {
+    //         toast.success(err.message)
+    //         setLoader(false)
+    //     } finally {
+    //         setLoader(false)
+    //     }
+    // }
 
 
     // useEffect(() => {
@@ -233,69 +247,69 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
 
-    const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: "AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I",
-        id: 'google-map-script',
-    })
+    // const { isLoaded } = useJsApiLoader({
+    //     googleMapsApiKey: "AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I",
+    //     id: 'google-map-script',
+    // })
 
 
 
 
 
-    const containerStyle = {
-        width: "100%",
-        height: "400px",
-    };
+    // const containerStyle = {
+    //     width: "100%",
+    //     height: "400px",
+    // };
 
-    const center = {
-        lat: 37.7749,
-        lng: -122.4194,
-    };
+    // const center = {
+    //     lat: 37.7749,
+    //     lng: -122.4194,
+    // };
 
 
 
-    const [path, setPath] = useState([
-        { lat: 52.52549080781086, lng: 13.398118538856465 },
-        { lat: 52.48578559055679, lng: 13.36653284549709 },
-        { lat: 52.48871246221608, lng: 13.44618372440334 }
-    ]);
+    // const [path, setPath] = useState([
+    //     { lat: 52.52549080781086, lng: 13.398118538856465 },
+    //     { lat: 52.48578559055679, lng: 13.36653284549709 },
+    //     { lat: 52.48871246221608, lng: 13.44618372440334 }
+    // ]);
 
     // Define refs for Polygon instance and listeners
-    const polygonRef = useRef<google.maps.Polygon | null>(null);
-    const listenersRef = useRef<google.maps.MapsEventListener[]>([]);
+    // const polygonRef = useRef<google.maps.Polygon | null>(null);
+    // const listenersRef = useRef<google.maps.MapsEventListener[]>([]);
 
     // Call setPath with new edited path
-    const onEdit = useCallback(() => {
-        if (polygonRef.current) {
-            const nextPath = polygonRef.current
-                .getPath()
-                .getArray()
-                .map((latLng: google.maps.LatLng) => {
-                    return { lat: latLng.lat(), lng: latLng.lng() };
-                });
-            setPath(nextPath);
-        }
-    }, [setPath]);
+    // const onEdit = useCallback(() => {
+    //     if (polygonRef.current) {
+    //         const nextPath = polygonRef.current
+    //             .getPath()
+    //             .getArray()
+    //             .map((latLng: google.maps.LatLng) => {
+    //                 return { lat: latLng.lat(), lng: latLng.lng() };
+    //             });
+    //         setPath(nextPath);
+    //     }
+    // }, [setPath]);
 
     // Bind refs to current Polygon and listeners
-    const onLoad = useCallback(
-        (polygon: google.maps.Polygon) => {
-            polygonRef.current = polygon;
-            const path = polygon.getPath();
-            listenersRef.current.push(
-                path.addListener("set_at", onEdit),
-                path.addListener("insert_at", onEdit),
-                path.addListener("remove_at", onEdit)
-            );
-        },
-        [onEdit]
-    );
+    // const onLoad = useCallback(
+    //     (polygon: google.maps.Polygon) => {
+    //         polygonRef.current = polygon;
+    //         const path = polygon.getPath();
+    //         listenersRef.current.push(
+    //             path.addListener("set_at", onEdit),
+    //             path.addListener("insert_at", onEdit),
+    //             path.addListener("remove_at", onEdit)
+    //         );
+    //     },
+    //     [onEdit]
+    // );
 
     // Clean up refs
-    const onUnmount = useCallback(() => {
-        listenersRef.current.forEach((lis: google.maps.MapsEventListener) => lis.remove());
-        polygonRef.current = null;
-    }, []);
+    // const onUnmount = useCallback(() => {
+    //     listenersRef.current.forEach((lis: google.maps.MapsEventListener) => lis.remove());
+    //     polygonRef.current = null;
+    // }, []);
 
 
     const imageUploder = (file: any) => {
@@ -321,6 +335,17 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
     }
+
+    const onChangeSelectAccountType = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+        setAccountType(value);
+        console.log(value, 'account Type')
+        setValue('account_type', value)
+        setError('account_type', { message: '' })
+
+
+    }
+
 
     const getFranchiseList = async () => {
         try {
@@ -363,28 +388,28 @@ const Vendorform = ({ res, view, data }: props) => {
     }
 
 
-    const filterSubcategory = async () => {
+    // const filterSubcategory = async () => {
 
 
-        let array = vendorList?.category_id?.map((res: any) => res?.id);
-        if (array?.length > 0) {
-            try {
-                let data = {
-                    categories: array
-                }
-                const response = await postData('admin/subcategorylist', data);
-           
-                let filter = response?.data.map((res: any) => res?._id);
-              
-                setMultipleArraySub(filter)
-                setSubcategoryList(response?.data)
-        
-            } catch (err: any) {
+    //     let array = vendorList?.category_id?.map((res: any) => res?.id);
+    //     if (array?.length > 0) {
+    //         try {
+    //             let data = {
+    //                 categories: array
+    //             }
+    //             const response = await postData('admin/subcategorylist', data);
 
-            }
-        }
+    //             let filter = response?.data.map((res: any) => res?._id);
 
-    }
+    //             setMultipleArraySub(filter)
+    //             setSubcategoryList(response?.data)
+
+    //         } catch (err: any) {
+
+    //         }
+    //     }
+
+    // }
 
     // const subCategoryList = async () => {
     //     let array = vendorList?.category_id?.map((res: any) => res?.id);
@@ -421,6 +446,8 @@ const Vendorform = ({ res, view, data }: props) => {
             setValue('store_address', vendorList?.store_address);
             setValue('franchise_id', vendorList?.franchise_id);
             setFranchise(vendorList?.franchise_id);
+            setAccountType(vendorList?.account_type);
+            setValue('account_type', vendorList?.account_type)
 
             setValue('category_id', vendorList?.category_id);
             setCategory(vendorList?.category_id);
@@ -455,6 +482,7 @@ const Vendorform = ({ res, view, data }: props) => {
         }
     }, [vendorList])
 
+    console.log({ paths });
 
 
     const onChangeStartTime = (value: any) => {
@@ -491,6 +519,7 @@ const Vendorform = ({ res, view, data }: props) => {
 
 
 
+
     const onChangeMultiple = async (event: any) => {
         const {
             target: { value },
@@ -508,6 +537,11 @@ const Vendorform = ({ res, view, data }: props) => {
         if (data) {
             setValue('category_id', data)
             setError('category_id', { message: '' })
+        }
+        if (data.length === 0) {
+            setError('category_id', { message: 'Category is Requireda' })
+            setValue('category_id', null)
+            console.log("jj");
         }
 
         setPostArray(data)
@@ -551,6 +585,12 @@ const Vendorform = ({ res, view, data }: props) => {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
 
+        if (data.category_id.length === 0) {
+            setError('category_id', { message: 'Category is Required' });
+            return;
+        } else {
+            setError('category_id', { message: '' });
+        }
 
         const URL_CREATE = '/admin/vendor/create'
         const URL_EDIT = '/admin/vendor/update'
@@ -584,6 +624,7 @@ const Vendorform = ({ res, view, data }: props) => {
         formData.append("vendor_email", data?.vendor_email);
         formData.append("vendor_mobile", data?.vendor_mobile);
         formData.append("store_name", data?.store_name);
+        formData.append("account_type", data?.account_type);
         formData.append("store_address", data?.store_address);
         formData.append("franchise_id", data?.franchise_id);
         formData.append("category_id", JSON.stringify(data?.category_id));
@@ -658,6 +699,18 @@ const Vendorform = ({ res, view, data }: props) => {
             getStatuslist()
         }
     }, [idd])
+
+
+    const accountType: any = [
+        {
+            id: 1,
+            value: 'Ready Cash',
+        },
+        {
+            id: 2,
+            value: 'Credit',
+        },
+    ]
 
 
 
@@ -786,7 +839,8 @@ const Vendorform = ({ res, view, data }: props) => {
                                 ))}
                             </Customselect>
                         </Grid>
-                        <Grid item xs={12} lg={4}>
+                        <Grid item xs={12} lg={2}>
+
                             <CustomMultiselect
 
                                 multiple={true}
@@ -808,32 +862,35 @@ const Vendorform = ({ res, view, data }: props) => {
                                 ))}
                             </CustomMultiselect>
 
+                        </Grid>
+                        <Grid item xs={12} lg={2}>
+                            <Customselect
+                                disabled={view ? true : false}
+                                type='text'
+                                control={control}
+                                error={errors.account_type}
+                                fieldName="account_type"
+                                placeholder={``}
+                                fieldLabel={"Account Type"}
+                                selectvalue={""}
+                                height={40}
+                                label={''}
+                                size={16}
+                                value={accounttype}
+                                options={''}
+                                onChangeValue={onChangeSelectAccountType}
+                                background={'#fff'}
+                            >
+                                <MenuItem value="" disabled >
+                                    <>Account Type</>
+                                </MenuItem>
+                                {accountType?.map((res: any) => (
+                                    <MenuItem key={res?._id} value={res?.value}>{res?.value}</MenuItem>
+                                ))}
+                            </Customselect>
+
 
                         </Grid>
-                        {/* <Grid item xs={12} lg={2}>
-                            <CustomMultiselect
-
-                                multiple={true}
-                                control={control}
-                                error={errors.subCategory_id}
-                                fieldName="subCategory_id"
-                                placeholder={``}
-                                fieldLabel={"SubCategory"}
-                                readOnly={view ? true : false}
-                                value={multpleArraySub}
-                                onChangeValue={onChangeSelectSubCategory}
-                                type=''
-                            >
-                                <MenuItem  disabled >
-                                    <>Select SubCategory</>
-                                </MenuItem>
-                                {subcategorylist && subcategorylist?.map((res: any) => (
-                                    <MenuItem key={res?._id} value={res?._id}>{res?.name}</MenuItem>
-                                ))}
-                            </CustomMultiselect>
-
-
-                        </Grid> */}
                         <Grid item xs={12} lg={1.6}>
                             <CustomTimepicker
                                 disabled={view ? true : false}
@@ -887,7 +944,7 @@ const Vendorform = ({ res, view, data }: props) => {
                     <Divider />
                     {/* {isLoaded && */}
                     <Box py={1}>
-                        {idd && data?.delivery_location ? <Polygon onComplete={polygonComplete} path={paths} /> : <Maps onPolygonComplete={polygonComplete} />}
+                        {(idd && data?.delivery_location && paths) ? <Polygon onComplete={polygonComplete} path={paths} /> : <Maps onPolygonComplete={polygonComplete} />}
                         {(errors && errors?.coordinates) && <span style={{ color: 'red', fontSize: 12 }}>{`${errors?.coordinates?.message}`}</span>}
                     </Box>
                 </Box>
