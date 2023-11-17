@@ -35,8 +35,8 @@ const Tabs = () => {
         >
           Shipments
         </li>
-      
-    
+
+
         <li
           className={`tab-item ${activeTab === 'payout' ? 'active' : ''}`}
           onClick={() => handleTabClick('payout')}
@@ -61,20 +61,20 @@ const Tabs = () => {
         >
           Work Details
         </li>
-      
+
       </ul>
 
       <div className="tab-content">
         {activeTab === 'profile' && <RiderSupportform res={id} />}
         {activeTab === 'shipments' && <ShipmentSupport res={id} />}
-        
-       
+
+
         {activeTab === 'payout' && <div>
           <h3>Settlements</h3>
-            <Payout res={id}/>
+          <Payout res={id} />
         </div>}
 
-        
+
         {activeTab === 'cash' && <Cashinhand res={id} />}
         {activeTab === 'workdetails' && <WorkDetailsTab res={id} />}
         {activeTab === 'ratecard' && (
@@ -83,7 +83,7 @@ const Tabs = () => {
             <RateCardTab res={id} handleClose={handleClose} open={open} />
           </div>
         )}
-      
+
       </div>
 
       <style jsx>{`
@@ -108,7 +108,7 @@ const Tabs = () => {
     flex: 1; 
     min-width: 120px; 
     max-width: 146px; 
-    padding: 10px;
+    padding: 3px;
     margin-right: 10px;
     border: 3px solid #58D36E;
     background-color: #FFFFFF;
