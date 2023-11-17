@@ -20,7 +20,7 @@ import Polygon from '@/components/maps/Polygon';
 import { useRouter } from 'next/router';
 import { IMAGE_URL } from '../../Config/index';
 import CustomLoader from '@/components/CustomLoader';
-
+import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
 
 
 type Inputs = {
@@ -312,7 +312,19 @@ const RiderDetailsform = ({ res, view }: props) => {
         }
     }, [subOnboardingList, idd, setValue]);
 
+    const removeFranchisee = (index: number) => {
+        setSelectedFranchisees((prevSelectedFranchisees) => {
+            const updatedFranchisees = [...prevSelectedFranchisees];
+            updatedFranchisees.splice(index, 1);
+            return updatedFranchisees;
+        });
 
+        setSelectedFranchiseNames((prevSelectedFranchiseNames) => {
+            const updatedFranchiseNames = [...prevSelectedFranchiseNames];
+            updatedFranchiseNames.splice(index, 1);
+            return updatedFranchiseNames;
+        });
+    };
 
     const imageUploder = (file: any) => {
         if (file.size <= 1000000) {
@@ -596,38 +608,55 @@ const RiderDetailsform = ({ res, view }: props) => {
                                 ))}
                             </Customselect>
                         </Grid>
+                       
                         {selectedFranchisees.map((franchiseId, index) => (
-                            <Grid item xs={12} lg={3} key={index}>
-                                <Customselect
-                                    type="text"
-                                    control={control}
-                                    error={errors.franchise_id}
-                                    fieldName={`franchise_id_${index}`}
-                                    placeholder={``}
-                                    fieldLabel={`Secondary Franchisee `}
-                                    selectvalue={selectedFranchisees[index]}
-                                    height={40}
-                                    label={""}
-                                    size={16}
-                                    value={selectedFranchisees[index]}
-                                    onChangeValue={(e: any) => handleFranchiseSelects(index, e)}
+    <Grid item xs={12} lg={3} key={index}>
+        <div style={{ position: 'relative' }}>
+            <Customselect
+                type="text"
+                control={control}
+                error={errors.franchise_id}
+                fieldName={`franchise_id_${index}`}
+                placeholder={``}
+                fieldLabel={`Secondary Franchisee `}
+                selectvalue={selectedFranchisees[index]}
+                height={40}
+                label={""}
+                size={16}
+                value={selectedFranchisees[index]}
+                onChangeValue={(e: any) => handleFranchiseSelects(index, e)}
+                background={"#fff"}
+                disabled={view ? true : false}
+                options={franchiseList}
+            >
+                {franchiseList.map((franchise) => (
+                    <MenuItem
+                        key={franchise._id}
+                        value={franchise._id}
+                    >
+                        {franchise?.franchise_name}
+                    </MenuItem>
+                ))}
+            </Customselect>
 
-                                    background={"#fff"}
-                                    disabled={view ? true : false}
-                                    options={franchiseList}
-                                >
-                                    {franchiseList.map((franchise) => (
-                                        <MenuItem
-                                            key={franchise._id}
-                                            value={franchise._id}
-                                        >
-                                            {franchise?.franchise_name}
-                                        </MenuItem>
-                                    ))}
-                                </Customselect>
-                            </Grid>
-                        ))}
-
+            {!view && (
+                <DeleteOutlineTwoToneIcon
+                    aria-label="Delete"
+                    style={{
+                        position: 'absolute',
+                        right: 0,
+                        top: '21%',
+                        transform: 'translateY(-50%)',
+                        color: 'red',
+                        cursor: 'pointer'
+                    }}
+                    onClick={() => removeFranchisee(index)}
+                >
+                </DeleteOutlineTwoToneIcon>
+            )}
+        </div>
+    </Grid>
+))}
 
 
                     </Grid>

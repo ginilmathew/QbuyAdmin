@@ -198,6 +198,7 @@ const RiderAccountsform = ({ view, res }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+          
 
         },
 
@@ -452,7 +453,7 @@ const RiderAccountsform = ({ view, res }: props) => {
                         <CustomViewInput fieldLabel='Deduction' text={RiderSingleList?.deduction} color='#FF7B7B' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Payable' text={RiderSingleList?.total_payable} color='#2EA10C' />
+                        <CustomViewInput fieldLabel='Total Payable' text={RiderSingleList?.total_outstanding} color='#2EA10C' />
                     </Grid>
                     <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="center" marginLeft={'149px'} mt={2}>
                         <div >

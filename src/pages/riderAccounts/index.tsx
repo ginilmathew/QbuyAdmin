@@ -97,7 +97,7 @@ const RiderAccounts = () => {
     let Results = data?.data?.data?.filter((com: any) =>
       com?.rider_id.toString().includes(value) ||
       com?.mobile.toString().includes(value) ||
-      com?.name.toString().includes(value) ||
+      com?.name.toString().toLowerCase().includes(value.toLowerCase())  ||
       com?.primary_franchise?.franchise_name?.toLowerCase().includes(value.toLowerCase())
     );
 
