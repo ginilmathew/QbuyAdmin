@@ -19,16 +19,17 @@ import Custombutton from '@/components/Custombutton';
 import { useRouter } from 'next/router';
 import Spinner from '@/components/Spinner';
 import { postData } from '@/CustomAxios';
-import AmountSettlementModal from './AmountSettlements';
-import RiderLogsModal from './RiderLogModal';
+import AmountSettlementFranchiseeModal from './AmountSettlements';
+import RiderLogsModalFranchisee from './RiderLogModal';
 import CustomDatePicker from '@/components/CustomDatePicker';
 
 
 type Inputs = {
-    name: string,
-    mobile: string,
+    franchise_name: string,
+    owner_name: string,
     email: string,
-    franchise: string,
+    mobile: string,
+    address: string,
 };
 
 type props = {
@@ -36,7 +37,7 @@ type props = {
     view?: any,
     id?: any;
 };
-const RiderAccountsform = ({ view, res }: props) => {
+const FranchiseeAccountsform = ({ view, res }: props) => {
     const idd = view ? view : res;
 
     const router = useRouter()
@@ -53,15 +54,13 @@ const RiderAccountsform = ({ view, res }: props) => {
     const [total, setTotal] = useState<any>(null);
     const [dateSelect, setdateSelect] = useState<string>('')
     const [checkedValue, setcheckedvalue] = useState<any>(false)
-    const [RiderSingleList, setRiderSinglelist] = useState<any>(null);
-    const [RiderEarningList, setRiderEarninglist] = useState<any>(null);
-    console.log({ RiderSingleList }, 'PP')
+    const [FranchiseeSingleList, setFranchiseeSinglelist] = useState<any>(null);
     const commonDateLabel = 'Date Filter';
     const [fromDate, setFromDate] = useState<Date | null>(null);
     const [fromDates, setFromDates] = useState<Date | null>(null);
     const [toDate, setToDate] = useState<Date | null>(null);
     const [toDates, setToDates] = useState<Date | null>(null);
-    const [accountData, setAccountData] = useState([]);
+    const [franchiseeData, setFranchiseeData] = useState([]);
     const [accountDatas, setAccountDatas] = useState([]);
     const schema = yup
         .object()
@@ -96,6 +95,15 @@ const RiderAccountsform = ({ view, res }: props) => {
 
         },
         {
+            field: 'total_store',
+            headerName: 'Total Stores',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+
+        {
             field: 'total_sales',
             headerName: 'Total Sales',
             flex: 1,
@@ -106,14 +114,6 @@ const RiderAccountsform = ({ view, res }: props) => {
         {
             field: 'total_sales_amount',
             headerName: 'Sales Amount',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-
-        },
-        {
-            field: 'deduction',
-            headerName: 'Deductions',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
@@ -198,7 +198,6 @@ const RiderAccountsform = ({ view, res }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-          
 
         },
 
@@ -233,11 +232,11 @@ const RiderAccountsform = ({ view, res }: props) => {
 
 
 
-    const viewRider = useCallback(async () => {
+    const viewFranchisee = useCallback(async () => {
         try {
             setLoading(true)
-            const res = await fetchData(`admin/rider-account/show/${idd}`);
-            setRiderSinglelist(res?.data?.data)
+            const res = await fetchData(`admin/account/franchise/show/${idd}`);
+            setFranchiseeSinglelist(res?.data?.data)
             setLoading(false)
         } catch (err: any) {
             setLoading(false)
@@ -246,56 +245,32 @@ const RiderAccountsform = ({ view, res }: props) => {
 
     useEffect(() => {
         if (idd) {
-            viewRider();
+            viewFranchisee();
 
         }
     }, [idd])
 
- 
-    //     if (RiderSingleList) {
-    //         const formattedData = RiderSingleList.rider_earning_list.map((earning: any, index: number) => ({
-    //             id: index + 1,
-    //             date: moment(earning?.date).format('DD-MM-YYYY'),
-    //             total_sales: earning?.total_sales,
-    //             total_sales_amount: earning?.total_sales_amount,
-    //             deduction: earning?.deduction,
-    //             payout: earning?.payout,
-    //             status: earning?.status,
-    //         }));
-    //         const data = RiderSingleList.rider_earning_list;
-    //         setAccountData(formattedData);
 
-    //         const settlementData = RiderSingleList.settlement_list.map((settlement: any, index: number) => ({
-    //             id: index + 1,
-    //             transaction_date: moment(settlement?.transaction_date).format('DD-MM-YYYY'),
-    //             amount: settlement?.amount,
-    //             payment_mode: settlement?.payment_mode,
-    //             transaction_id: settlement?.transaction_id,
-    //         }));
 
-    //         setAccountData(settlementData);
-
-    //         setValue('name', RiderSingleList?.name);
-    //         setValue('mobile', RiderSingleList?.mobile);
-    //         setValue('franchise', RiderSingleList?.primary_franchise?.franchise_name);
-    //     }
-    // }, [RiderSingleList]);
     useEffect(() => {
-        if (RiderSingleList && RiderSingleList.rider_earning_list) {
-            const formattedData = RiderSingleList.rider_earning_list.map((earning: any, index: number) => ({
+        if (FranchiseeSingleList && Array.isArray(FranchiseeSingleList?.franchise_earning_list)) {
+
+            const formattedData = FranchiseeSingleList?.franchise_earning_list?.map((earning: any, index: number) => ({
+
                 id: index + 1,
                 date: moment(earning?.date).format('DD-MM-YYYY'),
+                total_store: earning?.total_store,
                 total_sales: earning?.total_sales,
                 total_sales_amount: earning?.total_sales_amount,
-                deduction: earning?.deduction,
                 payout: earning?.payout,
                 status: earning?.status,
             }));
-            setAccountData(formattedData);
+            setFranchiseeData(formattedData);
+            console.log('Formatted franchise_earning_list:', formattedData);
         }
 
-        if (RiderSingleList && RiderSingleList.settlement_list) {
-            const settlementData = RiderSingleList.settlement_list.map((settlement: any, index: number) => ({
+        if (FranchiseeSingleList && FranchiseeSingleList.settlement_list) {
+            const settlementData = FranchiseeSingleList.settlement_list.map((settlement: any, index: number) => ({
                 id: index + 1,
                 transaction_date: moment(settlement?.transaction_date).format('DD-MM-YYYY'),
                 amount: settlement?.amount,
@@ -305,12 +280,15 @@ const RiderAccountsform = ({ view, res }: props) => {
             setAccountDatas(settlementData);
         }
 
-        setValue('name', RiderSingleList?.name);
-        setValue('mobile', RiderSingleList?.mobile);
-        setValue('franchise', RiderSingleList?.primary_franchise?.franchise_name);
-    }, [RiderSingleList]);
+        setValue('franchise_name', FranchiseeSingleList?.franchise_name);
+        setValue('owner_name', FranchiseeSingleList?.owner_name);
+        setValue('email', FranchiseeSingleList?.email);
+        setValue('mobile', FranchiseeSingleList?.mobile);
+        setValue('email', FranchiseeSingleList?.email);
+        setValue('address', FranchiseeSingleList?.address);
+    }, [FranchiseeSingleList]);
 
-//Settlement filter
+    //Settlement filter
     const fetchFilteredDatasettlement = async () => {
         const formattedFromDate = moment(fromDates).format('YYYY-MM-DD');
         const formattedToDate = moment(toDates).format('YYYY-MM-DD');
@@ -362,13 +340,13 @@ const RiderAccountsform = ({ view, res }: props) => {
                     payout: earning?.payout,
                     status: earning?.status,
                 }));
-                setAccountData(earningData);
+                setFranchiseeData(earningData);
             }
         } catch (error) {
             toast.error('Failed to filter data.');
         }
     };
-    
+
     useEffect(() => {
         if (fromDate && toDate) {
             fetchFilteredData();
@@ -379,7 +357,7 @@ const RiderAccountsform = ({ view, res }: props) => {
     const onCloseAccount = useCallback(() => {
         setOpen(false)
 
-        viewRider()
+        viewFranchisee()
     }, [open])
 
 
@@ -400,17 +378,42 @@ const RiderAccountsform = ({ view, res }: props) => {
 
     return (
         <Box>
-            <CustomBox title='Rider Details'>
+            <CustomBox title='Franchisee Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={3}>
                         <CustomInput
                             type='text'
                             control={control}
-                            error={errors.name}
-                            fieldName="name"
+                            error={errors.franchise_name}
+                            fieldName="franchise_name"
                             placeholder={``}
-                            fieldLabel="Rider Name"
+                            fieldLabel="Franchisee Name"
                             disabled={true}
+                            view={true}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={3}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.owner_name}
+                            fieldName="owner_name"
+                            placeholder={``}
+                            fieldLabel={"Owner Name"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={3}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.email}
+                            fieldName="email"
+                            placeholder={``}
+                            fieldLabel={"Email Address"}
+                            disabled={false}
                             view={true}
                         />
                     </Grid>
@@ -424,38 +427,37 @@ const RiderAccountsform = ({ view, res }: props) => {
                             fieldLabel={"Mobile Number"}
                             disabled={false}
                             view={true}
-                            defaultValue={''}
                         />
                     </Grid>
                     <Grid item xs={12} lg={3}>
                         <CustomInput
                             type='text'
                             control={control}
-                            error={errors.franchise}
-                            fieldName="franchise"
+                            error={errors.address}
+                            fieldName="address"
                             placeholder={``}
-                            fieldLabel={"Franchisee"}
+                            fieldLabel={"Address"}
                             disabled={false}
                             view={true}
                         />
                     </Grid>
                 </Grid>
             </CustomBox>
-            <CustomBox title='Rider  Earnings'>
+            <CustomBox title='Franchisee  Earnings'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Orders' text={RiderSingleList?.order_count} color='#1675C8' />
+                        <CustomViewInput fieldLabel='Total Orders' text={FranchiseeSingleList?.order_count} color='#1675C8' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Earnings' text={RiderSingleList?.total_earnings} color='#2EA10C' />
+                        <CustomViewInput fieldLabel='Total Earnings' text={FranchiseeSingleList?.total_earnings} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Deduction' text={RiderSingleList?.deduction} color='#FF7B7B' />
+                        <CustomViewInput fieldLabel='Promotion Cost' text={FranchiseeSingleList?.promotion_cost} color='#FF7B7B' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Payable' text={RiderSingleList?.total_outstanding} color='#2EA10C' />
+                        <CustomViewInput fieldLabel='Total Payable' text={FranchiseeSingleList?.total_payable} color='#2EA10C' />
                     </Grid>
-                    <Stack direction="row" spacing={2}  marginLeft={'85px'} mt={2}>
+                    <Stack direction="row" spacing={2}  mt={2} marginLeft={'85px'}>
                         <div >
                             <CustomDatePicker
                                 fieldName='fromDate'
@@ -481,17 +483,18 @@ const RiderAccountsform = ({ view, res }: props) => {
                     </Stack>
                 </Grid>
                 <Box py={2}>
-                    <CustomTable dashboard={false} columns={columns} rows={accountData} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={franchiseeData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+
                 </Box>
             </CustomBox>
 
             <CustomBox title="Settlements">
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Earnings' text={RiderSingleList?.total_earnings} color='#2EA10C' />
+                        <CustomViewInput fieldLabel='Total Earnings' text={FranchiseeSingleList?.total_earnings} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Outstanding' text={RiderSingleList?.total_outstanding} color='#FF7B7B' />
+                        <CustomViewInput fieldLabel='Total Outstanding' text={FranchiseeSingleList?.total_outstanding} color='#FF7B7B' />
                     </Grid>
                     <Grid item direction="row-reverse">
                         <Typography mb={3}></Typography>
@@ -509,7 +512,10 @@ const RiderAccountsform = ({ view, res }: props) => {
 
                     </Grid>
 
-                    <Stack direction="row" spacing={2}  marginLeft={'220px'} mt={2}>
+
+
+                   
+                    <Stack direction="row" spacing={2}  mt={2} marginLeft={'220px'}>
                         <div >
                             <CustomDatePicker
                                 fieldName='fromDates'
@@ -538,23 +544,23 @@ const RiderAccountsform = ({ view, res }: props) => {
                     <CustomTable dashboard={false} columns={column3} rows={accountDatas} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </CustomBox>
-            {open && <AmountSettlementModal
+            {open && <AmountSettlementFranchiseeModal
                 onClose={onCloseAccount}
                 open={open}
                 price={total}
                 //data={selectChecked}
-                data={RiderSingleList?.rider_earning_list}
+                data={FranchiseeSingleList?.rider_earning_list}
                 id={idd}
-                setRiderSinglelist={setRiderSinglelist}
-                RiderSingleList={RiderSingleList}
-                viewRider={viewRider}
+                setFranchiseeSinglelist={setFranchiseeSinglelist}
+                RiderSingleList={FranchiseeSingleList}
+                viewFranchisee={viewFranchisee}
                 setTotal={setTotal}
 
 
             />}
-            {openLog && <RiderLogsModal onClose={onCloseLogModal} open={openLog} id={idd} date={dateSelect} />}
+            {openLog && <RiderLogsModalFranchisee onClose={onCloseLogModal} open={openLog} id={idd} date={dateSelect} />}
         </Box>
     )
 }
 
-export default RiderAccountsform
+export default FranchiseeAccountsform
