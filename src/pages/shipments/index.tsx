@@ -4,7 +4,7 @@ import { Router, useRouter } from 'next/router'
 import React, { useState, useTransition, useEffect, useCallback } from 'react'
 import dynamic from 'next/dynamic';
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { Box, Stack } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
 const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
@@ -20,7 +20,7 @@ import useSWR from 'swr'
 import Custombutton from '@/components/Custombutton';
 import AssignModal from '@/Widgets/Shippings/Modal/AssignModal';
 import RefundModal from '@/Widgets/Shippings/Modal/RefundModal';
-
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 
 const fetcher = (url: any) => fetchData(url).then((res) => res);
 
@@ -83,7 +83,7 @@ const Shipments = () => {
     }, [refundModal])
 
     const columns: GridColDef[] = [
-    
+
         {
             field: 'Actions',
             headerName: 'Actions',
@@ -110,8 +110,8 @@ const Shipments = () => {
                                 }}
                             />
                         )}
-                    </Stack>
-                    <Stack display={'flex'} alignItems={'center'} gap={1} direction={'column'} paddingBottom={"20px"}>
+
+
                         {(
                             (row?.refundAmount
                             )
@@ -238,10 +238,17 @@ const Shipments = () => {
             headerAlign: 'center',
             align: "left",
             valueGetter: (params) => {
-                const customerName =params?.row?.customer_address?.name ? params?.row?.customer_address?.name : '-';
+                const customerName = params?.row?.customer_address?.name ? params?.row?.customer_address?.name : '-';
                 const customerAddress = params?.row?.customer_address?.area?.address ? params?.row?.customer_address?.area?.address : '-';
-                const customerphone=params?.row?.customer_address?.mobile?params?.row?.customer_address?.mobile:'-';
-                return `${customerName}\n${customerAddress} \n ${customerphone}`;
+                const customerphone = params?.row?.customer_address?.mobile ? params?.row?.customer_address?.mobile : '-';
+                // return `${customerName}\n${customerAddress} \n ${customerphone}`;
+                return (
+                    <div>
+                        <Tooltip title={customerName + customerAddress + customerphone}>
+                            <span>{(customerName + ','   + customerAddress + customerphone).slice(0,26) + '...'  }</span>
+                        </Tooltip>
+                    </div>
+                );
             },
             renderCell: (params) => (
                 <div style={{ whiteSpace: 'pre-line' }}>{params.value}</div>
@@ -315,8 +322,8 @@ const Shipments = () => {
 
             valueGetter: (params) => params.row.rider_each_order_settlement?.rider?.name ? params.row.rider_each_order_settlement?.rider?.name : '-'
         },
-     
-      
+
+
     ];
 
 
@@ -381,6 +388,7 @@ const Shipments = () => {
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
+            <Typography style={{ borderBottom: '3px solid #58d36e', paddingBottom: 2, fontFamily: `'Poppins' sans-serif`, }}>{'Orders'}</Typography>
                 <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='Orders' onClick={addOrderShipmets} addbtn={false} />
 
                 <Box py={5}>
@@ -401,9 +409,11 @@ const Shipments = () => {
 
         <Box px={5} py={2} pt={10} mt={0}>
 
-            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='Orders' onClick={addOrderShipmets} addbtn={false} />
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
+              
+                <Box sx={{ display: 'flex', justifyContent:'space-between' }}>
+                <Typography style={{ color: '#58d36e', paddingBottom: 2, fontFamily: `'Poppins' sans-serif`, fontSize:30}}>{'Orders'}</Typography>
+                
                     <Custombutton
                         btncolor='#cfe19d'
                         IconEnd={''}
@@ -414,9 +424,10 @@ const Shipments = () => {
                         label={'Refresh'}
                         disabled={false}
                         onClick={RefreshAgain} />
+                        <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='' onClick={addOrderShipmets} addbtn={false} />
                 </Box>
-                <Box py={2}>
-                    <CustomTable rowheight={110} dashboard={false} columns={columns} rows={shippingList ? shippingList : []} id={"_id"} bg={'#ffff'} label='Recent Activity' />
+                <Box py={1}>
+                    <CustomTable  rowheight={60} dashboard={false} columns={columns} rows={shippingList ? shippingList : []} id={"_id"} bg={'#ffff'} label='Recent Activity' />
                 </Box>
             </Box>
             {open && <AssignModal
