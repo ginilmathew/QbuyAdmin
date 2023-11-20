@@ -482,7 +482,7 @@ const VendorAccountsForm = ({ idd }: props) => {
                     <Grid item xs={12} lg={1.5}>
                         <CustomViewInput fieldLabel='Total Payable' text={vendorSingleList?.total_outstanding} color='#2EA10C' />
                     </Grid>
-                    <Grid item xs={12} lg={1.5}>
+                    <Grid item direction="row-reverse">
                         <Typography mb={3}></Typography>
                         <Custombutton label='Settle Payment'
                             btncolor='#F71C1C'
@@ -491,7 +491,7 @@ const VendorAccountsForm = ({ idd }: props) => {
                             startIcon={false}
                             IconStart={undefined}
                             IconEnd={undefined}
-                            height={undefined}
+                            height={'42px'}
                             disabled={(vendorEarningList && total) ? false : true}
 
                         />

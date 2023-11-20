@@ -1,13 +1,40 @@
-import React from 'react'
+import { Box } from '@mui/material'
+import React, { useState, useEffect, useCallback, useTransition } from 'react'
+import { Stack, Typography } from '@mui/material';
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { Box, Stack } from '@mui/material';
-import CustomTableHeader from '@/Widgets/CustomTableHeader';
-import CustomTable from '@/components/CustomTable';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import moment from 'moment'
 import { useRouter } from 'next/router';
+import { fetchData } from '@/CustomAxios';
+import { toast } from 'react-toastify';
+import useSWR from 'swr';
+import dynamic from 'next/dynamic';
+const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
+const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
+const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
+const DeleteOutlineTwoToneIcon = dynamic(() => import('@mui/icons-material/DeleteOutlineTwoTone'), { ssr: false });
+const CustomDelete = dynamic(() => import('@/Widgets/CustomDelete'), { ssr: false });
+
+const fetcher = (url: any) => fetchData(url).then((res) => res);
 
 const FranchiseAccounts = () => {
-      
+  const { data, error, isLoading, mutate } = useSWR(`admin/account/franchise/list`, fetcher);
+  const router = useRouter()
+  const [franchiseeaccountData, setFranchiseeAccountData] = useState([]);
+  const [pending, startTransition] = useTransition();
+
+
+  useEffect(() => {
+    if (data?.data?.data) {
+      setFranchiseeAccountData(data?.data?.data);
+      console.log("Franchisee Data:", data?.data?.data);
+    }
+  }, [data?.data?.data]);
+
+  const viewFranchiseeAccount = (id: any) => {
+    router.push(`/franchiseAccounts/view/${id}`)
+  }
+
   const columns: GridColDef[] = [
     {
       field: 'Franchise Accounts',
@@ -17,21 +44,20 @@ const FranchiseAccounts = () => {
       align: 'center',
     },
     {
-      field: 'Franchise Name',
+      field: 'franchise_name',
       headerName: 'Franchise Name',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
-      valueGetter: (params) => params?.row?.franchise?.franchise_name,
     },
     {
-      field: 'Owner Name',
+      field: 'owner_name',
       headerName: 'Owner Name',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
     },
- 
+
     {
       field: 'Total Scores',
       headerName: 'Total Scores',
@@ -41,7 +67,7 @@ const FranchiseAccounts = () => {
 
     },
     {
-      field: 'Location',
+      field: 'address',
       headerName: 'Location',
       flex: 1,
       headerAlign: 'center',
@@ -49,7 +75,7 @@ const FranchiseAccounts = () => {
 
     },
     {
-      field: 'Total Orders',
+      field: 'order_count',
       headerName: 'Total Orders',
       flex: 1,
       headerAlign: 'center',
@@ -64,8 +90,8 @@ const FranchiseAccounts = () => {
       align: 'center',
 
     },
- 
- 
+
+
     {
       field: 'Actions',
       headerName: 'Actions',
@@ -75,7 +101,7 @@ const FranchiseAccounts = () => {
       renderCell: ({ row }) => (
         <Stack alignItems={'center'} gap={1} direction={'row'}>
           <RemoveRedEyeIcon
-
+            onClick={() => viewFranchiseeAccount(row?._id)}
             style={{
               color: '#58D36E',
               cursor: 'pointer'
@@ -86,26 +112,32 @@ const FranchiseAccounts = () => {
     }
   ];
 
-  const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  ];
+  const searchProducts = useCallback((value: string) => {
+    const lowercasedValue = value.toLowerCase();
+    let results = data?.data?.data?.filter((com: any) => {
+      const franchiseName = com?.franchise_name?.toLowerCase() ?? "";
+      const ownerName = com?.owner_name?.toLowerCase() ?? "";
+      const address = com?.address?.toLowerCase() ?? "";
+      return franchiseName.includes(lowercasedValue) ||
+             ownerName.includes(lowercasedValue) ||
+             address.includes(lowercasedValue);
+    });
+  
+    startTransition(() => {
+      setFranchiseeAccountData(results);
+    });
+  }, [data?.data?.data]);
+  
+
   return (
     <Box px={5} py={2} pt={10} mt={0}>
-    <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-      <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Franchise Accounts' onClick={() => null} />
-      <Box py={5}>
-        <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+      <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
+        <CustomTableHeader addbtn={false}  setState={searchProducts} imprtBtn={false} Headerlabel='Franchise Accounts' onClick={() => null} />
+        <Box py={5}>
+          <CustomTable dashboard={false} columns={columns} rows={franchiseeaccountData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+        </Box>
       </Box>
     </Box>
-  </Box>
 
   )
 }
