@@ -285,11 +285,7 @@ const Shipments = () => {
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => params.row.user?.mobile ? params.row.user?.mobile : '-',
-
-
         },
-
-
         {
             field: 'payment_status',
             headerName: 'payment Status',
@@ -304,7 +300,6 @@ const Shipments = () => {
             headerAlign: 'center',
             align: 'center',
 
-
         },
         {
             field: 'name',
@@ -312,7 +307,6 @@ const Shipments = () => {
             width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
-
             valueGetter: (params) => params.row.rider_each_order_settlement?.rider?.name ? params.row.rider_each_order_settlement?.rider?.name : '-'
         },
      

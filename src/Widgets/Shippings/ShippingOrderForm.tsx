@@ -39,6 +39,7 @@ type Inputs = {
     order_id: string;
     ridername: string,
     payment_status: string;
+    refund_amount: string;
     vendor_status: any
 };
 
@@ -79,7 +80,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
     const [vendor_statusP, setVendorStatusP] = useState<any>(null)
     const [defaultStatus, setDefaultStatus] = useState<any>(null)
     const [refundModal, setRefundModal] = useState<boolean>(false);
-    const [storeList,setStoreList]=useState<any>(null)
+    const [storeList, setStoreList] = useState<any>(null)
 
 
 
@@ -277,6 +278,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             setValue('mobile', orderviewList?.user?.mobile)
             setValue('email', orderviewList?.user?.email)
             setValue('order_id', orderviewList?.order_id)
+            setValue('refund_amount', orderviewList?.refund_details?.refund_amount);
             setValue('ridername', orderviewList?.rider_each_order_settlement?.rider?.name)
             // setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name ? orderviewList?.billaddress?.name : ''},${orderviewList?.billaddress?.area?.address ? orderviewList?.billaddress?.area?.address : ''},${orderviewList?.billaddress?.pincode ? orderviewList?.billaddress?.pincode : ''},${orderviewList?.billaddress?.mobile ? `${'Mob:'}${orderviewList?.billaddress?.mobile}` : ''}`)
             setValue('shipping_address_delivery_address', `${orderviewList?.shipaddress?.name ? orderviewList?.shipaddress?.name : ''},${orderviewList?.shipaddress?.area?.address ? orderviewList?.shipaddress?.area?.address : ''},${orderviewList?.shipaddress?.pincode ? orderviewList?.shipaddress?.pincode : ''},
@@ -308,9 +310,9 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
 
 
     const SubmitOrder = async (data: any) => {
-       
+
         let uniqueStore: any[] = Array.from(new Set(storeList));
-    
+
         let result = {
             id: idd,
             delivery_charge: Math.ceil(deliveryCharge),
@@ -318,9 +320,9 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             payment_method: data?.payment_type,
             vendor_status: vendor_statusP,
             platform_charge: orderviewList?.platform_charge,
-            store:uniqueStore,
+            store: uniqueStore,
         }
-          
+
         try {
 
             await postData('admin/order/update', result);
@@ -487,6 +489,37 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
+                    {/* <Grid item xs={12} lg={2.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.refund_amount}
+                            fieldName="refund_amount"
+                            placeholder={``}
+                            fieldLabel={"Confirmed Refund Payment"}
+                            disabled={true}
+                            view={true}
+                            {...register("refund_amount")}
+                            defaultValue={orderviewList?.refund_details?.refund_amount || ''}
+                        />
+                    </Grid> */}
+                    {orderviewList?.refund_completed_status === "completed" && (
+                        <Grid item xs={12} lg={2.5}>
+                            <CustomInput
+                                type='text'
+                                control={control}
+                                error={errors.refund_amount}
+                                fieldName="refund_amount"
+                                placeholder={``}
+                                fieldLabel={"Confirmed Refund Payment"}
+                                disabled={true}
+                                view={true}
+                                {...register("refund_amount")}
+                                defaultValue={orderviewList?.refund_details?.refund_amount || ''}
+                            />
+                        </Grid>
+                    )}
+
                 </Grid>
                 {orderviewList?.refundAmount &&
                     <Box display={'flex'} justifyContent={'flex-end'} alignItems={'center'} py={1}>
@@ -596,7 +629,7 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
             </CustomBox>
             <CustomBox title='Product Details'>
                 {orderviewList &&
-                    <ShippingTable res={orderviewList} readonly={res} id={idd} SetDeliveryCharge={SetDeliveryCharge} setStoreList={setStoreList}/>}
+                    <ShippingTable res={orderviewList} readonly={res} id={idd} SetDeliveryCharge={SetDeliveryCharge} setStoreList={setStoreList} />}
             </CustomBox>
 
             <CustomBox title='Vendor Status'>
@@ -672,9 +705,10 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
                                     <>Select OrderStatus</>
                                 </MenuItem>
                                 {orderList?.map((res: any) => (
-                                    <MenuItem value={res?.status_name}>{res?.status_name}</MenuItem>
+                                   <MenuItem value={res?.status_name}>{res?.status_name}</MenuItem>
+                                  
                                 ))}
-
+           
                             </Customselect>
                         </Grid>
                         <Grid item xs={12} lg={5}>
