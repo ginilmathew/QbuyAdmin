@@ -190,7 +190,8 @@ const RiderAccountsform = ({ view, res }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-
+            valueGetter: (params) => moment(params?.row?.settlement_list?.map((res:any)=>res?.transaction_date,"YYYY-MM-DD")).format("DD-MM-YYYY")
+            
         },
         {
             field: 'amount',

@@ -135,7 +135,7 @@ type props = {
 const ProductForm = ({ res, view }: props) => {
     let idd = res ? res : view;
 
-console.log(idd);
+    console.log(idd);
 
     const router = useRouter()
 
@@ -329,10 +329,10 @@ console.log(idd);
                 fixed_delivery_price: 0,
                 commission: null
             }
-           
+
         });
 
-     
+
 
 
 
@@ -381,7 +381,7 @@ console.log(idd);
 
     // }
 
-   
+
     const StockCheck = (e: any) => {
         if (!view) {
             setValue('stock', e)
@@ -456,7 +456,7 @@ console.log(idd);
         setError('image', { message: '' })
     }
 
-    
+
 
     // console.log({ errors })
 
@@ -477,7 +477,7 @@ console.log(idd);
         }
     }
 
-    
+
 
 
     const onselectFranchise = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -491,7 +491,7 @@ console.log(idd);
             const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
             //const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${e.target.value}`)
             setVendorList(response?.data?.data)
-            if(response?.data?.data?.length === 1){
+            if (response?.data?.data?.length === 1) {
                 getRecomentedProducts(response?.data?.data?.[0]?._id)
             }
             // let result = recomendedProduct?.data?.data.map((res: any) => ({
@@ -513,12 +513,12 @@ console.log(idd);
     }
 
 
-    
+
 
 
     const onSelectStore = (e: React.ChangeEvent<HTMLInputElement>) => {
         getRecomentedProducts(e.target.value)
-        setvendorSelect(e.target.value)   
+        setvendorSelect(e.target.value)
         let result = vendorList?.filter((res: any) => res?._id === e.target.value).map((get: any) => (
             {
                 commision: get?.additional_details ? get?.additional_details.commission : null,
@@ -528,13 +528,13 @@ console.log(idd);
             }
 
         ))
-        
+
         setCategoryList(result?.[0]?.category)
-       
+
 
         let findresult = vendorList?.filter((res: any) => res?._id === e.target.value)
         console.log(findresult);
-        
+
         console.log(findresult?.approved_by)
         console.log(findresult?.start_time)
         console.log(findresult?.end_time)
@@ -542,7 +542,7 @@ console.log(idd);
         // if(findresult?.length > 0){
         //     getRecomentedProducts(findresult?.[0]?._id)
         // }
-        
+
         setVendorListDirection(findresult)
         // setValue('commission', result[0]?.commision)     
         setValue('store', e.target.value)
@@ -597,7 +597,7 @@ console.log(idd);
 
         let attributess = [];
 
-        if(attributes && attributes?.length > 0){
+        if (attributes && attributes?.length > 0) {
             // attributes?.map((att: object, i: number) => {
             //     attributess.push({
             //         ...att,
@@ -605,15 +605,15 @@ console.log(idd);
             //     })
             // })
 
-            attributess=[...attributes, { id: `${moment().unix()}`, name: '', options: [], variant: false }]
+            attributess = [...attributes, { id: `${moment().unix()}`, name: '', options: [], variant: false }]
         }
-        else{
+        else {
             attributess = [{ id: `${moment().unix()}`, name: '', options: [], variant: false }]
         }
 
         setAttributes([...attributess])
 
-        console.log({attributess})
+        console.log({ attributess })
         // if(attributes?.length  < 2){
         //setAttributes((prev: any) => [...prev, { id: attributess?.length+1, name: '', options: [], variant: false }])
         // }
@@ -651,17 +651,17 @@ console.log(idd);
 
 
     const onChangeProductFrom = (e: any) => {
-    
-            setValue('product_availability_from', e);
-       
-       
-    }   
+
+        setValue('product_availability_from', e);
+
+
+    }
 
     const onChangeProductTo = (e: any) => {
-       
-            setValue('product_availability_to', e);
-            }
-    
+
+        setValue('product_availability_to', e);
+    }
+
 
 
     const onCheckPandasuggestion = (e: any) => {
@@ -712,7 +712,7 @@ console.log(idd);
         setProductCategorySelect(value)
     }
 
-    const getRecomentedProducts = async(id: any) => {
+    const getRecomentedProducts = async (id: any) => {
         const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${id}`)
         let result = recomendedProduct?.data?.data.map((res: any) => ({
             _id: res?._id,
@@ -727,7 +727,7 @@ console.log(idd);
         if (productList) {
             const getvendorlist = async (vendorId: any) => {
                 try {
-                    const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)                
+                    const response = await fetchData(`admin/vendor-list/${productList?.franchisee?._id}/${process.env.NEXT_PUBLIC_TYPE}`)
                     // const recomendedProduct = await fetchData(`admin/product/recommended/${process.env.NEXT_PUBLIC_TYPE}/${productList?.franchisee?._id}`)
 
                     // let result = recomendedProduct?.data?.data.map((res: any) => ({
@@ -824,11 +824,11 @@ console.log(idd);
                     attributesArray.push({
                         name: item?.name,
                         options: item?.options,
-                        variant: item?.variant
-
+                        variant: item?.variant,
+                       
                     })
 
-                    
+
                 })
                 setAttributes([...attributesArray])
             }
@@ -843,21 +843,22 @@ console.log(idd);
                         attributs: item?.attributs,
                         seller_price: item?.seller_price,
                         regular_price: (item?.regular_price && item?.regular_price > 0) ? item?.regular_price : null,
-                        offer_price: (item?.offer_price && item?.offer_price > 0) ? item?.offer_price : null, 
-                        offer_date_from: (item?.offer_date_from && moment(item?.offer_date_from, 'YYYY-MM-DD').isValid()) ?  moment(item?.offer_date_from, 'YYYY-MM-DD') : null,
+                        offer_price: (item?.offer_price && item?.offer_price > 0) ? item?.offer_price : null,
+                        offer_date_from: (item?.offer_date_from && moment(item?.offer_date_from, 'YYYY-MM-DD').isValid()) ? moment(item?.offer_date_from, 'YYYY-MM-DD') : null,
                         offer_date_to: (item?.offer_date_to && moment(item?.offer_date_to, 'YYYY-MM-DD').isValid()) ? moment(item?.offer_date_to, 'YYYY-MM-DD') : null,
-                        stock: item?.stock,
+                        // stock: item?.stock,
+                        stock: productList?.stock,
                         stock_value: item?.stock_value,
                         commission: (item?.commission && item?.commission > 0) ? item?.commission : null,
                         fixed_delivery_price: (item?.fixed_delivery_price && item?.fixed_delivery_price > 0) ? item?.fixed_delivery_price : null
                     })
-                    
+
                 })
 
                 setTimeout(() => {
                     setVarientsArray(myvaarientArray)
                 }, 500);
-                
+
             }
             setValue('commission', productList?.commission ? productList?.commission : null)
             setValue('regular_price', productList?.regular_price ? productList?.regular_price : null)
@@ -999,7 +1000,7 @@ console.log(idd);
 
 
     const addvarients = (attributes: any) => {
-        console.log({attributes}, "vari")
+        console.log({ attributes }, "vari")
         if (attributes?.some((res: any) => res?.variant === true)) {
             const output = [];
             setValue('seller_price', '')
@@ -1034,7 +1035,7 @@ console.log(idd);
                 }
             })
 
-            console.log({attri})
+            console.log({ attri })
             setVarientsArray([...attri])
         } else {
             setVarientsArray([])
@@ -1062,8 +1063,12 @@ console.log(idd);
 
     const changeAttributeValues = (i: number, key: string, values: any) => {
         varientsarray[i][key] = values
+        if (stock) {
+            varientsarray[i]['stock'] = stock;
+        }
+
         setVarientsArray([...varientsarray])
-        console.log({ varientsarray })
+        console.log({ varientsarray }, 'haii')
     }
 
 
@@ -1100,7 +1105,7 @@ console.log(idd);
 
     }
 
-    console.log({errors})
+    console.log({ errors })
 
     //posting products ...................................................................................................
 
@@ -1119,7 +1124,7 @@ console.log(idd);
         }
         let pattern = /^[0-9]+$/
         //Check Any Variants
-        let variantsChe = attributes?.find((att: any) => att.variant === true );
+        let variantsChe = attributes?.find((att: any) => att.variant === true);
         // console.log({ length: attributes.length, price: isEmpty(data?.seller_price) })
         if (!variantsChe && varientsarray?.length === 0) {
             if (isNaN(data?.seller_price) || data?.seller_price <= 0) {
@@ -1134,7 +1139,7 @@ console.log(idd);
                     return false;
                 }
             }
-          
+
             // if(data?.regular_price<=0){
             //     setError("regular_price", { type: 'custom', message: 'Selling price must be a greater than 0' })
             //     return false;
@@ -1148,7 +1153,7 @@ console.log(idd);
                     setError("offer_price", { type: 'custom', message: 'Offer price must be a number' })
                     return false;
                 }
-             
+
                 // else if (!data?.offer_date_from || !data?.offer_date_to) {
                 //     toast.warning("Offer From date and to date required")
                 //     return false;
@@ -1424,7 +1429,7 @@ console.log(idd);
         // console.log('FUCTION CALLED')
 
         if (!res || !view) {
-            let newAttri = await attributes?.filter((att: any) => att.id !==id)
+            let newAttri = await attributes?.filter((att: any) => att.id !== id)
             // attributes[i].variant = false;
             // setAttributes([...attributes])
             // let attribute = await attributes?.filter((att: any, index: Number) => index !== i)
@@ -1445,7 +1450,7 @@ console.log(idd);
 
             await setAttributes([...newAttri])
             addvarients(newAttri)
-            
+
         }
 
 
@@ -1814,7 +1819,7 @@ console.log(idd);
                                 changeValue={onChangeProductFrom}
                                 fieldName='product_availability_from'
                                 control={control}
-                               
+
                                 error={errors.product_availability_from}
                                 fieldLabel={'Product Availability'} />
                         </Grid>}
