@@ -46,10 +46,11 @@ type Inputs = {
 type props = {
     view?: any,
     res?: any,
-    edit?: any
+    edit?: any,
+    onupdate?: any
 }
 
-const ShippingOrderForm = ({ view, res, edit }: props) => {
+const ShippingOrderForm = ({ view, res, edit, onupdate }: props) => {
     const router = useRouter()
     const idd = view ? view : res;
     const [orderhistory, setOrderhistory] = useState<any>()
@@ -326,7 +327,11 @@ const ShippingOrderForm = ({ view, res, edit }: props) => {
         try {
 
             await postData('admin/order/update', result);
-            router.push('/shipments')
+            //router.push('/shipments')
+            if(onupdate){
+                onupdate()
+            }
+            
             toast.success('Order Updated Successfully')
 
         } catch (err) {

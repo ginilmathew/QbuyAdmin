@@ -101,6 +101,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: p
                 title: itm?.type === "single" ? null : itm?.variants?.title,
                 stock_value: itm?.type === "single" ? (itm?.stock_value + parseFloat(itm?.quantity)) : (itm?.variants?.stock_value + parseFloat(itm?.quantity)),
                 stock: itm?.type === "single" ? itm?.stock : itm?.variants?.stock,
+                attributes: itm?.attributes
 
             }))
 
@@ -291,7 +292,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: p
                                 <TableCell component="th" scope="row">
                                     {/* {row?.name}  {row.title ? (row.title) : ''} */}
                                     {row?.name}  {row.title ? `(${row.title})` : ''}
-
+                                    {(row?.attributes && !row?.variant_id) ? `(${row?.attributes?.join(', ')})` : ''}
                                 </TableCell>
                                 <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor?.vendor_mobile}{ }</TableCell>
                                 <TableCell align="center">{row.quantity}</TableCell>
