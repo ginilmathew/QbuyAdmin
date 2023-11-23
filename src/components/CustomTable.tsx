@@ -55,7 +55,7 @@ const CustomTable = ({ columns, rows, id, bg, label, dashboard, rowheight, check
                         endIcon={false}
                         label='View All' onClick={() => null} />
                 </Box>}
-            <Box height={dashboard ? 215 : '63vh'} boxShadow={dashboard ? 'rgba(17, 12, 46, 0.15) 0px 48px 100px 0px' : 0}>
+            <Box height={dashboard ? 215 : '70vh'} boxShadow={dashboard ? 'rgba(17, 12, 46, 0.15) 0px 48px 100px 0px' : 0}>
                 <DataGrid
                     style={{
                         background: "#ffff",

@@ -37,8 +37,8 @@ const FranchiseAccounts = () => {
 
   const columns: GridColDef[] = [
     {
-      field: 'Franchise Accounts',
-      headerName: 'Franchise Accounts',
+      field: 'franchise_id',
+      headerName: 'Franchisee ID',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
@@ -57,15 +57,6 @@ const FranchiseAccounts = () => {
       headerAlign: 'center',
       align: 'center',
     },
-
-    {
-      field: 'Total Scores',
-      headerName: 'Total Scores',
-      flex: 1,
-      headerAlign: 'center',
-      align: 'center',
-
-    },
     {
       field: 'address',
       headerName: 'Location',
@@ -83,7 +74,7 @@ const FranchiseAccounts = () => {
 
     },
     {
-      field: 'Last Payment Date',
+      field: 'last_salary_date',
       headerName: 'Last Payment Date',
       flex: 1,
       headerAlign: 'center',
@@ -115,19 +106,21 @@ const FranchiseAccounts = () => {
   const searchProducts = useCallback((value: string) => {
     const lowercasedValue = value.toLowerCase();
     let results = data?.data?.data?.filter((com: any) => {
-      const franchiseName = com?.franchise_name?.toLowerCase() ?? "";
-      const ownerName = com?.owner_name?.toLowerCase() ?? "";
-      const address = com?.address?.toLowerCase() ?? "";
-      return franchiseName.includes(lowercasedValue) ||
-             ownerName.includes(lowercasedValue) ||
-             address.includes(lowercasedValue);
+        const franchiseId = com?.franchise_id?.toString()?.toLowerCase() ?? "";
+        const franchiseName = com?.franchise_name?.toLowerCase() ?? "";
+        const ownerName = com?.owner_name?.toLowerCase() ?? "";
+        const address = com?.address?.toLowerCase() ?? "";
+        return franchiseId.includes(lowercasedValue) ||
+               franchiseName.includes(lowercasedValue) ||
+               ownerName.includes(lowercasedValue) ||
+               address.includes(lowercasedValue);
     });
-  
+
     startTransition(() => {
-      setFranchiseeAccountData(results);
+        setFranchiseeAccountData(results);
     });
-  }, [data?.data?.data]);
-  
+}, [data?.data?.data]);
+
 
   return (
     <Box px={5} py={2} pt={10} mt={0}>

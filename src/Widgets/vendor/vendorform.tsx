@@ -910,9 +910,10 @@ const Vendorform = ({ res, view, data }: props) => {
                                 error={errors.end_time}
                                 fieldLabel={''} />
                         </Grid>
-                    </Grid>
-                    {!view &&
-                        <Box flex={.3} sx={{}}>
+
+                        <Grid item xs={12} lg={3}>
+                        {!view &&
+                        <Box>
                             <CustomImageUploader
                                 ICON={""}
                                 viewImage={imagePreview}
@@ -929,16 +930,19 @@ const Vendorform = ({ res, view, data }: props) => {
                                 type={"file"}
                                 background="#e7f5f7"
                                 myid="contained-button-file"
-                                width={"80%"}
+                                width={"100%"}
                             />
                         </Box>}
 
                     {view &&
-                        <Box flex={.2} sx={{}}>
+                        <Box>
                             <Typography>Store Logo/Image</Typography>
                             <Avatar variant='square' src={`${IMAGE_URL}${vendorList?.store_logo}`} sx={{ width: '100%', height: 130 }} />
                         </Box>}
 
+                        </Grid>
+                    </Grid>
+                   
                 </Box>
                 <Box py={2}>
                     <Divider />

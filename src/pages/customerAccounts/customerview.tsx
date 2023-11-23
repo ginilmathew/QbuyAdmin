@@ -1,5 +1,5 @@
-import { Avatar, Box, Grid, MenuItem, Typography } from '@mui/material'
-import React, { useState, useEffect } from 'react'
+import { Avatar, Box, Grid, MenuItem, Typography, Stack } from '@mui/material'
+import React, { useCallback, useEffect, useState } from 'react'
 import CustomBox from '@/Widgets/CustomBox';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FormInputs } from '@/utilities/types';
@@ -19,10 +19,17 @@ import moment from 'moment';
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
 import CustomTable from '@/components/CustomTable';
+import CustomerLogsModal from '@/pages/customerAccounts/Customerlog'
 
 type props = {
     resData?: any,
     view?: any
+}
+export interface SimpleDialogProps {
+    open: boolean;
+    id: string | null;
+    date: any;
+    onClose: any;
 }
 
 
@@ -31,7 +38,10 @@ const CustomerAccountForm = ({ resData, view }: props) => {
     const [customerData, setCustomerData] = useState<any>(null);
     const router = useRouter()
     const [loading, setLoading] = useState(false);
-
+    const [productViewed, setProductViewed] = useState<any>([]);
+    const [open, setOpen] = useState<boolean>(false);
+    const [openLog, setOpenLog] = useState<boolean>(false)
+    const [orderIdSelect, setOrderIdSelect] = useState<string | null>(null);
 
 
     const { register,
@@ -49,14 +59,37 @@ const CustomerAccountForm = ({ resData, view }: props) => {
             }
         });
 
+
+        const OpenLogModal = useCallback((orderId: string) => {
+            console.log('OpenLogModal called with orderId:', orderId);
+            setOrderIdSelect(orderId);
+            setOpenLog(true);
+        }, []);
+        
+
     const columns: GridColDef[] = [
+    
         {
             field: 'order_id',
             headerName: 'Order ID',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            renderCell: (params) => (
+                <Stack alignItems={'center'} gap={1} direction={'row'}>
+                    <Typography
+                        onClick={() => OpenLogModal(params.row._id)}
+                        style={{
+                            cursor: 'pointer',
+                            textDecoration: 'underline',
+                            color: '#58D36E'
+                        }}>
+                        {params.value}
+                    </Typography>
+                </Stack>
+            )
         },
+
         {
             field: 'created_at ',
             headerName: 'Ordered Date & Time',
@@ -84,24 +117,44 @@ const CustomerAccountForm = ({ resData, view }: props) => {
         },
 
     ];
-    const rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+    const columns2: GridColDef[] = [
+        {
+            field: 'product_name',
+            headerName: 'Product Name',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
+            field: 'name',
+            headerName: 'Store Name',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => params?.row?.store_details?.name,
+        },
+        {
+            field: 'viewed_date',
+            headerName: 'Date Viewed',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => moment(params?.row?.viewed_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+        },
+
+
     ];
+
+
 
     const customerCart = async () => {
         try {
             setLoading(true);
             const response = await fetchData(`admin/account/customers/show/${idd}`);
+            console.log({ response }, 'responsedataview')
             reset(response?.data?.data);
             setCustomerData(response?.data?.data?.total_orders);
+            setProductViewed(response?.data?.data?.product_viewd);
         } catch (err: any) {
             toast.error(err.message || 'Error fetching OTP data');
         } finally {
@@ -131,7 +184,7 @@ const CustomerAccountForm = ({ resData, view }: props) => {
                             fieldLabel="Rider Name"
                             disabled={false}
                             view={view ? true : false}
-                          
+
                         />
                     </Grid>
 
@@ -146,7 +199,7 @@ const CustomerAccountForm = ({ resData, view }: props) => {
                             fieldLabel="Email Address"
                             disabled={false}
                             view={view ? true : false}
-                          
+
                         />
                     </Grid>
 
@@ -160,7 +213,7 @@ const CustomerAccountForm = ({ resData, view }: props) => {
                             fieldLabel="Mobile Number"
                             disabled={false}
                             view={view ? true : false}
-                          
+
                         />
                     </Grid>
                 </Grid>
@@ -170,7 +223,20 @@ const CustomerAccountForm = ({ resData, view }: props) => {
                     <CustomTable dashboard={false} columns={columns} rows={customerData ? customerData : []} id={'_id'} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </CustomBox>
-
+            <CustomBox title='Products Viewed Report'>
+                <Box py={3}>
+                    <CustomTable dashboard={false} columns={columns2} rows={productViewed} id={'index'} bg={"#ffff"} label='Recent Activity' />
+                </Box>
+            </CustomBox>
+            {openLog && (
+                <CustomerLogsModal
+                onClose={() => setOpenLog(false)}
+                open={openLog}
+                order_id={orderIdSelect} 
+                isReadOnly={true}
+            />
+            
+            )}
         </Box>
     )
 }

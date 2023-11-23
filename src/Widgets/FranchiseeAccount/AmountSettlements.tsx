@@ -32,14 +32,14 @@ export interface SimpleDialogProps {
   price: any,
   id: string,
   setFranchiseeSinglelist: any,
-  RiderSingleList:any,
+  FranchiseeSingleList:any,
   viewFranchisee: any,
   setTotal: any
 
 }
 
 
-const AmountSettlementFranchiseeModal = (props: SimpleDialogProps) => {
+const AmountSettlementModal = (props: SimpleDialogProps) => {
   const { onClose, data, open, price, id, setFranchiseeSinglelist,viewFranchisee, setTotal} = props;
   console.log('datass:', data);
  
@@ -114,12 +114,12 @@ const AmountSettlementFranchiseeModal = (props: SimpleDialogProps) => {
 
   const submitData = useCallback(async (formData: Inputs) => {
     let orderId = data?.reduce((acc: any, obj: any) => acc.concat(obj.order_id_array), []);
-    const amountValue = formData.amount || price?.toString();
+    
     let value = {
       order_ids: orderId,
-      rider_id: id,
+      franchise_id: id,
       transaction_date: moment(time).format('YYYY-DD-MM'),
-      amount: amountValue,
+      amount: price?.toString(),
       payment_mode: paymentSelect,
       transaction_id: formData?.transaction_id,
 
@@ -127,7 +127,7 @@ const AmountSettlementFranchiseeModal = (props: SimpleDialogProps) => {
 
     try {
       setLoading(true)
-      await postData('admin/rider-account/rider-settlement/create', value)
+      await postData('admin/account/settlement/create', value)
       console.log({value},'valuepayment')
       setLoading(false)
       setFranchiseeSinglelist(null)
@@ -275,4 +275,4 @@ const AmountSettlementFranchiseeModal = (props: SimpleDialogProps) => {
   )
 }
 
-export default AmountSettlementFranchiseeModal
+export default AmountSettlementModal
