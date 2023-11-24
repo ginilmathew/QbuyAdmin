@@ -3,7 +3,7 @@ import PushNotificationForm from '@/Widgets/PushNotification/PushNotificationFor
 import { Box } from '@mui/material'
 import React from 'react'
 
-const addPush = () => {
+const addpush = () => {
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <CustomHeaderBack backlabel='Add Push Notifications' />
@@ -12,4 +12,4 @@ const addPush = () => {
     )
 }
 
-export default addPush
+export default addpush

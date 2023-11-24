@@ -33,13 +33,13 @@ const pushnotificationList = () => {
     }, [data?.data?.data]);
 
     const NavigateToaddCustomer = useCallback(() => {
-        router.push('/pushnotification/addPush')
+        router.push('/pushnotification/addpush')
 
     }, []);
     
-    const editNotification = (id: any) => {
-        router.push(`/pushnotification/edit/${id}`)
-    }
+    // const editNotification = (id: any) => {
+    //     router.push(`/pushnotification/edit/${id}`)
+    // }
     const viewNotification = (id: any) => {
         router.push(`/pushnotification/view/${id}`)
     }
@@ -47,21 +47,27 @@ const pushnotificationList = () => {
     const columns: GridColDef[] = [
         
         {
-            field: 'Added Date',
+            field: 'created_at',
             headerName: 'Added Date',
             flex: 1,
+            valueGetter: (params) => moment(params?.row?.created_at, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
         },
         {
-            field: 'mobile',
+            field: 'title',
             headerName: 'Notification Title',
             flex: 1,
         },
         {
-            field: 'franchise_name',
+            field: 'app_target',
             headerName: 'Target App',
             flex: 1,
         },
-     
+        {
+            field: 'app_targets',
+            headerName: 'Franchise',
+            flex: 1,
+            valueGetter: (params) => params.row.franchise?.name,
+        },
         {
             field: 'Action',
             headerName: 'Action',
@@ -77,32 +83,32 @@ const pushnotificationList = () => {
                             cursor: 'pointer'
                         }}
                     />
-                    <BorderColorTwoToneIcon
+                    {/* <BorderColorTwoToneIcon
                             onClick={() => editNotification(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
                         }}
-                    />
+                    /> */}
                 </Stack>
             ),
         }
     ];
     
-   
-   
+
     const searchProducts = useCallback((value: any) => {
         let Results = data?.data?.data?.filter((com: any) =>
-            com?.rider_id.toString().includes(value) ||
-            com?.mobile.toString().includes(value) ||
-            com?.name.toString().includes(value) ||
-            com?.primary_franchise?.franchise_name?.toLowerCase().includes(value.toLowerCase())
+            (com?.title?.toString() || '').toLowerCase().includes(value.toLowerCase()) ||
+            (com?.app_target?.toString() || '').toLowerCase().includes(value.toLowerCase()) ||
+            (com?.franchise?.name?.toString() || '').toLowerCase().includes(value.toLowerCase())
         );
     
         startTransition(() => {
             setNotificationData(Results);
         });
     }, [notificationData]);
+    
+    
     
     
 
