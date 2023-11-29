@@ -18,6 +18,10 @@ import Custombutton from "@/components/Custombutton";
 import { fetchData, postData } from "@/CustomAxios";
 import { SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/router";
+import moment from 'moment';
+import CustomDateTimePicker from '@/components/CustomDateTimePicker';
+
+
 const CustomDatePicker = dynamic(() => import('@/components/CustomDatePicker'), { ssr: false });
 
 type Inputs = {
@@ -35,8 +39,9 @@ type Inputs = {
     image: string;
     instant: string;
     notification_sound: string;
-};
+    schedule_date_time: any
 
+};
 
 type RiderGroup = {
     _id: string;
@@ -49,15 +54,12 @@ type props = {
     view?: any;
 };
 
-
-
 const PushNotificationForm = ({ resData, view }: props) => {
-    console.log({ resData }, 'kkk')
     const idd = resData ? resData : view;
     const [statusChange, setStatusChange] = useState<any>(
         [
-            { value: 'customer', name: 'customer' }
-            , { value: 'vendor', name: 'vendor' },
+            { value: 'customer', name: 'customer' },
+            { value: 'vendor', name: 'vendor' },
             { value: 'rider', name: 'rider' }
         ])
 
@@ -67,7 +69,7 @@ const PushNotificationForm = ({ resData, view }: props) => {
     const router = useRouter();
     const [categoryList, setCategoryList] = useState<any>([]);
     const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
-    const [fromDate, setFromDate] = useState<Date | null>(null);
+    //const [fromDate, setFromDate] = useState<moment.Moment | null>(null);
     const [toDate, setToDate] = useState<Date | null>(null);
     const [franchiseList, setFranchiseList] = useState<RiderGroup[]>([]);
     const [selectedFranchiseName, setSelectedFranchiseName] = useState("");
@@ -75,28 +77,26 @@ const PushNotificationForm = ({ resData, view }: props) => {
     const [instantBlock, setInstantBlock] = useState<boolean>(false);
     const [notificationBlock, setNotificationBlock] = useState<boolean>(false);
     const [notificationList, setNotificationList] = useState<any>([]);
-    console.log({ notificationList }, 'kkk')
+    console.log({ notificationList }, "listdply")
+    const [time, setTime] = useState<any>(null);
+
 
     const schema = yup.object().shape({
         title: yup.string().required('Title is required'),
         description: yup.string().required('Description is required'),
         franchise_id: yup.string().required('Franchise is required'),
         franchise_name: yup.string().required('Franchise name is required'),
-
+        schedule_date_time: yup.string().required('Date & Time is Required'),
+        app_target: yup.string().required('App target is Required')
     });
 
-    const { register,
-        handleSubmit,
-        control,
-        formState: { errors },
-        reset,
-        setError,
-        setValue, } = useForm<Inputs>({
-            resolver: yupResolver(schema),
-            defaultValues: {
+    const { register, handleSubmit, control, formState: { errors }, reset, setValue, setError, clearErrors } = useForm<Inputs>({
+        resolver: yupResolver(schema),
+        defaultValues: {
 
-            }
-        });
+        }
+    });
+
 
     const CheckBlackList = (e: any) => {
         if (!view) {
@@ -115,19 +115,25 @@ const PushNotificationForm = ({ resData, view }: props) => {
         const newValue = event.target.value;
         setSelectedValue(newValue);
     };
-
+    const OnChangeDate = (value: any) => {
+        setValue('schedule_date_time', value)
+        setTime(value)
+        setError('schedule_date_time', { message: "" })
+    }
 
     const onSubmit = async (data: Inputs) => {
         setLoading(true);
+        const formattedDateTime = time ? time.format("YYYY-MM-DD HH:mm:ss") : null;
 
         try {
             const payload = {
+                id: idd,
                 title: data.title,
                 description: data.description,
                 type: type,
                 instant: instantBlock,
                 image_link: data.image_link || "",
-                schedule_date_time: null,
+                schedule_date_time: formattedDateTime,
                 app_target: statusSelect || "",
                 product_url: data.product_url || "",
                 franchise: {
@@ -137,17 +143,21 @@ const PushNotificationForm = ({ resData, view }: props) => {
                 notification_sound: notificationBlock,
             };
 
-            const response = await postData("/admin/push-notification/create", payload);
+            const URL_CREATE = "/admin/push-notification/create";
+            const URL_UPDATE = "/admin/push-notification/update";
+
+            const response = await postData(idd ? URL_UPDATE : URL_CREATE, payload);
 
             if (response.status === 201 || response.status === 200) {
-                toast.success("Push notification created successfully");
+                const successMessage = idd ? "Push notification updated successfully" : "Push notification created successfully";
+                toast.success(successMessage);
                 reset();
                 router.push("/pushnotification");
             } else {
-                toast.error("Failed to create push notification");
+                toast.error("Failed to update push notification");
             }
         } catch (error) {
-            toast.error("An error occurred while creating push notification");
+            toast.error("An error occurred while updating push notification");
             console.error(error);
         } finally {
             setLoading(false);
@@ -156,18 +166,17 @@ const PushNotificationForm = ({ resData, view }: props) => {
 
 
 
-
     const notificationview = async () => {
         try {
             setLoading(true);
             const response = await fetchData(`admin/push-notification/show/${idd}`);
-            console.log(response.data.data);
             const notificationData = response?.data?.data;
             reset(notificationData);
             setNotificationList(notificationData);
             setStatusSelect(notificationData.app_target);
             setInstantBlock(notificationData.instant);
             setNotificationBlock(notificationData.notification_sound);
+
         } catch (err: any) {
             toast.error(err.message || "Error fetching data");
         } finally {
@@ -199,7 +208,6 @@ const PushNotificationForm = ({ resData, view }: props) => {
         try {
             const response = await fetchData("/admin/franchise/list");
             const franchiseListData = response.data.data;
-            console.log("Franchise List API Response:", franchiseListData);
             setFranchiseList(franchiseListData);
         } catch (error) {
             console.error("Failed to fetch franchise list:", error);
@@ -219,13 +227,31 @@ const PushNotificationForm = ({ resData, view }: props) => {
             setValue('franchise_id', notificationList.franchise.id);
             setValue('franchise_name', notificationList.franchise.name);
         }
+        if (notificationList && notificationList.schedule_date_time) {
+            setTime(moment(notificationList.schedule_date_time));
+            console.log("Updated time state with schedule_date_time:", moment(notificationList.schedule_date_time));
+        }
+
+
     }, [notificationList, setValue]);
+
+
+
+
+
+    // const ChangeStatus = useCallback((e: any) => {
+    //     const { value } = e.target;
+    //     setStatusSelect(value)
+    // }, [])
 
     const ChangeStatus = useCallback((e: any) => {
         const { value } = e.target;
-        setStatusSelect(value)
-    }, [])
-
+        setStatusSelect(value);
+        setValue('app_target', value, { shouldValidate: true });
+        if (value) {
+            clearErrors('app_target');
+        }
+    }, [setValue, clearErrors]);
 
     return (
         <Box>
@@ -244,7 +270,7 @@ const PushNotificationForm = ({ resData, view }: props) => {
 
                         />
                     </Grid>
-                    <Grid item xs={12} lg={6} style={{ height: '100px' }}>
+                    <Grid item xs={12} lg={6} >
                         <CustomInput
                             type="text"
                             control={control}
@@ -257,24 +283,22 @@ const PushNotificationForm = ({ resData, view }: props) => {
                             defaultValue={""}
                         />
                     </Grid>
-            
-                  
-                        <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="center" mt={0} marginLeft={'20px'}>
-                            <div >
-                                <CustomDatePicker
-                                    fieldName='schedule_date_time'
-                                    control={control}
-                                    error={''}
-                                    past={true}
-                                    fieldLabel={'Schedule Date & Time'}
-                                    values={fromDate}
-                                    changeValue={(date) => setFromDate(date)}
-                                    disabled={false}
+                    <Grid item xs={12} lg={2}>
+                        <CustomDateTimePicker
+                            values={time} 
+                            changeValue={(value: any) => OnChangeDate(value)}
+                            fieldName='schedule_date_time'
+                            control={control}
+                            error={errors.schedule_date_time}
+                            fieldLabel={'Schedule Date & Time'}
+                        />
+                    </Grid>
 
-                                />
-                            </div>
-                        </Stack>
-              
+
+
+
+
+
                     <Grid item xs={12} lg={2} >
                         <CustomInput
                             type="text"
@@ -294,7 +318,7 @@ const PushNotificationForm = ({ resData, view }: props) => {
                             disabled={view ? true : false}
                             type='text'
                             control={control}
-                            error={''}
+                            error={errors.app_target}
                             fieldName="app_target"
                             placeholder={``}
                             fieldLabel={"App Target"}
@@ -314,6 +338,7 @@ const PushNotificationForm = ({ resData, view }: props) => {
                                 <MenuItem key={res.value} value={res.value}>{res.name}</MenuItem>
                             ))}
                         </Customselect>
+
                     </Grid>
                     <Grid item xs={12} lg={2}>
                         <CustomInput
@@ -377,7 +402,7 @@ const PushNotificationForm = ({ resData, view }: props) => {
                             onChange={CheckBlackLists}
                             title="Notification Sound"
                         />
-                    </Grid> 
+                    </Grid>
                 </Grid>
             </CustomBox>
 

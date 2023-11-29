@@ -23,12 +23,14 @@ const pushnotificationList = () => {
     const router = useRouter()
     const [notificationData, setNotificationData] = useState([]);
     const [pending, startTransition] = useTransition();
-  
+    const [_id, set_id] = useState<string>('');
+    const [open, setOpen] = useState<boolean>(false);
+
 
     useEffect(() => {
         if (data?.data?.data) {
             setNotificationData(data?.data?.data);
-            console.log("Notification Data:", data?.data?.data); 
+            console.log("Notification Data:", data?.data?.data);
         }
     }, [data?.data?.data]);
 
@@ -36,16 +38,24 @@ const pushnotificationList = () => {
         router.push('/pushnotification/addpush')
 
     }, []);
-    
-    // const editNotification = (id: any) => {
-    //     router.push(`/pushnotification/edit/${id}`)
-    // }
+
+    const editNotification = (id: any) => {
+        router.push(`/pushnotification/edit/${id}`)
+    }
     const viewNotification = (id: any) => {
         router.push(`/pushnotification/view/${id}`)
     }
+    const handleOpen = (id: any) => {
+        set_id(id)
+        setOpen(true)
+    }
+
+    const handleClose = () => {
+        setOpen(false)
+    }
 
     const columns: GridColDef[] = [
-        
+
         {
             field: 'created_at',
             headerName: 'Added Date',
@@ -74,27 +84,39 @@ const pushnotificationList = () => {
             width: 200,
             headerAlign: 'center',
             align: 'center',
+          
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-                    onClick={() => viewNotification(row?._id)}
+                        onClick={() => viewNotification(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
                         }}
                     />
-                    {/* <BorderColorTwoToneIcon
-                            onClick={() => editNotification(row?._id)}
-                        style={{
-                            color: '#58D36E',
-                            cursor: 'pointer'
-                        }}
-                    /> */}
+                    {row?.instant ? null : ( 
+                        <>
+                            <BorderColorTwoToneIcon
+                                onClick={() => editNotification(row?._id)}
+                                style={{
+                                    color: '#58D36E',
+                                    cursor: 'pointer'
+                                }}
+                            />
+                            <DeleteOutlineTwoToneIcon
+                                onClick={() => handleOpen(row?._id)}
+                                style={{
+                                    color: '#58D36E',
+                                    cursor: 'pointer'
+                                }}
+                            />
+                        </>
+                    )}
                 </Stack>
-            ),
+            ),  
         }
     ];
-    
+
 
     const searchProducts = useCallback((value: any) => {
         let Results = data?.data?.data?.filter((com: any) =>
@@ -102,40 +124,44 @@ const pushnotificationList = () => {
             (com?.app_target?.toString() || '').toLowerCase().includes(value.toLowerCase()) ||
             (com?.franchise?.name?.toString() || '').toLowerCase().includes(value.toLowerCase())
         );
-    
+
         startTransition(() => {
             setNotificationData(Results);
         });
     }, [notificationData]);
-    
-    
-    
-    
 
-    
-  if(isLoading){
-    <Box px={5} py={2} pt={10} mt={0}>
+    if (isLoading) {
+        <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader  addbtn={false} imprtBtn={false} Headerlabel='Push Notifications'  onClick={NavigateToaddCustomer}/>
+                <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Push Notifications' onClick={NavigateToaddCustomer} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={notificationData} rows={[]} loading={true} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
         </Box>
-  }
-  if (error) {
-    toast.error(error?.message);
-}
+    }
+    if (error) {
+        toast.error(error?.message);
+    }
     return (
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader setState={searchProducts}  imprtBtn={false} Headerlabel='Push Notifications'onClick={NavigateToaddCustomer} addbtn={true} />
+                <CustomTableHeader setState={searchProducts} imprtBtn={false} Headerlabel='Push Notifications' onClick={NavigateToaddCustomer} addbtn={true} />
                 <Box py={5}>
-                <CustomTable dashboard={false} columns={columns} rows={notificationData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={notificationData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
 
                 </Box>
             </Box>
+            {open && <CustomDelete
+                heading='Push'
+                paragraph='Notification'
+                _id={_id}
+                setData={setNotificationData}
+                data={notificationData}
+                url={`admin/push-notification/delete/${_id}`}
+                onClose={handleClose}
+                open={open} />}
         </Box>
     )
 }
