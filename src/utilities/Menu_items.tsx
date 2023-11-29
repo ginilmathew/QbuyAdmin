@@ -401,7 +401,7 @@ export const support_item = [
     {
         id: 5,
         item: 'Push Notification',
-        path: '/dashboard',
+        path: '/pushnotification',
     },
     {
         id: 6,

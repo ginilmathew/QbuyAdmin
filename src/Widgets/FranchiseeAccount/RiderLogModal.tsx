@@ -14,7 +14,7 @@ export interface SimpleDialogProps {
   onClose: any;
 }
 
-const RiderLogsModalFranchisee = (props: SimpleDialogProps) => {
+const RiderLogsModal = (props: SimpleDialogProps) => {
   const { onClose, open, date, id } = props;
 
 
@@ -32,16 +32,16 @@ const RiderLogsModalFranchisee = (props: SimpleDialogProps) => {
       align: 'center',
     },
     {
-      field: 'created_at',
+      field: 'date',
       headerName: 'Order Date & Time',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
-      valueGetter: (params) => (moment(params?.row?.created_at).format('DD/MM/YYYY hh:mm A')),
+      valueGetter: (params) => (moment(params?.row?.date).format('DD/MM/YYYY hh:mm A')),
 
     },
     {
-      field: 'rider_amount',
+      field: 'order_amount',
       headerName: 'Order Total',
       flex: 1,
       headerAlign: 'center',
@@ -49,12 +49,12 @@ const RiderLogsModalFranchisee = (props: SimpleDialogProps) => {
 
     },
     {
-      field: 'delivery_date',
+      field: 'delivered_date',
       headerName: 'Order Completed Date & Time',
       width: 300,
       headerAlign: 'center',
       align: 'center',
-      valueGetter: (params) => moment(params?.row?.delivery_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+      valueGetter: (params) => moment(params?.row?.delivered_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
 
     },
 
@@ -78,7 +78,7 @@ const RiderLogsModalFranchisee = (props: SimpleDialogProps) => {
 
     let value = {
       "order_date": date,
-      "rider_id": id
+      "franchise_id": id
     }
     let result: any = []
 
@@ -86,7 +86,7 @@ const RiderLogsModalFranchisee = (props: SimpleDialogProps) => {
 
     try {
       setLoading(true)
-      let response = await postData('admin/rider-account/rider-order-log/list', value);
+      let response = await postData('admin/account/franchise-order-log/list', value);
       let results = response?.data?.data?.map((res: any, i: boolean) => ({
         _id: i,
         ...res
@@ -166,4 +166,4 @@ const RiderLogsModalFranchisee = (props: SimpleDialogProps) => {
   )
 }
 
-export default RiderLogsModalFranchisee
+export default RiderLogsModal

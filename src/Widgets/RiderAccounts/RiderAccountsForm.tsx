@@ -36,71 +36,47 @@ type props = {
     view?: any,
     id?: any;
 };
+
 const RiderAccountsform = ({ view, res }: props) => {
     const idd = view ? view : res;
-
     const router = useRouter()
 
     const [loading, setLoading] = useState<boolean>(false);
-    //const [vendorSingleList, setVendorSinglelist] = useState<any>(null);
+    const [vendorSingleList, setVendorSinglelist] = useState<any>(null);
     const [multpleArray, setMultipleArray] = useState<any>([]);
     const [getcategory, setGetCategory] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [openLog, setOpenLog] = useState<boolean>(false)
-    const [vendorEarningList, setvendorEarningList] = useState<any>(null)
-    const [vendorSettlementList, setVendorsettlementlist] = useState<any>([])
+    const [franchiseeEarningList, setfranchiseeEarningList] = useState<any>(null)
+    const [riderSettlementList, setRidersettlementlist] = useState<any>([])
     const [selectChecked, setSelectChecked] = useState<any>([])
     const [total, setTotal] = useState<any>(null);
     const [dateSelect, setdateSelect] = useState<string>('')
     const [checkedValue, setcheckedvalue] = useState<any>(false)
     const [RiderSingleList, setRiderSinglelist] = useState<any>(null);
-    const [RiderEarningList, setRiderEarninglist] = useState<any>(null);
-    console.log({ RiderSingleList }, 'PP')
-    const commonDateLabel = 'Date Filter';
-    const [fromDate, setFromDate] = useState<Date | null>(null);
-    const [fromDates, setFromDates] = useState<Date | null>(null);
-    const [toDate, setToDate] = useState<Date | null>(null);
-    const [toDates, setToDates] = useState<Date | null>(null);
-    const [accountData, setAccountData] = useState([]);
-    const [accountDatas, setAccountDatas] = useState([]);
-    const schema = yup
-        .object()
-        .shape({
+    console.log({RiderSingleList},'oooo')
+    const [riderEarningList, setriderEarningList] = useState<any>(null)
 
 
-        })
-        .required();
-
-
-
-    const { register,
-        handleSubmit,
-        control,
-        formState: { errors },
-        reset,
-        getValues,
-        setError,
-        setValue, } = useForm<Inputs>({
-            resolver: yupResolver(schema),
-
-        });
 
     const columns: GridColDef[] = [
-
         {
             field: 'date',
             headerName: 'Date',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => moment(params.row.date).format('DD-MM-YYYY')
 
         },
+     
         {
             field: 'total_sales',
             headerName: 'Total Sales',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+           
 
         },
         {
@@ -109,6 +85,7 @@ const RiderAccountsform = ({ view, res }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => (params.row.total_sales_amount).toFixed(2)
 
         },
         {
@@ -155,35 +132,8 @@ const RiderAccountsform = ({ view, res }: props) => {
         }
     ];
 
-    const column2: GridColDef[] = [
-        {
-            field: 'date',
-            headerName: 'Date',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
 
-        },
-        {
-            field: 'amount',
-            headerName: 'Deduction Amount',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-
-        },
-
-        {
-            field: 'payment_mode',
-            headerName: 'Reason',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
-
-        },
-    ];
-
-    const column3: GridColDef[] = [
+    const columns2: GridColDef[] = [
         {
             field: 'transaction_date',
             headerName: 'Date and Time of Transaction',
@@ -191,15 +141,13 @@ const RiderAccountsform = ({ view, res }: props) => {
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => moment(params?.row?.settlement_list?.map((res:any)=>res?.transaction_date,"YYYY-MM-DD")).format("DD-MM-YYYY")
-            
         },
         {
             field: 'amount',
-            headerName: 'Amount settled',
+            headerName: 'Amount Settled',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-          
 
         },
 
@@ -219,6 +167,7 @@ const RiderAccountsform = ({ view, res }: props) => {
             align: 'center',
 
         },
+
     ];
 
 
@@ -227,11 +176,54 @@ const RiderAccountsform = ({ view, res }: props) => {
         setOpenLog(true)
     }, [])
 
+    const schema = yup
+        .object()
+        .shape({
+
+
+        })
+        .required();
+
+
+
+    const { register,
+        handleSubmit,
+        control,
+        formState: { errors },
+        reset,
+        getValues,
+        setError,
+        setValue, } = useForm<Inputs>({
+            resolver: yupResolver(schema),
+            defaultValues: {
+
+
+
+            }
+        });
+
+
+    const onCloseAccount = useCallback(() => {
+        setOpen(false)
+
+        viewRider()
+    }, [open])
+
 
     const OpenAccountModal = useCallback(() => {
         setOpen(true)
     }, [open])
 
+    const onCloseLogModal = useCallback(() => {
+        setOpenLog(false)
+        setdateSelect('')
+    }, [openLog])
+
+
+    const OpenLogModal = useCallback((data: any) => {
+        setdateSelect(data)
+        setOpenLog(true)
+    }, [openLog])
 
 
     const viewRider = useCallback(async () => {
@@ -245,6 +237,38 @@ const RiderAccountsform = ({ view, res }: props) => {
         }
     }, [idd])
 
+    // const getCategoryList = async () => {
+    //     try {
+    //         setLoading(true)
+    //         const response = await fetchData(`/admin/category/list/${process.env.NEXT_PUBLIC_TYPE}`)
+
+    //         setGetCategory(response?.data?.data)
+    //         setLoading(false)
+
+    //     } catch (err: any) {
+    //         toast.error(err)
+    //         setLoading(false)
+    //     }
+    //     finally {
+    //         setLoading(false)
+    //     }
+
+    // }
+
+
+
+    useEffect(() => {
+        if (RiderSingleList) {
+            setValue('name', RiderSingleList?.name);
+            setValue('mobile', RiderSingleList?.mobile);
+            setValue('franchise', RiderSingleList?.primary_franchise?.franchise_name); 
+        }
+    }, [RiderSingleList]);
+    
+
+
+
+
     useEffect(() => {
         if (idd) {
             viewRider();
@@ -252,152 +276,43 @@ const RiderAccountsform = ({ view, res }: props) => {
         }
     }, [idd])
 
- 
-    //     if (RiderSingleList) {
-    //         const formattedData = RiderSingleList.rider_earning_list.map((earning: any, index: number) => ({
-    //             id: index + 1,
-    //             date: moment(earning?.date).format('DD-MM-YYYY'),
-    //             total_sales: earning?.total_sales,
-    //             total_sales_amount: earning?.total_sales_amount,
-    //             deduction: earning?.deduction,
-    //             payout: earning?.payout,
-    //             status: earning?.status,
-    //         }));
-    //         const data = RiderSingleList.rider_earning_list;
-    //         setAccountData(formattedData);
 
-    //         const settlementData = RiderSingleList.settlement_list.map((settlement: any, index: number) => ({
-    //             id: index + 1,
-    //             transaction_date: moment(settlement?.transaction_date).format('DD-MM-YYYY'),
-    //             amount: settlement?.amount,
-    //             payment_mode: settlement?.payment_mode,
-    //             transaction_id: settlement?.transaction_id,
-    //         }));
-
-    //         setAccountData(settlementData);
-
-    //         setValue('name', RiderSingleList?.name);
-    //         setValue('mobile', RiderSingleList?.mobile);
-    //         setValue('franchise', RiderSingleList?.primary_franchise?.franchise_name);
-    //     }
-    // }, [RiderSingleList]);
     useEffect(() => {
-        if (RiderSingleList && RiderSingleList.rider_earning_list) {
-            const formattedData = RiderSingleList.rider_earning_list.map((earning: any, index: number) => ({
-                id: index + 1,
-                date: moment(earning?.date).format('DD-MM-YYYY'),
-                total_sales: earning?.total_sales,
-                total_sales_amount: earning?.total_sales_amount,
-                deduction: earning?.deduction,
-                payout: earning?.payout,
-                status: earning?.status,
-            }));
-            setAccountData(formattedData);
+        if (RiderSingleList) {
+            let result = RiderSingleList?.rider_earning_list?.map((res: any, i: number) => ({
+                _id: i,
+                ...res
+            }))
+            setriderEarningList(result);
         }
 
-        if (RiderSingleList && RiderSingleList.settlement_list) {
-            const settlementData = RiderSingleList.settlement_list.map((settlement: any, index: number) => ({
-                id: index + 1,
-                transaction_date: moment(settlement?.transaction_date).format('DD-MM-YYYY'),
-                amount: settlement?.amount,
-                payment_mode: settlement?.payment_mode,
-                transaction_id: settlement?.transaction_id,
-            }));
-            setAccountDatas(settlementData);
-        }
+    }, [RiderSingleList, open])
 
-        setValue('name', RiderSingleList?.name);
-        setValue('mobile', RiderSingleList?.mobile);
-        setValue('franchise', RiderSingleList?.primary_franchise?.franchise_name);
-    }, [RiderSingleList]);
 
-//Settlement filter
-    const fetchFilteredDatasettlement = async () => {
-        const formattedFromDate = moment(fromDates).format('YYYY-MM-DD');
-        const formattedToDate = moment(toDates).format('YYYY-MM-DD');
-        const payload = {
-            rider_id: idd,
-            from_date: formattedFromDate,
-            to_date: formattedToDate,
-        };
-        try {
-            const response = await postData('admin/rider-account/rider-settlement/list', payload);
-            if (response.data && response.data.data) {
-                const settlementData = response.data.data.map((settlement: any, index: number) => ({
-                    id: index + 1,
-                    transaction_date: moment(settlement?.transaction_date).format('DD-MM-YYYY'),
-                    amount: settlement?.amount,
-                    payment_mode: settlement?.payment_mode,
-                    transaction_id: settlement?.transaction_id,
-                }));
-                setAccountDatas(settlementData);
-            }
-        } catch (error) {
-            toast.error('Failed to filter data.');
-        }
-    };
     useEffect(() => {
-        if (fromDates && toDates) {
-            fetchFilteredDatasettlement();
+        if (RiderSingleList) {
+            let result = RiderSingleList?.settlement_list?.map((res: any, i: number) => ({
+                _id: i,
+                ...res
+            }))
+            setRidersettlementlist(result)
         }
-    }, [fromDates, toDates]);
+
+    }, [RiderSingleList])
 
 
-    const fetchFilteredData = async () => {
-        const formattedFromDate = moment(fromDate).format('YYYY-MM-DD');
-        const formattedToDate = moment(toDate).format('YYYY-MM-DD');
-        const payload = {
-            rider_id: idd,
-            from_date: formattedFromDate,
-            to_date: formattedToDate,
-        };
-        try {
-            const response = await postData('admin/rider-account/rider-earning/list', payload);
-            if (response.data && response.data.data) {
-                const earningData = response.data.data.map((earning: any, index: number) => ({
-                    id: index + 1,
-                    date: moment(earning?.date).format('DD-MM-YYYY'),
-                    total_sales: earning?.total_sales,
-                    total_sales_amount: earning?.total_sales_amount,
-                    deduction: earning?.deduction,
-                    payout: earning?.payout,
-                    status: earning?.status,
-                }));
-                setAccountData(earningData);
-            }
-        } catch (error) {
-            toast.error('Failed to filter data.');
-        }
-    };
-    
-    useEffect(() => {
-        if (fromDate && toDate) {
-            fetchFilteredData();
-        }
-    }, [fromDate, toDate]);
+
+    const riderEarningSelect = (item: any) => {
+        let result = riderEarningList?.filter((res: any) => item?.includes(res?._id))
+        let totalPrice = result.reduce((accumulator: any, total: any) => accumulator + parseInt(total.payout), 0);
+        setSelectChecked(result)
+        setTotal(totalPrice)
+    }
 
 
-    const onCloseAccount = useCallback(() => {
-        setOpen(false)
-
-        viewRider()
-    }, [open])
-
-
-    const onCloseLogModal = useCallback(() => {
-        setOpenLog(false)
-        setdateSelect('')
-    }, [openLog])
-
-
-    const OpenLogModal = useCallback((data: any) => {
-        setdateSelect(data)
-        setOpenLog(true)
-    }, [openLog])
-
-    // if (!RiderSingleList) {
-    //     return <><Spinner /></>
-    // }
+    if (!RiderSingleList) {
+        return <><Spinner /></>
+    }
 
     return (
         <Box>
@@ -410,9 +325,10 @@ const RiderAccountsform = ({ view, res }: props) => {
                             error={errors.name}
                             fieldName="name"
                             placeholder={``}
-                            fieldLabel="Rider Name"
-                            disabled={true}
+                            fieldLabel={"Rider Name"}
+                            disabled={false}
                             view={true}
+                            defaultValue={''}
                         />
                     </Grid>
                     <Grid item xs={12} lg={3}>
@@ -438,10 +354,12 @@ const RiderAccountsform = ({ view, res }: props) => {
                             fieldLabel={"Franchisee"}
                             disabled={false}
                             view={true}
+                            defaultValue={''}
                         />
                     </Grid>
                 </Grid>
             </CustomBox>
+         
             <CustomBox title='Rider  Earnings'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={1.5}>
@@ -449,50 +367,13 @@ const RiderAccountsform = ({ view, res }: props) => {
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
                         <CustomViewInput fieldLabel='Total Earnings' text={RiderSingleList?.total_earnings} color='#2EA10C' />
+
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
                         <CustomViewInput fieldLabel='Deduction' text={RiderSingleList?.deduction} color='#FF7B7B' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Payable' text={RiderSingleList?.total_outstanding} color='#2EA10C' />
-                    </Grid>
-                    <Stack direction="row" spacing={2}  marginLeft={'85px'} mt={2}>
-                        <div >
-                            <CustomDatePicker
-                                fieldName='fromDate'
-                                control={control}
-                                error={''}
-                                past={false}
-                                fieldLabel={commonDateLabel}
-                                values={fromDate}
-                                changeValue={(date) => setFromDate(date)}
-                            />
-                        </div>
-                        <div style={{ marginTop: '24px' }}>
-                            <CustomDatePicker
-                                fieldName='toDate'
-                                control={control}
-                                error={''}
-                                past={false}
-                                fieldLabel={''}
-                                values={toDate}
-                                changeValue={(date) => setToDate(date)}
-                            />
-                        </div>
-                    </Stack>
-                </Grid>
-                <Box py={2}>
-                    <CustomTable dashboard={false} columns={columns} rows={accountData} id={"id"} bg={"#ffff"} label='Recent Activity' />
-                </Box>
-            </CustomBox>
-
-            <CustomBox title="Settlements">
-                <Grid container spacing={2}>
-                    <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Earnings' text={RiderSingleList?.total_earnings} color='#2EA10C' />
-                    </Grid>
-                    <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Outstanding' text={RiderSingleList?.total_outstanding} color='#FF7B7B' />
+                        <CustomViewInput fieldLabel='Total Payable' text={RiderSingleList?.total_payable} color='#2EA10C' />
                     </Grid>
                     <Grid item direction="row-reverse">
                         <Typography mb={3}></Typography>
@@ -501,50 +382,47 @@ const RiderAccountsform = ({ view, res }: props) => {
                             onClick={OpenAccountModal}
                             endIcon={false}
                             startIcon={false}
-                            IconStart={''}
-                            IconEnd={''}
+                            IconStart={undefined}
+                            IconEnd={undefined}
                             height={'42px'}
-                            disabled={loading}
+                            disabled={(riderEarningList && total) ? false : true}
 
                         />
-
                     </Grid>
-
-                    <Stack direction="row" spacing={2}  marginLeft={'220px'} mt={2}>
-                        <div >
-                            <CustomDatePicker
-                                fieldName='fromDates'
-                                control={control}
-                                error={''}
-                                past={false}
-                                fieldLabel={commonDateLabel}
-                                values={fromDates}
-                                changeValue={(date) => setFromDates(date)}
-                            />
-                        </div>
-                        <div style={{ marginTop: '24px' }}>
-                            <CustomDatePicker
-                                fieldName='toDates'
-                                past={false}
-                                control={control}
-                                error={''}
-                                fieldLabel={''}
-                                values={toDates}
-                                changeValue={(date) => setToDates(date)}
-                            />
-                        </div>
-                    </Stack>
                 </Grid>
-                <Box py={2}>
-                    <CustomTable dashboard={false} columns={column3} rows={accountDatas} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                <Box py={3}>
+                    <CustomTable
+                        dashboard={false}
+                        columns={columns}
+                        rows={riderEarningList ? riderEarningList : []}
+                        id={"_id"}
+                        bg={"#ffff"}
+                        label='Recent Activity'
+                        checked={true}
+
+                        selectCheck={(itm: any) => riderEarningSelect(itm)}
+                    />
                 </Box>
             </CustomBox>
+            <CustomBox title="Settlements">
+                <Grid container spacing={2}>
+                    <Grid item xs={12} lg={1.5}>
+                        <CustomViewInput fieldLabel='Total Earnings' text={RiderSingleList?.total_earnings} color='#2EA10C' />
+                    </Grid>
+                    <Grid item xs={12} lg={1.5}>
+                        <CustomViewInput fieldLabel='Total Outstanding' text={RiderSingleList?.total_outstanding} color='#FF7B7B' />
+                    </Grid>
+                </Grid>
+                <Box py={2}>
+                    <CustomTable dashboard={false} columns={columns2} rows={riderSettlementList} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                </Box>
+            </CustomBox>
+
             {open && <AmountSettlementModal
                 onClose={onCloseAccount}
                 open={open}
                 price={total}
-                //data={selectChecked}
-                data={RiderSingleList?.rider_earning_list}
+                data={selectChecked}
                 id={idd}
                 setRiderSinglelist={setRiderSinglelist}
                 RiderSingleList={RiderSingleList}
