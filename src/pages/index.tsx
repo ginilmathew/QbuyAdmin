@@ -1,9 +1,13 @@
 import Head from 'next/head'
 import dynamic from 'next/dynamic';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSession } from "next-auth/react"
 //import Login from './login'
 //import Shipments from './shipments'
+import { getMessaging, onMessage } from 'firebase/messaging';
+import firebaseApp from '../utilities/firebase/firebase';
+import useFcmToken from '@/utilities/hooks/useFcmToken';
+import { toast } from 'react-toastify';
 
 const Login = dynamic(() => import('./login'), {
 	ssr: false,
@@ -14,8 +18,16 @@ const Shipments = dynamic(() => import('./shipments'), {
 });
 
 
+
 export default function Home() {
 	const { data: session, status } = useSession()
+	const { fcmToken,notificationPermissionStatus } = useFcmToken();
+
+
+	console.log({fcmToken, notificationPermissionStatus})
+
+
+	
 
 
 
