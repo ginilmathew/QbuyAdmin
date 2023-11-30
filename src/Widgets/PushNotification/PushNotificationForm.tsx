@@ -1,4 +1,4 @@
-import { Box, Grid, MenuItem, Typography } from "@mui/material";
+import { Box, Grid, MenuItem, Typography, Stack } from "@mui/material";
 import React, {
     startTransition,
     useCallback,
@@ -8,6 +8,7 @@ import React, {
 import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import dynamic from 'next/dynamic';
 import { useForm } from "react-hook-form";
 import CustomBox from "../CustomBox";
 import CustomInput from "@/components/CustomInput";
@@ -17,352 +18,368 @@ import Custombutton from "@/components/Custombutton";
 import { fetchData, postData } from "@/CustomAxios";
 import { SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/router";
+import moment from 'moment';
+import CustomDateTimePicker from '@/components/CustomDateTimePicker';
+
+
+const CustomDatePicker = dynamic(() => import('@/components/CustomDatePicker'), { ssr: false });
 
 type Inputs = {
-    name: any;
-    mobile: any;
-    email: any;
-    customer_group_id: string;
-    customer_block_status: boolean;
+    title: string;
+    description: string;
+    image_link: string;
+    app_target: string;
+    product_url: string;
+    name: string;
+    email: string;
+    mobile: string;
+    franchise_id: string;
+    franchise_name: string;
+    status: string;
+    image: string;
+    instant: string;
+    notification_sound: string;
+    schedule_date_time: any
+
 };
 
-type Address = {
-    address: any;
-    flatno: any;
-    city: any;
-    landmark: any;
-    pincode: any;
-    category_id: string;
+type RiderGroup = {
+    _id: string;
+    franchise_name: string;
+    franchise_id: string;
 };
 
 type props = {
     resData?: any;
     view?: any;
 };
-type CustomerGroup = {
-    _id: string;
-    name: string;
-    customer_group_id: string;
-};
 
-type IFormInput = {
-    name: any;
-    email: any;
-    mobile: any;
-    customer_group_id: string;
-    customer_block_status: boolean;
-    address: any;
-    flatno: any;
-    city: any;
-    landmark: any;
-    pincode: any;
-    category_id: any;
-};
 const PushNotificationForm = ({ resData, view }: props) => {
-    console.log({ resData }, 'kkk')
     const idd = resData ? resData : view;
-    const schema = yup.object().shape({
-        name: yup.string().required("Customer Name is required"),
-        email: yup
-            .string()
-            .email("Invalid email")
-            .required("Email is required"),
-        mobile: yup.string().required("Mobile Number is required"),
-    });
+    const [statusChange, setStatusChange] = useState<any>(
+        [
+            { value: 'customer', name: 'customer' },
+            { value: 'vendor', name: 'vendor' },
+            { value: 'rider', name: 'rider' }
+        ])
 
-    const {
-        register,
-        handleSubmit,
-        control,
-        formState: { errors },
-        reset,
-        setError,
-        setValue,
-    } = useForm({
-        resolver: yupResolver(schema),
-
-        defaultValues: {
-            name: resData?.name || "",
-            email: resData?.email || "",
-            mobile: resData?.mobile || "",
-            customer_group_id: resData?.customer_group_id || "",
-            customer_block_status: false,
-            addresses: [
-                {
-                    address: "",
-                    flatno: "",
-                    city: "",
-                    landmark: "",
-                    pincode: "",
-                    category_id: "",
-                },
-            ],
-        },
-    });
 
     const [loading, setLoading] = useState(false);
-    const [numAddresses, setNumAddresses] = useState(1);
-    const [showDeleteButton, setShowDeleteButton] = useState(false);
-    const [datas, setDatas] = useState([]);
-    const [isChecked, setIsChecked] = useState(true);
-    const [customerGroupOptions, setCustomerGroupOptions] = useState<
-        CustomerGroup[]
-    >([]);
     const [selectedValue, setSelectedValue] = useState("");
-    const [customerView, setCustomerView] = useState<any>(null);
-    const [customerBlock, setCustomerBlock] = useState<boolean>(false);
-    const [customerAddress, setCustomerAddress] = useState<boolean>(false);
-    const [customerList, setCustomerList] = useState<any>([]);
-    console.log({ customerList }, 'll')
-    const [loader, setLoader] = useState<boolean>(false);
-    const [groupID, setGroupID] = useState<any>("");
     const router = useRouter();
     const [categoryList, setCategoryList] = useState<any>([]);
     const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
-    const [categories, setCategories] = useState<string[]>([]);
+    //const [fromDate, setFromDate] = useState<moment.Moment | null>(null);
+    const [toDate, setToDate] = useState<Date | null>(null);
+    const [franchiseList, setFranchiseList] = useState<RiderGroup[]>([]);
+    const [selectedFranchiseName, setSelectedFranchiseName] = useState("");
+    const [statusSelect, setStatusSelect] = useState<any>(null)
+    const [instantBlock, setInstantBlock] = useState<boolean>(false);
+    const [notificationBlock, setNotificationBlock] = useState<boolean>(false);
+    const [notificationList, setNotificationList] = useState<any>([]);
+    console.log({ notificationList }, "listdply")
+    const [time, setTime] = useState<any>(null);
+
+
+    const schema = yup.object().shape({
+        title: yup.string().required('Title is required'),
+        description: yup.string().required('Description is required'),
+        franchise_id: yup.string().required('Franchise is required'),
+        franchise_name: yup.string().required('Franchise name is required'),
+        schedule_date_time: yup.string().required('Date & Time is Required'),
+        app_target: yup.string().required('App target is Required')
+    });
+
+    const { register, handleSubmit, control, formState: { errors }, reset, setValue, setError, clearErrors } = useForm<Inputs>({
+        resolver: yupResolver(schema),
+        defaultValues: {
+
+        }
+    });
+
 
     const CheckBlackList = (e: any) => {
         if (!view) {
-            setCustomerBlock(e);
-            setValue("customer_block_status", e);
+            setInstantBlock(e);
+            setValue("instant", e);
         }
     };
-    const CheckCustomerList = (e: any) => {
+
+    const CheckBlackLists = (e: any) => {
         if (!view) {
-            setCustomerAddress(e);
+            setNotificationBlock(e);
+            setValue("notification_sound", e);
         }
     };
     const onChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newValue = event.target.value;
         setSelectedValue(newValue);
     };
+    const OnChangeDate = (value: any) => {
+        setValue('schedule_date_time', value)
+        setTime(value)
+        setError('schedule_date_time', { message: "" })
+    }
 
-    const onChangeSelectCategory = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        index: any
-    ) => {
-        setValue(`addresses.${index}.category_id`, e.target.value);
-        setError(`addresses.${index}.category_id`, { message: "" });
-        const updatedCatgeories = [...categories];
-        updatedCatgeories[index] = e.target.value;
-        setCategories(updatedCatgeories);
-    };
-
-    const addAddressSection = () => {
-        setNumAddresses(numAddresses + 1);
-    };
-
-    const deleteAddressSection = (indexToDelete: number) => {
-        if (indexToDelete > 0) {
-            setNumAddresses(numAddresses - 1);
-        }
-    };
-
-    const fetchCustomerGroupOptions = async () => {
-        try {
-            const response = await fetchData("/admin/customer-group");
-            const customerGroupData = response.data.data;
-            console.log("API Response:", customerGroupData);
-            setCustomerGroupOptions(customerGroupData);
-        } catch (error) {
-            console.error("Failed to fetch customer groups:", error);
-            toast.error("Failed to fetch customer groups");
-        }
-    };
-
-    useEffect(() => {
-        fetchCustomerGroupOptions();
-    }, []);
-
-    const getCategoryList = async () => {
-        try {
-            setLoading(true);
-            const response = await fetchData(`admin/category/list/${type}`);
-            setCategoryList(response?.data?.data);
-        } catch (err: any) {
-            toast.error(err.message);
-            setLoading(false);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        getCategoryList();
-    }, []);
-
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: Inputs) => {
         setLoading(true);
+        const formattedDateTime = time ? time.format("YYYY-MM-DD HH:mm:ss") : null;
 
         try {
-            console.log({ data });
-            data.customer_group_id = selectedValue;
+            const payload = {
+                id: idd,
+                title: data.title,
+                description: data.description,
+                type: type,
+                instant: instantBlock,
+                image_link: data.image_link || "",
+                schedule_date_time: formattedDateTime,
+                app_target: statusSelect || "",
+                product_url: data.product_url || "",
+                franchise: {
+                    id: data.franchise_id || "",
+                    name: data.franchise_name || "",
+                },
+                notification_sound: notificationBlock,
+            };
 
-            const URL_CREATE = "/admin/customer-details/create";
-            const URL_EDIT = "/admin/customer-details/update";
-            const formData = new FormData();
-            if (idd) {
-                formData.append("id", customerList?._id);
-            }
-            formData.append("name", data.name);
-            formData.append("mobile", data.mobile);
-            formData.append("email", data.email);
+            const URL_CREATE = "/admin/push-notification/create";
+            const URL_UPDATE = "/admin/push-notification/update";
 
-            formData.append("customer_group_id", data.customer_group_id);
-            formData.append(
-                "customer_block_status",
-                data.customer_block_status
-            );
-            // Collect addresses
-            const addresses = [];
-            for (let i = 0; i < numAddresses; i++) {
-                const addressData = {
-                    address: data.addresses[i].address,
-                    flatno: data.addresses[i].flatno,
-                    city: data.addresses[i].city,
-                    landmark: data.addresses[i].landmark,
-                    pincode: data.addresses[i].pincode,
-                    category_id: data.addresses[i].category_id,
-                };
-                addresses.push(addressData);
-            }
-            formData.append("customer_address", JSON.stringify(addresses));
-
-            const response = await postData(
-                idd ? URL_EDIT : URL_CREATE,
-                formData
-            );
+            const response = await postData(idd ? URL_UPDATE : URL_CREATE, payload);
 
             if (response.status === 201 || response.status === 200) {
-                toast.success(
-                    idd
-                        ? "Customer updated successfully"
-                        : "Customer created successfully"
-                );
+                const successMessage = idd ? "Push notification updated successfully" : "Push notification created successfully";
+                toast.success(successMessage);
                 reset();
-
-                router.push("/customerDetails");
+                router.push("/pushnotification");
             } else {
-                toast.error("Failed");
+                toast.error("Failed to update push notification");
             }
         } catch (error) {
-            toast.error(
-                "An error occurred while creating/updating the customer"
-            );
+            toast.error("An error occurred while updating push notification");
             console.error(error);
         } finally {
             setLoading(false);
         }
     };
 
-    const customerview = async () => {
+
+
+    const notificationview = async () => {
         try {
             setLoading(true);
-            const response = await fetchData(
-                `admin/customer-details/show/${idd}`
-            );
-            console.log(response.data.data);
-            reset(response?.data?.data);
-            setCustomerList(response?.data?.data);
+            const response = await fetchData(`admin/push-notification/show/${idd}`);
+            const notificationData = response?.data?.data;
+            reset(notificationData);
+            setNotificationList(notificationData);
+            setStatusSelect(notificationData.app_target);
+            setInstantBlock(notificationData.instant);
+            setNotificationBlock(notificationData.notification_sound);
+
         } catch (err: any) {
             toast.error(err.message || "Error fetching data");
         } finally {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         if (idd) {
-            customerview();
+            notificationview();
         }
     }, [idd]);
 
-    useEffect(() => {
-        if (customerList && idd) {
-            setValue("name", customerList?.users?.name);
-            setValue("mobile", customerList?.users?.mobile);
-            setValue("email", customerList?.users?.email);
-            if (customerList?.customer_group_id) {
-                setValue("customer_group_id", customerList?.customer_group_id);
-                setSelectedValue(customerList?.customer_group_id);
-            }
-            if (customerList?.customer_block_status) {
-                setValue(
-                    "customer_block_status",
-                    customerList?.customer_block_status
-                );
-                setCustomerBlock(customerList?.customer_block_status);
-            }
+
+
+    const handleFranchiseSelect = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+        const selectedFranchiseId = e.target.value as string;
+        const selectedFranchise = franchiseList.find((franchise) => franchise._id === selectedFranchiseId);
+
+        if (selectedFranchise) {
+            setSelectedValue(selectedFranchiseId);
+            setSelectedFranchiseName(selectedFranchise.franchise_name);
+            setValue("franchise_id", selectedFranchiseId);
+            setValue('franchise_name', selectedFranchise.franchise_name);
         }
-    }, [customerList, idd]);
+    };
+
+
+    const fetchFranchiseList = async () => {
+        try {
+            const response = await fetchData("/admin/franchise/list");
+            const franchiseListData = response.data.data;
+            setFranchiseList(franchiseListData);
+        } catch (error) {
+            console.error("Failed to fetch franchise list:", error);
+            toast.error("Failed to fetch franchise list");
+        }
+    };
+
+    useEffect(() => {
+
+        fetchFranchiseList();
+    }, []);
+
+    useEffect(() => {
+        if (notificationList && notificationList.franchise && notificationList.franchise.name) {
+            setSelectedValue(notificationList.franchise.id);
+            setSelectedFranchiseName(notificationList.franchise.name);
+            setValue('franchise_id', notificationList.franchise.id);
+            setValue('franchise_name', notificationList.franchise.name);
+        }
+        if (notificationList && notificationList.schedule_date_time) {
+            setTime(moment(notificationList.schedule_date_time));
+            console.log("Updated time state with schedule_date_time:", moment(notificationList.schedule_date_time));
+        }
+
+
+    }, [notificationList, setValue]);
+
+
+
+
+
+    // const ChangeStatus = useCallback((e: any) => {
+    //     const { value } = e.target;
+    //     setStatusSelect(value)
+    // }, [])
+
+    const ChangeStatus = useCallback((e: any) => {
+        const { value } = e.target;
+        setStatusSelect(value);
+        setValue('app_target', value, { shouldValidate: true });
+        if (value) {
+            clearErrors('app_target');
+        }
+    }, [setValue, clearErrors]);
 
     return (
         <Box>
-            <CustomBox title="Basic Details">
+            <CustomBox title="Notification Details">
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2}>
                         <CustomInput
                             type="text"
                             control={control}
-                            error={errors.name}
-                            fieldName="name"
+                            error={errors.title}
+                            fieldName="title"
                             placeholder={``}
-                            fieldLabel={"Customer Name"}
+                            fieldLabel={"Title"}
                             disabled={false}
-                            view={false}
-                            defaultValue={customerView?.users?.name}
+                            view={view ? true : false}
+
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2}>
+                    <Grid item xs={12} lg={6} >
                         <CustomInput
                             type="text"
                             control={control}
-                            error={errors.mobile}
-                            fieldName="mobile"
+                            error={errors.description}
+                            fieldName="description"
                             placeholder={``}
-                            fieldLabel={"Mobile Number"}
+                            fieldLabel={"Description"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
+                            defaultValue={""}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
+                        <CustomDateTimePicker
+                            values={time} 
+                            changeValue={(value: any) => OnChangeDate(value)}
+                            fieldName='schedule_date_time'
+                            control={control}
+                            error={errors.schedule_date_time}
+                            fieldLabel={'Schedule Date & Time'}
+                        />
+                    </Grid>
+
+
+
+
+
+
+                    <Grid item xs={12} lg={2} >
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={''}
+                            fieldName="image_link"
+                            placeholder={``}
+                            fieldLabel={"Image Link"}
+                            disabled={false}
+                            view={view ? true : false}
                             defaultValue={""}
                         />
                     </Grid>
 
                     <Grid item xs={12} lg={2}>
+                        <Customselect
+                            disabled={view ? true : false}
+                            type='text'
+                            control={control}
+                            error={errors.app_target}
+                            fieldName="app_target"
+                            placeholder={``}
+                            fieldLabel={"App Target"}
+                            selectvalue={notificationList?.app_target}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={statusSelect}
+                            options={''}
+                            onChangeValue={ChangeStatus}
+                            background={'#fff'}
+                        >
+                            <MenuItem value="" disabled>
+                                <em>Choose App Target</em>
+                            </MenuItem>
+                            {statusChange.map((res: any) => (
+                                <MenuItem key={res.value} value={res.value}>{res.name}</MenuItem>
+                            ))}
+                        </Customselect>
+
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
                         <CustomInput
                             type="text"
                             control={control}
-                            error={errors.email}
-                            fieldName="email"
+                            error={''}
+                            fieldName="product_url"
                             placeholder={``}
-                            fieldLabel={"Email Address"}
+                            fieldLabel={"Product Opening URL"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={""}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2}>
+
+
+
+                    <Grid item xs={12} lg={3}>
                         <Customselect
                             type="text"
                             control={control}
-                            error={errors.customer_group_id}
-                            fieldName="customer_group_id"
+                            error={errors.franchise_id}
+                            fieldName="franchise_id"
                             placeholder={``}
-                            fieldLabel={"Customer Group"}
+                            fieldLabel={"Franchisee"}
                             selectvalue={selectedValue}
                             height={40}
                             label={""}
                             size={16}
                             value={selectedValue}
-                            onChangeValue={onChangeSelect}
+                            onChangeValue={handleFranchiseSelect}
                             background={"#fff"}
-                            options={customerGroupOptions}
+                            disabled={view ? true : false}
+                            options={franchiseList}
                         >
-                            {customerGroupOptions.map((group) => (
+                            {franchiseList.map((franchise) => (
                                 <MenuItem
-                                    key={group._id}
-                                    value={group.customer_group_id}
+                                    key={franchise._id}
+                                    value={franchise._id}
                                 >
-                                    {group.name}
+                                    {franchise?.franchise_name}
                                 </MenuItem>
                             ))}
                         </Customselect>
@@ -370,244 +387,25 @@ const PushNotificationForm = ({ resData, view }: props) => {
                     <Grid item xs={12} lg={2}>
                         <Typography mb={3}></Typography>
                         <CustomCheckBox
-                            isChecked={customerBlock}
+                            isChecked={instantBlock}
                             label=""
                             onChange={CheckBlackList}
-                            title="Blacklist Customer"
+                            title="Instant"
+                        />
+
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
+                        <Typography mb={3}></Typography>
+                        <CustomCheckBox
+                            isChecked={notificationBlock}
+                            label=""
+                            onChange={CheckBlackLists}
+                            title="Notification Sound"
                         />
                     </Grid>
                 </Grid>
             </CustomBox>
-            {Array.from({ length: numAddresses }).map((_, index) => (
-                <CustomBox
-                    title={index === 0 ? "Address Details" : ""}
-                    key={index}
-                >
-                    <Box
-                        display="flex"
-                        justifyContent="space-between"
-                        alignItems="center"
-                    >
-                        <Grid container spacing={2}>
-                            <Grid item xs={13} lg={5}>
-                                <CustomInput
-                                    key={index}
-                                    type="text"
-                                    control={control}
-                                    error={
-                                        errors.addresses &&
-                                        errors.addresses[index] && (
-                                            <div className="error">
-                                                {
-                                                    errors.addresses[index]
-                                                        ?.address?.message
-                                                }
-                                            </div>
-                                        )
-                                    }
-                                    fieldName={`addresses[${index}].address`}
-                                    {...register(`addresses.${index}.address`)}
-                                    placeholder={``}
-                                    fieldLabel={" Address"}
-                                    disabled={false}
-                                    view={false}
-                                    defaultValue={""}
 
-                                />
-                            </Grid>
-                            <Grid item xs={12} lg={2}>
-                                <CustomInput
-                                    key={index}
-                                    type="text"
-                                    control={control}
-                                    error={
-                                        errors.addresses &&
-                                        errors.addresses[index] && (
-                                            <div className="error">
-                                                {
-                                                    errors.addresses[index]
-                                                        ?.flatno?.message
-                                                }
-                                            </div>
-                                        )
-                                    }
-                                    fieldName={`addresses[${index}].flatno`}
-                                    {...register(`addresses.${index}.flatno`)}
-                                    placeholder={``}
-                                    fieldLabel={"House or Flat No"}
-                                    disabled={false}
-                                    view={false}
-                                    defaultValue={""}
-                                />
-                            </Grid>
-                            <Grid item xs={12} lg={2}>
-                                <CustomInput
-                                    key={index}
-                                    type="text"
-                                    control={control}
-                                    error={
-                                        errors.addresses &&
-                                        errors.addresses[index] && (
-                                            <div className="error">
-                                                {
-                                                    errors.addresses[index]
-                                                        ?.city?.message
-                                                }
-                                            </div>
-                                        )
-                                    }
-                                    fieldName={`addresses[${index}].city`}
-                                    {...register(`addresses.${index}.city`)}
-                                    placeholder={``}
-                                    fieldLabel={"City"}
-                                    disabled={false}
-                                    view={false}
-                                    defaultValue={""}
-                                />
-                            </Grid>
-                            <Grid item xs={12} lg={2}>
-                                <CustomInput
-                                    key={index}
-                                    type="text"
-                                    control={control}
-                                    error={
-                                        errors.addresses &&
-                                        errors.addresses[index] && (
-                                            <div className="error">
-                                                {
-                                                    errors.addresses[index]
-                                                        ?.landmark?.message
-                                                }
-                                            </div>
-                                        )
-                                    }
-                                    fieldName={`addresses[${index}].landmark`}
-                                    {...register(`addresses.${index}.landmark`)}
-                                    placeholder={``}
-                                    fieldLabel={"LandMark"}
-                                    disabled={false}
-                                    view={false}
-                                    defaultValue={""}
-                                />
-                            </Grid>
-                            <Grid item xs={12} lg={2}>
-                                <CustomInput
-                                    key={index}
-                                    type="text"
-                                    control={control}
-                                    error={
-                                        errors.addresses &&
-                                        errors.addresses[index] && (
-                                            <div className="error">
-                                                {
-                                                    errors.addresses[index]
-                                                        ?.pincode?.message
-                                                }
-                                            </div>
-                                        )
-                                    }
-                                    fieldName={`addresses[${index}].pincode`}
-                                    {...register(`addresses.${index}.pincode`)}
-                                    placeholder={``}
-                                    fieldLabel={"Pincode"}
-                                    disabled={false}
-                                    view={false}
-                                    defaultValue={""}
-                                />
-                            </Grid>
-                            <Grid item xs={12} lg={2.5}>
-                                <Customselect
-                                    key={index}
-                                    disabled={view ? true : false}
-                                    type="text"
-                                    control={control}
-                                    error={
-                                        errors.addresses &&
-                                        errors.addresses[index] && (
-                                            <div className="error">
-                                                {
-                                                    errors.addresses[index]
-                                                        ?.category_id?.message
-                                                }
-                                            </div>
-                                        )
-                                    }
-                                    fieldName={`addresses.${index}.category_id`}
-                                    {...register(
-                                        `addresses.${index}.category_id`
-                                    )}
-                                    placeholder={``}
-                                    fieldLabel={"Category"}
-                                    selectvalue={""}
-                                    height={40}
-                                    label={""}
-                                    size={16}
-                                    value={categories[index] || ""} // Set the value here
-                                    background={"#fff"}
-                                    onChangeValue={(
-                                        e: React.ChangeEvent<HTMLInputElement>
-                                    ) => onChangeSelectCategory(e, index)} // Pass index
-                                    options={categoryList} // Pass the list of categor
-                                >
-                                    <MenuItem value="" disabled>
-                                        <>Select Category</>
-                                    </MenuItem>
-                                    {categoryList &&
-                                        categoryList?.map((res: any) => (
-                                            <MenuItem
-                                                key={res?._id}
-                                                value={res?._id}
-                                            >
-                                                {res?.name}
-                                            </MenuItem>
-                                        ))}
-                                </Customselect>
-                            </Grid>
-                            <Grid item xs={12} lg={2}>
-                                <Typography mb={3}></Typography>
-                                <CustomCheckBox
-                                    isChecked={customerAddress}
-                                    label=""
-                                    onChange={CheckCustomerList}
-                                    title="Set As Default Address"
-                                />
-                            </Grid>
-                        </Grid>
-                        <div
-                            style={{
-                                position: "relative",
-                                top: "-93px",
-                                width: "124px",
-                                height: "36px",
-                            }}
-                        >
-                            {index > 0 ? (
-                                <Custombutton
-                                    btncolor=""
-                                    IconEnd={""}
-                                    IconStart={""}
-                                    endIcon={false}
-                                    startIcon={false}
-                                    height={"30px"}
-                                    label={"Delete"}
-                                    onClick={() => deleteAddressSection(index)}
-                                />
-                            ) : (
-                                <Custombutton
-                                    btncolor=""
-                                    IconEnd={""}
-                                    IconStart={""}
-                                    endIcon={false}
-                                    startIcon={false}
-                                    height={"30px"}
-                                    label={"Add More"}
-                                    onClick={addAddressSection}
-                                />
-                            )}
-                        </div>
-                    </Box>
-                </CustomBox>
-            ))}
 
             {!view && (
                 <Box py={3}>
@@ -618,7 +416,7 @@ const PushNotificationForm = ({ resData, view }: props) => {
                         endIcon={false}
                         startIcon={false}
                         height={""}
-                        label={resData ? "Update" : "Add Customer"}
+                        label={resData ? "Update" : "Add Notification"}
                         onClick={handleSubmit(onSubmit)}
                     />
                 </Box>

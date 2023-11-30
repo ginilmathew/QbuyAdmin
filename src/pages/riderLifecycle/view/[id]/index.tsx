@@ -5,7 +5,7 @@ import { Box, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import React, { useState, useEffect, useCallback } from 'react'
 import { toast } from 'react-toastify'
-// import PickUp from '../../addPickAndDrop/PickUp'
+import RiderLifecycleForm from '@/Widgets/RiderLifecycle/RiderLifecycleForm'
 
 
 const PickUpAndDropView = () => {
@@ -18,8 +18,9 @@ console.log("vie pickup");
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
-            <CustomHeaderBack backlabel='View PickUp And Drops' />
-            {/* <PickUp view={id}/> */}
+            <CustomHeaderBack backlabel='View Rider Lifecycle' />
+            <RiderLifecycleForm view={id}/>
+
         </Box>
     )
 }
