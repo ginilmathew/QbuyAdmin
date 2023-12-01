@@ -3,8 +3,8 @@
 import { Router, useRouter } from 'next/router'
 import React, { useState, useTransition, useEffect, useCallback } from 'react'
 import dynamic from 'next/dynamic';
-import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { Box, Stack, Typography } from '@mui/material';
+import { GridCloseIcon, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { AppBar, Box, Button, Dialog, IconButton, Slide, Stack, Toolbar, Typography } from '@mui/material';
 
 const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
 const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
@@ -21,6 +21,17 @@ import Custombutton from '@/components/Custombutton';
 import AssignModal from '@/Widgets/Shippings/Modal/AssignModal';
 import RefundModal from '@/Widgets/Shippings/Modal/RefundModal';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
+import ShippingOrderForm from '@/Widgets/Shippings/ShippingOrderForm';
+import { TransitionProps } from '@mui/material/transitions';
+
+const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & {
+      children: React.ReactElement;
+    },
+    ref: React.Ref<unknown>,
+  ) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
 
 const fetcher = (url: any) => fetchData(url).then((res) => res);
 
@@ -33,8 +44,11 @@ const Shipments = () => {
     const [pending, startTransition] = useTransition();
     const [serachList, setSearchList] = useState<any>([]);
     const [open, setopen] = useState<any>(false)
+    const [editModal, setEditModal] = useState<any>(false)
+    const [viewModal, setViewModal] = useState<any>(false)
     const [franchiseData, setfranchiseData] = useState<any>('')
     const [refundModal, setreFundModal] = useState<any>(false)
+    const [id, setId] = useState<any>('')
 
     const { data, error, isLoading, mutate } = useSWR(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
 
@@ -47,11 +61,23 @@ const Shipments = () => {
     }, [data?.data?.data])
 
     const ShippmentView = (id: string) => {
-        router.push(`/shipments/view/${id}`)
+        setId(id)
+        setViewModal(true)
+        
+        //router.push(`/shipments/view/${id}`)
     }
 
     const ShippmentEdit = (id: string) => {
-        router.push(`/shipments/edit/${id}`)
+        setId(id)
+        setEditModal(true)
+        //router.push(`/shipments/edit/${id}`)
+    }
+
+
+    const closeEditModal = () => {
+        setEditModal(false);
+        setId(null)
+        mutate()
     }
 
     const openAssignModal = useCallback((row: any) => {
@@ -431,8 +457,52 @@ const Shipments = () => {
             />
             }
             {refundModal && <RefundModal open={refundModal} handleClose={handleCloseRefundModal} res={franchiseData} functioncall={handleCloseRefundModal} />}
-
-
+            <Dialog
+                fullScreen
+                open={viewModal}
+                onClose={()=> setViewModal(false)}
+                TransitionComponent={Transition}
+            >
+                <AppBar sx={{ position: 'relative' }}>
+                    <Toolbar>
+                        <IconButton
+                        edge="start"
+                        color="inherit"
+                        onClick={()=> setViewModal(false)}
+                        aria-label="close"
+                        >
+                        <GridCloseIcon />
+                        </IconButton>
+                        <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                        View Order
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <ShippingOrderForm view={id} />
+            </Dialog>
+            <Dialog
+                fullScreen
+                open={editModal}
+                onClose={closeEditModal}
+                TransitionComponent={Transition}
+            >
+                <AppBar sx={{ position: 'relative' }}>
+                    <Toolbar>
+                        <IconButton
+                        edge="start"
+                        color="inherit"
+                        onClick={closeEditModal}
+                        aria-label="close"
+                        >
+                        <GridCloseIcon />
+                        </IconButton>
+                        <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                        Edit Order
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <ShippingOrderForm res={id} onupdate={closeEditModal} />
+            </Dialog>
         </Box>
 
     )

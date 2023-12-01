@@ -249,17 +249,17 @@ const ProductForm = ({ res, view }: props) => {
             //     .matches(/^(\d+(\.\d*)?|\.\d+)$/, 'Only contain valid numerical values.')
             //     .nullable()
             regular_price: yup.string()
-                .test('is-greater-than-zero', 'Regular Price must be greater than 0', function (value) {
-                    // Check if regular_price is provided and greater than 0
-                    return !value || (parseFloat(value) > 0);
-                })
-                .nullable().transform((_, val) => val === Number(val) ? val : null),
-            commission: yup.string()
-                .test('is-greater-than-zero', 'commission must be greater than 0', function (value) {
-                    // Check if regular_price is provided and greater than 0
-                    return !value || (parseFloat(value) > 0);
-                })
-                .nullable().transform((_, val) => val === Number(val) ? val : null),
+        .test('is-greater-than-zero', 'Regular Price must be greater than 0', function (value) {
+            // Check if regular_price is provided and greater than 0
+            return !value || (parseFloat(value) > 0);
+        })
+        .nullable().transform((_, val) => val == Number(val) ? val : null),
+        commission: yup.string()
+        .test('is-greater-than-zero', 'commission must be greater than 0', function (value) {
+            // Check if regular_price is provided and greater than 0
+            return !value || (parseFloat(value) > 0);
+        })
+        .nullable().transform((_, val) => val == Number(val) ? val : null) ,
             //     .string()
             //     .required('Selling Price is Required')
             //     .test('is-greater-than-purchase', 'Selling Price should not be less than Purchase Price', function (value) {
@@ -1113,7 +1113,8 @@ const ProductForm = ({ res, view }: props) => {
 
 
 
-        //console.log({ data })
+        console.log({ data })
+        //return false;
         //Check All Attributes have values
         let attributeCheck = attributes?.find((att: any) => isEmpty(att?.name) || att?.options?.length === 0);
         // console.log({ attributeCheck, attributes })

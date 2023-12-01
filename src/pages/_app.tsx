@@ -12,10 +12,13 @@ import { useRouter } from 'next/router'
 import { Poppins } from 'next/font/google';
 import React, { useEffect } from 'react';
 import Router from 'next/router';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SessionProvider } from "next-auth/react"
 import type { NextComponentType } from 'next'
+import { getMessaging, onMessage } from 'firebase/messaging';
+import firebaseApp from '@/utilities/firebase/firebase';
+import useFcmToken from '@/utilities/hooks/useFcmToken';
 
 // import PushNotificationLayout from '@/components/PushNotificationLayout';
 // import VendorStatusProvider from '@/helpers/shippingStatus/VendorStatusContext';
@@ -50,6 +53,43 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 		};
 	}, []);
 
+	const { fcmToken,notificationPermissionStatus, retrieveToken } = useFcmToken();
+
+
+	console.log({fcmToken, notificationPermissionStatus})
+
+
+	useEffect(() => {
+		if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+		  const messaging = getMessaging(firebaseApp);
+		  const unsubscribe = onMessage(messaging, (payload) => {
+			console.log('Foreground push notification received:', payload);
+			const notificationOptions = {
+				body: payload?.notification?.body,
+				icon: 'images/panda.png',
+				sound:'default'
+			
+			  };
+			//new Notification(payload?.notification?.title, notificationOptions);
+			toast(({ closeToast }) => <div style={{ display: 'flex', flexDirection: 'column' }}>
+				<div style={{ fontSize: 16, color: 'black', fontWeight: 'bold' }}>{payload?.notification?.title}</div>
+				<div>{payload?.notification?.body}</div>
+
+			</div>);
+			// Handle the received push notification while the app is in the foreground
+			// You can display a notification or update the UI based on the payload
+		  });
+		  return () => {
+			unsubscribe(); // Unsubscribe from the onMessage event
+		  };
+		}
+	  }, []);
+
+	  const handleGetFirebaseToken = () => {
+		retrieveToken()
+	  };
+
+
 
 
 
@@ -60,6 +100,18 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 				<LinearProgress color="success" />
 			</Stack>
 		)}
+		{notificationPermissionStatus !== "granted" && (
+          <div className="notification-banner">
+            <span>The app needs permission to</span>
+            <a
+              href="#"
+              className="notification-banner-link"
+              onClick={handleGetFirebaseToken}
+            >
+              enable push notifications.
+            </a>
+          </div>
+        )}
 		<SessionProvider session={session}>
 			<UserProvider>
 					{Component.auth ? (
