@@ -68,13 +68,16 @@ const RiderLifecycleForm = ({ resData, view }: props) => {
         reset,
         setError,
         setValue,
-      } = useForm<FormData>({
+      } = useForm<IFormInput>({
         resolver: yupResolver(schema),
         defaultValues: {
-          reason: "",
-          status: "",
+            rider_id: "",
+            name: "",
+            mobile: "",
+            reason: "",
+            status: "",
         },
-      });
+    });
 
     const [loading, setLoading] = useState(false);
     const [selectedValue, setSelectedValue] = useState("");
