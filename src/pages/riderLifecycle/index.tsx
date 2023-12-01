@@ -150,7 +150,7 @@ const RiderLifecyle = () => {
     
     const searchProducts = useCallback((value: any) => {
         let results = data?.data?.data?.filter((com: any) =>
-        com?.rider_id.toString() === value ||
+        com?.rider_id.toString() === value || 
             com?.mobile.toString().includes(value) ||
             com?.name.toString().toLowerCase().includes(value.toLowerCase()) 
         );
@@ -159,6 +159,8 @@ const RiderLifecyle = () => {
             setreactLifceCycleList(results);
         });
     }, [data?.data?.data, startTransition]);
+   
+  
     
 
     if(isLoading){
