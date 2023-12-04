@@ -158,8 +158,8 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
 
 
-     
-    
+
+
 
 
     };
@@ -537,11 +537,6 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
         const { value } = e.target
 
         addressfromprevious[index][key] = value;
-
-
-
-
-
     }
 
 
@@ -565,7 +560,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
     console.log(addressfromprevious, "EDIT FINAL");
 
-    if (addressfromprevious?.length <= 0) {
+    if (addressfromprevious?.length <= 0 && customerList) {
         return (
             <div>Loading</div>
         )
@@ -691,20 +686,21 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                             onClick={addAddressSectionSingle}
                         />
                     </Box>
+                    {addressfromprevious?.[0]?.address_name &&
+                        <Grid container spacing={2}>
+                            {addressfromprevious?.length > 0 && addressfromprevious?.map((res: any, i: any) => (
 
-                    <Grid container spacing={2}>
-                        {addressfromprevious?.length > 0 && addressfromprevious?.map((addres: any, i: any) => (
-
-                            <>
-                                <Grid item xs={12} lg={3}>
-                                    {/* <CustomInput
+                                <>
+                                    <Grid item xs={12} lg={3}>
+                                        {/* <CustomInput
                                    key={i}
                                    type="text"
                                    control={control}
                                    error={errors.address_name}
                                    fieldName="address_name"
                                    placeholder={``}
-                                   Values={addres?.[i]?.address_name}
+
+                                   Values={res?.address_name}
                                    fieldLabel={"Address"}
                                    onChangeValue={(e: any) => allDetailsChange(e,i,'address_name')}
                                    disabled={false}
@@ -712,58 +708,58 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                                    defaultValue={''}
 
                                /> */}
-                                    <CustomInputNormal
-                                        value={addres?.[i]?.address_name}
-                                        disabled={false}
-                                        type="text"
-                                        error={errors.address_name}
-                                        fieldName='address_name'
-                                        placeholder={``}
-                                        onChangeValue={(e: any) => allDetailsChange(e, i, 'address_name')}
-                                        fieldLabel={'Address Name'}
-                                        view={view ? true : false}
-                                        defaultValue={addres?.[i]?.address_name}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} lg={3}>
+                                        <CustomInputNormal
+                                            value={res?.[i]?.address_name}
+                                            disabled={false}
+                                            type="text"
+                                            error={errors.address_name}
+                                            fieldName='address_name'
+                                            placeholder={``}
+                                            onChangeValue={(e: any) => allDetailsChange(e, i, 'address_name')}
+                                            fieldLabel={'Address Name'}
+                                            view={view ? true : false}
+                                            defaultValue={res?.address_name}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} lg={3}>
 
-                                    <CustomInputNormal
-                                        value={addres[i]?.pincode}
-                                        disabled={false}
-                                        type="text"
-                                        error={errors.pincode}
-                                        fieldName='pincode'
-                                        placeholder={``}
-                                        onChangeValue={(e: any) => allDetailsChange(e, i, 'pincode')}
-                                        fieldLabel={'Pincode'}
-                                        view={view ? true : false}
-                                        defaultValue={addres[i]?.pincode}
-                                    />
-                                </Grid>
-
-
-                                <Grid item xs={12} lg={3}>
-
-                                    <GoogleAutocomplete
-                                        apiKey={process.env.NEXT_PUBLIC_GOOGLEKEY}
-                                        style={{ width: "95%", height: '63%', marginTop: "23px", }}
-                                        onPlaceSelected={(e: any) => handlePlaceSelected(e, i, 'area')}
-                                        types={['(regions)']}
-                                        defaultValue={areaofcustomer?.address}
-                                        selectProps={{
-                                            value: areaofcustomer?.address,
-                                            onChange: (o: any) => {
+                                        <CustomInputNormal
+                                            value={res[i]?.pincode}
+                                            disabled={false}
+                                            type="text"
+                                            error={errors.pincode}
+                                            fieldName='pincode'
+                                            placeholder={``}
+                                            onChangeValue={(e: any) => allDetailsChange(e, i, 'pincode')}
+                                            fieldLabel={'Pincode'}
+                                            view={view ? true : false}
+                                            defaultValue={res[i]?.pincode}
+                                        />
+                                    </Grid>
 
 
-                                                let placeId = o["value"]["place_id"];
-                                                setareaofcustomer(o);
-                                                // formik.setFieldValue("googlePlaceId", placeId);
-                                            }
-                                        }}
-                                    />
-                                </Grid>
+                                    <Grid item xs={12} lg={3}>
 
-                                {/* <Grid item xs={12} lg={2}>  
+                                        <GoogleAutocomplete
+                                            apiKey={process.env.NEXT_PUBLIC_GOOGLEKEY}
+                                            style={{ width: "95%", height: '63%', marginTop: "23px", }}
+                                            onPlaceSelected={(e: any) => handlePlaceSelected(e, i, 'area')}
+                                            types={['(regions)']}
+                                            defaultValue={areaofcustomer?.address}
+                                            selectProps={{
+                                                value: areaofcustomer?.address,
+                                                onChange: (o: any) => {
+
+
+                                                    let placeId = o["value"]["place_id"];
+                                                    setareaofcustomer(o);
+                                                    // formik.setFieldValue("googlePlaceId", placeId);
+                                                }
+                                            }}
+                                        />
+                                    </Grid>
+
+                                    {/* <Grid item xs={12} lg={2}>  
             <CustomInput
                                    key={index}
                                    type="text"
@@ -780,76 +776,76 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                                />
                            </Grid> */}
 
-                                <Grid item xs={12} lg={3}>
+                                    <Grid item xs={12} lg={3}>
 
-                                    <CustomInputNormal
-                                        value={addres[i]?.address_mobile}
-                                        disabled={false}
-                                        type="text"
-                                        error={errors.address_mobile}
-                                        fieldName='address_mobile'
-                                        placeholder={``}
-                                        onChangeValue={(e: any) => allDetailsChange(e, i, 'address_mobile')}
-                                        fieldLabel={'Address Mobile'}
-                                        view={view ? true : false}
-                                        defaultValue={addres[i]?.address_mobile}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} lg={3}>
+                                        <CustomInputNormal
+                                            value={res[i]?.address_mobile}
+                                            disabled={false}
+                                            type="text"
+                                            error={errors.address_mobile}
+                                            fieldName='address_mobile'
+                                            placeholder={``}
+                                            onChangeValue={(e: any) => allDetailsChange(e, i, 'address_mobile')}
+                                            fieldLabel={'Address Mobile'}
+                                            view={view ? true : false}
+                                            defaultValue={res[i]?.address_mobile}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} lg={3}>
 
-                                    <CustomInputNormal
-                                        value={addres[i]?.comments}
-                                        disabled={false}
-                                        type="text"
-                                        error={errors.comments}
-                                        fieldName='comments'
-                                        placeholder={``}
-                                        onChangeValue={(e: any) => allDetailsChange(e, i, 'comments')}
-                                        fieldLabel={'Comments'}
-                                        view={view ? true : false}
-                                        defaultValue={addres[i]?.comments}
-                                    />
-                                </Grid>
+                                        <CustomInputNormal
+                                            value={res[i]?.comments}
+                                            disabled={false}
+                                            type="text"
+                                            error={errors.comments}
+                                            fieldName='comments'
+                                            placeholder={``}
+                                            onChangeValue={(e: any) => allDetailsChange(e, i, 'comments')}
+                                            fieldLabel={'Comments'}
+                                            view={view ? true : false}
+                                            defaultValue={res[i]?.comments}
+                                        />
+                                    </Grid>
 
-                                <Grid item lg={3} xs={12}>
-                                    <Customselect
-                                        disabled={view ? true : false}
-                                        type='text'
-                                        control={control}
-                                        error={errors.address_type}
-                                        fieldName="address_type"
-                                        placeholder={``}
-                                        fieldLabel={"Address Type"}
-                                        selectvalue={addres[i]?.address_type}
-                                        height={40}
-                                        label={''}
-                                        size={16}
-                                        value={addres[i]?.address_type}
-                                        options={''}
-                                        onChangeValue={(e: any) => allDetailsChange(e, i, 'address_type')}
-                                        background={'#fff'}
-                                    >
-                                        <MenuItem value="" disabled >
-                                            <em>Change Status</em>
-                                        </MenuItem>
-                                        {addressStatus.map((res: any) => (
-                                            <MenuItem value={res?.value}>{res?.name}</MenuItem>
-                                        ))}
-                                    </Customselect>
+                                    <Grid item lg={3} xs={12}>
+                                        <Customselect
+                                            disabled={view ? true : false}
+                                            type='text'
+                                            control={control}
+                                            error={errors.address_type}
+                                            fieldName="address_type"
+                                            placeholder={``}
+                                            fieldLabel={"Address Type"}
+                                            selectvalue={res[i]?.address_type}
+                                            height={40}
+                                            label={''}
+                                            size={16}
+                                            value={res[i]?.address_type}
+                                            options={''}
+                                            onChangeValue={(e: any) => allDetailsChange(e, i, 'address_type')}
+                                            background={'#fff'}
+                                        >
+                                            <MenuItem value="" disabled >
+                                                <em>Change Status</em>
+                                            </MenuItem>
+                                            {addressStatus.map((res: any) => (
+                                                <MenuItem value={res?.value}>{res?.name}</MenuItem>
+                                            ))}
+                                        </Customselect>
 
-                                </Grid>
-                                <Grid item xs={12} lg={3}>
-                                    <Typography mb={3}></Typography>
-                                    <CustomCheckBox
-                                        isChecked={addres[i]?.default_status}
-                                        label=""
-                                        onChange={(e: any) => CheckCustomerList(e, i, "default_status")}
-                                        title="Set As Default Address"
-                                    />
-                                </Grid>
-                            </>
-                        ))}
-                    </Grid>
+                                    </Grid>
+                                    <Grid item xs={12} lg={3}>
+                                        <Typography mb={3}></Typography>
+                                        <CustomCheckBox
+                                            isChecked={res[i]?.default_status}
+                                            label=""
+                                            onChange={(e: any) => CheckCustomerList(e, i, "default_status")}
+                                            title="Set As Default Address"
+                                        />
+                                    </Grid>
+                                </>
+                            ))}
+                        </Grid>}
                     {/* <div
                             style={{
                                 position: "relative",
