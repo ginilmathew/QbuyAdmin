@@ -18,7 +18,7 @@ import { SessionProvider } from "next-auth/react"
 import type { NextComponentType } from 'next'
 import { getMessaging, onMessage } from 'firebase/messaging';
 import firebaseApp from '@/utilities/firebase/firebase';
-import useFcmToken from '@/utilities/hooks/useFcmToken';
+// import useFcmToken from '@/utilities/hooks/useFcmToken';
 
 import PushNotificationLayout from '@/components/PushNotificationLayout';
 // import VendorStatusProvider from '@/helpers/shippingStatus/VendorStatusContext';
@@ -53,10 +53,10 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 		};
 	}, []);
 
-	const { fcmToken,notificationPermissionStatus, retrieveToken } = useFcmToken();
+	// const { fcmToken,notificationPermissionStatus, retrieveToken } = useFcmToken();
 
 
-	console.log({fcmToken, notificationPermissionStatus})
+	// console.log({fcmToken, notificationPermissionStatus})
 
 
 	useEffect(() => {
@@ -120,10 +120,10 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 						<ProtectedRoute>
 					
 								<UserProvider>
-									<PushNotificationLayout>
+									{/* <PushNotificationLayout> */}
 									<Header />
 									<Component {...pageProps} />
-									</PushNotificationLayout>
+									{/* </PushNotificationLayout> */}
 								</UserProvider>
 						
 						</ProtectedRoute>
