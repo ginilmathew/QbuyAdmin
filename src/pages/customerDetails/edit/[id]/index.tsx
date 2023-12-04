@@ -16,7 +16,7 @@ const CategoryEdit = () => {
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
-            <CustomHeaderBack backlabel='Edit Category' />
+            <CustomHeaderBack backlabel='Edit Customer' />
             <CustomerDetailsForm resData={id}/>
         </Box>
     )

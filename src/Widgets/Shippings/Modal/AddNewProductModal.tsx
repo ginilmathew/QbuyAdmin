@@ -15,9 +15,7 @@ import { fetchData, postData } from '@/CustomAxios';
 import CustomSingleSearch from '@/components/CustomSingleSearch';
 import { getProduct } from '../../../helpers/productHelper/productHelper';
 import { loadGetInitialProps } from 'next/dist/shared/lib/utils';
-
-
-
+import { log } from 'console';
 type props = {
     handleClose: any;
     open: boolean;
@@ -26,7 +24,7 @@ type props = {
     SetDeliveryCharge?: any,
     order_id: string,
     setStoreList: any
-
+    onApiSuccess: (AddedProduct: string) => void;
 
 }
 type Inputs = {
@@ -39,17 +37,10 @@ type Inputs = {
     seller: string | number;
     stock_value: any
     product_id: any;
-
-
-
 };
 
-const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id, setStoreList }: props) => {
-
-
-
-
-    const [productList, setProductList] = useState<any>([]);
+const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id, setStoreList ,onApiSuccess}: props) => {
+     const [productList, setProductList] = useState<any>([]);
     const [productListRes, setProductListRes] = useState<any>([]);
     const [franchise, setFranchise] = useState<any>([])
     const [vendor, setVendor] = useState<any>([]);
@@ -65,8 +56,9 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const [stockvl, setstockvl] = useState<any>(null)
 
 
+
     const schema = yup
-        .object()
+     .object()
         .shape({
 
         })
@@ -101,12 +93,9 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         setFranchiseSelect(e.target.value)
         setValue('franchisee', e.target.value)
         setError('franchisee', { message: '' })
-
         try {
             setLoading(true)
             const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
-            console.log(response);
-
             setVendor(response?.data?.data)
         } catch (err: any) {
             toast.error(err.message)
@@ -117,9 +106,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         }
 
     }
-
-
-
+ 
     const onSelectStore = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue("total", "")
         setValue("quantity", "")
@@ -133,8 +120,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                 name: get?.store_name,
                 category: get?.category_id
             }
-
-        ))
+         ))
         let vendorDetails = vendor?.filter((res: any) => res?._id === e.target.value);
         setVendorDetails(vendorDetails)
 
@@ -269,7 +255,8 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         }
     }
 
-
+    
+    
 
     const Submit = async (data: any) => {
         let quntityValidation = parseInt(data?.quantity)
@@ -317,13 +304,15 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                 return false;
             }
         }
+        console.log({selectProduct});
+        
 
         let value: any = {
-            image: selectProduct?.product_image,
-            name: selectProduct?.name,
-            price: data?.total,
+            image: selectProduct?.product_image,//
+            name: selectProduct?.name,//
+            price: data?.total,//
             product_id: selectProduct?._id,
-            quantity: data?.quantity,
+            quantity: data?.quantity,//
             seller_price: data?.seller,
             store_address: vendorDetails?.[0]?.store_address,
             store_name: vendorDetails?.[0]?.store_name,
@@ -334,10 +323,15 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             vendor_mobile: vendorDetails?.[0]?.vendor_mobile,
             title: null,
             stock_value: null,
-            deliveryPrice: null
+            deliveryPrice:selectProduct?.delivery,
+
+            
         }
+console.log(selectProduct?.delivery);
 
         if (selectProduct?.variant === true) {
+            console.log("hfhuuuuuuuuuu");
+            
             value['type'] = "variant";
             value['deliveryPrice'] = attributeSelect?.[0]?.delivery;
 
@@ -346,15 +340,23 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             value['variant_id'] = attributeSelect?.[0]?.id;
             value['stock_value'] = selectProduct.stock ? parseInt(attributeSelect?.[0]?.stockValue) + parseInt(attributeSelect?.[0]?.minQty) : null;
         } else {
+            console.log("kggggg");
+            
 
             // value['fixed_delivery_price'] = selectProduct?.delivery;
             value['type'] = "single";
             value['deliveryPrice'] = selectProduct?.delivery;
-            value['stock_value'] = selectProduct.stock ? selectProduct.stockValue + parseInt(selectProduct?.minQty) : null
+            value['stock_value'] =  selectProduct?.delivery;
         }
 
-        AllProducts.productDetails.push(value);
+if (AllProducts && AllProducts.productDetails) {
 
+  AllProducts.productDetails.push(value);
+} else {
+    AllProducts = AllProducts || {};
+ 
+  AllProducts.productDetails = [value];
+}        // setaddProductList((previous)=>[previous,value])
 
 
         // setVendorStatus(AllProducts.productDetails?.map((res: any) => ({ "vendor_id": null, "status": null})))
@@ -365,6 +367,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             return Math.max(highest, delivery.deliveryPrice);
         }, 0);
 
+        console.log({highestDelivery});
 
         SetDeliveryCharge(highestDelivery)
         // AllProducts['delivery_charge'] = allProduct?.delivery_charge;
@@ -372,22 +375,25 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         AllProducts['total_amount'] = parseInt(data?.total) + parseInt(allProduct?.total_amount);
         AllProducts['grand_total'] = (parseInt(data?.total) + parseInt(allProduct?.total_amount)) + parseInt(highestDelivery) + allProduct?.platform_charge;
 
-        if (Number.isNaN(AllProducts?.grand_total)) {
-            toast.warning('product not available');
-            return false;
-        }
-
+        // if (Number.isNaN(AllProducts?.grand_total)) {
+        //     toast.warning('product not available');
+        //     return false;
+        // }
 
 
 
         try {
             setLoading(true)
             let publishValue = {
-                id: order_id,
+                id: null,
                 productDetails: [...AllProducts.productDetails]
             }
-            await postData('admin/order/edit', publishValue);
-
+              
+           const response= await postData('admin/order/createproduct', publishValue);
+           const AddedProduct = response?.data?.data;
+           console.log({AddedProduct});
+           
+           onApiSuccess(AddedProduct);
             let find = publishValue?.productDetails?.map((res) => (res?.vendor?._id));
             setStoreList(find)
 
@@ -436,7 +442,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                             fontWeight: 'bold',
                             letterSpacing: 1,
                             fontFamily: `'Poppins' sans-serif`,
-                        }}>{'Add Product'}</Typography>
+                        }}>{'Add New Product'}</Typography>
                     </Box>
                     <Box onClick={handleClose}>
                         <Box
@@ -610,4 +616,4 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     )
 }
 
-export default AddProductModal
+export default AddNewProductModal
