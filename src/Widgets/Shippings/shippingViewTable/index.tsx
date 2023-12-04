@@ -16,28 +16,31 @@ import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
 import { fetchData, postData } from '@/CustomAxios';
 import { toast } from "react-toastify";
 import VendorStatusContext from '@/helpers/shippingStatus';
+import AddNewProductModal from '../Modal/AddNewProductModal';
 type props = {
     res: any,
     readonly: any,
     id: any,
     SetDeliveryCharge: any,
-    setStoreList: any
-
+    setStoreList: any,
+    onApiSuccess: (newAddedProduct: string) => void;
 }
 
 
-const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: props) => {
+const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList ,onApiSuccess}: props) => {
 
 
 
 
     const [modalOpen, setModalOpen] = useState(false);
+    const [addModalOpen, setaddModalOpen] = useState(false)
     const [modalDelete, setModalDelete] = useState(false);
     const [addOpen, setAddOpen] = useState(false);
     const [singleList, setSingleList] = useState([]);
     const [mode, setMode] = useState<any>(null)
     const [productList, setProductList] = useState<any>(null);
-
+    const [newAddedProduct, setnewAddedProduct] = useState<any>()
+    const [platFomCharge, setplatFomCharge] = useState<any>()
 
 
 
@@ -55,14 +58,43 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: p
 
 
     const handleOpenAddModal = useCallback(() => {
-        setAddOpen(true)
-    }, [addOpen])
+        if (res === null) {
+            setaddModalOpen(true);  
+        } else {
+            setAddOpen(true);  
+        }
+    }, [res]);
 
     const handleCloseAddModal = useCallback(() => {
-        setAddOpen(false)
-    }, [addOpen])
+        if (res === null) {
+            setaddModalOpen(false);
+        } else {
+            setAddOpen(false); 
+        }
+    }, [res]);
+
+    
+    useEffect(() => {
+        getPlatFormCharge()
+    }, [])
 
 
+    const getPlatFormCharge = async () => {
+     
+        try {
+            
+            const response = await fetchData('common/platformcharge')
+            let { data } = response?.data
+            console.log({data});
+            
+             setplatFomCharge(data?.platformCharge)
+
+        } catch (err) {
+            toast.error("cant't find platform charge")
+         
+
+        } 
+    }
 
     const handleOpenDeleteModal = useCallback(() => {
         setModalDelete(true)
@@ -72,10 +104,81 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: p
         setModalDelete(false)
     }, [modalDelete])
 
+    const handleApiSuccess = (AddedProduct: string) => {
+        setnewAddedProduct(AddedProduct)
+        console.log('API Success! Order ID:', AddedProduct);
+      };
 
 
     useEffect(() => {
-        if (res) {
+     
+        if (res===null && newAddedProduct  ){
+            onApiSuccess(newAddedProduct)
+    
+            console.log({newAddedProduct});
+            
+        
+            let pricedata = {
+                delivery_charge:parseInt(newAddedProduct?.delivery_charge),
+                grand_total: parseInt(newAddedProduct?.delivery_charge) + parseInt(newAddedProduct?.total_amount) + platFomCharge,
+                total_amount: parseInt(newAddedProduct?.total_amount),
+                platform_charge:  platFomCharge,
+            }
+            
+            
+                
+            let productDetails: any[] = newAddedProduct?.product_details?.productDetails?.map((itm: any) => ({
+                name: itm?.name,
+                price: itm?.price,
+                quantity: itm?.quantity,
+                unitPrice: itm?.unitPrice,
+                image: itm?.image,
+                type: itm?.type,
+                // variant_id: itm?.variant_id,
+                // product_id: itm?.product_id,
+                store_name: itm?.store_name,
+                store_address: itm?.store_address,
+                vendor: itm?.vendor,
+                deliveryPrice: itm?.deliveryPrice,
+                seller_price: itm?.seller_price,
+                stock_value: itm?.stock_value,
+                product_id: itm?.product_id,
+                vendor_mobile: itm?.vendor_mobile,
+                // seller_price: itm?.type === "single" ? itm?.productdata?.seller_price : itm?.variants?.seller_price,
+                // deliveryPrice: itm?.type === "single" ? itm?.deliveryPrice : itm?.variants?.fixed_delivery_price,
+                // fixed_delivery_price: itm?.type === "single" ? itm?.deliveryPrice : itm?.variants?.fixed_delivery_price,
+                // title: itm?.type === "single" ? null : itm?.variants?.title,
+                // stock_value: itm?.type === "single" ? (itm?.stock_value + parseFloat(itm?.quantity)) : (itm?.variants?.stock_value + parseFloat(itm?.quantity)),
+                // stock: itm?.type === "single" ? itm?.stock : itm?.variants?.stock,
+                // Add other properties as needed
+            }));
+    console.log({pricedata});
+    console.log({productDetails});
+    
+    
+            let Combine = {
+                 ...pricedata,
+                productDetails
+            }
+            setProductList(Combine);
+
+            
+            // const result = productDetails?.map((res: any) => res?.vendor)
+            // setVendorStatus(productDetails?.map((res: any) => ({ "vendor_id": "", "status": "" })))
+
+
+            // const uniqueArray = result.filter((obj, index, self) => {
+
+            //     return index === self.findIndex((o) => o._id === obj._id);
+            // });
+            // const uniqueNames = Array.from(new Set(result.map(res => res)));
+
+
+            let store = productDetails?.map((res: any) => (res?.vendor?._id));
+            setStoreList(store)
+
+        }
+        else if (res) {
             let pricedata = {
                 delivery_charge: parseInt(res?.delivery_charge),
                 grand_total: res?.grand_total,
@@ -109,6 +212,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: p
             let Combine = {
                 ...pricedata,
                 productDetails
+
             }
             setProductList(Combine);
             // const result = productDetails?.map((res: any) => res?.vendor)
@@ -127,9 +231,13 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: p
 
         }
 
+    }, [res,newAddedProduct])
 
-    }, [res])
-
+    useEffect(() => {
+      console.log(productList);
+      
+    }, [productList])
+    
 
 
 
@@ -137,8 +245,11 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: p
 
 
     const InitialPost = useCallback(async (data: any) => {
+      
+        console.log({data});
+        
         try {
-            await postData('admin/order/edit', data);
+            await postData('admin/order/edit', "hh");
         } catch (err) {
             let message = 'Unknown Error'
             if (err instanceof Error) message = err.message
@@ -148,16 +259,41 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: p
 
     }, [productList])
 
+ 
 
+   console.log({productList});
+
+ 
+ 
 
 
     useEffect(() => {
         if (productList) {
-            let value = {
-                id: id,
-                productDetails: [...productList.productDetails]
+            if(newAddedProduct){
+                console.log({newAddedProduct});
+                console.log({id});
+                
+                let value = {
+                    id: newAddedProduct?.product_details?._id,
+                    productDetails: [productList?.product_details?.productDetails],
+                    //  product_id:newAddedProduct?.product_details?._id
+                }
+                // InitialPost(value)
             }
-            InitialPost(value)
+            else{
+                console.log("syammmmmmmmmmm");
+             
+                
+                let value = {
+                    id: id,
+                  
+                    productDetails: [...productList.productDetails]
+                }
+                console.log({value});
+                InitialPost(value)
+            }
+          
+           
         }
 
     }, [productList])
@@ -256,7 +392,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: p
         <Box>
             <Box>
 
-                {readonly && <Box py={1} display={'flex'} justifyContent={'flex-end'}>
+                { <Box py={1} display={'flex'} justifyContent={'flex-end'}>
                     <Custombutton
                         btncolor=''
                         IconEnd={''}
@@ -278,9 +414,9 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: p
                             <TableCell align="center">Quantity</TableCell>
                             <TableCell align="center">Unit Price</TableCell>
                             <TableCell align="center">Total Price</TableCell>
-                            {readonly && <TableCell align="center"></TableCell>}
-                            {readonly && <TableCell align="center"></TableCell>}
-                            {readonly && <TableCell align="center"></TableCell>}
+                            { <TableCell align="center"></TableCell>}
+                            {<TableCell align="center"></TableCell>}
+                            { <TableCell align="center"></TableCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -298,14 +434,14 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: p
                                 <TableCell align="center">{row.quantity}</TableCell>
                                 <TableCell align="center">{(row?.unitPrice)}</TableCell>
                                 <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
-                                {readonly && <TableCell align="center"> <BorderColorTwoToneIcon
+                                { <TableCell align="center"> <BorderColorTwoToneIcon
                                     onClick={() => { handleOpen(row, 'product') }}
                                     style={{
                                         color: '#58D36E',
                                         cursor: 'pointer'
                                     }}
                                 /></TableCell>}
-                                {readonly && <TableCell > <DeleteOutlineTwoToneIcon
+                                { <TableCell > <DeleteOutlineTwoToneIcon
                                     onClick={() => { removeProduct(row) }}
                                     style={{
                                         color: 'red',
@@ -378,6 +514,19 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList }: p
                     open={addOpen}
                     handleClose={handleCloseAddModal}
                 />}
+                {addModalOpen &&
+                 <AddNewProductModal
+                 setStoreList={setStoreList}
+                 order_id={id}
+                 SetDeliveryCharge={SetDeliveryCharge}
+                 allProduct={productList}
+                 setaddProductList={setProductList}
+                 open={addModalOpen}
+                 onApiSuccess={handleApiSuccess} 
+                 handleClose={handleCloseAddModal}
+             />
+
+                }
 
         </Box>
     )
