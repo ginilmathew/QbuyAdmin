@@ -5,8 +5,8 @@ import { Controller } from "react-hook-form";
 import Select from '@mui/material/Select';
 import Autocomplete from '@mui/material/Autocomplete';
 type props = {
-    fieldName?:string,
-    control?:any,
+    fieldName:string,
+    control:any,
     fieldLabel?:string,
     error?:any,
     children?:any,
