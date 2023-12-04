@@ -114,12 +114,13 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
 
   const submitData = useCallback(async (formData: Inputs) => {
     let orderId = data?.reduce((acc: any, obj: any) => acc.concat(obj.order_id_array), []);
-    const amountValue = formData.amount || price?.toString();
+    //const amountValue = formData.amount || price?.toString();
+   
     let value = {
       order_ids: orderId,
       rider_id: id,
-      transaction_date: moment(time).format('YYYY-DD-MM'),
-      amount: amountValue,
+      transaction_date: moment(time).format('YYYY-MM-DD HH:mm A'),
+      amount: price?.toString(),
       payment_mode: paymentSelect,
       transaction_id: formData?.transaction_id,
 
