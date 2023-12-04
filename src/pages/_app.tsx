@@ -18,9 +18,9 @@ import { SessionProvider } from "next-auth/react"
 import type { NextComponentType } from 'next'
 import { getMessaging, onMessage } from 'firebase/messaging';
 import firebaseApp from '@/utilities/firebase/firebase';
-import useFcmToken from '@/utilities/hooks/useFcmToken';
+// import useFcmToken from '@/utilities/hooks/useFcmToken';
 
-// import PushNotificationLayout from '@/components/PushNotificationLayout';
+import PushNotificationLayout from '@/components/PushNotificationLayout';
 // import VendorStatusProvider from '@/helpers/shippingStatus/VendorStatusContext';
 
 const poppins = Poppins({
@@ -53,10 +53,10 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 		};
 	}, []);
 
-	const { fcmToken,notificationPermissionStatus, retrieveToken } = useFcmToken();
+	// const { fcmToken,notificationPermissionStatus, retrieveToken } = useFcmToken();
 
 
-	console.log({fcmToken, notificationPermissionStatus})
+	// console.log({fcmToken, notificationPermissionStatus})
 
 
 	useEffect(() => {
@@ -85,9 +85,9 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 		}
 	  }, []);
 
-	  const handleGetFirebaseToken = () => {
-		retrieveToken()
-	  };
+	//   const handleGetFirebaseToken = () => {
+	// 	retrieveToken()
+	//   };
 
 
 
@@ -100,7 +100,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 				<LinearProgress color="success" />
 			</Stack>
 		)}
-		{notificationPermissionStatus !== "granted" && (
+		{/* {notificationPermissionStatus !== "granted" && (
           <div className="notification-banner">
             <span>The app needs permission to</span>
             <a
@@ -111,7 +111,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
               enable push notifications.
             </a>
           </div>
-        )}
+        )} */}
 		<SessionProvider session={session}>
 			<UserProvider>
 					{Component.auth ? (

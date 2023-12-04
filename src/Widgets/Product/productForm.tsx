@@ -458,7 +458,7 @@ const ProductForm = ({ res, view }: props) => {
 
 
 
-    // console.log({ errors })
+
 
 
 
