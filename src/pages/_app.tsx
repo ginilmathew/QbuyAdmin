@@ -17,7 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { SessionProvider } from "next-auth/react"
 import type { NextComponentType } from 'next'
 
-// import PushNotificationLayout from '@/components/PushNotificationLayout';
+import PushNotificationLayout from '@/components/PushNotificationLayout';
 // import VendorStatusProvider from '@/helpers/shippingStatus/VendorStatusContext';
 
 const poppins = Poppins({
@@ -68,10 +68,10 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 						<ProtectedRoute>
 					
 								<UserProvider>
-									{/* <PushNotificationLayout> */}
+									<PushNotificationLayout>
 									<Header />
 									<Component {...pageProps} />
-									{/* </PushNotificationLayout> */}
+									</PushNotificationLayout>
 								</UserProvider>
 						
 						</ProtectedRoute>
