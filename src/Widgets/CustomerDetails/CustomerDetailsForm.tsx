@@ -716,7 +716,7 @@ console.log("ii");
 
                                /> */}
                                <CustomInputNormal
-                        value={addres?.[i]?.address_name}
+                        value={addres?.address_name}
                         disabled={false}
                        type="text"
                         error={errors.address_name}
@@ -725,7 +725,8 @@ console.log("ii");
                         onChangeValue={(e: any) => allDetailsChange(e,i,'address_name')}
                         fieldLabel={'Address Name'}
                         view={view ? true : false}
-                        defaultValue={addres?.[i]?.address_name}
+                        defaultValue={addres?.address_name}
+                        
                     />
                            </Grid>
                            <Grid item xs={12} lg={3}>
