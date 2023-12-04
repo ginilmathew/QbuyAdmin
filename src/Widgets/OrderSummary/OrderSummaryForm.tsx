@@ -46,6 +46,10 @@ type Inputs = {
     ridermobile: string;
     payment_type: string;
     payment_status: string;
+    created_time: string;
+    created_ontheway: string;
+    created_dropoff: string;
+    created_completed: string;
 };
 
 
@@ -61,6 +65,31 @@ interface Product {
     unitPrice: number;
     quantity: number;
 }
+
+interface VendorOrderLogEntry {
+    created_time: string;
+    order_id: string;
+    status: string;
+    updated_at: string;
+    vendor_id: string;
+
+}
+interface LogEntry {
+    created_ontheway: string;
+    order_id: string;
+    status: string;
+    updated_at: string;
+}
+interface OrderHistoryEntry {
+    created_completed: string;
+    order_history_id: number;
+    order_id: string;
+    status: string;
+    comments: string;
+
+}
+
+
 const OrderSummaryForm = ({ resData, view }: props) => {
     const idd = resData ? resData : view;
 
@@ -79,7 +108,10 @@ const OrderSummaryForm = ({ resData, view }: props) => {
     const [customerName, setCustomerName] = useState("");
     const [time, setTime] = useState<any>(null);
     const [orderHistory, setOrderHistory] = useState([]);
-
+    const [pendingOrderTime, setPendingOrderTime] = useState("");
+    const [onTheWayTime, setOnTheWayTime] = useState("");
+    const [onLocationTime, setOnLocationTime] = useState("");
+    const [completedTime, setCompletedTime] = useState("");
 
 
 
@@ -132,61 +164,105 @@ const OrderSummaryForm = ({ resData, view }: props) => {
             const response = await fetchData(`admin/order-summary/show/${idd}`);
             console.log(response.data.data);
             setSummaryList(response?.data?.data);
-        } catch (err: any) {
-            toast.error(err.message || "Error fetching data");
-        } finally {
-            setLoading(false);
-        }
-    };
+          
+            const vendorLog = response?.data?.data?.vendor_order_log;
+            if (vendorLog && vendorLog.length > 0) {
+                const pendingOrder = vendorLog.find((log: VendorOrderLogEntry) => log.status === "pending");
+                if (pendingOrder) {
+                    const timeOnly = moment(pendingOrder.created_at).format('hh:mm A');
 
-    useEffect(() => {
-        if (idd) {
-            orderview();
-        }
-    }, [idd]);
-
-    useEffect(() => {
-        if (summaryList) {
-            if (summaryList?.billaddress?.name) {
-                setValue('name', summaryList?.billaddress?.name);
-                setValue('mobile', summaryList?.billaddress?.mobile);
-                setValue('order_id', summaryList?.order_id);
-                setValue('created_at', summaryList?.created_at);
-                setValue('address', summaryList?.billaddress?.area?.address);
-                setValue('addresss', summaryList?.shipaddress?.area?.address);
-                setValue('comments', summaryList?.billaddress?.comments);
-                setValue('ridername', summaryList?.rider_each_order_settlement?.rider?.name)
-                setValue('ridermobile', summaryList?.rider_each_order_settlement?.rider?.mobile)
-                setValue('payment_type', summaryList?.payment_type)
-                setValue('payment_status', summaryList?.payment_status)
+                    setPendingOrderTime(timeOnly);
+                    setValue('created_time', timeOnly);
+                }
             }
-            if (summaryList.order_history) {
-                setOrderHistory(summaryList.order_history);
+                const riderOrderLog = response?.data?.data?.rider_order_log;
+                if (riderOrderLog && riderOrderLog.length > 0) {
+                    const onTheWayOrder = riderOrderLog.find((log: LogEntry) => log.status === "onTheWay");
+                    if (onTheWayOrder) {
+                        const timeOnly = moment(onTheWayOrder.created_at).format('hh:mm A');
+                        setOnTheWayTime(timeOnly);
+                        setValue('created_ontheway', timeOnly);
+                    }
+                }
+
+                if (riderOrderLog && riderOrderLog.length > 0) {
+                    const onLocationOrder = riderOrderLog.find((log: LogEntry) => log.status === "onLocation");
+                    if (onLocationOrder) {
+                        const timeOnly = moment(onLocationOrder.created_at).format('hh:mm A');
+                        setOnLocationTime(timeOnly);
+                        setValue('created_dropoff', timeOnly);
+                    }
+                }
+                const orderHistory = response?.data?.data?.order_history;
+                if (orderHistory && orderHistory.length > 0) {
+                    const completedOrder = orderHistory.find((entry: OrderHistoryEntry) => entry.status === "completed");
+                    if (completedOrder) {
+                        const timeOnly = moment(completedOrder.created_at).format('hh:mm A');
+                        setCompletedTime(timeOnly);
+                        setValue('created_completed', timeOnly);
+                    }
+                }
+
+            } catch (err: any) {
+                toast.error(err.message || "Error fetching data");
+            } finally {
+                setLoading(false);
             }
+        };
 
-        }
-    }, [summaryList, setValue]);
+        useEffect(() => {
+            if (idd) {
+                orderview();
+            }
+        }, [idd]);
+
+        useEffect(() => {
+            if (summaryList) {
+                if (summaryList?.billaddress?.name) {
+                    const formattedDate = moment(summaryList?.created_at).format('DD/MM/YYYY hh:mm A');
+                    setValue('name', summaryList?.billaddress?.name);
+                    setValue('mobile', summaryList?.billaddress?.mobile);
+                    setValue('order_id', summaryList?.order_id);
+                    // setValue('created_at', summaryList?.created_at);
+                    setValue('created_at', formattedDate);
+                    setValue('address', summaryList?.billaddress?.area?.address);
+                    setValue('addresss', summaryList?.shipaddress?.area?.address);
+                    setValue('comments', summaryList?.billaddress?.comments);
+                    setValue('ridername', summaryList?.rider_each_order_settlement?.rider?.name)
+                    setValue('ridermobile', summaryList?.rider_each_order_settlement?.rider?.mobile)
+                    setValue('payment_type', summaryList?.payment_type)
+                    setValue('payment_status', summaryList?.payment_status)
+                }
+                if (summaryList.order_history) {
+                    setOrderHistory(summaryList.order_history);
+                }
+
+            }
+        }, [summaryList, setValue]);
 
 
-    return (
-        <Box>
-            <CustomBox title="Customer Details">
-                <Grid container spacing={2}>
-                    <Grid item xs={12} lg={2}>
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={errors.name}
-                            fieldName="name"
-                            placeholder={``}
-                            fieldLabel={"Customer Name"}
-                            disabled={false}
-                            view={view ? true : false}
 
 
-                        />
-                    </Grid>
-                    {/* <Grid item xs={12} lg={2} >
+
+        return (
+            <Box>
+                <CustomBox title="Customer Details">
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} lg={2}>
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={errors.name}
+                                fieldName="name"
+                                placeholder={``}
+                                fieldLabel={"Customer Name"}
+                                disabled={false}
+                                view={view ? true : false}
+
+
+                            />
+                        </Grid>
+                        {/* <Grid item xs={12} lg={2} >
                         <CustomInput
                             type="text"
                             control={control}
@@ -199,201 +275,195 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                             defaultValue={""}
                         />
                     </Grid> */}
-                    <Grid item xs={12} lg={2} >
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="mobile"
-                            placeholder={``}
-                            fieldLabel={"Mobile Number"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={""}
-                        />
+                        <Grid item xs={12} lg={2} >
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="mobile"
+                                placeholder={``}
+                                fieldLabel={"Mobile Number"}
+                                disabled={false}
+                                view={view ? true : false}
+                                defaultValue={""}
+                            />
+                        </Grid>
+                        <Grid item xs={12} lg={2} >
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="description"
+                                placeholder={``}
+                                fieldLabel={"Customer Group"}
+                                disabled={false}
+                                view={view ? true : false}
+                                defaultValue={""}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} lg={2} >
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="description"
-                            placeholder={``}
-                            fieldLabel={"Customer Group"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={""}
-                        />
+                </CustomBox>
+
+                <CustomBox title="Order Details">
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} lg={2}>
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="order_id"
+                                placeholder={``}
+                                fieldLabel={"Order ID"}
+                                disabled={false}
+                                view={view ? true : false}
+
+                            />
+                        </Grid>
+                        <Grid item xs={12} lg={2}>
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="created_at"
+                                placeholder={``}
+                                fieldLabel="Ordered Date & Time"
+                                disabled={false}
+                                view={view ? true : false}
+
+                            />
+                        </Grid>
+
+
+
+                        <Grid item xs={12} lg={6} >
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="address"
+                                placeholder={``}
+                                fieldLabel={"Payment Address or Pickup Address"}
+                                disabled={false}
+                                view={view ? true : false}
+                                defaultValue={""}
+                            />
+                        </Grid>
+                        <Grid item xs={12} lg={6} >
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="addresss"
+                                placeholder={``}
+                                fieldLabel={"Shipping Address or Delivery Address"}
+                                disabled={false}
+                                view={view ? true : false}
+                                defaultValue={""}
+                            />
+                        </Grid>
                     </Grid>
-                </Grid>
-            </CustomBox>
+                </CustomBox>
+                <CustomBox title="">
 
-            <CustomBox title="Order Details">
-                <Grid container spacing={2}>
-                    <Grid item xs={12} lg={2}>
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="order_id"
-                            placeholder={``}
-                            fieldLabel={"Order ID"}
-                            disabled={false}
-                            view={view ? true : false}
-
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={2}>
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="created_at"
-                            placeholder={``}
-                            fieldLabel="Ordered Date & Time"
-                            disabled={false}
-                            view={view ? true : false}
-                            
-                        />
-                    </Grid>
-
-
-
-                    <Grid item xs={12} lg={6} >
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="address"
-                            placeholder={``}
-                            fieldLabel={"Payment Address or Pickup Address"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={""}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={6} >
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="addresss"
-                            placeholder={``}
-                            fieldLabel={"Shipping Address or Delivery Address"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={""}
-                        />
-                    </Grid>
-                </Grid>
-            </CustomBox>
-            <CustomBox title="">
-
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Product</TableCell>
-                                <TableCell align="center">Restuarant</TableCell>
-                                <TableCell align="center">Quantity</TableCell>
-                                <TableCell align="center">Unit Price</TableCell>
-                                <TableCell align="center">Total Price</TableCell>
-                            </TableRow>
-                        </TableHead>
-
-                        <TableBody>
-                            {summaryList.product_details ? (
-                                summaryList.product_details.map((product: Product, index: number) => (
-                                    <TableRow key={index}>
-                                        <TableCell component="th" scope="row">
-                                            {product.name}
-                                        </TableCell>
-                                        <TableCell align="center">{product.store_name}</TableCell>
-                                        <TableCell align="center">{product.quantity}</TableCell>
-                                        <TableCell align="center">{product.unitPrice}</TableCell>
-                                        <TableCell align="center">{product.quantity * product.unitPrice}</TableCell>
-                                    </TableRow>
-                                ))
-                            ) : (
+                    <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
                                 <TableRow>
-                                    <TableCell colSpan={5}>No product details available.</TableCell>
+                                    <TableCell>Product</TableCell>
+                                    <TableCell align="center">Restuarant</TableCell>
+                                    <TableCell align="center">Quantity</TableCell>
+                                    <TableCell align="center">Unit Price</TableCell>
+                                    <TableCell align="center">Total Price</TableCell>
                                 </TableRow>
-                            )}
+                            </TableHead>
 
-                            <TableRow >
-                                <TableCell rowSpan={5} />
-                                <TableCell colSpan={2}></TableCell>
-                                <TableCell align="right">Sub-Total</TableCell>
-                                <TableCell align="center">₹ {parseFloat(summaryList?.total_amount)?.toFixed(2)}</TableCell>
+                            <TableBody>
+                                {summaryList.product_details ? (
+                                    summaryList.product_details.map((product: Product, index: number) => (
+                                        <TableRow key={index}>
+                                            <TableCell component="th" scope="row">
+                                                {product.name}
+                                            </TableCell>
+                                            <TableCell align="center">{product.store_name}</TableCell>
+                                            <TableCell align="center">{product.quantity}</TableCell>
+                                            <TableCell align="center">{product.unitPrice}</TableCell>
+                                            <TableCell align="center">{product.quantity * product.unitPrice}</TableCell>
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={5}>No product details available.</TableCell>
+                                    </TableRow>
+                                )}
 
-                            </TableRow>
-                            {/* <TableRow >
-                                <TableCell rowSpan={5} />
-                                <TableCell colSpan={2}></TableCell>
-                                <TableCell align="right">Platform & Other Charges</TableCell>
-                                <TableCell align="center">₹ {parseFloat(summaryList?.platform_charge)?.toFixed(2)}</TableCell>
+                                <TableRow >
+                                    <TableCell rowSpan={5} />
+                                    <TableCell colSpan={2}></TableCell>
+                                    <TableCell align="right">Sub-Total</TableCell>
+                                    <TableCell align="center">₹ {parseFloat(summaryList?.total_amount)?.toFixed(2)}</TableCell>
 
-                            </TableRow>
-                            <TableRow >
-                                <TableCell rowSpan={5} />
-                                <TableCell colSpan={2}></TableCell>
-                                <TableCell align="right">Multi shop Pickup(No Extra cellers) </TableCell>
-                                <TableCell align="center">₹ {parseFloat(summaryList?.total_amount)?.toFixed(2)}</TableCell>
+                                </TableRow>
+                                 <TableRow >
+                                    <TableCell />
+                                    <TableCell></TableCell>
+                                    <TableCell align="right">Platform & Other Charges</TableCell>
+                                    <TableCell align="center">₹ {parseFloat(summaryList?.platform_charge)?.toFixed(2)}</TableCell>
 
-                            </TableRow>
-                            <TableRow >
-                                <TableCell rowSpan={5} />
-                                <TableCell colSpan={2}></TableCell>
-                                <TableCell align="right">Delivery Charge</TableCell>
-                                <TableCell align="center">₹ {parseFloat(summaryList?.delivery_charge)?.toFixed(2)}</TableCell>
+                                </TableRow>
+                               
+                                <TableRow >
+                                    <TableCell />
+                                    <TableCell ></TableCell>
+                                    <TableCell align="right">Delivery Charge</TableCell>
+                                    <TableCell align="center">₹ {parseFloat(summaryList?.delivery_charge)?.toFixed(2)}</TableCell>
 
-                            </TableRow>
-                            <TableRow >
-                                <TableCell rowSpan={5} />
-                                <TableCell colSpan={2}></TableCell>
-                                <TableCell align="right">Total</TableCell>
-                                <TableCell align="center">₹ {parseFloat(summaryList?.grand_total)?.toFixed(2)}</TableCell>
+                                </TableRow>
+                                <TableRow >
+                                    <TableCell/>
+                                    <TableCell></TableCell>
+                                    <TableCell align="right">Total</TableCell>
+                                    <TableCell align="center">₹ {parseFloat(summaryList?.grand_total)?.toFixed(2)}</TableCell>
 
-                            </TableRow> */}
-                        </TableBody>
+                                </TableRow> 
+                            </TableBody>
 
-                    </Table>
-                </TableContainer>
-            </CustomBox>
+                        </Table>
+                    </TableContainer>
+                </CustomBox>
 
-            <CustomBox title="">
-                <Grid container spacing={2}>
-                    <Grid item xs={12} lg={6}>
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="comments"
-                            placeholder={``}
-                            fieldLabel={"Customer Instructions"}
-                            disabled={false}
-                            view={view ? true : false}
+                <CustomBox title="">
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} lg={6}>
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="comments"
+                                placeholder={``}
+                                fieldLabel={"Customer Instructions"}
+                                disabled={false}
+                                view={view ? true : false}
 
-                        />
+                            />
+                        </Grid>
                     </Grid>
-                </Grid>
-            </CustomBox>
-            <CustomBox title="Rider Details">
-                <Grid container spacing={2}>
-                    <Grid item xs={12} lg={2}>
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="ridername"
-                            placeholder={``}
-                            fieldLabel={"Rider Name"}
-                            disabled={false}
-                            view={view ? true : false}
+                </CustomBox>
+                <CustomBox title="Rider Details">
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} lg={2}>
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="ridername"
+                                placeholder={``}
+                                fieldLabel={"Rider Name"}
+                                disabled={false}
+                                view={view ? true : false}
 
-                        />
-                    </Grid>
-                    {/* <Grid item xs={12} lg={2} >
+                            />
+                        </Grid>
+                        {/* <Grid item xs={12} lg={2} >
                         <CustomInput
                             type="text"
                             control={control}
@@ -406,20 +476,20 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                             defaultValue={""}
                         />
                     </Grid> */}
-                    <Grid item xs={12} lg={2} >
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="ridermobile"
-                            placeholder={``}
-                            fieldLabel={"Mobile Number"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={""}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={2} >
+                        <Grid item xs={12} lg={2} >
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="ridermobile"
+                                placeholder={``}
+                                fieldLabel={"Mobile Number"}
+                                disabled={false}
+                                view={view ? true : false}
+                                defaultValue={""}
+                            />
+                        </Grid>
+                        {/* <Grid item xs={12} lg={2} >
                         <CustomInput
                             type="text"
                             control={control}
@@ -431,107 +501,108 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                             view={view ? true : false}
                             defaultValue={""}
                         />
+                    </Grid> */}
                     </Grid>
-                </Grid>
-            </CustomBox>
-            <CustomBox title="Order Timings">
-                <Grid container spacing={2}>
-                    <Grid item xs={12} lg={2}>
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="title"
-                            placeholder={``}
-                            fieldLabel={"Store Accepted On"}
-                            disabled={false}
-                            view={view ? true : false}
+                </CustomBox>
+                <CustomBox title="Order Timings">
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} lg={2}>
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="created_time"
+                                placeholder={``}
+                                fieldLabel={"Store Accepted On"}
+                                disabled={false}
+                                view={view ? true : false}
 
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={2} >
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="description"
-                            placeholder={``}
-                            fieldLabel={"Reached Store"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={""}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={2} >
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="description"
-                            placeholder={``}
-                            fieldLabel={"Pickup Time"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={""}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={2} >
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="description"
-                            placeholder={``}
-                            fieldLabel={"Reached Dropoff"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={""}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={2} >
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="description"
-                            placeholder={``}
-                            fieldLabel={"Delivery Time"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={""}
-                        />
-                    </Grid>
-                </Grid>
-            </CustomBox>
-            <CustomBox title="Payment Details">
-                <Grid container spacing={2}>
-                    <Grid item xs={12} lg={2}>
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="payment_type"
-                            placeholder={``}
-                            fieldLabel={"Payment Method"}
-                            disabled={false}
-                            view={view ? true : false}
+                            />
 
-                        />
+                        </Grid>
+                        <Grid item xs={12} lg={2} >
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="created_ontheway"
+                                placeholder={``}
+                                fieldLabel={"Reached Store"}
+                                disabled={false}
+                                view={view ? true : false}
+
+                            />
+                        </Grid>
+                        <Grid item xs={12} lg={2} >
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="created_ontheway"
+                                placeholder={``}
+                                fieldLabel={"Pickup Time"}
+                                disabled={false}
+                                view={view ? true : false}
+                                defaultValue={""}
+                            />
+                        </Grid>
+                        <Grid item xs={12} lg={2} >
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="created_dropoff"
+                                placeholder={``}
+                                fieldLabel={"Reached Dropoff"}
+                                disabled={false}
+                                view={view ? true : false}
+                                defaultValue={onLocationTime}
+                            />
+                        </Grid>
+                        <Grid item xs={12} lg={2} >
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="created_completed"
+                                placeholder={``}
+                                fieldLabel={"Delivery Time"}
+                                disabled={false}
+                                view={view ? true : false}
+                                defaultValue={""}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} lg={2} >
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="payment_status"
-                            placeholder={``}
-                            fieldLabel={"Payment Status"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={""}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={2} >
+                </CustomBox>
+                <CustomBox title="Payment Details">
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} lg={2}>
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="payment_type"
+                                placeholder={``}
+                                fieldLabel={"Payment Method"}
+                                disabled={false}
+                                view={view ? true : false}
+
+                            />
+                        </Grid>
+                        <Grid item xs={12} lg={2} >
+                            <CustomInput
+                                type="text"
+                                control={control}
+                                error={''}
+                                fieldName="payment_status"
+                                placeholder={``}
+                                fieldLabel={"Payment Status"}
+                                disabled={false}
+                                view={view ? true : false}
+                                defaultValue={""}
+                            />
+                        </Grid>
+                        {/* <Grid item xs={12} lg={2} >
                         <CustomInput
                             type="text"
                             control={control}
@@ -556,10 +627,10 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                             view={view ? true : false}
                             defaultValue={""}
                         />
+                    </Grid> */}
                     </Grid>
-                </Grid>
-            </CustomBox>
-            <CustomBox title="Customer Feedbacks">
+                </CustomBox>
+                {/* <CustomBox title="Customer Feedbacks">
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2}>
                         <CustomInput
@@ -588,20 +659,20 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                         />
                     </Grid>
                 </Grid>
-            </CustomBox>
-            <CustomBox title="Order History">
-                <CustomTable
-                    dashboard={false}
-                    columns={columns}
-                    rows={orderHistory}
-                    id={"_id"}
-                    bg={"#ffff"}
-                    label='Recent Activity'
-                />
-            </CustomBox>
+            </CustomBox> */}
+                <CustomBox title="Order History">
+                    <CustomTable
+                        dashboard={false}
+                        columns={columns}
+                        rows={orderHistory}
+                        id={"_id"}
+                        bg={"#ffff"}
+                        label='Recent Activity'
+                    />
+                </CustomBox>
 
-        </Box>
-    );
-};
+            </Box>
+        );
+    };
 
-export default OrderSummaryForm;
+    export default OrderSummaryForm;

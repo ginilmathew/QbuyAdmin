@@ -34,7 +34,7 @@ const CustomInput = (
         defaultValue,
         onChangeValue,
         type,
-        Values
+        Values,
     }: props
 ) => {
     return (
