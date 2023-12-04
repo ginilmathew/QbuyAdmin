@@ -45,6 +45,9 @@ type IFormInput = {
 type FormData = {
     reason: string;
     status: string;
+    rider_id: string;
+    name: string;
+    mobile: string;
   };
 
 const RiderLifecycleForm = ({ resData, view }: props) => {
