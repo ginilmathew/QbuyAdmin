@@ -19,7 +19,7 @@ type props = {
     changeValue: (value: any) => void,
     values: any,
     disabled?: boolean
-
+    disablePast?: boolean
 }
 
 
@@ -31,6 +31,7 @@ const CustomDateTimePicker = ({
     values,
     disabled,
     changeValue,
+    disablePast
 }: props) => {
     const tomorrow = dayjs().add(1, 'day');
     return (
@@ -54,8 +55,9 @@ const CustomDateTimePicker = ({
                     render={({ field: { value, onChange, onBlur } }) => (
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                             <MobileDateTimePicker
-                                // disablePast={true}
-                                maxDate={moment()}
+                                //disablePast={disablePast}
+                                minDateTime={disablePast ? moment() : null}
+                                maxDateTime={disablePast ? null :moment()}
                                 views={['year', 'month', 'day', 'hours', 'minutes', 'seconds']}
                                 sx={{
                                     "& .MuiInputBase-input": {
@@ -64,6 +66,7 @@ const CustomDateTimePicker = ({
                                 }}
                                 value={values ? values : value}
                                 onChange={changeValue ? (e: any) => changeValue(e) : onChange}
+                                //onChange={(e: any) => console.log(e)}
                             />
 
 
