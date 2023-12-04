@@ -85,9 +85,9 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 		}
 	  }, []);
 
-	  const handleGetFirebaseToken = () => {
-		retrieveToken()
-	  };
+	//   const handleGetFirebaseToken = () => {
+	// 	retrieveToken()
+	//   };
 
 
 
@@ -100,7 +100,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 				<LinearProgress color="success" />
 			</Stack>
 		)}
-		{notificationPermissionStatus !== "granted" && (
+		{/* {notificationPermissionStatus !== "granted" && (
           <div className="notification-banner">
             <span>The app needs permission to</span>
             <a
@@ -111,7 +111,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
               enable push notifications.
             </a>
           </div>
-        )}
+        )} */}
 		<SessionProvider session={session}>
 			<UserProvider>
 					{Component.auth ? (
