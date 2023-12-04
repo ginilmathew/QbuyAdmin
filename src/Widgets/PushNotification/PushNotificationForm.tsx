@@ -496,8 +496,7 @@ const PushNotificationForm = ({ resData, view }: props) => {
                         />
                     </Grid>
                     <Grid item xs={12} lg={6} >
-                        <CustomInput
-                            type="text"
+                        <CustomTextarea
                             control={control}
                             error={errors.description}
                             fieldName="description"
@@ -508,7 +507,7 @@ const PushNotificationForm = ({ resData, view }: props) => {
                             defaultValue={""}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2}>
+                    <Grid item xs={12} lg={3}>
                         <CustomDateTimePicker
                             values={time} 
                             changeValue={(value: any) => OnChangeDate(value)}
@@ -565,7 +564,7 @@ const PushNotificationForm = ({ resData, view }: props) => {
                         </Customselect>
 
                     </Grid>
-                    <Grid item xs={12} lg={2}>
+                    <Grid item xs={12} lg={4}>
                         <CustomInput
                             type="text"
                             control={control}

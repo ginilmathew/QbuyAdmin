@@ -70,7 +70,7 @@ const RiderLifecycleForm = ({ resData, view }: props) => {
         reset,
         setError,
         setValue,
-      }  = useForm<IFormInput>({
+      } = useForm<IFormInput>({
         resolver: yupResolver(schema),
         defaultValues: {
             rider_id: "",
