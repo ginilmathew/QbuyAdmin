@@ -590,6 +590,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
         // setareaofcustomer(area)
         addressfromprevious[i][mode] = area;
 
+console.log({addressfromprevious});
 
 
 
@@ -632,7 +633,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     //         <div>Loading</div>
     //     )
     // }
-    console.log({addressfromprevious});
+    console.log(areaofcustomer?.address);
     
     return (
         <Box>
@@ -890,7 +891,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                                         height={40}
                                         label={''}
                                         size={16}
-                                        value={addres[0]?.address_type}
+                                        value={addres[i]?.address_type}
                                         options={''}
                                         onChangeValue={(e: any) => allDetailsChange(e, i, 'address_type')}
                                         background={'#fff'}
@@ -932,7 +933,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     ) : ( */}
          
    
-         {view ? null : (
+         {resData && (
                                     <Custombutton
                                         btncolor=""
                                         IconEnd={""}
