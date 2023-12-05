@@ -25,12 +25,12 @@ const ordersummarylist = () => {
     const [pending, startTransition] = useTransition();
     const [_id, set_id] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);
+    const [searchList, setSearchList] = useState([]);
 
 
     useEffect(() => {
         if (data?.data?.data) {
             setSummaryData(data?.data?.data);
-            console.log("Summary Data:", data?.data?.data);
         }
     }, [data?.data?.data]);
 
@@ -130,24 +130,29 @@ const ordersummarylist = () => {
     ];
 
     
+    const rows = [];
+
+    
     const searchProducts = useCallback((value: any) => {
         let Results = data?.data?.data?.filter((com: any) =>
             (com?.order_id?.toString() || '').includes(value) ||
-            (com?.rider_mobile?.toString() || '').includes(value) ||
-            (com?.rider_name?.toLowerCase() || '').includes(value.toLowerCase())
+            (com?.rider_name?.toString().toLowerCase() || '').includes(value.toLowerCase()) ||
+            (com?.rider_mobile?.toString() || '').includes(value)
+            
         );
     
         startTransition(() => {
             setSummaryData(Results);
         });
     }, [summaryData]);
+
     
     if (isLoading) {
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Orders Summary' onClick={[]} />
+                <CustomTableHeader setState={searchProducts} addbtn={false} imprtBtn={false} Headerlabel='Orders Summary' onClick={[]} />
                 <Box py={5}>
-                    <CustomTable dashboard={false} columns={[]} rows={[]} loading={true} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={[]} loading={true} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
         </Box>
