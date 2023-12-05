@@ -26,14 +26,14 @@ import { log } from "console";
 
 type Inputs = {
     name: any;
-    mobile: any;
+    address_mobile: any;
     email: any;
     customer_group_id: string;
     customer_block_status: boolean;
     address_name: string;
 
     comments: string;
-    address_mobile: string;
+    mobile: string;
     pincode: string,
     address_type: string,
 };
@@ -60,13 +60,13 @@ type CustomerGroup = {
 type IFormInput = {
     name: any;
     email: any;
-    mobile: any;
+    address_mobile: any;
     customer_group_id: string;
     customer_block_status: boolean;
     address_name: any;
     address_type: any;
     comments: any;
-    address_mobile: any;
+    mobile: any;
     pincode: any
 };
 const CustomerDetailsForm = ({ resData, view }: props) => {
@@ -111,7 +111,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
             address_name: resData?.address_name || "",
             address_type: resData?.address_type || "",
             comments: resData?.comments || "",
-            address_mobile: resData?.address_mobile || "",
+            address_mobile: resData?.mobile || "",
             pincode: resData?.pincode || "",
         },
     });
@@ -192,11 +192,12 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
             address_type: null,
             pincode: null,
             Apikey: false,
+            areaObject:null
 
             // id:itm?._id,
             // address_name:itm?.name,
             //   area:itm?.area,
-            //   address_mobile:itm?.mobile,
+            //   mobile:itm?.mobile,
             //   address_type:itm?.address_type,
             //   pincode:itm?.pincode,
             //   Apikey:true,
@@ -273,7 +274,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
             const values = {
                 name: data?.name,
-                mobile: data?.mobile,
+                address_mobile: data?.address_mobile,
                 email: data?.email,
                 customer_group_id: data.customer_group_id,
                 customer_block_status: data.customer_block_status,
@@ -281,13 +282,17 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
                 address_name: addressfromprevious[0]?.address_name,
                 comments: addressfromprevious[0]?.comments,
-                address_mobile: addressfromprevious[0]?.address_mobile,
+                mobile: addressfromprevious[0]?.mobile,
                 pincode: addressfromprevious[0]?.pincode,
                 address_type: addressfromprevious[0]?.address_type,
                 default_status: addressfromprevious[0]?.default_status,
                 area: addressfromprevious[0]?.area,
+                
 
             }
+
+console.log({values});
+console.log({addressfromprevious});
 
 
 
@@ -456,10 +461,11 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                 },
                 name: data?.name,
                 email: data?.email,
-                mobile: data?.mobile,
+                address_mobile: data?.address_mobile,
                 customer_group_id: data.customer_group_id,
                 customer_block_status: data.customer_block_status,
-                customer_id: customerList?._id
+                customer_id: customerList?._id,
+                areaObject:data?.area
             }
 
             const response = await postData(
@@ -518,13 +524,13 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                     id: itm?._id,
                     address_name: itm?.name,
                     area: itm?.area,
-                    address_mobile: itm?.mobile,
+                    mobile: itm?.mobile,
                     address_type: itm?.address_type,
                     pincode: itm?.pincode,
                     Apikey: true,
                     comments: itm?.comments,
                     default_status: itm?.default_status,
-
+                    areaObject:itm?.area
 
                 }
             )
@@ -548,7 +554,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
         if (customerList && idd) {
             setValue("name", customerList?.users?.name);
-            setValue("mobile", customerList?.users?.mobile);
+            setValue("address_mobile", customerList?.users?.mobile);
             setValue("email", customerList?.users?.email);
 
             if (customerList?.customer_group_id) {
@@ -589,6 +595,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
         }
         // setareaofcustomer(area)
         addressfromprevious[i][mode] = area;
+        addressfromprevious[i]["areaObject"]=place
 
 console.log({addressfromprevious});
 
@@ -597,12 +604,14 @@ console.log({addressfromprevious});
     };
     const allDetailsChange = (e: any, index: any, key: any) => {
 
+
         const { value } = e.target
 
         addressfromprevious[index][key] = value;
 
 
-
+ console.log({addressfromprevious});
+ 
 
 
     }
@@ -633,7 +642,7 @@ console.log({addressfromprevious});
     //         <div>Loading</div>
     //     )
     // }
-    console.log(areaofcustomer?.address);
+    console.log({addressfromprevious});
     
     return (
         <Box>
@@ -656,8 +665,8 @@ console.log({addressfromprevious});
                         <CustomInput
                             type="text"
                             control={control}
-                            error={errors.mobile}
-                            fieldName="mobile"
+                            error={errors.address_mobile}
+                            fieldName="address_mobile"
                             placeholder={``}
                             fieldLabel={"Mobile Number"}
                             disabled={false}
@@ -690,6 +699,7 @@ console.log({addressfromprevious});
                             selectvalue={selectedValue}
                             height={40}
                             label={""}
+                            defaultValue={""}
                             size={16}
                             value={selectedValue}
                             onChangeValue={onChangeSelect}
@@ -732,18 +742,7 @@ console.log({addressfromprevious});
 
                 </Grid>
             </CustomBox>
-
-
-            <CustomBox
-                title={"Address Details"}
-
-            >
-                <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                >
-                    {customerList&& !view ?"": <Box>
+            {addressfromprevious.length  ? "": <Box style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '15px' ,paddingTop:'10px'}}>
 
 <Custombutton
     btncolor=""
@@ -757,12 +756,24 @@ console.log({addressfromprevious});
 />
 </Box>
                     }
+  {addressfromprevious?.length > 0 && addressfromprevious?.map((addres: any, i: any) => (
+
+<>
+     
+            <CustomBox
+                title={"Address Details"}
+
+            >
+           <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
+                 
                    
 
                     <Grid container spacing={2}>
-                        {addressfromprevious?.length > 0 && addressfromprevious?.map((addres: any, i: any) => (
-
-                            <>
+                      
                                 <Grid item xs={12} lg={3}>
                                     {/* <CustomInput
                                    key={i}
@@ -850,16 +861,16 @@ console.log({addressfromprevious});
                                 <Grid item xs={12} lg={3}>
 
                                     <CustomInputNormal
-                                        value={addres[i]?.address_mobile}
+                                        value={addres[i]?.mobile}
                                         disabled={false}
                                         type="text"
-                                        error={errors.address_mobile}
-                                        fieldName='address_mobile'
+                                        error={errors.mobile}
+                                        fieldName='mobile'
                                         placeholder={``}
-                                        onChangeValue={(e: any) => allDetailsChange(e, i, 'address_mobile')}
+                                        onChangeValue={(e: any) => allDetailsChange(e, i, 'mobile')}
                                         fieldLabel={'Address Mobile'}
                                         view={view ? true : false}
-                                        defaultValue={addres?.address_mobile}
+                                        defaultValue={addres?.mobile}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={3}>
@@ -890,6 +901,7 @@ console.log({addressfromprevious});
                                         selectvalue={addres?.address_type}
                                         height={40}
                                         label={''}
+                                        defaultValue={addres?.address_type}
                                         size={16}
                                         value={addres[i]?.address_type}
                                         options={''}
@@ -933,19 +945,23 @@ console.log({addressfromprevious});
     ) : ( */}
          
    
-         {resData && (
-                                    <Custombutton
-                                        btncolor=""
-                                        IconEnd={""}
-                                        IconStart={""}
-                                        endIcon={false}
-                                        startIcon={false}
-                                        height={"30px"}
-                                        label={"Add More"}
-                                        onClick={addAddressSection}
-                                    />
-                                )}
-        
+       
+         {i > 0 ? (
+       null
+    ) : (
+        resData && ( 
+            <Custombutton
+            btncolor=""
+            IconEnd={""}
+            IconStart={""}
+            endIcon={false}
+            startIcon={false}
+            height={"30px"}
+            label={"Add More"}
+            onClick={addAddressSection}
+        />
+        )
+    )}
     
                         </div>
                         {i > 0 ? (
@@ -973,16 +989,17 @@ console.log({addressfromprevious});
             />
         )
     )}
-                            </>
-                            
-                        ))}
+                       
                     </Grid>
                   
 
 
                 </Box>
+                
             </CustomBox>
-
+     </>
+                            
+     ))}
 
             {!view && !resData && (
                 <Box py={3}>
