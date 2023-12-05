@@ -437,7 +437,7 @@ console.log(productList);
                                 <TableCell align="center">{row.quantity}</TableCell>
                                 <TableCell align="center">{(row?.unitPrice)}</TableCell>
                                 <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
-                                 {row.isNewlyAdded && (
+                                 {/* {row.isNewlyAdded && ( */}
                 <>
                    <TableCell align="center"> <BorderColorTwoToneIcon
                                     onClick={() => { handleOpen(row, 'product') }}
@@ -454,7 +454,7 @@ console.log(productList);
                                     }}
                                 /></TableCell>
                 </>
-         )}
+         {/* )} */}
                                  
 
                             </TableRow>
