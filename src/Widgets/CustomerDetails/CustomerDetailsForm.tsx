@@ -22,6 +22,7 @@ import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
 import Icon from '@mui/material/Icon';
 import { CheckBox, Style } from "@mui/icons-material";
 import CustomInputNormal from "@/components/CustomInputNormal";
+import { log } from "console";
 
 type Inputs = {
     name: any;
@@ -69,7 +70,7 @@ type IFormInput = {
     pincode: any
 };
 const CustomerDetailsForm = ({ resData, view }: props) => {
-    console.log({ resData }, 'kkk')
+  
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const idd = resData ? resData : view;
     const schema = yup.object().shape({
@@ -128,12 +129,13 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     const [customerGroupOptions, setCustomerGroupOptions] = useState<
         CustomerGroup[]
     >([]);
+    const [value, setvalue] = useState<any>({})
     const [selectedValue, setSelectedValue] = useState("");
     const [customerView, setCustomerView] = useState<any>(null);
     const [customerBlock, setCustomerBlock] = useState<boolean>(false);
     const [customerAddress, setCustomerAddress] = useState<boolean>(false);
     const [customerList, setCustomerList] = useState<any>(null);
-    console.log({ customerList }, 'll')
+   
     const [userid, setuserid] = useState<any>("")
     const [customer_id, setcustomer_id] = useState<any>("")
     const [areaofcustomer, setareaofcustomer] = useState<any>({})
@@ -219,7 +221,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
         try {
             const response = await fetchData("/admin/customer-group");
             const customerGroupData = response.data.data;
-            console.log("API Response:", customerGroupData);
+   
             setCustomerGroupOptions(customerGroupData);
         } catch (error) {
             console.error("Failed to fetch customer groups:", error);
@@ -246,13 +248,14 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
         fetchCustomerGroupOptions();
         getCategoryList();
     }, []);
+    
 
     const onSubmit = async (data: any) => {
         setLoading(true);
-        console.log({ areaofcustomer });
+      
 
         try {
-            console.log({ data });
+            
             data.customer_group_id = selectedValue;
 
 
@@ -260,10 +263,10 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
             // const URL_EDIT = "/admin/customer-details/update";
             const formData = new FormData();
             // const addresses = [];
-            console.log("kk");
+      
 
             // console.log(...addressfromprevious[0],'TEXT')
-            console.log("ii");
+     
 
 
 
@@ -288,9 +291,6 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
 
 
-            console.log({ values });
-
-
             const response = await postData(
                 `/admin/customer-details/create`, values
 
@@ -303,8 +303,9 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                         : "Customer created successfully"
                 );
                 reset();
+             
 
-                // router.push("/customerDetails");
+                router.push("/customerDetails");
             } else {
                 toast.error("Failed");
             }
@@ -317,40 +318,35 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
         }
     };
     const onSubmitAddress = async (data: any) => {
+
+    const result = {...data}
+     delete result?.customer_address?.Apikey
+    // delete result?.customer_address[0]?.created_at
+    // delete result?.customer_address[0]?.customer_address_id
+    // delete result?.customer_address[0]?.updated_at
+    // delete result?.customer_address[0]?.status
+    // delete result?.customer_address[0]?.default
+
+    result.default_status= 1
+    // result.id = "iuhiuhiu";
+    console.log({result})
         setLoading(true);
 
+
+
         try {
-            console.log({ data });
-            data.customer_group_id = selectedValue;
-
-            const URL_CREATE = "/admin/customer-details/create";
+    
+            // data.customer_group_id = selectedValue;
+          
+            
+  
+           
             const URL_EDIT = "/admin/customer-details/update-address";
-            // const formData = new FormData();
-            // if (idd) {
-            //     formData.append("id", customerList?._id);
-            // }
-            console.log({ customerList });
-
-            const values = {
-                if(idd: any) {
-
-                    const id = customerList?._id
-                },
-                address_name: data?.address_name,
-                comments: data?.comments,
-                mobile: data?.address_mobile,
-                pincode: data?.pincode,
-                address_type: statusSelect ? statusSelect : "",
-                default_status: customerAddress ? 1 : 0,
-
-                id: customer_id,
-                user_id: userid,
-                area: areaofcustomer
-            }
+            
 
             const response = await postData(
-                idd ? URL_EDIT : URL_CREATE,
-                values
+                URL_EDIT ,
+                result
             );
 
             if (response.status === 201 || response.status === 200) {
@@ -374,13 +370,79 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
             setLoading(false);
         }
     };
+
+    const onSubmitAddresscreate = async (data: any) => {
+    console.log({customerList});
+
+        const result = {...data}
+         delete result?.Apikey
+
+          delete result?.customer_address?.id
+          
+        // delete result?.customer_address[0]?.customer_address_id
+        // delete result?.customer_address[0]?.updated_at
+        // delete result?.customer_address[0]?.status
+        // delete result?.customer_address[0]?.default
+         
+        result.default_status=1
+        result.user_id= customerList?.customer_address[0]?.user_id
+        // result.id = "iuhiuhiu";
+        console.log({result})
+            setLoading(true);
+    
+    
+    
+            try {
+        
+                data.customer_group_id = selectedValue;
+                console.log({addressfromprevious});
+                
+                console.log( addressfromprevious?.name);
+                
+      
+                const URL_CREATE = "/admin/customer-details/create-address";
+                const URL_EDIT = "/admin/customer-details/update-address";
+           
+            
+                
+    
+                const response = await postData(
+                     URL_CREATE,
+                    result
+                );
+    
+                if (response.status === 201 || response.status === 200) {
+                    toast.success(
+                        idd
+                            ? "Customer updated successfully"
+                            : "Customer created successfully"
+                    );
+                    reset();
+    
+                    router.push("/customerDetails");
+                } else {
+                    toast.error("Failed");
+                }
+            } catch (error) {
+                toast.error(
+                    "An error occurred while creating/updating the customer"
+                );
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+
+
+
     const onSubmitCustomerBasicDetails = async (data: any) => {
         setLoading(true);
 
         try {
-            console.log({ data });
+           
             data.customer_group_id = selectedValue;
-            console.log(customerAddress, "kk");
+          
 
             const URL_CREATE = "admin/customer-details/update";
             // const URL_EDIT = "/admin/customer-details/update";
@@ -433,7 +495,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
             const response = await fetchData(
                 `admin/customer-details/show/${idd}`
             );
-            console.log(response.data.data);
+        
             reset(response?.data?.data);
             setCustomerList(response?.data?.data);
         } catch (err: any) {
@@ -477,12 +539,12 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
     const ChangeStatus = useCallback((e: any) => {
         const { value } = e.target;
-        console.log({ value });
+   
 
         setStatusSelect(value)
     }, [])
     useEffect(() => {
-        console.log(customerList);
+        
 
         if (customerList && idd) {
             setValue("name", customerList?.users?.name);
@@ -514,7 +576,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     const handleAreaChange = (e: any) => {
         const value = e.target.value;
         setArea(e.target.value)
-        console.log({ area });
+      
 
     }
     const handlePlaceSelected = (place: any, i: any, mode: any) => {
@@ -563,13 +625,15 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
         setaddressfromprevious([variable])
     };
 
-    console.log(addressfromprevious, "EDIT FINAL");
 
-    if (addressfromprevious?.length <= 0) {
-        return (
-            <div>Loading</div>
-        )
-    }
+
+    // if (addressfromprevious?.length <= 0) {
+    //     return (
+    //         <div>Loading</div>
+    //     )
+    // }
+    console.log({addressfromprevious});
+    
     return (
         <Box>
             <CustomBox title="Basic Details">
@@ -678,19 +742,21 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <Box>
+                    {customerList&& !view ?"": <Box>
 
-                        <Custombutton
-                            btncolor=""
-                            IconEnd={""}
-                            IconStart={""}
-                            endIcon={false}
-                            startIcon={false}
-                            height={"30px"}
-                            label={"Add"}
-                            onClick={addAddressSectionSingle}
-                        />
-                    </Box>
+<Custombutton
+    btncolor=""
+    IconEnd={""}
+    IconStart={""}
+    endIcon={false}
+    startIcon={false}
+    height={"30px"}
+    label={"Add"}
+    onClick={addAddressSectionSingle}
+/>
+</Box>
+                    }
+                   
 
                     <Grid container spacing={2}>
                         {addressfromprevious?.length > 0 && addressfromprevious?.map((addres: any, i: any) => (
@@ -722,7 +788,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                                         onChangeValue={(e: any) => allDetailsChange(e, i, 'address_name')}
                                         fieldLabel={'Address Name'}
                                         view={view ? true : false}
-                                        defaultValue={addres?.[i]?.address_name}
+                                        defaultValue={addres?.address_name}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={3}>
@@ -737,7 +803,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                                         onChangeValue={(e: any) => allDetailsChange(e, i, 'pincode')}
                                         fieldLabel={'Pincode'}
                                         view={view ? true : false}
-                                        defaultValue={addres[i]?.pincode}
+                                        defaultValue={addres?.pincode}
                                     />
                                 </Grid>
 
@@ -751,7 +817,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                                         types={['(regions)']}
                                         defaultValue={areaofcustomer?.address}
                                         selectProps={{
-                                            value: areaofcustomer?.address,
+                                            value:areaofcustomer?.address,
                                             onChange: (o: any) => {
 
 
@@ -792,7 +858,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                                         onChangeValue={(e: any) => allDetailsChange(e, i, 'address_mobile')}
                                         fieldLabel={'Address Mobile'}
                                         view={view ? true : false}
-                                        defaultValue={addres[i]?.address_mobile}
+                                        defaultValue={addres?.address_mobile}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={3}>
@@ -807,7 +873,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                                         onChangeValue={(e: any) => allDetailsChange(e, i, 'comments')}
                                         fieldLabel={'Comments'}
                                         view={view ? true : false}
-                                        defaultValue={addres[i]?.comments}
+                                        defaultValue={addres?.comments}
                                     />
                                 </Grid>
 
@@ -820,11 +886,11 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                                         fieldName="address_type"
                                         placeholder={``}
                                         fieldLabel={"Address Type"}
-                                        selectvalue={addres[i]?.address_type}
+                                        selectvalue={addres?.address_type}
                                         height={40}
                                         label={''}
                                         size={16}
-                                        value={addres[i]?.address_type}
+                                        value={addres[0]?.address_type}
                                         options={''}
                                         onChangeValue={(e: any) => allDetailsChange(e, i, 'address_type')}
                                         background={'#fff'}
@@ -841,46 +907,45 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                                 <Grid item xs={12} lg={3}>
                                     <Typography mb={3}></Typography>
                                     <CustomCheckBox
-                                        isChecked={addres[i]?.default_status}
+                                        isChecked={addres?.default}
                                         label=""
                                         onChange={(e: any) => CheckCustomerList(e, i, "default_status")}
                                         title="Set As Default Address"
                                     />
                                 </Grid>
-                            </>
-                        ))}
-                    </Grid>
-                    {/* <div
+                                <div
                             style={{
                                 position: "relative",
-                                top: "-93px",
+                                top: "-110px",
                                 width: "124px",
                                 height: "36px",
                             }}
-                        > */}
-
-                    {/*       
+                        >
+                             {/* {i > 0 ? (
+      
         <DeleteOutlineTwoToneIcon
-        onClick={() => deleteAddressSection()}
+        onClick={() => deleteAddressSection(i)}
                         style={{
                             color: 'red',
                             cursor: 'pointer'
                         }} />
-    ) : (
-        resData && ( 
+    ) : ( */}
+         
    
-            <Custombutton
-                btncolor=""
-                IconEnd={""}
-                IconStart={""}
-                endIcon={false}
-                startIcon={false}
-                height={"30px"}
-                label={"Add More"}
-                onClick={addAddressSection}
-            />
-        )
-    )}
+         {view ? null : (
+                                    <Custombutton
+                                        btncolor=""
+                                        IconEnd={""}
+                                        IconStart={""}
+                                        endIcon={false}
+                                        startIcon={false}
+                                        height={"30px"}
+                                        label={"Add More"}
+                                        onClick={addAddressSection}
+                                    />
+                                )}
+        
+    
                         </div>
                         {i > 0 ? (
         <Custombutton
@@ -891,7 +956,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
             startIcon={false}
             height={"30px"}
             label={"Save"}
-            onClick={handleSubmit(onSubmitAddress)}
+            onClick={()=>onSubmitAddresscreate(addres)}
         />
     ) : (
        !view && resData && ( 
@@ -903,11 +968,15 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                 startIcon={false}
                 height={"30px"}
                 label={"Update"}
-                onClick={handleSubmit(onSubmitAddress)}
+                onClick={()=>onSubmitAddress(addres)}
             />
         )
-    )} */}
-
+    )}
+                            </>
+                            
+                        ))}
+                    </Grid>
+                  
 
 
                 </Box>

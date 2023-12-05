@@ -46,6 +46,7 @@ type Inputs = {
 
 const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge }: props) => {
 
+
     const schema = yup
         .object()
         .shape({
@@ -179,33 +180,38 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
         product.push(alldata);
     
         try {
-            let publishValue = {
-                id: order_iD,
-                productDetails: product
-            };
-    
-            const response = await postData('admin/order/edit', publishValue);
-    
-            const highestDelivery = product.reduce((highest: number, product: any) => {
-                return Math.max(highest, parseFloat(product?.deliveryPrice));
-            }, 0);
-    
-            allProduct['delivery_charge'] = highestDelivery;
-    
-            const rate = response?.data?.data?.productDetails?.reduce((initial: number, price: any) =>
-                initial + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0);
-    
-            let resetValue = {
-                delivery_charge: highestDelivery,
-                grand_total: parseInt(highestDelivery) + rate + allProduct?.platform_charge,
-                total_amount: rate,
-                platform_charge: allProduct?.platform_charge,
-                productDetails: [...response?.data?.data?.productDetails]
-            };
-           
-            setProductList(resetValue);
-            toast.success('Order edit Successfully');
-            handleClose();
+            if(order_iD){
+                let publishValue = {
+                    id: order_iD,
+                    productDetails: product
+                };
+                console.log({publishValue});
+                
+                const response = await postData('admin/order/edit', publishValue);
+        
+                const highestDelivery = product.reduce((highest: number, product: any) => {
+                    return Math.max(highest, parseFloat(product?.deliveryPrice));
+                }, 0);
+        
+                allProduct['delivery_charge'] = highestDelivery;
+        
+                const rate = response?.data?.data?.productDetails?.reduce((initial: number, price: any) =>
+                    initial + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0);
+        
+                let resetValue = {
+                    delivery_charge: highestDelivery,
+                    grand_total: parseInt(highestDelivery) + rate + allProduct?.platform_charge,
+                    total_amount: rate,
+                    platform_charge: allProduct?.platform_charge,
+                    productDetails: [...response?.data?.data?.productDetails]
+                };
+               
+                setProductList(resetValue);
+                toast.success('Order edit Successfully');
+                handleClose(); 
+            }
+            
+          
         } catch (err) {
            
         }

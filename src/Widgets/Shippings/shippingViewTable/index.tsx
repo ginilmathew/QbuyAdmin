@@ -53,6 +53,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList ,onA
     const handleOpen = useCallback((data: any, mode: string) => {
         setSingleList(data);
         setModalOpen(true);
+        console.log(data);
+        
         setMode(mode)
     }, [modalOpen, singleList, mode]);
 
@@ -134,7 +136,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList ,onA
                 unitPrice: itm?.unitPrice,
                 image: itm?.image,
                 type: itm?.type,
-                // variant_id: itm?.variant_id,
+                variant_id: itm?.variant_id,
                 // product_id: itm?.product_id,
                 store_name: itm?.store_name,
                 store_address: itm?.store_address,
@@ -249,7 +251,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList ,onA
         console.log({data});
         
         try {
-            await postData('admin/order/edit', "hh");
+            await postData('admin/order/edit', data);
         } catch (err) {
             let message = 'Unknown Error'
             if (err instanceof Error) message = err.message
@@ -274,8 +276,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList ,onA
                 console.log({id});
                 
                 let value = {
-                    id: newAddedProduct?.product_details?._id,
-                    productDetails: [productList?.product_details?.productDetails],
+                    id: newAddedProduct?.product_details?.product_id,
+                    // productDetails: [productList?.product_details?.productDetails],
                     //  product_id:newAddedProduct?.product_details?._id
                 }
                 // InitialPost(value)
@@ -386,6 +388,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList ,onA
 
     // }
 
+console.log(productList);
 
 
     return (
@@ -434,20 +437,26 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList ,onA
                                 <TableCell align="center">{row.quantity}</TableCell>
                                 <TableCell align="center">{(row?.unitPrice)}</TableCell>
                                 <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
-                                { <TableCell align="center"> <BorderColorTwoToneIcon
+                                 {row.isNewlyAdded && (
+                <>
+                   <TableCell align="center"> <BorderColorTwoToneIcon
                                     onClick={() => { handleOpen(row, 'product') }}
                                     style={{
                                         color: '#58D36E',
                                         cursor: 'pointer'
                                     }}
-                                /></TableCell>}
-                                { <TableCell > <DeleteOutlineTwoToneIcon
+                                /></TableCell>
+                                 <TableCell > <DeleteOutlineTwoToneIcon
                                     onClick={() => { removeProduct(row) }}
                                     style={{
                                         color: 'red',
                                         cursor: 'pointer'
                                     }}
-                                /></TableCell>}
+                                /></TableCell>
+                </>
+         )}
+                                 
+
                             </TableRow>
                         ))}
                         <TableRow >
