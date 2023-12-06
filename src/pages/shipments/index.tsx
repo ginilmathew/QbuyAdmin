@@ -68,9 +68,9 @@ const Shipments = () => {
     }
 
     const ShippmentEdit = (id: string) => {
-        setId(id)
-        setEditModal(true)
-        //router.push(`/shipments/edit/${id}`)
+        // setId(id)
+        // setEditModal(true)
+        router.push(`/shipments/edit/${id}`)
     }
 
 
