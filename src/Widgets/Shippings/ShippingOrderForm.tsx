@@ -162,6 +162,8 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
         }
 
     }
+    console.log({res});
+    
     const fetchCustomerGroupOptions = async () => {
         try {
             const response = await fetchData("/admin/customer-group");
@@ -483,8 +485,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             vendor_status: vendor_statusP,
             platform_charge: orderviewList?.platform_charge,
             store:uniqueStore,
-          
-        }
+          }
   
         
         try {
@@ -523,7 +524,8 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             total_amount: productdetails?.total_amount,
             type:process.env.NEXT_PUBLIC_TYPE,
             delivery_date:new Date().toISOString().slice(0, 19).replace("T", " "),
-            delivery_type:ordertype 
+            delivery_type:ordertype ,
+          
             
         }));
 
