@@ -46,6 +46,11 @@ type Inputs = {
     ridermobile: string;
     payment_type: string;
     payment_status: string;
+    created_time: string;
+    created_ontheway: string;
+    created_dropoff: string;
+    created_completed: string;
+    customer_group: string;
 };
 
 
@@ -61,6 +66,37 @@ interface Product {
     unitPrice: number;
     quantity: number;
 }
+
+interface VendorOrderLogEntry {
+    created_time: string;
+    order_id: string;
+    status: string;
+    updated_at: string;
+    vendor_id: string;
+
+}
+interface LogEntry {
+    created_ontheway: string;
+    order_id: string;
+    status: string;
+    updated_at: string;
+}
+// interface OrderHistoryEntry {
+//     created_completed: string;
+//     order_history_id: number;
+//     order_id: string;
+//     status: string;
+//     comments: string;
+
+// }
+interface VendorStatus {
+    status: string;
+    store_name: string;
+    vendor_id: string;
+    vendor_name: string;
+}
+
+
 const OrderSummaryForm = ({ resData, view }: props) => {
     const idd = resData ? resData : view;
 
@@ -79,7 +115,10 @@ const OrderSummaryForm = ({ resData, view }: props) => {
     const [customerName, setCustomerName] = useState("");
     const [time, setTime] = useState<any>(null);
     const [orderHistory, setOrderHistory] = useState([]);
-
+    const [pendingOrderTime, setPendingOrderTime] = useState("");
+    const [onTheWayTime, setOnTheWayTime] = useState("");
+    const [onLocationTime, setOnLocationTime] = useState("");
+    const [completedTime, setCompletedTime] = useState("");
 
 
 
@@ -132,6 +171,45 @@ const OrderSummaryForm = ({ resData, view }: props) => {
             const response = await fetchData(`admin/order-summary/show/${idd}`);
             console.log(response.data.data);
             setSummaryList(response?.data?.data);
+
+            const vendorLog = response?.data?.data?.vendor_order_log;
+            if (vendorLog && vendorLog.length > 0) {
+                const pendingOrder = vendorLog.find((log: VendorOrderLogEntry) => log.status === "pending");
+                if (pendingOrder) {
+                    const timeOnly = moment(pendingOrder.created_at).format('hh:mm A');
+
+                    setPendingOrderTime(timeOnly);
+                    setValue('created_time', timeOnly);
+                }
+            }
+            const riderOrderLog = response?.data?.data?.rider_order_log;
+            if (riderOrderLog && riderOrderLog.length > 0) {
+                const onTheWayOrder = riderOrderLog.find((log: LogEntry) => log.status === "onTheWay");
+                if (onTheWayOrder) {
+                    const timeOnly = moment(onTheWayOrder.created_at).format('hh:mm A');
+                    setOnTheWayTime(timeOnly);
+                    setValue('created_ontheway', timeOnly);
+                }
+            }
+
+            if (riderOrderLog && riderOrderLog.length > 0) {
+                const onLocationOrder = riderOrderLog.find((log: LogEntry) => log.status === "onLocation");
+                if (onLocationOrder) {
+                    const timeOnly = moment(onLocationOrder.created_at).format('hh:mm A');
+                    setOnLocationTime(timeOnly);
+                    setValue('created_dropoff', timeOnly);
+                }
+            }
+            // const orderHistory = response?.data?.data?.order_history;
+            // if (orderHistory && orderHistory.length > 0) {
+            //     const completedOrder = orderHistory.find((entry: OrderHistoryEntry) => entry.status === "completed");
+            //     if (completedOrder) {
+            //         const timeOnly = moment(completedOrder.created_at).format('hh:mm A');
+            //         setCompletedTime(timeOnly);
+            //         setValue('created_completed', timeOnly);
+            //     }
+            // }
+
         } catch (err: any) {
             toast.error(err.message || "Error fetching data");
         } finally {
@@ -148,10 +226,12 @@ const OrderSummaryForm = ({ resData, view }: props) => {
     useEffect(() => {
         if (summaryList) {
             if (summaryList?.billaddress?.name) {
+                const formattedDate = moment(summaryList?.created_at).format('DD/MM/YYYY hh:mm A');
                 setValue('name', summaryList?.billaddress?.name);
                 setValue('mobile', summaryList?.billaddress?.mobile);
                 setValue('order_id', summaryList?.order_id);
-                setValue('created_at', summaryList?.created_at);
+                // setValue('created_at', summaryList?.created_at);
+                setValue('created_at', formattedDate);
                 setValue('address', summaryList?.billaddress?.area?.address);
                 setValue('addresss', summaryList?.shipaddress?.area?.address);
                 setValue('comments', summaryList?.billaddress?.comments);
@@ -159,6 +239,16 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                 setValue('ridermobile', summaryList?.rider_each_order_settlement?.rider?.mobile)
                 setValue('payment_type', summaryList?.payment_type)
                 setValue('payment_status', summaryList?.payment_status)
+                const customerGroupName = summaryList.user?.customer?.customer_group?.name || '';
+                setValue('customer_group', customerGroupName);
+                // const deliveryTime = moment(summaryList.order_delivery_time).format('hh:mm A');
+                // setValue('created_completed', deliveryTime);
+                if (summaryList.order_delivery_time !== null) {
+                    const deliveryTime = moment(summaryList.order_delivery_time).format('hh:mm A');
+                    setValue('created_completed', deliveryTime);
+                  } else {
+                    setValue('created_completed', '');
+                  }
             }
             if (summaryList.order_history) {
                 setOrderHistory(summaryList.order_history);
@@ -166,6 +256,9 @@ const OrderSummaryForm = ({ resData, view }: props) => {
 
         }
     }, [summaryList, setValue]);
+
+
+
 
 
     return (
@@ -216,13 +309,13 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                         <CustomInput
                             type="text"
                             control={control}
-                            error={''}
-                            fieldName="description"
+                            error={errors.customer_group}
+                            fieldName="customer_group"
                             placeholder={``}
                             fieldLabel={"Customer Group"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={""}
+                            defaultValue={summaryList.user?.customer?.customer_group?.name || ''}
                         />
                     </Grid>
                 </Grid>
@@ -253,7 +346,7 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                             fieldLabel="Ordered Date & Time"
                             disabled={false}
                             view={view ? true : false}
-                            
+
                         />
                     </Grid>
 
@@ -308,7 +401,11 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                                         <TableCell component="th" scope="row">
                                             {product.name}
                                         </TableCell>
-                                        <TableCell align="center">{product.store_name}</TableCell>
+                                        {/* <TableCell align="center">{product.store_name}</TableCell> */}
+                                        {/* <TableCell align="center">{summaryList?.vendor_status[0]?.store_name}</TableCell> */}
+                                        <TableCell align="center">
+                                            {summaryList.vendor_status[index]?.store_name}
+                                        </TableCell>
                                         <TableCell align="center">{product.quantity}</TableCell>
                                         <TableCell align="center">{product.unitPrice}</TableCell>
                                         <TableCell align="center">{product.quantity * product.unitPrice}</TableCell>
@@ -327,34 +424,28 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                                 <TableCell align="center">₹ {parseFloat(summaryList?.total_amount)?.toFixed(2)}</TableCell>
 
                             </TableRow>
-                            {/* <TableRow >
-                                <TableCell rowSpan={5} />
-                                <TableCell colSpan={2}></TableCell>
+                            <TableRow >
+                                <TableCell />
+                                <TableCell></TableCell>
                                 <TableCell align="right">Platform & Other Charges</TableCell>
                                 <TableCell align="center">₹ {parseFloat(summaryList?.platform_charge)?.toFixed(2)}</TableCell>
 
                             </TableRow>
-                            <TableRow >
-                                <TableCell rowSpan={5} />
-                                <TableCell colSpan={2}></TableCell>
-                                <TableCell align="right">Multi shop Pickup(No Extra cellers) </TableCell>
-                                <TableCell align="center">₹ {parseFloat(summaryList?.total_amount)?.toFixed(2)}</TableCell>
 
-                            </TableRow>
                             <TableRow >
-                                <TableCell rowSpan={5} />
-                                <TableCell colSpan={2}></TableCell>
+                                <TableCell />
+                                <TableCell ></TableCell>
                                 <TableCell align="right">Delivery Charge</TableCell>
                                 <TableCell align="center">₹ {parseFloat(summaryList?.delivery_charge)?.toFixed(2)}</TableCell>
 
                             </TableRow>
                             <TableRow >
-                                <TableCell rowSpan={5} />
-                                <TableCell colSpan={2}></TableCell>
+                                <TableCell />
+                                <TableCell></TableCell>
                                 <TableCell align="right">Total</TableCell>
                                 <TableCell align="center">₹ {parseFloat(summaryList?.grand_total)?.toFixed(2)}</TableCell>
 
-                            </TableRow> */}
+                            </TableRow>
                         </TableBody>
 
                     </Table>
@@ -419,7 +510,7 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                             defaultValue={""}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2} >
+                    {/* <Grid item xs={12} lg={2} >
                         <CustomInput
                             type="text"
                             control={control}
@@ -431,7 +522,7 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                             view={view ? true : false}
                             defaultValue={""}
                         />
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </CustomBox>
             <CustomBox title="Order Timings">
@@ -441,9 +532,23 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                             type="text"
                             control={control}
                             error={''}
-                            fieldName="title"
+                            fieldName="created_time"
                             placeholder={``}
                             fieldLabel={"Store Accepted On"}
+                            disabled={false}
+                            view={view ? true : false}
+
+                        />
+
+                    </Grid>
+                    <Grid item xs={12} lg={2} >
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={''}
+                            fieldName="created_ontheway"
+                            placeholder={``}
+                            fieldLabel={"Reached Store"}
                             disabled={false}
                             view={view ? true : false}
 
@@ -454,20 +559,7 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                             type="text"
                             control={control}
                             error={''}
-                            fieldName="description"
-                            placeholder={``}
-                            fieldLabel={"Reached Store"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={""}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={2} >
-                        <CustomInput
-                            type="text"
-                            control={control}
-                            error={''}
-                            fieldName="description"
+                            fieldName="created_ontheway"
                             placeholder={``}
                             fieldLabel={"Pickup Time"}
                             disabled={false}
@@ -480,12 +572,12 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                             type="text"
                             control={control}
                             error={''}
-                            fieldName="description"
+                            fieldName="created_dropoff"
                             placeholder={``}
                             fieldLabel={"Reached Dropoff"}
                             disabled={false}
                             view={view ? true : false}
-                            defaultValue={""}
+                            defaultValue={onLocationTime}
                         />
                     </Grid>
                     <Grid item xs={12} lg={2} >
@@ -493,7 +585,7 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                             type="text"
                             control={control}
                             error={''}
-                            fieldName="description"
+                            fieldName="created_completed"
                             placeholder={``}
                             fieldLabel={"Delivery Time"}
                             disabled={false}
@@ -531,7 +623,7 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                             defaultValue={""}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2} >
+                    {/* <Grid item xs={12} lg={2} >
                         <CustomInput
                             type="text"
                             control={control}
@@ -556,10 +648,10 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                             view={view ? true : false}
                             defaultValue={""}
                         />
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </CustomBox>
-            <CustomBox title="Customer Feedbacks">
+            {/* <CustomBox title="Customer Feedbacks">
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2}>
                         <CustomInput
@@ -588,7 +680,7 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                         />
                     </Grid>
                 </Grid>
-            </CustomBox>
+            </CustomBox> */}
             <CustomBox title="Order History">
                 <CustomTable
                     dashboard={false}

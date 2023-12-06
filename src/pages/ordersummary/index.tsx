@@ -25,20 +25,20 @@ const ordersummarylist = () => {
     const [pending, startTransition] = useTransition();
     const [_id, set_id] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);
+    const [searchList, setSearchList] = useState([]);
 
 
     useEffect(() => {
         if (data?.data?.data) {
             setSummaryData(data?.data?.data);
-            console.log("Summary Data:", data?.data?.data);
         }
     }, [data?.data?.data]);
 
-  
+
     const viewOrder = (id: any) => {
         router.push(`/ordersummary/view/${id}`)
     }
-  
+
 
     const columns: GridColDef[] = [
 
@@ -46,7 +46,7 @@ const ordersummarylist = () => {
             field: 'order_id',
             headerName: 'Order ID',
             flex: 1,
-           
+
         },
         {
             field: 'rider_name',
@@ -62,43 +62,50 @@ const ordersummarylist = () => {
             field: 'created_at',
             headerName: 'Order Placed On',
             flex: 1,
-            valueGetter: (params) => params.row.franchise?.name,
+            valueGetter: (params) => moment(params?.row?.created_at).format("DD-MM-YYYY hh:mm A")
         },
         {
             field: 'store_accepted',
             headerName: 'Store Accepted On',
             flex: 1,
-            valueGetter: (params) => params.row.franchise?.name,
+            valueGetter: (params) =>
+                params?.row?.store_accepted
+                    ? moment(params?.row?.store_accepted).format("hh:mm A")
+                    : "",
         },
-        {
-            field: 'app_targetsss',
-            headerName: 'Reached Store',
-            flex: 1,
-            valueGetter: (params) => params.row.franchise?.name,
-        },
+    
         {
             field: 'picked_up',
             headerName: 'Pickup Time ',
             flex: 1,
-            valueGetter: (params) => params.row.franchise?.name,
+            valueGetter: (params) =>
+                params?.row?.picked_up
+                    ? moment(params?.row?.picked_up).format("hh:mm A")
+                    : "",
         },
         {
             field: 'dropp_off',
             headerName: 'Reached Dropoff ',
             flex: 1,
-            valueGetter: (params) => params.row.franchise?.name,
+            valueGetter: (params) =>
+                params?.row?.dropp_off
+                    ? moment(params?.row?.dropp_off).format("hh:mm A")
+                    : "",
         },
         {
             field: 'delivery_time',
             headerName: 'Delivery Time ',
             flex: 1,
-            valueGetter: (params) => params.row.franchise?.name,
+            valueGetter: (params) =>
+                params?.row?.delivery_time
+                    ? moment(params?.row?.delivery_time).format("hh:mm A")
+                    : "",
         },
         {
             field: 'status',
             headerName: 'Status',
             flex: 1,
-         
+
         },
         {
             field: 'Action',
@@ -106,7 +113,7 @@ const ordersummarylist = () => {
             width: 200,
             headerAlign: 'center',
             align: 'center',
-          
+
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
@@ -116,31 +123,36 @@ const ordersummarylist = () => {
                             cursor: 'pointer'
                         }}
                     />
-                  
+
                 </Stack>
-            ),  
+            ),
         }
     ];
 
+    
+    const rows = [];
 
+    
     const searchProducts = useCallback((value: any) => {
         let Results = data?.data?.data?.filter((com: any) =>
-        com?.order_id.toString().includes(value) ||
-            (com?.app_target?.toString() || '').toLowerCase().includes(value.toLowerCase()) ||
-            (com?.franchise?.name?.toString() || '').toLowerCase().includes(value.toLowerCase())
+            (com?.order_id?.toString() || '').includes(value) ||
+            (com?.rider_name?.toString().toLowerCase() || '').includes(value.toLowerCase()) ||
+            (com?.rider_mobile?.toString() || '').includes(value)
+            
         );
-
+    
         startTransition(() => {
             setSummaryData(Results);
         });
     }, [summaryData]);
 
+    
     if (isLoading) {
         <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='Orders Summary' onClick={[]} />
+                <CustomTableHeader setState={searchProducts} addbtn={false} imprtBtn={false} Headerlabel='Orders Summary' onClick={[]} />
                 <Box py={5}>
-                    <CustomTable dashboard={false} columns={summaryData} rows={[]} loading={true} id={"id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={[]} loading={true} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
         </Box>
