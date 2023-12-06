@@ -608,15 +608,12 @@ console.log({addressfromprevious});
         const { value } = e.target
 
         addressfromprevious[index][key] = value;
-<<<<<<< HEAD
-=======
 
 
  console.log({addressfromprevious});
  
 
 
->>>>>>> customermultaddress
     }
 
 
@@ -639,13 +636,6 @@ console.log({addressfromprevious});
     };
 
 
-<<<<<<< HEAD
-    if (addressfromprevious?.length <= 0 && customerList) {
-        return (
-            <div>Loading</div>
-        )
-    }
-=======
 
     // if (addressfromprevious?.length <= 0) {
     //     return (
@@ -654,7 +644,6 @@ console.log({addressfromprevious});
     // }
     console.log({addressfromprevious});
     
->>>>>>> customermultaddress
     return (
         <Box>
             <CustomBox title="Basic Details">
