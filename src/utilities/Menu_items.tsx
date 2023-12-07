@@ -381,7 +381,7 @@ export const support_item = [
     {
         id: 1,
         item: 'Customer Complaints',
-        path: '/dashboard',
+        path: '/customercomplaints',
     },
     {
         id: 2,

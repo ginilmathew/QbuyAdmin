@@ -132,7 +132,37 @@ const RiderAccountsform = ({ view, res }: props) => {
         }
     ];
 
+    const column1: GridColDef[] = [
+        {
+            field: 'date',
+            headerName: 'Date',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => moment(params.row.date).format('DD-MM-YYYY')
 
+        },
+     
+        {
+            field: 'total_sales',
+            headerName: 'Deduction Amount',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+           
+
+        },
+        {
+            field: 'total_sales_amount',
+            headerName: 'Reason',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => (params.row.total_sales_amount).toFixed(2)
+
+        },
+       
+    ];
     const columns2: GridColDef[] = [
         {
             field: 'transaction_date',
@@ -394,6 +424,37 @@ const RiderAccountsform = ({ view, res }: props) => {
                     <CustomTable
                         dashboard={false}
                         columns={columns}
+                        rows={riderEarningList ? riderEarningList : []}
+                        id={"_id"}
+                        bg={"#ffff"}
+                        label='Recent Activity'
+                        checked={true}
+
+                        selectCheck={(itm: any) => riderEarningSelect(itm)}
+                    />
+                </Box>
+            </CustomBox>
+            <CustomBox title='Deductions'>
+                <Grid container spacing={2}>
+                    <Grid item direction="row-reverse">
+                        <Typography mb={3}></Typography>
+                        <Custombutton label='Add Deduction'
+                            btncolor='#F71C1C'
+                            onClick={OpenAccountModal}
+                            endIcon={false}
+                            startIcon={false}
+                            IconStart={undefined}
+                            IconEnd={undefined}
+                            height={'42px'}
+                            disabled={(riderEarningList && total) ? false : true}
+
+                        />
+                    </Grid>
+                </Grid>
+                <Box py={3}>
+                    <CustomTable
+                        dashboard={false}
+                        columns={column1}
                         rows={riderEarningList ? riderEarningList : []}
                         id={"_id"}
                         bg={"#ffff"}
