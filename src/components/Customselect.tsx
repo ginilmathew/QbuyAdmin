@@ -19,6 +19,7 @@ type props = {
     selectvalue: string,
     options: any,
     value: any,
+    defaultValue?:any,
     size: number,
     label: string,
     disabled?: boolean
@@ -39,6 +40,7 @@ const Customselect = ({
     size,
     value,
     label,
+    defaultValue,
     disabled
 
 }: props) => {
@@ -87,7 +89,7 @@ const Customselect = ({
                         onBlur={onBlur}
                         value={value}
                         label={label}
-                        defaultValue={value}
+                        defaultValue={defaultValue}
                         IconComponent={() => (
                             <>
                                 {!disabled &&

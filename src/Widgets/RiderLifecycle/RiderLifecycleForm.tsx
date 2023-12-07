@@ -45,6 +45,9 @@ type IFormInput = {
 type FormData = {
     reason: string;
     status: string;
+    rider_id: string;
+    name: string;
+    mobile: string;
   };
 
 const RiderLifecycleForm = ({ resData, view }: props) => {
@@ -54,7 +57,6 @@ const RiderLifecycleForm = ({ resData, view }: props) => {
     .shape({
     
       reason: yup.string().required('Reason is Required'),
-      status: yup.string().required("Status is required"),
     
     })
     .required();

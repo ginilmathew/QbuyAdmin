@@ -86,7 +86,15 @@ const RiderLifecyle = () => {
             field: 'status',
             headerName: 'Status',
             flex: 1,
-
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => {
+              if (Array.isArray(params.row.rider_life_cycle_log) && params.row.rider_life_cycle_log.length > 0) {
+                const lastLog = params.row.rider_life_cycle_log[params.row.rider_life_cycle_log.length - 1];
+                return lastLog.status || '';
+              }
+              return '';
+            },
         },
         {
             field: 'reason',

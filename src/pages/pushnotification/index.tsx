@@ -55,7 +55,22 @@ const pushnotificationList = () => {
     }
 
     const columns: GridColDef[] = [
-
+        {
+            field: 'type',
+            headerName: 'Type',
+            flex: 1,
+            renderCell: ({row}) => (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <label>{row.instant ? "Instant" : "Scheduled"}</label>
+                    {!row.instant && <label>{moment(row?.schedule_date_time, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")}</label>}
+                </div>
+            ),
+        },
+        {
+            field: 'app_target',
+            headerName: 'Target App',
+            flex: 1,
+        },
         {
             field: 'created_at',
             headerName: 'Added Date',
@@ -67,17 +82,14 @@ const pushnotificationList = () => {
             headerName: 'Notification Title',
             flex: 1,
         },
-        {
-            field: 'app_target',
-            headerName: 'Target App',
-            flex: 1,
-        },
+        
         {
             field: 'app_targets',
             headerName: 'Franchise',
             flex: 1,
             valueGetter: (params) => params.row.franchise?.name,
         },
+        
         {
             field: 'Action',
             headerName: 'Action',

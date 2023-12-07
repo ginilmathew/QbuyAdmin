@@ -68,9 +68,9 @@ const Shipments = () => {
     }
 
     const ShippmentEdit = (id: string) => {
-        setId(id)
-        setEditModal(true)
-        //router.push(`/shipments/edit/${id}`)
+        // setId(id)
+        // setEditModal(true)
+        router.push(`/shipments/edit/${id}`)
     }
 
 
@@ -409,7 +409,7 @@ const Shipments = () => {
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
             <Typography style={{ borderBottom: '3px solid #58d36e', paddingBottom: 2, fontFamily: `'Poppins' sans-serif`, }}>{'Orders'}</Typography>
-                <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='Orders' onClick={addOrderShipmets} addbtn={false} />
+                <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='Orders' onClick={addOrderShipmets} addbtn={true} />
 
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={[]} id={"id"} bg={"#ffff"} loading={true} label='Recent Activity' />
@@ -444,7 +444,7 @@ const Shipments = () => {
                         label={'Refresh'}
                         disabled={false}
                         onClick={RefreshAgain} />
-                        <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='' onClick={addOrderShipmets} addbtn={false} />
+                        <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='' onClick={addOrderShipmets} addbtn={true} />
                 </Box>
                 <Box py={1}>
                     <CustomTable  rowheight={60} dashboard={false} columns={columns} rows={shippingList ? shippingList : []} id={"_id"} bg={'#ffff'} label='Recent Activity' />

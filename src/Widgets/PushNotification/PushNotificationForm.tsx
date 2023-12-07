@@ -20,7 +20,7 @@ import { SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/router";
 import moment from 'moment';
 import CustomDateTimePicker from '@/components/CustomDateTimePicker';
-import CustomTextarea from '@/components/CustomTextarea';
+import CustomTextarea from "@/components/CustomTextarea";
 
 
 const CustomDatePicker = dynamic(() => import('@/components/CustomDatePicker'), { ssr: false });
@@ -40,7 +40,8 @@ type Inputs = {
     image: string;
     instant: string;
     notification_sound: string;
-    schedule_date_time: any
+    schedule_date_time: any,
+    type: string
 
 };
 
@@ -80,18 +81,20 @@ const PushNotificationForm = ({ resData, view }: props) => {
     const [notificationList, setNotificationList] = useState<any>([]);
     console.log({ notificationList }, "listdply")
     const [time, setTime] = useState<any>(null);
+    const [notiType, setNotiType] = useState<any>(null);
 
 
     const schema = yup.object().shape({
         title: yup.string().required('Title is required'),
         description: yup.string().required('Description is required'),
-        franchise_id: yup.string().required('Franchise is required'),
-        franchise_name: yup.string().required('Franchise name is required'),
-        schedule_date_time: yup.string().required('Date & Time is Required'),
-        app_target: yup.string().required('App target is Required')
+        franchise_id: yup.string(),
+        franchise_name: yup.string(),
+        schedule_date_time: yup.string(),
+        app_target: yup.string().required('App target is Required'),
+        type: yup.string().required("Type Required")
     });
 
-    const { register, handleSubmit, control, formState: { errors }, reset, setValue, setError, clearErrors } = useForm<Inputs>({
+    const { register, handleSubmit, control, formState: { errors }, reset, setValue, setError, clearErrors, getValues } = useForm<Inputs>({
         resolver: yupResolver(schema),
         defaultValues: {
 
@@ -123,32 +126,51 @@ const PushNotificationForm = ({ resData, view }: props) => {
     }
 
     const onSubmit = async (data: Inputs) => {
+        console.log({data})
         setLoading(true);
         const formattedDateTime = time ? time.format("YYYY-MM-DD HH:mm:ss") : null;
+        let datas : any = {
+            title: data.title,
+            description: data.description,
+            type: process.env.NEXT_PUBLIC_TYPE,
+            instant: data?.type === "instant" ? true : false,
+            image_link: data?.image_link,
+            app_target: data?.app_target,
+            product_url: parseFloat(data?.product_url),
+            notification_sound: data?.notification_sound
+        }
+        if(data?.app_target !== "customer"){
+            let franchisee = {
+                id: data?.franchise_id,
+                name: data?.franchise_name
+            }
+            datas['franchise'] = franchisee
+        }   
 
+
+        if(data?.type === "scheduled"){
+            if( time && time?.isValid()){
+                datas['schedule_date_time'] = formattedDateTime
+                //setError("schedule_date_time", { type: 'custom', message: '' })
+            }
+            else{
+                //console.log({ time: time?.valid(), date: data?.schedule_date_time })
+                //setError("schedule_date_time", { type: 'custom', message: '' })
+                setError("schedule_date_time", { type: 'custom', message: 'Scheduled date and time required' })
+                return false;
+            }
+        }
+
+        //return false;
+
+        if(idd){
+            datas['id'] = idd
+        }
+
+        const URL_CREATE = "/admin/push-notification/create";
+        const URL_UPDATE = "/admin/push-notification/update";
         try {
-            const payload = {
-                id: idd,
-                title: data.title,
-                description: data.description,
-                type: type,
-                instant: instantBlock,
-                image_link: data.image_link || "",
-                schedule_date_time: formattedDateTime,
-                app_target: statusSelect || "",
-                product_url: data.product_url || "",
-                franchise: {
-                    id: data.franchise_id || "",
-                    name: data.franchise_name || "",
-                },
-                notification_sound: notificationBlock,
-            };
-
-            const URL_CREATE = "/admin/push-notification/create";
-            const URL_UPDATE = "/admin/push-notification/update";
-
-            const response = await postData(idd ? URL_UPDATE : URL_CREATE, payload);
-
+            const response = await postData(idd ? URL_UPDATE : URL_CREATE, datas);
             if (response.status === 201 || response.status === 200) {
                 const successMessage = idd ? "Push notification updated successfully" : "Push notification created successfully";
                 toast.success(successMessage);
@@ -159,10 +181,51 @@ const PushNotificationForm = ({ resData, view }: props) => {
             }
         } catch (error) {
             toast.error("An error occurred while updating push notification");
-            console.error(error);
-        } finally {
+        }
+        finally {
             setLoading(false);
         }
+       
+
+        //console.log({datas})
+
+        // try {
+        //     const payload = {
+        //         id: idd,
+        //         title: data.title,
+        //         description: data.description,
+        //         type: type,
+        //         instant: instantBlock,
+        //         image_link: data.image_link || "",
+        //         schedule_date_time: formattedDateTime,
+        //         app_target: statusSelect || "",
+        //         product_url: data.product_url || "",
+        //         franchise: {
+        //             id: data.franchise_id || "",
+        //             name: data.franchise_name || "",
+        //         },
+        //         notification_sound: notificationBlock,
+        //     };
+
+        //     const URL_CREATE = "/admin/push-notification/create";
+        //     const URL_UPDATE = "/admin/push-notification/update";
+
+        //     const response = await postData(idd ? URL_UPDATE : URL_CREATE, payload);
+
+        //     if (response.status === 201 || response.status === 200) {
+        //         const successMessage = idd ? "Push notification updated successfully" : "Push notification created successfully";
+        //         toast.success(successMessage);
+        //         reset();
+        //         router.push("/pushnotification");
+        //     } else {
+        //         toast.error("Failed to update push notification");
+        //     }
+        // } catch (error) {
+        //     toast.error("An error occurred while updating push notification");
+        //     console.error(error);
+        // } finally {
+        //     setLoading(false);
+        // }
     };
 
 
@@ -254,9 +317,170 @@ const PushNotificationForm = ({ resData, view }: props) => {
         }
     }, [setValue, clearErrors]);
 
+
+    const changeType = (e: any) => {
+        const { value } = e.target
+        setValue('type', value);
+        setNotiType(value)
+        clearErrors('type');
+        console.log({values: getValues()})
+    }
+
     return (
         <Box>
             <CustomBox title="Notification Details">
+                <Grid container spacing={2}>
+                    <Grid item xs={12} lg={2} xl={2} md={3}>
+                        <Customselect
+                            disabled={view ? true : false}
+                            type='text'
+                            control={control}
+                            error={errors.app_target}
+                            fieldName="app_target"
+                            placeholder={``}
+                            fieldLabel={"App Target"}
+                            selectvalue={notificationList?.app_target}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={statusSelect}
+                            options={''}
+                            onChangeValue={ChangeStatus}
+                            background={'#fff'}
+                        >
+                            <MenuItem value="" disabled>
+                                <em>Choose App Target</em>
+                            </MenuItem>
+                            {statusChange.map((res: any) => (
+                                <MenuItem key={res.value} value={res.value}>{res.name}</MenuItem>
+                            ))}
+                        </Customselect>
+
+                    </Grid>
+                    <Grid item xs={12} lg={statusSelect !== "customer" ? 2 : 3}>
+                        <Customselect
+                            type='text'
+                            control={control}
+                            error={errors.type}
+                            fieldName="type"
+                            placeholder={``}
+                            fieldLabel={"Type"}
+                            selectvalue={notificationList?.type}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={notiType}
+                            options={''}
+                            onChangeValue={changeType}
+                            background={'#fff'}
+                        >
+                            <MenuItem value="" disabled>
+                                <em>Choose Type</em>
+                            </MenuItem>
+                            <MenuItem key={"instant"} value={"instant"}>{"Instant"}</MenuItem>
+                            <MenuItem key={"scheduled"} value={"scheduled"}>{"Scheduled"}</MenuItem>
+                        </Customselect>
+
+                    </Grid>
+                    {notiType === "scheduled" && <Grid item xs={12} lg={2}>
+                        <CustomDateTimePicker
+                            disablePast={true}
+                            values={time} 
+                            changeValue={(value: any) => OnChangeDate(value)}
+                            fieldName='schedule_date_time'
+                            control={control}
+                            error={errors.schedule_date_time}
+                            fieldLabel={'Schedule Date & Time'}
+                        />
+                    </Grid>}
+                    {statusSelect !== "customer" && <Grid item xs={12} lg={notiType === "scheduled" ? 2 : 3}>
+                        <Customselect
+                            type="text"
+                            control={control}
+                            error={errors.franchise_id}
+                            fieldName="franchise_id"
+                            placeholder={``}
+                            fieldLabel={"Franchisee"}
+                            selectvalue={selectedValue}
+                            height={40}
+                            label={""}
+                            size={16}
+                            value={selectedValue}
+                            onChangeValue={handleFranchiseSelect}
+                            background={"#fff"}
+                            disabled={view ? true : false}
+                            options={franchiseList}
+                        >
+                            {franchiseList.map((franchise) => (
+                                <MenuItem
+                                    key={franchise._id}
+                                    value={franchise._id}
+                                >
+                                    {franchise?.franchise_name}
+                                </MenuItem>
+                            ))}
+                        </Customselect>
+                    </Grid>}
+                    <Grid item xs={12} lg={statusSelect !== "customer" ? 2 : notiType === "scheduled" ? 2 : 3}>
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={''}
+                            fieldName="product_url"
+                            placeholder={``}
+                            fieldLabel={"Product Id"}
+                            disabled={false}
+                            view={view ? true : false}
+                            defaultValue={""}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={notiType === "scheduled" ? statusSelect !== "customer" ? 2 : 3 : statusSelect !== "customer" ? 3 : 4} >
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={''}
+                            fieldName="image_link"
+                            placeholder={``}
+                            fieldLabel={"Image Link"}
+                            disabled={false}
+                            view={view ? true : false}
+                            defaultValue={""}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={errors.title}
+                            fieldName="title"
+                            placeholder={``}
+                            fieldLabel={"Title"}
+                            disabled={false}
+                            view={view ? true : false}
+
+                        />
+                        <CustomCheckBox
+                            isChecked={notificationBlock}
+                            label=""
+                            onChange={CheckBlackLists}
+                            title="Notification Sound"
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={10} >
+                        <CustomTextarea
+                            control={control}
+                            error={errors.description}
+                            fieldName="description"
+                            placeholder={``}
+                            fieldLabel={"Description"}
+                            disabled={false}
+                            view={view ? true : false}
+                            defaultValue={""}
+                        />
+                    </Grid>
+                </Grid>
+            </CustomBox>
+            {/* <CustomBox title="Notification Details">
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2}>
                         <CustomInput
@@ -404,7 +628,7 @@ const PushNotificationForm = ({ resData, view }: props) => {
                         />
                     </Grid>
                 </Grid>
-            </CustomBox>
+            </CustomBox> */}
 
 
             {!view && (
