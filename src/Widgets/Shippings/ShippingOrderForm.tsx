@@ -875,7 +875,9 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                         </Grid>
 
                     </Grid>
+            
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', py: 1 }}>
+                    {!view && 
                         <Custombutton
                             btncolor='#D35858'
                             IconEnd={''}
@@ -885,7 +887,7 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                             height={''}
                             label={'Alert Rider'}
                             disabled={loading}
-                            onClick={Alertrider} />
+                            onClick={Alertrider} />}
                     </Box>
                 </CustomBox>
             <CustomBox title='Payment Details'>

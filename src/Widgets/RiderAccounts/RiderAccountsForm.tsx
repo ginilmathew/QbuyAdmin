@@ -166,11 +166,12 @@ const RiderAccountsform = ({ view, res }: props) => {
     const columns2: GridColDef[] = [
         {
             field: 'transaction_date',
-            headerName: 'Date and Time of Transaction',
+            headerName: 'Dateof Transaction',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => moment(params?.row?.settlement_list?.map((res:any)=>res?.transaction_date,"YYYY-MM-DD")).format("DD-MM-YYYY")
+           
         },
         {
             field: 'amount',

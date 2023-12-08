@@ -130,24 +130,24 @@ useEffect(() => {
 
 
 
-    const onSubmit = async (formData: Inputs) => {
-        setLoading(true);
-        try {
-            const payload = {
-                slot_based: formData.slot_based,
-                express_delivery: formData.express_delivery,
-                multi_shop_charge: formData.multi_shop_charge,
-            };
-            const response = await postData("admin/panda-config/create", payload);
-            console.log(response);
-            toast.success("Panda config successfully added");
-        } catch (err) {
-            console.error(err);
-            toast.error("Error creating Panda Config");
-        } finally {
-            setLoading(false);
-        }
-    };
+    // const onSubmit = async (formData: Inputs) => {
+    //     setLoading(true);
+    //     try {
+    //         const payload = {
+    //             slot_based: formData.slot_based,
+    //             express_delivery: formData.express_delivery,
+    //             multi_shop_charge: formData.multi_shop_charge,
+    //         };
+    //         const response = await postData("admin/panda-config/create", payload);
+    //         console.log(response);
+    //         toast.success("Panda config successfully added");
+    //     } catch (err) {
+    //         console.error(err);
+    //         toast.error("Error creating Panda Config");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
 
     return (
@@ -252,7 +252,7 @@ useEffect(() => {
                     </Grid>
                 </Grid>
 
-                <Box py={6}>
+                {/* <Box py={6}>
                     <Custombutton
                         btncolor=""
                         IconEnd={""}
@@ -263,7 +263,7 @@ useEffect(() => {
                         label={"Update Status"}
                         onClick={handleSubmit(onSubmit)}
                     />
-                </Box>
+                </Box> */}
 
             </CustomBox>
 

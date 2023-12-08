@@ -406,6 +406,9 @@ const OrderSummaryForm = ({ resData, view,readonly }: props) => {
                                         {row?.name},{row?.attributes}
                                         
                                     </TableCell>
+                                   
+
+                            
                                     <TableCell align="center">{row?.productdata?.store?.name}</TableCell>
 
                                     <TableCell align="center">{row.quantity}</TableCell>

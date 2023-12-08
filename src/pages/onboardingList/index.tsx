@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import dynamic from 'next/dynamic';
 import RiderOnBoarding from '../riderOnboarding';
-const CustomTableHeader = dynamic(() => import('@/Widgets/CustomTableHeader'), { ssr: false });
+const CustomTableHeader1 = dynamic(() => import('@/Widgets/CustomTableHeader1'), { ssr: false });
 const CustomTable = dynamic(() => import('@/components/CustomTable'), { ssr: false });
 const RemoveRedEyeIcon = dynamic(() => import('@mui/icons-material/RemoveRedEye'), { ssr: false });
 const BorderColorTwoToneIcon = dynamic(() => import('@mui/icons-material/BorderColorTwoTone'), { ssr: false });
@@ -128,7 +128,7 @@ const OnBoardingList = () => {
   if(isLoading){
     <Box px={5} py={2} pt={10} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader  addbtn={false} imprtBtn={false} Headerlabel='Riders'  onClick={() => <RiderOnBoarding/>} />
+                <CustomTableHeader1  imprtBtn={false} Headerlabel='Riders'  onClick={() => <RiderOnBoarding/>} />
                 <Box py={5}>
                     <CustomTable dashboard={false} columns={columns} rows={[]} loading={true} id={"id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
@@ -142,7 +142,7 @@ const OnBoardingList = () => {
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader setState={searchProducts}  imprtBtn={false} Headerlabel='Riders' onClick={() => <RiderOnBoarding/>} addbtn={true} />
+                <CustomTableHeader1 setState={searchProducts}  imprtBtn={false} Headerlabel='Riders' onClick={() => <RiderOnBoarding/>}  />
                 <Box py={5}>
                 <CustomTable dashboard={false} columns={columns} rows={riderData} id={"_id"} bg={"#ffff"} label='Recent Activity' />
 

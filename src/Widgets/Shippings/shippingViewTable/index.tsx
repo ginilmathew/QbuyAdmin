@@ -27,9 +27,9 @@ type props = {
 }
 
 
-const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList ,onApiSuccess}: props) => {
+const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onApiSuccess }: props) => {
 
-console.log(id,"lllll");
+
 
 
 
@@ -55,16 +55,16 @@ console.log(id,"lllll");
         setSingleList(data);
         setModalOpen(true);
         console.log(data);
-        
+
         setMode(mode)
     }, [modalOpen, singleList, mode]);
 
 
     const handleOpenAddModal = useCallback(() => {
         if (res === null) {
-            setaddModalOpen(true);  
+            setaddModalOpen(true);
         } else {
-            setAddOpen(true);  
+            setAddOpen(true);
         }
     }, [res]);
 
@@ -72,31 +72,31 @@ console.log(id,"lllll");
         if (res === null) {
             setaddModalOpen(false);
         } else {
-            setAddOpen(false); 
+            setAddOpen(false);
         }
     }, [res]);
 
-    
+
     useEffect(() => {
         getPlatFormCharge()
     }, [])
 
 
     const getPlatFormCharge = async () => {
-     
+
         try {
-            
+
             const response = await fetchData('common/platformcharge')
             let { data } = response?.data
-            console.log({data});
-            
-             setplatFomCharge(data?.platformCharge)
+            console.log({ data });
+
+            setplatFomCharge(data?.platformCharge)
 
         } catch (err) {
             toast.error("cant't find platform charge")
-         
 
-        } 
+
+        }
     }
 
     const handleOpenDeleteModal = useCallback(() => {
@@ -110,26 +110,26 @@ console.log(id,"lllll");
     const handleApiSuccess = (AddedProduct: string) => {
         setnewAddedProduct(AddedProduct)
         console.log('API Success! Order ID:', AddedProduct);
-      };
+    };
 
 
     useEffect(() => {
-     
-        if (res===null && newAddedProduct  ){
+
+        if (res === null && newAddedProduct) {
             onApiSuccess(newAddedProduct)
-    
-            console.log({newAddedProduct});
-            
-        
+
+            console.log({ newAddedProduct });
+
+
             let pricedata = {
-                delivery_charge:parseInt(newAddedProduct?.delivery_charge),
+                delivery_charge: parseInt(newAddedProduct?.delivery_charge),
                 grand_total: parseInt(newAddedProduct?.delivery_charge) + parseInt(newAddedProduct?.total_amount) + platFomCharge,
                 total_amount: parseInt(newAddedProduct?.total_amount),
-                platform_charge:  platFomCharge,
+                platform_charge: platFomCharge,
             }
-            
-            
-                
+
+
+
             let productDetails: any[] = newAddedProduct?.product_details?.productDetails?.map((itm: any) => ({
                 name: itm?.name,
                 price: itm?.price,
@@ -155,17 +155,16 @@ console.log(id,"lllll");
                 // stock: itm?.type === "single" ? itm?.stock : itm?.variants?.stock,
                 // Add other properties as needed
             }));
-    console.log({pricedata});
-    console.log({productDetails});
-    
-    
+
+
+
             let Combine = {
-                 ...pricedata,
+                ...pricedata,
                 productDetails
             }
             setProductList(Combine);
 
-            
+
             // const result = productDetails?.map((res: any) => res?.vendor)
             // setVendorStatus(productDetails?.map((res: any) => ({ "vendor_id": "", "status": "" })))
 
@@ -234,13 +233,13 @@ console.log(id,"lllll");
 
         }
 
-    }, [res,newAddedProduct])
+    }, [res, newAddedProduct])
 
     useEffect(() => {
-      console.log(productList);
-      
+        console.log(productList);
+
     }, [productList])
-    
+
 
 
 
@@ -248,9 +247,9 @@ console.log(id,"lllll");
 
 
     const InitialPost = useCallback(async (data: any) => {
-      
-        console.log({data});
-        
+
+        console.log({ data });
+
         try {
             await postData('admin/order/edit', data);
         } catch (err) {
@@ -262,20 +261,20 @@ console.log(id,"lllll");
 
     }, [productList])
 
- 
 
-   console.log({productList});
 
- 
- 
+    console.log({ productList });
+
+
+
 
 
     useEffect(() => {
         if (productList) {
-            if(newAddedProduct){
-                console.log({newAddedProduct});
-                console.log({id});
-                
+            if (newAddedProduct) {
+                console.log({ newAddedProduct });
+                console.log({ id });
+
                 let value = {
                     id: newAddedProduct?.product_details?.product_id,
                     // productDetails: [productList?.product_details?.productDetails],
@@ -283,20 +282,20 @@ console.log(id,"lllll");
                 }
                 // InitialPost(value)
             }
-            else{
-                console.log("syammmmmmmmmmm");
-             
-                
+            else {
+
+
+
                 let value = {
                     id: id,
-                  
+
                     productDetails: [...productList.productDetails]
                 }
-                console.log({value});
+                console.log({ value });
                 InitialPost(value)
             }
-          
-           
+
+
         }
 
     }, [productList])
@@ -389,24 +388,25 @@ console.log(id,"lllll");
 
     // }
 
-console.log(productList);
+
 
 
     return (
         <Box>
             <Box>
 
-                { <Box py={1} display={'flex'} justifyContent={'flex-end'}>
-                    <Custombutton
-                        btncolor=''
-                        IconEnd={''}
-                        IconStart={''}
-                        endIcon={false}
-                        startIcon={false}
-                        height={''}
-                        label={'Add'}
-                        disabled={false}
-                        onClick={handleOpenAddModal} />
+                {<Box py={1} display={'flex'} justifyContent={'flex-end'}>
+                    {readonly &&
+                        <Custombutton
+                            btncolor=''
+                            IconEnd={''}
+                            IconStart={''}
+                            endIcon={false}
+                            startIcon={false}
+                            height={''}
+                            label={'Add'}
+                            disabled={false}
+                            onClick={handleOpenAddModal} />}
                 </Box>}
             </Box>
             <TableContainer component={Paper} >
@@ -418,9 +418,9 @@ console.log(productList);
                             <TableCell align="center">Quantity</TableCell>
                             <TableCell align="center">Unit Price</TableCell>
                             <TableCell align="center">Total Price</TableCell>
-                            { <TableCell align="center"></TableCell>}
                             {<TableCell align="center"></TableCell>}
-                            { <TableCell align="center"></TableCell>}
+                            {<TableCell align="center"></TableCell>}
+                            {<TableCell align="center"></TableCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -438,25 +438,25 @@ console.log(productList);
                                 <TableCell align="center">{row.quantity}</TableCell>
                                 <TableCell align="center">{(row?.unitPrice)}</TableCell>
                                 <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
-                                  {id && ( 
-                <>
-                   <TableCell align="center"> <BorderColorTwoToneIcon
-                                    onClick={() => { handleOpen(row, 'product') }}
-                                    style={{
-                                        color: '#58D36E',
-                                        cursor: 'pointer'
-                                    }}
-                                /></TableCell>
-                                 <TableCell > <DeleteOutlineTwoToneIcon
-                                    onClick={() => { removeProduct(row) }}
-                                    style={{
-                                        color: 'red',
-                                        cursor: 'pointer'
-                                    }}
-                                /></TableCell>
-                </>
-         )}
-                                 
+                                {id && readonly &&(
+                                    <>
+                                        <TableCell align="center"> <BorderColorTwoToneIcon
+                                            onClick={() => { handleOpen(row, 'product') }}
+                                            style={{
+                                                color: '#58D36E',
+                                                cursor: 'pointer'
+                                            }}
+                                        /></TableCell>
+                                        <TableCell > <DeleteOutlineTwoToneIcon
+                                            onClick={() => { removeProduct(row) }}
+                                            style={{
+                                                color: 'red',
+                                                cursor: 'pointer'
+                                            }}
+                                        /></TableCell>
+                                    </>
+                                )}
+
 
                             </TableRow>
                         ))}
@@ -524,19 +524,19 @@ console.log(productList);
                     open={addOpen}
                     handleClose={handleCloseAddModal}
                 />}
-                {addModalOpen &&
-                 <AddNewProductModal
-                 setStoreList={setStoreList}
-                 order_id={id}
-                 SetDeliveryCharge={SetDeliveryCharge}
-                 allProduct={productList}
-                 setaddProductList={setProductList}
-                 open={addModalOpen}
-                 onApiSuccess={handleApiSuccess} 
-                 handleClose={handleCloseAddModal}
-             />
+            {addModalOpen &&
+                <AddNewProductModal
+                    setStoreList={setStoreList}
+                    order_id={id}
+                    SetDeliveryCharge={SetDeliveryCharge}
+                    allProduct={productList}
+                    setaddProductList={setProductList}
+                    open={addModalOpen}
+                    onApiSuccess={handleApiSuccess}
+                    handleClose={handleCloseAddModal}
+                />
 
-                }
+            }
 
         </Box>
     )
