@@ -19,7 +19,7 @@ type props = {
     selectvalue: string,
     options: any,
     value: any,
-    defaultValue:any,
+    defaultValue?:any,
     size: number,
     label: string,
     disabled?: boolean

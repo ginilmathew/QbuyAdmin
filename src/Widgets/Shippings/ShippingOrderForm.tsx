@@ -41,6 +41,7 @@ type Inputs = {
     comment: string;
     order_id: string;
     ridername: string,
+    customer_comments:string,
     rider_email:string,
     rider_phone:string,
     payment_status: string;
@@ -76,7 +77,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
         },
 
     ])
-  
+    const [rider_name, setrider_name] = useState<any>('')
     const [customer_id, setcustomer_id] = useState<any>('')
     const [customer_user_id, setcustomer_user_id] = useState<any>('')
     const [paymentMethodSelect, setPaymentMethodSelect] = useState<string>('')
@@ -100,7 +101,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
 	const [inputValue, setInputValue] = useState<any>('');
     const [productdetails, setproductdetails] = useState<any>()
     const [customerGroupData, setcustomerGroupData] = useState<any>('')
-
+const [platFomCharge, setplatFomCharge] = useState<any>('')
     const [customeraddressList, setcustomeraddressList] = useState<any>([]);
     const [orderStatusSelect, setOrderStatus] = useState<any>([
         {
@@ -127,7 +128,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
         .shape({
             comment: yup.string().max(60, 'Maximum Character Exceeds').nullable(),
             // name:yup.string().required("name required")
-            email:yup.string().required("email required"),
+            // email:yup.string().required("email required"),
             
         })
         .required();
@@ -175,8 +176,25 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             toast.error("Failed to fetch customer groups");
         } };
 
+        const getPlatFormCharge = async () => {
+     
+            try {
+                
+                const response = await fetchData('common/platformcharge')
+                let { data } = response?.data
+                console.log({data});
+                
+                 setplatFomCharge(data?.platformCharge)
+    
+            } catch (err) {
+                toast.error("cant't find platform charge")
+             
+    
+            } 
+        }
     useEffect(() => {
         fetchCustomerGroupOptions();
+        getPlatFormCharge()
     }, []);
     useEffect(() => {
          if (dataa ) {
@@ -221,7 +239,11 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
     }
 
     useEffect(() => {
-        customerDetailsAddressGet()
+        if(dataa)
+        {
+            customerDetailsAddressGet()
+        }
+        
     }, [dataa])
 
 
@@ -235,7 +257,10 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             const customerGroupId = response?.data?.data?.customer_group_id;
             const matchingCustomerGroup = findMatchingCustomerGroup(customerGroupId);
             setcustomeraddressList(response?.data?.data?.users?.addresses)
-
+           
+            {customeraddressList?.map((res: any) => (
+                setValue('customer_comments',res?.comments)
+            ))}
           
            console.log({customerGroupData});
            console.log({matchingCustomerGroup});
@@ -438,6 +463,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             setValue('order_id', orderviewList?.order_id)
             setValue('refund_amount', orderviewList?.refund_details?.refund_amount);
             setValue('ridername', orderviewList?.rider_each_order_settlement?.rider?.name)
+            setrider_name(orderviewList?.rider_each_order_settlement?.rider?.name)
             // setValue('rider_email',orderviewList?.rider_each_order_settlement?.rider?.email)
             setValue('rider_phone',orderviewList?.rider_each_order_settlement?.rider?.mobile)
             // setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name ? orderviewList?.billaddress?.name : ''},${orderviewList?.billaddress?.area?.address ? orderviewList?.billaddress?.area?.address : ''},${orderviewList?.billaddress?.pincode ? orderviewList?.billaddress?.pincode : ''},${orderviewList?.billaddress?.mobile ? `${'Mob:'}${orderviewList?.billaddress?.mobile}` : ''}`)
@@ -525,6 +551,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             type:process.env.NEXT_PUBLIC_TYPE,
             delivery_date:new Date().toISOString().slice(0, 19).replace("T", " "),
             delivery_type:ordertype ,
+            platform_charge:platFomCharge
           
             
         }));
@@ -787,7 +814,7 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                         background={'#fff'}
                     >
                          {customeraddressList?.map((res: any) => (
-                                    <MenuItem value={res?._id}>{res?.name}</MenuItem>
+                                    <MenuItem value={res?._id}>{res?.fullData}</MenuItem>
                                 ))}
                     </Customselect>
                         ) }
@@ -817,8 +844,8 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                         <CustomInput
                             type='text'
                             control={control}
-                            error={errors.ridername}
-                            fieldName="ridername"
+                            error={errors.customer_comments}
+                            fieldName="customer_comments"
                             placeholder={``}
                             fieldLabel={"Comments"}
                             disabled={false}
@@ -840,7 +867,7 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                             placeholder={``}
                             fieldLabel={"Rider Name"}
                             disabled={false}
-                            view={idd?true:false}
+                            view={true}
                             defaultValue={''}
                         />
                     
@@ -884,7 +911,7 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                             startIcon={false}
                             height={''}
                             label={'Alert Rider'}
-                            disabled={loading}
+                            disabled={rider_name ?false:true}
                             onClick={Alertrider} />
                     </Box>
                 </CustomBox>

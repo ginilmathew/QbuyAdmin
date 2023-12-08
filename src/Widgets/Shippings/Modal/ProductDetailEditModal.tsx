@@ -266,7 +266,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                             fontWeight: 'bold',
                             letterSpacing: 1,
                             fontFamily: `'Poppins' sans-serif`,
-                        }}>{mode === 'product' ? 'Edit Producttt' : 'Edit Delivery Charge'}</Typography>
+                        }}>{mode === 'product' ? 'Edit Product' : 'Edit Delivery Charge'}</Typography>
                     </Box>
                     <Box onClick={handleClose}>
                         <Box
