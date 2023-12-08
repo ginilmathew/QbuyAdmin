@@ -231,7 +231,7 @@ const ProductForm = ({ res, view }: props) => {
             store: yup.string().typeError('Store is Required').required('Store is Required'),
             stock: yup.boolean(),
             category: yup.string().typeError('Category is Required').required('Category is Required'),
-            delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
+            // delivery_locations: yup.array().typeError('Delivery location is Required').required('Delivery location is Required'),
             product_image: yup
                 .mixed()
                 .required("Product Image is Required"),
