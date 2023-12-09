@@ -58,6 +58,7 @@ type Inputs = {
 type props = {
     resData?: any;
     view?: any;
+    readonly: any;
 };
 
 interface Product {
@@ -97,7 +98,7 @@ interface VendorStatus {
 }
 
 
-const OrderSummaryForm = ({ resData, view }: props) => {
+const OrderSummaryForm = ({ resData, view,readonly }: props) => {
     const idd = resData ? resData : view;
 
     const [loading, setLoading] = useState(false);
@@ -246,9 +247,9 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                 if (summaryList.order_delivery_time !== null) {
                     const deliveryTime = moment(summaryList.order_delivery_time).format('hh:mm A');
                     setValue('created_completed', deliveryTime);
-                  } else {
+                } else {
                     setValue('created_completed', '');
-                  }
+                }
             }
             if (summaryList.order_history) {
                 setOrderHistory(summaryList.order_history);
@@ -381,75 +382,79 @@ const OrderSummaryForm = ({ resData, view }: props) => {
                 </Grid>
             </CustomBox>
             <CustomBox title="">
-
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} >
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                             <TableRow>
                                 <TableCell>Product</TableCell>
-                                <TableCell align="center">Restuarant</TableCell>
+                                <TableCell align="center">Restaurant</TableCell>
                                 <TableCell align="center">Quantity</TableCell>
                                 <TableCell align="center">Unit Price</TableCell>
                                 <TableCell align="center">Total Price</TableCell>
+                                {<TableCell align="center"></TableCell>}
+                                {<TableCell align="center"></TableCell>}
+                                {<TableCell align="center"></TableCell>}
                             </TableRow>
                         </TableHead>
-
                         <TableBody>
-                            {summaryList.product_details ? (
-                                summaryList.product_details.map((product: Product, index: number) => (
-                                    <TableRow key={index}>
-                                        <TableCell component="th" scope="row">
-                                            {product.name}
-                                        </TableCell>
-                                        {/* <TableCell align="center">{product.store_name}</TableCell> */}
-                                        {/* <TableCell align="center">{summaryList?.vendor_status[0]?.store_name}</TableCell> */}
-                                        <TableCell align="center">
-                                            {summaryList.vendor_status[index]?.store_name}
-                                        </TableCell>
-                                        <TableCell align="center">{product.quantity}</TableCell>
-                                        <TableCell align="center">{product.unitPrice}</TableCell>
-                                        <TableCell align="center">{product.quantity * product.unitPrice}</TableCell>
-                                    </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={5}>No product details available.</TableCell>
-                                </TableRow>
-                            )}
+                            {summaryList?.product_details?.map((row: any) => (
+                                <TableRow
+                                    key={row.name}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        {row?.name},{row?.attributes}
+                                        
+                                    </TableCell>
+                                   
 
+                            
+                                    <TableCell align="center">{row?.productdata?.store?.name}</TableCell>
+
+                                    <TableCell align="center">{row.quantity}</TableCell>
+                                    <TableCell align="center">{(row?.unitPrice)}</TableCell>
+                                    <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
+                                  
+
+
+                                </TableRow>
+                            ))}
                             <TableRow >
                                 <TableCell rowSpan={5} />
                                 <TableCell colSpan={2}></TableCell>
                                 <TableCell align="right">Sub-Total</TableCell>
                                 <TableCell align="center">₹ {parseFloat(summaryList?.total_amount)?.toFixed(2)}</TableCell>
-
-                            </TableRow>
-                            <TableRow >
-                                <TableCell />
-                                <TableCell></TableCell>
-                                <TableCell align="right">Platform & Other Charges</TableCell>
-                                <TableCell align="center">₹ {parseFloat(summaryList?.platform_charge)?.toFixed(2)}</TableCell>
-
+                                {readonly && <TableCell align="center"></TableCell>}
+                                {readonly && <TableCell align="center"></TableCell>}
                             </TableRow>
 
-                            <TableRow >
-                                <TableCell />
-                                <TableCell ></TableCell>
-                                <TableCell align="right">Delivery Charge</TableCell>
-                                <TableCell align="center">₹ {parseFloat(summaryList?.delivery_charge)?.toFixed(2)}</TableCell>
+                            <TableRow>
 
+                                <TableCell colSpan={2}></TableCell>
+                                <TableCell align="right" >Delivery Charge (SlotBased)</TableCell>
+                                <TableCell align="center">₹ {summaryList?.delivery_charge}</TableCell>
+                                
+                             
                             </TableRow>
-                            <TableRow >
-                                <TableCell />
-                                <TableCell></TableCell>
+
+
+                            <TableRow>
+                                <TableCell colSpan={2}></TableCell>
+                                <TableCell align="right">Platform Charge</TableCell>
+                                <TableCell align="center">
+                                    ₹ {isNaN(summaryList?.platform_charge) ? 'Nil' : parseFloat(summaryList?.platform_charge).toFixed(2)}
+                                </TableCell>
+                            </TableRow>
+
+                            <TableRow>
+                                <TableCell colSpan={2}></TableCell>
                                 <TableCell align="right">Total</TableCell>
                                 <TableCell align="center">₹ {parseFloat(summaryList?.grand_total)?.toFixed(2)}</TableCell>
-
                             </TableRow>
                         </TableBody>
-
                     </Table>
                 </TableContainer>
+
             </CustomBox>
 
             <CustomBox title="">
