@@ -58,7 +58,7 @@ type Inputs = {
 type props = {
     resData?: any;
     view?: any;
-    readonly: any;
+    readonly?: any;
 };
 
 interface Product {
