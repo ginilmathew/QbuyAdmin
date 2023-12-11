@@ -40,6 +40,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
     const [singleList, setSingleList] = useState([]);
     const [mode, setMode] = useState<any>(null)
     const [productList, setProductList] = useState<any>(null);
+    console.log({productList},"list")
     const [newAddedProduct, setnewAddedProduct] = useState<any>()
     const [platFomCharge, setplatFomCharge] = useState<any>()
 
@@ -396,7 +397,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
             <Box>
 
                 {<Box py={1} display={'flex'} justifyContent={'flex-end'}>
-                    {readonly &&
+                    
                         <Custombutton
                             btncolor=''
                             IconEnd={''}
@@ -406,7 +407,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                             height={''}
                             label={'Add'}
                             disabled={false}
-                            onClick={handleOpenAddModal} />}
+                            onClick={handleOpenAddModal} />
                 </Box>}
             </Box>
             <TableContainer component={Paper} >
@@ -438,7 +439,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                                 <TableCell align="center">{row.quantity}</TableCell>
                                 <TableCell align="center">{(row?.unitPrice)}</TableCell>
                                 <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
-                                {id && readonly &&(
+                                {id && (
                                     <>
                                         <TableCell align="center"> <BorderColorTwoToneIcon
                                             onClick={() => { handleOpen(row, 'product') }}
