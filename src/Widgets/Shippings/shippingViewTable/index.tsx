@@ -27,11 +27,7 @@ type props = {
 }
 
 
-const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList ,onApiSuccess}: props) => {
-
-console.log(id,"lllll");
-
-
+const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onApiSuccess }: props) => {
 
     const [modalOpen, setModalOpen] = useState(false);
     const [addModalOpen, setaddModalOpen] = useState(false)
@@ -40,6 +36,7 @@ console.log(id,"lllll");
     const [singleList, setSingleList] = useState([]);
     const [mode, setMode] = useState<any>(null)
     const [productList, setProductList] = useState<any>(null);
+    console.log({productList},"list")
     const [newAddedProduct, setnewAddedProduct] = useState<any>()
     const [platFomCharge, setplatFomCharge] = useState<any>()
 
@@ -387,8 +384,6 @@ console.log(id,"lllll");
     //     vendorStatusData[index]['vendor_id'] = res?._id;
     //     vendorStatusData[index]['status'] = value;
 
-
-
     // }
 
 console.log(productList);
@@ -398,17 +393,18 @@ console.log(productList);
         <Box>
             <Box>
 
-                { <Box py={1} display={'flex'} justifyContent={'flex-end'}>
-                    <Custombutton
-                        btncolor=''
-                        IconEnd={''}
-                        IconStart={''}
-                        endIcon={false}
-                        startIcon={false}
-                        height={''}
-                        label={'Add'}
-                        disabled={false}
-                        onClick={handleOpenAddModal} />
+                {<Box py={1} display={'flex'} justifyContent={'flex-end'}>
+                
+                        <Custombutton
+                            btncolor=''
+                            IconEnd={''}
+                            IconStart={''}
+                            endIcon={false}
+                            startIcon={false}
+                            height={''}
+                            label={'Add'}
+                            disabled={false}
+                            onClick={handleOpenAddModal} />
                 </Box>}
             </Box>
             <TableContainer component={Paper} >
@@ -445,25 +441,25 @@ console.log(productList);
                                 <TableCell align="center">{row.quantity}</TableCell>
                                 <TableCell align="center">{(row?.unitPrice)}</TableCell>
                                 <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
-                                  {id && ( 
-                <>
-                   <TableCell align="center"> <BorderColorTwoToneIcon
-                                    onClick={() => { handleOpen(row, 'product') }}
-                                    style={{
-                                        color: '#58D36E',
-                                        cursor: 'pointer'
-                                    }}
-                                /></TableCell>
-                                 <TableCell > <DeleteOutlineTwoToneIcon
-                                    onClick={() => { removeProduct(row) }}
-                                    style={{
-                                        color: 'red',
-                                        cursor: 'pointer'
-                                    }}
-                                /></TableCell>
-                </>
-         )}
-                                 
+                                {id && (
+                                    <>
+                                        <TableCell align="center"> <BorderColorTwoToneIcon
+                                            onClick={() => { handleOpen(row, 'product') }}
+                                            style={{
+                                                color: '#58D36E',
+                                                cursor: 'pointer'
+                                            }}
+                                        /></TableCell>
+                                        <TableCell > <DeleteOutlineTwoToneIcon
+                                            onClick={() => { removeProduct(row) }}
+                                            style={{
+                                                color: 'red',
+                                                cursor: 'pointer'
+                                            }}
+                                        /></TableCell>
+                                    </>
+                                )}
+
 
                             </TableRow>
                         ))}

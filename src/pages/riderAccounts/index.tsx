@@ -72,6 +72,7 @@ const RiderAccounts = () => {
       flex: 1,
       headerAlign: 'center',
       align: 'center',
+      
 
     },
     {

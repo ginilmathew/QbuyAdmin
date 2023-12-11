@@ -344,7 +344,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             setLoading(true)
             await postData('admin/order/status', value)
             toast.success('Order Updated Successfully')
-            // router.push('/shipments')
+            router.push('/shipments')
             setLoading(false)
         } catch (err: any) {
             toast.error(err?.message)
@@ -525,6 +525,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             }
             
             toast.success('Order Updated Successfully')
+            router.push('/shipments')
 
         } catch (err) {
             let message = 'Unknown Error'

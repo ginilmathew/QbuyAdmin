@@ -57,6 +57,8 @@ const RiderLogsModal = (props: SimpleDialogProps) => {
       valueGetter: (params) => moment(params?.row?.delivered_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
 
     },
+   
+    
 
   ];
 
