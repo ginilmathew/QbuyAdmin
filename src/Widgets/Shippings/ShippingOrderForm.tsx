@@ -101,7 +101,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
 	const [inputValue, setInputValue] = useState<any>('');
     const [productdetails, setproductdetails] = useState<any>()
     const [customerGroupData, setcustomerGroupData] = useState<any>('')
-const [platFomCharge, setplatFomCharge] = useState<any>('')
+    const [platFomCharge, setplatFomCharge] = useState<any>('')
     const [customeraddressList, setcustomeraddressList] = useState<any>([]);
     const [orderStatusSelect, setOrderStatus] = useState<any>([
         {
@@ -127,8 +127,10 @@ const [platFomCharge, setplatFomCharge] = useState<any>('')
         .object()
         .shape({
             comment: yup.string().max(60, 'Maximum Character Exceeds').nullable(),
+            payment_status: yup.string().max(60, 'payment status required'),
+            payment_method: yup.string().max(60, 'payment method required'),
             // name:yup.string().required("name required")
-            // email:yup.string().required("email required"),
+            email:yup.string().required("email required"),
             
         })
         .required();
@@ -532,8 +534,8 @@ const [platFomCharge, setplatFomCharge] = useState<any>('')
         }
        }
        else {
-        console.log(customer_user_id,"id");
-       
+        console.log(selectedcustmraddress,"id");
+    
 
 
         let resultadd = productdetails?.product_details?.productDetails?.map((itm: any) => ({
@@ -556,8 +558,25 @@ const [platFomCharge, setplatFomCharge] = useState<any>('')
             
         }));
 
-   
-
+ 
+  
+        if(!selectedcustmraddress)
+        {
+            toast.error("Shipping Address/Delivery Address required")
+            return
+        }
+        if(! data?.payment_type){
+         toast.error("Payment method required")
+         return
+        }
+        if(!data?.payment_status){
+         toast.error("Payment status required")
+         return
+        }
+        if(!productdetails?.product_details?._id){
+         toast.error("Please Add Product")
+         return
+        }
         try {
             await postData('admin/order/create', resultadd[0]);
             router.push('/shipments');
@@ -902,9 +921,7 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                         </Grid>
 
                     </Grid>
-            
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', py: 1 }}>
-                    {!view && 
                         <Custombutton
                             btncolor='#D35858'
                             IconEnd={''}
@@ -913,8 +930,8 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                             startIcon={false}
                             height={''}
                             label={'Alert Rider'}
-                            disabled={loading}
-                            onClick={Alertrider} />}
+                            disabled={rider_name ?false:true}
+                            onClick={Alertrider} />
                     </Box>
                 </CustomBox>
             <CustomBox title='Payment Details'>

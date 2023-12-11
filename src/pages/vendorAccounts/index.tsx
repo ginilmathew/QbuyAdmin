@@ -117,7 +117,7 @@ const VendorAccounts = () => {
 
     },
     {
-      field: 'Last Payment Date',
+      field: 'last_salary_date',
       headerName: 'Last Payment Date',
       flex: 1,
       headerAlign: 'center',

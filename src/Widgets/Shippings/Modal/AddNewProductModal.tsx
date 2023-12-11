@@ -324,7 +324,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
             title: null,
             stock_value: null,
             deliveryPrice:selectProduct?.delivery,
-
+            description:selectProduct?.description
             
         }
 console.log(selectProduct?.delivery);

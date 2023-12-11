@@ -443,7 +443,7 @@ const Vendorform = ({ res, view, data }: props) => {
             setValue('vendor_mobile', vendorList?.vendor_mobile);
             setValue('vendor_email', vendorList?.vendor_email);
             setValue('store_name', vendorList?.store_name);
-            setValue('store_address', vendorList?.store_address);
+            setValue('store_address', vendorList?.store_address!=="null"?vendorList?.store_address:"");
             setValue('franchise_id', vendorList?.franchise_id);
             setFranchise(vendorList?.franchise_id);
             setAccountType(vendorList?.account_type);

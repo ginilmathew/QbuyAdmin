@@ -65,7 +65,7 @@ const WorkDetailsTab = ({ res, view }: props) => {
 
         {
             field: 'cancelled_order',
-            headerName: 'Canceled Orders',
+            headerName: 'Cancelled Orders',
             flex: 1,
             headerAlign: 'center',
             align: 'center',

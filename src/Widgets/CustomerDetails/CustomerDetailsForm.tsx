@@ -74,13 +74,15 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const idd = resData ? resData : view;
     const schema = yup.object().shape({
-         name: yup.string().required("Customer Name is required"),
-         address_name: yup.string().required("address Name is required"),
+         name: yup.string().required("Customer Name  required"),
+       
+        //  address_name: yup.string().required("address Name is required"),
         // email: yup
         //     .string()
         //     .email("Invalid email")
         //     .required("Email is required"),
-        //     mobile: yup.string().required('Mobile Number is Required').matches(phoneRegExp, 'Mobile number is not valid').min(10, 'Mobile Number must be minimum 10 digit').max(10, 'Mobile number is not valid'),
+       //    mobile: yup.string().required('Mobile Number is Required').matches(phoneRegExp, 'Mobile number is not valid').min(10, 'Mobile Number must be minimum 10 digit').max(10, 'Mobile number is not valid'),
+        address_mobile: yup.string().required('Mobile Number  Required').matches(phoneRegExp, 'Mobile number is not valid').min(10, 'Mobile Number must be minimum 10 digit').max(10, 'Mobile number is not valid'),
         // addresses: yup.array().of(
         //     yup.object().shape({
         //         address: yup.string().required("Address is required"),
@@ -160,12 +162,16 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     const CheckCustomerList = (e: any, i: any, mode: any) => {
 
 
+        
 
-
-
+        addressfromprevious[i][mode] = e;
+     
+    
 
 
     };
+    
+    const defaultAddress = addressfromprevious;
     const onChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newValue = event.target.value;
         setSelectedValue(newValue);
@@ -269,13 +275,28 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
             // console.log(...addressfromprevious[0],'TEXT')
      
+            if(!addressfromprevious[0]?.pincode){
+                toast.error("Address pincode required")
+                return 
+            }
 
+            if(!addressfromprevious[0]?.area){
+                toast.error("Area required")
+                return 
+            }
+              
+            if(!addressfromprevious[0]?.address_type){
+                toast.error("Address type required")
+                return 
+            }
+
+         
 
 
 
             const values = {
                 name: data?.name,
-                address_mobile: data?.address_mobile,
+                address_mobile:addressfromprevious[0]?.mobile,
                 email: data?.email,
                 customer_group_id: data.customer_group_id,
                 customer_block_status: data.customer_block_status,
@@ -283,7 +304,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
                 address_name: addressfromprevious[0]?.address_name,
                 comments: addressfromprevious[0]?.comments,
-                mobile: addressfromprevious[0]?.mobile,
+                mobile:data?.address_mobile,
                 pincode: addressfromprevious[0]?.pincode,
                 address_type: addressfromprevious[0]?.address_type,
                 default_status: addressfromprevious[0]?.default_status,
@@ -291,13 +312,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                 
 
             }
-
-console.log({values});
-console.log({addressfromprevious});
-
-
-
-            const response = await postData(
+          const response = await postData(
                 `/admin/customer-details/create`, values
 
             );
@@ -327,11 +342,30 @@ console.log({addressfromprevious});
 
     const result = {...data}
      delete result?.customer_address?.Apikey
+     console.log(result?.address_name
+     );
+     if (!result?.address_name ) {
+     
+        toast.error("Address name is required");
+        return;
+    }
+    if(!result?.address_type){
+        toast.error("Address type required")
+        return 
+    }
+    
+    if (!result?.pincode) {
+     
+        toast.error("Address pincode is required");
+        return;
+    }
+    
     // delete result?.customer_address[0]?.created_at
     // delete result?.customer_address[0]?.customer_address_id
     // delete result?.customer_address[0]?.updated_at
     // delete result?.customer_address[0]?.status
     // delete result?.customer_address[0]?.default
+
 
     result.default_status= 1
     // result.id = "iuhiuhiu";
@@ -384,7 +418,24 @@ console.log({addressfromprevious});
          delete result?.Apikey
 
           delete result?.customer_address?.id
+          console.log({result});
           
+          if (!result?.address_name ) {
+     
+            toast.error("Address name is required");
+            return;
+        }
+        if (!result?.address_type ) {
+     
+            toast.error("Address type is required");
+            return;
+        }
+        
+        if (!result?.pincode) {
+         
+            toast.error("Address pincode is required");
+            return;
+        }
         // delete result?.customer_address[0]?.customer_address_id
         // delete result?.customer_address[0]?.updated_at
         // delete result?.customer_address[0]?.status
@@ -643,8 +694,10 @@ console.log({addressfromprevious});
     //         <div>Loading</div>
     //     )
     // }
-    console.log({addressfromprevious});
-    
+  
+    addressfromprevious?.map((addres: any, i: any) => (
+        console.log({addressfromprevious})
+    ))
     return (
         <Box>
             <CustomBox title="Basic Details">
@@ -783,8 +836,7 @@ console.log({addressfromprevious});
                                    error={errors.address_name}
                                    fieldName="address_name"
                                    placeholder={``}
-
-                                   Values={res?.address_name}
+                                   Values={addres?.[i]?.address_name}
                                    fieldLabel={"Address"}
                                    onChangeValue={(e: any) => allDetailsChange(e,i,'address_name')}
                                    disabled={false}
@@ -822,28 +874,29 @@ console.log({addressfromprevious});
                                 </Grid>
 
 
-                                    <Grid item xs={12} lg={3}>
+                                <Grid item xs={12} lg={3}>
 
                                     <GoogleAutocomplete
                                         apiKey={process.env.NEXT_PUBLIC_GOOGLEKEY}
                                         style={{ width: "95%", height: '63%', marginTop: "23px", }}
                                         onPlaceSelected={(e: any) => handlePlaceSelected(e, i, 'area')}
                                         types={['(regions)']}
-                                        defaultValue={areaofcustomer?.address}
+                                        defaultValue={addres?.[i]?.area?.address || defaultAddress[i]?.area?.address}
                                         selectProps={{
-                                            value:areaofcustomer?.address,
+                                            value: addres?.[i]?.area?.address || defaultAddress[i]?.area?.address,
                                             onChange: (o: any) => {
 
 
-                                                    let placeId = o["value"]["place_id"];
-                                                    setareaofcustomer(o);
-                                                    // formik.setFieldValue("googlePlaceId", placeId);
-                                                }
-                                            }}
-                                        />
-                                    </Grid>
+                                                let placeId = o["value"]["place_id"];
+                                                setareaofcustomer(o);
+                                                // formik.setFieldValue("googlePlaceId", placeId);
+                                            }
+                                        }}
+                                    />
+                                        
+                                </Grid>
 
-                                    {/* <Grid item xs={12} lg={2}>  
+                                {/* <Grid item xs={12} lg={2}>  
             <CustomInput
                                    key={index}
                                    type="text"
@@ -860,7 +913,7 @@ console.log({addressfromprevious});
                                />
                            </Grid> */}
 
-                                    <Grid item xs={12} lg={3}>
+                                <Grid item xs={12} lg={3}>
 
                                     <CustomInputNormal
                                         value={addres[i]?.mobile}
@@ -922,7 +975,7 @@ console.log({addressfromprevious});
                                 <Grid item xs={12} lg={3}>
                                     <Typography mb={3}></Typography>
                                     <CustomCheckBox
-                                        isChecked={addres?.default}
+                                        isChecked={addres[i]?.default}
                                         label=""
                                         onChange={(e: any) => CheckCustomerList(e, i, "default_status")}
                                         title="Set As Default Address"

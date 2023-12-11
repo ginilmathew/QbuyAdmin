@@ -27,9 +27,9 @@ type props = {
 }
 
 
-const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onApiSuccess }: props) => {
+const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList ,onApiSuccess}: props) => {
 
-
+console.log(id,"lllll");
 
 
 
@@ -55,16 +55,16 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
         setSingleList(data);
         setModalOpen(true);
         console.log(data);
-
+        
         setMode(mode)
     }, [modalOpen, singleList, mode]);
 
 
     const handleOpenAddModal = useCallback(() => {
         if (res === null) {
-            setaddModalOpen(true);
+            setaddModalOpen(true);  
         } else {
-            setAddOpen(true);
+            setAddOpen(true);  
         }
     }, [res]);
 
@@ -72,31 +72,31 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
         if (res === null) {
             setaddModalOpen(false);
         } else {
-            setAddOpen(false);
+            setAddOpen(false); 
         }
     }, [res]);
 
-
+    
     useEffect(() => {
         getPlatFormCharge()
     }, [])
 
 
     const getPlatFormCharge = async () => {
-
+     
         try {
-
+            
             const response = await fetchData('common/platformcharge')
             let { data } = response?.data
-            console.log({ data });
-
-            setplatFomCharge(data?.platformCharge)
+            console.log({data});
+            
+             setplatFomCharge(data?.platformCharge)
 
         } catch (err) {
             toast.error("cant't find platform charge")
+         
 
-
-        }
+        } 
     }
 
     const handleOpenDeleteModal = useCallback(() => {
@@ -110,26 +110,26 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
     const handleApiSuccess = (AddedProduct: string) => {
         setnewAddedProduct(AddedProduct)
         console.log('API Success! Order ID:', AddedProduct);
-    };
+      };
 
 
     useEffect(() => {
-
-        if (res === null && newAddedProduct) {
+     
+        if (res===null && newAddedProduct  ){
             onApiSuccess(newAddedProduct)
-
-            console.log({ newAddedProduct });
-
-
+    
+            console.log({newAddedProduct});
+            
+        
             let pricedata = {
-                delivery_charge: parseInt(newAddedProduct?.delivery_charge),
+                delivery_charge:parseInt(newAddedProduct?.delivery_charge),
                 grand_total: parseInt(newAddedProduct?.delivery_charge) + parseInt(newAddedProduct?.total_amount) + platFomCharge,
                 total_amount: parseInt(newAddedProduct?.total_amount),
-                platform_charge: platFomCharge,
+                platform_charge:  platFomCharge,
             }
-
-
-
+            
+            
+                
             let productDetails: any[] = newAddedProduct?.product_details?.productDetails?.map((itm: any) => ({
                 name: itm?.name,
                 price: itm?.price,
@@ -147,6 +147,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                 stock_value: itm?.stock_value,
                 product_id: itm?.product_id,
                 vendor_mobile: itm?.vendor_mobile,
+                description:itm?.description
                 // seller_price: itm?.type === "single" ? itm?.productdata?.seller_price : itm?.variants?.seller_price,
                 // deliveryPrice: itm?.type === "single" ? itm?.deliveryPrice : itm?.variants?.fixed_delivery_price,
                 // fixed_delivery_price: itm?.type === "single" ? itm?.deliveryPrice : itm?.variants?.fixed_delivery_price,
@@ -155,16 +156,17 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                 // stock: itm?.type === "single" ? itm?.stock : itm?.variants?.stock,
                 // Add other properties as needed
             }));
-
-
-
+    console.log({pricedata});
+    console.log({productDetails});
+    
+    
             let Combine = {
-                ...pricedata,
+                 ...pricedata,
                 productDetails
             }
             setProductList(Combine);
 
-
+            
             // const result = productDetails?.map((res: any) => res?.vendor)
             // setVendorStatus(productDetails?.map((res: any) => ({ "vendor_id": "", "status": "" })))
 
@@ -188,7 +190,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                 platform_charge: res?.platform_charge,
             }
             let productDetails: []
-            productDetails = res?.product_details?.map((itm: any) => ({
+                productDetails = res?.product_details?.map((itm: any) => ({
                 name: itm?.name,
                 price: itm?.price,
                 quantity: itm?.quantity,
@@ -206,7 +208,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                 title: itm?.type === "single" ? null : itm?.variants?.title,
                 stock_value: itm?.type === "single" ? (itm?.stock_value + parseFloat(itm?.quantity)) : (itm?.variants?.stock_value + parseFloat(itm?.quantity)),
                 stock: itm?.type === "single" ? itm?.stock : itm?.variants?.stock,
-                attributes: itm?.attributes
+                attributes: itm?.attributes,
+                description:itm?.description
 
             }))
 
@@ -233,13 +236,13 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
         }
 
-    }, [res, newAddedProduct])
+    }, [res,newAddedProduct])
 
     useEffect(() => {
-        console.log(productList);
-
+      console.log(productList);
+      
     }, [productList])
-
+    
 
 
 
@@ -247,9 +250,9 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
 
     const InitialPost = useCallback(async (data: any) => {
-
-        console.log({ data });
-
+      
+        console.log({data});
+        
         try {
             await postData('admin/order/edit', data);
         } catch (err) {
@@ -261,20 +264,20 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
     }, [productList])
 
+ 
 
+   console.log({productList});
 
-    console.log({ productList });
-
-
-
+ 
+ 
 
 
     useEffect(() => {
         if (productList) {
-            if (newAddedProduct) {
-                console.log({ newAddedProduct });
-                console.log({ id });
-
+            if(newAddedProduct){
+                console.log({newAddedProduct});
+                console.log({id});
+                
                 let value = {
                     id: newAddedProduct?.product_details?.product_id,
                     // productDetails: [productList?.product_details?.productDetails],
@@ -282,20 +285,20 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                 }
                 // InitialPost(value)
             }
-            else {
-
-
-
+            else{
+              
+             
+                
                 let value = {
                     id: id,
-
+                  
                     productDetails: [...productList.productDetails]
                 }
-                console.log({ value });
+                console.log({value});
                 InitialPost(value)
             }
-
-
+          
+           
         }
 
     }, [productList])
@@ -388,25 +391,24 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
     // }
 
-
+console.log(productList);
 
 
     return (
         <Box>
             <Box>
 
-                {<Box py={1} display={'flex'} justifyContent={'flex-end'}>
-                    {readonly &&
-                        <Custombutton
-                            btncolor=''
-                            IconEnd={''}
-                            IconStart={''}
-                            endIcon={false}
-                            startIcon={false}
-                            height={''}
-                            label={'Add'}
-                            disabled={false}
-                            onClick={handleOpenAddModal} />}
+                { <Box py={1} display={'flex'} justifyContent={'flex-end'}>
+                    <Custombutton
+                        btncolor=''
+                        IconEnd={''}
+                        IconStart={''}
+                        endIcon={false}
+                        startIcon={false}
+                        height={''}
+                        label={'Add'}
+                        disabled={false}
+                        onClick={handleOpenAddModal} />
                 </Box>}
             </Box>
             <TableContainer component={Paper} >
@@ -415,12 +417,16 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                         <TableRow>
                             <TableCell>Product</TableCell>
                             <TableCell align="center">Store/Pickup Address</TableCell>
+                            <TableCell align="center">Description</TableCell> 
+
                             <TableCell align="center">Quantity</TableCell>
-                            <TableCell align="center">Unit Price</TableCell>
+                           
                             <TableCell align="center">Total Price</TableCell>
+                            <TableCell align="center">Unit Price</TableCell>
+                            { <TableCell align="center"></TableCell>}
+                            
                             {<TableCell align="center"></TableCell>}
-                            {<TableCell align="center"></TableCell>}
-                            {<TableCell align="center"></TableCell>}
+                            { <TableCell align="center"></TableCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -435,39 +441,43 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                                     {(row?.attributes && !row?.variant_id) ? `(${row?.attributes?.join(', ')})` : ''}
                                 </TableCell>
                                 <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor?.vendor_mobile}{ }</TableCell>
+                                <TableCell align="center">{row.description}</TableCell> 
                                 <TableCell align="center">{row.quantity}</TableCell>
                                 <TableCell align="center">{(row?.unitPrice)}</TableCell>
                                 <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
-                                {id && readonly &&(
-                                    <>
-                                        <TableCell align="center"> <BorderColorTwoToneIcon
-                                            onClick={() => { handleOpen(row, 'product') }}
-                                            style={{
-                                                color: '#58D36E',
-                                                cursor: 'pointer'
-                                            }}
-                                        /></TableCell>
-                                        <TableCell > <DeleteOutlineTwoToneIcon
-                                            onClick={() => { removeProduct(row) }}
-                                            style={{
-                                                color: 'red',
-                                                cursor: 'pointer'
-                                            }}
-                                        /></TableCell>
-                                    </>
-                                )}
-
+                                  {id && ( 
+                <>
+                   <TableCell align="center"> <BorderColorTwoToneIcon
+                                    onClick={() => { handleOpen(row, 'product') }}
+                                    style={{
+                                        color: '#58D36E',
+                                        cursor: 'pointer'
+                                    }}
+                                /></TableCell>
+                                 <TableCell > <DeleteOutlineTwoToneIcon
+                                    onClick={() => { removeProduct(row) }}
+                                    style={{
+                                        color: 'red',
+                                        cursor: 'pointer'
+                                    }}
+                                /></TableCell>
+                </>
+         )}
+                                 
 
                             </TableRow>
                         ))}
-                        <TableRow >
-                            <TableCell rowSpan={5} />
-                            <TableCell colSpan={2}></TableCell>
-                            <TableCell align="right">Sub-Total</TableCell>
-                            <TableCell align="center">₹ {parseFloat(productList?.total_amount)?.toFixed(2)}</TableCell>
-                            {readonly && <TableCell align="center"></TableCell>}
-                            {readonly && <TableCell align="center"></TableCell>}
-                        </TableRow>
+                     
+                        <TableRow>
+    <TableCell rowSpan={5} />
+    <TableCell colSpan={2}></TableCell>
+    <TableCell align="right">Sub-Total</TableCell>
+    <TableCell align="center">
+        ₹ {isNaN(parseFloat(productList?.total_amount)) ? 0 : parseFloat(productList?.total_amount).toFixed(2)}
+    </TableCell>
+    {readonly && <TableCell align="center"></TableCell>}
+    {readonly && <TableCell align="center"></TableCell>}
+</TableRow>
 
                         <TableRow>
 
@@ -483,19 +493,21 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                             /></TableCell>}
                         </TableRow>
 
-
+                     
                         <TableRow>
-                            <TableCell colSpan={2}></TableCell>
-                            <TableCell align="right">Platform Charge</TableCell>
-                            <TableCell align="center">
-                                ₹ {isNaN(productList?.platform_charge) ? 'Nil' : parseFloat(productList?.platform_charge).toFixed(2)}
-                            </TableCell>
-                        </TableRow>
+    <TableCell colSpan={2}></TableCell>
+    <TableCell align="right">Platform Charge</TableCell>
+    <TableCell align="center">
+        ₹ {isNaN(parseFloat(productList?.platform_charge)) ? 0 : parseFloat(productList?.platform_charge).toFixed(2)}
+    </TableCell>
+</TableRow>
 
+
+                       
                         <TableRow>
                             <TableCell colSpan={2}></TableCell>
                             <TableCell align="right">Total</TableCell>
-                            <TableCell align="center">₹ {parseFloat(productList?.grand_total)?.toFixed(2)}</TableCell>
+                            <TableCell align="center">  ₹ {isNaN(parseFloat(productList?.grand_total)) ? 0 : parseFloat(productList?.grand_total).toFixed(2)}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
@@ -524,19 +536,19 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                     open={addOpen}
                     handleClose={handleCloseAddModal}
                 />}
-            {addModalOpen &&
-                <AddNewProductModal
-                    setStoreList={setStoreList}
-                    order_id={id}
-                    SetDeliveryCharge={SetDeliveryCharge}
-                    allProduct={productList}
-                    setaddProductList={setProductList}
-                    open={addModalOpen}
-                    onApiSuccess={handleApiSuccess}
-                    handleClose={handleCloseAddModal}
-                />
+                {addModalOpen &&
+                 <AddNewProductModal
+                 setStoreList={setStoreList}
+                 order_id={id}
+                 SetDeliveryCharge={SetDeliveryCharge}
+                 allProduct={productList}
+                 setaddProductList={setProductList}
+                 open={addModalOpen}
+                 onApiSuccess={handleApiSuccess} 
+                 handleClose={handleCloseAddModal}
+             />
 
-            }
+                }
 
         </Box>
     )
