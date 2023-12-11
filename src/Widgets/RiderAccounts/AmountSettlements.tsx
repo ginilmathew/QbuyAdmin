@@ -210,7 +210,7 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
                   placeholder={``}
                   fieldLabel={"Amount"}
                   disabled={false}
-                  view={false}
+                  view={true}
                   defaultValue={''}
                 />
               </Grid>

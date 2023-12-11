@@ -29,10 +29,6 @@ type props = {
 
 const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onApiSuccess }: props) => {
 
-
-
-
-
     const [modalOpen, setModalOpen] = useState(false);
     const [addModalOpen, setaddModalOpen] = useState(false)
     const [modalDelete, setModalDelete] = useState(false);
@@ -385,8 +381,6 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
     //     vendorStatusData[index]['vendor_id'] = res?._id;
     //     vendorStatusData[index]['status'] = value;
 
-
-
     // }
 
 
@@ -397,7 +391,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
             <Box>
 
                 {<Box py={1} display={'flex'} justifyContent={'flex-end'}>
-                    
+                
                         <Custombutton
                             btncolor=''
                             IconEnd={''}

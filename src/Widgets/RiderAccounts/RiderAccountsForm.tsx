@@ -102,6 +102,7 @@ const RiderAccountsform = ({ view, res }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            
 
         },
         {
@@ -166,11 +167,11 @@ const RiderAccountsform = ({ view, res }: props) => {
     const columns2: GridColDef[] = [
         {
             field: 'transaction_date',
-            headerName: 'Dateof Transaction',
+            headerName: 'Date and Time of Transaction',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => moment(params?.row?.settlement_list?.map((res:any)=>res?.transaction_date,"YYYY-MM-DD")).format("DD-MM-YYYY")
+            valueGetter: (params) => moment(params?.row?.settlement_list?.map((res:any)=>res?.transaction_date,"YYYY-MM-DD hh:mm A")).format("DD-MM-YYYY hh:mm A")
            
         },
         {
@@ -188,6 +189,7 @@ const RiderAccountsform = ({ view, res }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            
 
         },
         {
@@ -333,14 +335,32 @@ const RiderAccountsform = ({ view, res }: props) => {
 
 
 
+    // const riderEarningSelect = (item: any) => {
+    //     let result = riderEarningList?.filter((res: any) => item?.includes(res?._id))
+    //     let totalPrice = result.reduce((accumulator: any, total: any) => accumulator + parseInt(total.payout), 0);
+    //     setSelectChecked(result)
+    //     setTotal(totalPrice)
+    // }
     const riderEarningSelect = (item: any) => {
-        let result = riderEarningList?.filter((res: any) => item?.includes(res?._id))
-        let totalPrice = result.reduce((accumulator: any, total: any) => accumulator + parseInt(total.payout), 0);
-        setSelectChecked(result)
-        setTotal(totalPrice)
+        let result = riderEarningList?.filter((res: any) => item?.includes(res?._id));
+        
+        let totalPrice = result.reduce((accumulator: any, total: any) => {
+            console.log('Accumulator:', accumulator);
+            console.log('Current Payout:', total.payout);
+            return accumulator + parseFloat(total.payout);
+        }, 0);
+        
+        let roundedTotalPrice = totalPrice.toFixed(2);
+        let finalTotalPrice = parseFloat(roundedTotalPrice);
+        
+        console.log('Total Price:', finalTotalPrice);
+        
+        setSelectChecked(result);
+        setTotal(finalTotalPrice);
     }
-
-
+    
+   
+    
     if (!RiderSingleList) {
         return <><Spinner /></>
     }
@@ -404,7 +424,7 @@ const RiderAccountsform = ({ view, res }: props) => {
                         <CustomViewInput fieldLabel='Deduction' text={RiderSingleList?.deduction} color='#FF7B7B' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Payable' text={RiderSingleList?.total_payable} color='#2EA10C' />
+                        <CustomViewInput fieldLabel='Total Payable' text={RiderSingleList?.total_outstanding.toFixed(2)} color='#2EA10C' />
                     </Grid>
                     <Grid item direction="row-reverse">
                         <Typography mb={3}></Typography>
@@ -472,7 +492,7 @@ const RiderAccountsform = ({ view, res }: props) => {
                         <CustomViewInput fieldLabel='Total Earnings' text={RiderSingleList?.total_earnings} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Outstanding' text={RiderSingleList?.total_outstanding} color='#FF7B7B' />
+                        <CustomViewInput fieldLabel='Total Outstanding' text={RiderSingleList?.total_outstanding.toFixed(2)} color='#FF7B7B' />
                     </Grid>
                 </Grid>
                 <Box py={2}>

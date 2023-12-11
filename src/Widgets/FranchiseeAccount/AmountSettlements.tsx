@@ -41,7 +41,7 @@ export interface SimpleDialogProps {
 
 const AmountSettlementModal = (props: SimpleDialogProps) => {
   const { onClose, data, open, price, id, setFranchiseeSinglelist,viewFranchisee, setTotal} = props;
-  console.log('datass:', data);
+  console.log('setFranchiseeSinglelist:', data);
  
   const router = useRouter()
 
@@ -118,7 +118,7 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
     let value = {
       order_ids: orderId,
       franchise_id: id,
-      transaction_date: moment(time).format('YYYY-DD-MM'),
+      transaction_date: moment(time).format('YYYY-MM-DD HH:mm A'),
       amount: price?.toString(),
       payment_mode: paymentSelect,
       transaction_id: formData?.transaction_id,
@@ -209,7 +209,7 @@ const AmountSettlementModal = (props: SimpleDialogProps) => {
                   placeholder={``}
                   fieldLabel={"Amount"}
                   disabled={false}
-                  view={false}
+                  view={true}
                   defaultValue={''}
                 />
               </Grid>
