@@ -74,7 +74,8 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const idd = resData ? resData : view;
     const schema = yup.object().shape({
-        // name: yup.string().required("Customer Name is required"),
+         name: yup.string().required("Customer Name is required"),
+         address_name: yup.string().required("address Name is required"),
         // email: yup
         //     .string()
         //     .email("Invalid email")

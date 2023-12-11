@@ -61,10 +61,10 @@ const Shipments = () => {
     }, [data?.data?.data])
 
     const ShippmentView = (id: string) => {
-        setId(id)
-        setViewModal(true)
+        // setId(id)
+        // setViewModal(true)
         
-        //router.push(`/shipments/view/${id}`)
+        router.push(`/shipments/view/${id}`)
     }
 
     const ShippmentEdit = (id: string) => {
