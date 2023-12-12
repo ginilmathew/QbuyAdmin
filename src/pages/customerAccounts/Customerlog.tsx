@@ -143,8 +143,10 @@ const CustomerLogsModal = (props: SimpleDialogProps & { order_id: string | null 
                                     {customerLog && customerLog.map((customerOrder: any, index: any) => (
                                         <TableRow key={index}>
                                             <TableCell component="th" scope="row">
-                                                {customerOrder.name} {/* Display the name */}
+                                                {customerOrder.name}
+                                                {customerOrder?.variants?.title && ` [${customerOrder.variants.title}]`}
                                             </TableCell>
+
                                             <TableCell align="center">{customerOrder?.productdata?.store?.name},{customerOrder?.productdata?.vendors?.store_address},{customerOrder?.productdata?.vendors?.vendor_mobile}{ }</TableCell>
                                             <TableCell align="center">{customerOrder.quantity}</TableCell>
                                             <TableCell align="center">

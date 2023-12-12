@@ -38,7 +38,7 @@ const VendorLogsModal = (props: SimpleDialogProps) => {
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => (moment(params?.row?.date).format('DD/MM/YYYY hh:mm A')),
-           
+
         },
         {
             field: 'sales_amount',
@@ -54,9 +54,14 @@ const VendorLogsModal = (props: SimpleDialogProps) => {
             width: 300,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => moment(params?.row?.delivered_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+            valueGetter: (params) => {
+                const deliveredDate = params?.row?.delivered_date;
+                return deliveredDate
+                    ? moment(deliveredDate, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+                    : '_';
+            }
+        }
 
-        },
 
     ];
 
@@ -115,7 +120,7 @@ const VendorLogsModal = (props: SimpleDialogProps) => {
         setListLog([])
         onClose()
     }
-   
+
     return (
         <Box>
             <Dialog onClose={clearData} open={open} fullWidth={true}
