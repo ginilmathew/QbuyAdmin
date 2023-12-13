@@ -90,7 +90,7 @@ const CustomSelectSearch = ({
                             onChange={onChangeValue}
                             onInputChange={onInputChange}
                             getOptionLabel={getOptionLabel}
-                            renderInput={(params) => <TextField {...params} label={placeholder} />}
+                            renderInput={(params) => <TextField variant='outlined' {...params} label={placeholder} />}
                             style={{
                                 borderRadius: "10px",
                                 height: height,

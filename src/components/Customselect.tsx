@@ -18,7 +18,7 @@ type props = {
     children?: string | JSX.Element | JSX.Element[],
     selectvalue: string,
     options: any,
-    value: any,
+    value?: any,
     defaultValue?:any,
     size: number,
     label: string,

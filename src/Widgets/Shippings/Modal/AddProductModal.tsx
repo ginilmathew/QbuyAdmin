@@ -344,6 +344,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             // value['fixed_delivery_price']=attributeSelect?.[0]?.delivery;
             value['title'] = attributeSelect?.[0]?.title;
             value['variant_id'] = attributeSelect?.[0]?.id;
+            value["attributes"] = attributeSelect?.[0]?.attributs
             value['stock_value'] = selectProduct.stock ? parseInt(attributeSelect?.[0]?.stockValue) + parseInt(attributeSelect?.[0]?.minQty) : null;
         } else {
 

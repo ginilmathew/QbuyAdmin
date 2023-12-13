@@ -25,7 +25,7 @@ type props = {
     order_id: string,
     setStoreList: any
     onApiSuccess: (AddedProduct: string) => void;
-
+    added: any
 }
 type Inputs = {
     name: string;
@@ -39,8 +39,8 @@ type Inputs = {
     product_id: any;
 };
 
-const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id, setStoreList ,onApiSuccess}: props) => {
-     const [productList, setProductList] = useState<any>([]);
+const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id, setStoreList, onApiSuccess, added }: props) => {
+    const [productList, setProductList] = useState<any>([]);
     const [productListRes, setProductListRes] = useState<any>([]);
     const [franchise, setFranchise] = useState<any>([])
     const [vendor, setVendor] = useState<any>([]);
@@ -59,7 +59,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
 
 
     const schema = yup
-     .object()
+        .object()
         .shape({
 
         })
@@ -107,7 +107,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
         }
 
     }
- 
+
     const onSelectStore = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue("total", "")
         setValue("quantity", "")
@@ -121,7 +121,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
                 name: get?.store_name,
                 category: get?.category_id
             }
-         ))
+        ))
         let vendorDetails = vendor?.filter((res: any) => res?._id === e.target.value);
         setVendorDetails(vendorDetails)
 
@@ -145,7 +145,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
 
 
     const OnChangeProduct = useCallback(async (value: any) => {
-          setproductsel(value)
+        setproductsel(value)
         setValue("total", "")
         setValue("quantity", "")
         setValue("price", "")
@@ -168,7 +168,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
         setProductData(prdctlist)
 
     }, [productListRes])
-    const varientOncheck = async(e: any, i: number) => {
+    const varientOncheck = async (e: any, i: number) => {
         const { value } = e.target;
 
         let newArray: any[]
@@ -177,7 +177,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
             newArray[i] = value;
             return newArray;
         });
-        if(productData?.variants){
+        if (productData?.variants) {
             const matchedObjects = productData?.variants?.filter((item: any) => newArray.every((attr) => item.attributs.includes(attr)));
             setAttributeSelect(matchedObjects);
             setValue("quantity", 1)
@@ -186,14 +186,14 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
             setValue('price', matchedObjects[0]?.price);
             setValue('stock_value', matchedObjects[0]?.stockValue + matchedObjects[0]?.minQty);
         }
-        else{
+        else {
             setValue("total", "")
             setValue("quantity", "")
             setValue("price", "")
             let data = productListRes?.filter((res: any) => res?._id === productsel?.id);
             let prdctlist: any = await getProduct(data?.[0] || []);
-    
-    
+
+
             setSelectProduct(prdctlist)
             let filter = prdctlist || [].filter((res: any) => res?.id === value?.id);
             if (filter?.variant === false) {
@@ -209,7 +209,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
             setProductData(prdctlist)
 
         }
-      
+
     }
     const getFranchiseList = async () => {
         try {
@@ -225,7 +225,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
         }
     }
 
-  
+
     const OnChangeQuantity = (e: any) => {
         const { value } = e.target;
         setValue("quantity", value)
@@ -282,10 +282,16 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
         }
     }
 
-    
-    
+
+
 
     const Submit = async (data: any) => {
+
+
+        console.log({added})
+
+        //return false;
+
         let quntityValidation = parseInt(data?.quantity)
         let stock = selectProduct?.stock;
 
@@ -331,8 +337,8 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
                 return false;
             }
         }
-        console.log({selectProduct});
-        
+        console.log({ selectProduct });
+
 
         let value: any = {
             image: selectProduct?.product_image,//
@@ -350,40 +356,41 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
             vendor_mobile: vendorDetails?.[0]?.vendor_mobile,
             title: null,
             stock_value: null,
-            deliveryPrice:selectProduct?.delivery,
-            description:selectProduct?.description
-            
+            deliveryPrice: selectProduct?.delivery,
+            description: selectProduct?.description
+
         }
-console.log(selectProduct?.delivery);
+        console.log(selectProduct?.delivery);
 
         if (selectProduct?.variant === true) {
             console.log("hfhuuuuuuuuuu");
-            
+
             value['type'] = "variant";
             value['deliveryPrice'] = attributeSelect?.[0]?.delivery;
 
             // value['fixed_delivery_price']=attributeSelect?.[0]?.delivery;
             value['title'] = attributeSelect?.[0]?.title;
             value['variant_id'] = attributeSelect?.[0]?.id;
+            value["attributes"] = attributeSelect?.[0]?.attributs
             value['stock_value'] = selectProduct.stock ? parseInt(attributeSelect?.[0]?.stockValue) + parseInt(attributeSelect?.[0]?.minQty) : null;
         } else {
             console.log("kggggg");
-            
+
 
             // value['fixed_delivery_price'] = selectProduct?.delivery;
             value['type'] = "single";
             value['deliveryPrice'] = selectProduct?.delivery;
-            value['stock_value'] =  selectProduct?.delivery;
+            value['stock_value'] = selectProduct?.delivery;
         }
 
-if (AllProducts && AllProducts.productDetails) {
+        if (AllProducts && AllProducts.productDetails) {
 
-  AllProducts.productDetails.push(value);
-} else {
-    AllProducts = AllProducts || {};
- 
-  AllProducts.productDetails = [value];
-}        // setaddProductList((previous)=>[previous,value])
+            AllProducts.productDetails.push(value);
+        } else {
+            AllProducts = AllProducts || {};
+
+            AllProducts.productDetails = [value];
+        }        // setaddProductList((previous)=>[previous,value])
 
 
         // setVendorStatus(AllProducts.productDetails?.map((res: any) => ({ "vendor_id": null, "status": null})))
@@ -394,7 +401,7 @@ if (AllProducts && AllProducts.productDetails) {
             return Math.max(highest, delivery.deliveryPrice);
         }, 0);
 
-        console.log({highestDelivery});
+        console.log({ highestDelivery });
 
         SetDeliveryCharge(highestDelivery)
         // AllProducts['delivery_charge'] = allProduct?.delivery_charge;
@@ -409,18 +416,23 @@ if (AllProducts && AllProducts.productDetails) {
 
 
 
+
         try {
             setLoading(true)
             let publishValue = {
-                id: null,
+                id: added ? added?.product_details?._id : null,
                 productDetails: [...AllProducts.productDetails]
             }
-              
-           const response= await postData('admin/order/createproduct', publishValue);
-           const AddedProduct = response?.data?.data;
-           console.log({AddedProduct});
-           
-           onApiSuccess(AddedProduct);
+
+
+            console.log({publishValue})
+            //return false;
+
+            const response = await postData('admin/order/createproduct', publishValue);
+            const AddedProduct = response?.data?.data;
+            console.log({ AddedProduct });
+
+            onApiSuccess(AddedProduct);
             let find = publishValue?.productDetails?.map((res) => (res?.vendor?._id));
             setStoreList(find)
 
@@ -549,7 +561,7 @@ if (AllProducts && AllProducts.productDetails) {
                                 list={productList}
                                 onChangeValue={OnChangeProduct}
                                 fieldLabel='Products'
-                                
+
                             />
                         </Grid>
 
