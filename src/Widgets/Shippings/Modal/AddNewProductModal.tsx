@@ -54,6 +54,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
     const [attributeSelect, setAttributeSelect] = useState<any>([])
     const [vendorDetails, setVendorDetails] = useState<any>(null)
     const [stockvl, setstockvl] = useState<any>(null)
+    const [productsel, setproductsel] = useState<any>(null)
 
 
 
@@ -144,7 +145,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
 
 
     const OnChangeProduct = useCallback(async (value: any) => {
-
+          setproductsel(value)
         setValue("total", "")
         setValue("quantity", "")
         setValue("price", "")
@@ -167,7 +168,49 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
         setProductData(prdctlist)
 
     }, [productListRes])
+    const varientOncheck = async(e: any, i: number) => {
+        const { value } = e.target;
 
+        let newArray: any[]
+        setVarientSelect((prevArray: any) => {
+            newArray = [...prevArray];
+            newArray[i] = value;
+            return newArray;
+        });
+        if(productData?.variants){
+            const matchedObjects = productData?.variants?.filter((item: any) => newArray.every((attr) => item.attributs.includes(attr)));
+            setAttributeSelect(matchedObjects);
+            setValue("quantity", 1)
+            setValue("seller", matchedObjects[0]?.seller);
+            setValue("total", matchedObjects[0]?.price);
+            setValue('price', matchedObjects[0]?.price);
+            setValue('stock_value', matchedObjects[0]?.stockValue + matchedObjects[0]?.minQty);
+        }
+        else{
+            setValue("total", "")
+            setValue("quantity", "")
+            setValue("price", "")
+            let data = productListRes?.filter((res: any) => res?._id === productsel?.id);
+            let prdctlist: any = await getProduct(data?.[0] || []);
+    
+    
+            setSelectProduct(prdctlist)
+            let filter = prdctlist || [].filter((res: any) => res?.id === value?.id);
+            if (filter?.variant === false) {
+                setValue('price', filter?.price);
+                setValue("total", filter?.price)
+                setValue("seller", filter?.seller)
+                setValue("quantity", 1)
+            } else {
+                setValue("quantity", 0)
+                setVarientSelect([])
+                setValue('price', "")
+            }
+            setProductData(prdctlist)
+
+        }
+      
+    }
     const getFranchiseList = async () => {
         try {
             setLoading(true)
@@ -182,23 +225,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
         }
     }
 
-    const varientOncheck = (e: any, i: number) => {
-        const { value } = e.target;
-
-        let newArray: any[]
-        setVarientSelect((prevArray: any) => {
-            newArray = [...prevArray];
-            newArray[i] = value;
-            return newArray;
-        });
-        const matchedObjects = productData?.variants?.filter((item: any) => newArray.every((attr) => item.attributs.includes(attr)));
-        setAttributeSelect(matchedObjects);
-        setValue("quantity", 1)
-        setValue("seller", matchedObjects[0]?.seller);
-        setValue("total", matchedObjects[0]?.price);
-        setValue('price', matchedObjects[0]?.price);
-        setValue('stock_value', matchedObjects[0]?.stockValue + matchedObjects[0]?.minQty);
-    }
+  
     const OnChangeQuantity = (e: any) => {
         const { value } = e.target;
         setValue("quantity", value)
@@ -522,10 +549,11 @@ if (AllProducts && AllProducts.productDetails) {
                                 list={productList}
                                 onChangeValue={OnChangeProduct}
                                 fieldLabel='Products'
+                                
                             />
                         </Grid>
 
-                        {(productData && productData?.variant) && productData?.attributes?.map((res: any, i: number) => (
+                        {(productData) && productData?.attributes?.map((res: any, i: number) => (
                             <Grid item xs={12} lg={1.5}>
                                 <Customselect
                                     disabled={false}
