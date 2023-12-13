@@ -446,7 +446,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                         onClick={handleOpenAddModal} />
                 </Box>}
             </Box>
-            <TableContainer component={Paper} >
+            {productList?.productDetails && <TableContainer component={Paper} >
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
@@ -548,7 +548,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                         </TableRow>
                     </TableBody>
                 </Table>
-            </TableContainer>
+            </TableContainer>}
 
 
 
