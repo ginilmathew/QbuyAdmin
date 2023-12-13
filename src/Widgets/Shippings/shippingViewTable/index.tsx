@@ -54,7 +54,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
         if(id){
             setSingleList(data);
             setModalOpen(true);
-            console.log(data);
+            console.log({data});
     
             setMode(mode)
         }

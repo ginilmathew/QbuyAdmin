@@ -36,8 +36,8 @@ type Inputs = {
     store_address: string,
     store_name: string,
     vendor_mobile: string,
-    delivery: any
-
+    delivery: any,
+    attributes: any
 
 
 
@@ -86,7 +86,8 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                 store_address: data?.store_address,
                 store_name: data?.store_name,
                 vendor_mobile: data?.vendor_mobile,
-                delivery: data?.delivery
+                delivery: data?.delivery,
+                attributes: data?.attributes
             }
 
         });
@@ -160,6 +161,8 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     }
 
     const SubmitButton = async (item: any) => {
+        console.log({item})
+        //return false
         let product = [];
     
         if (item?.variant_id) {
