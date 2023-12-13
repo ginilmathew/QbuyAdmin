@@ -96,7 +96,8 @@ const CustomerAccountForm = ({ resData, view }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => moment(params?.row?.created_at, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+            //valueGetter: (params) => moment(params?.row?.created_at, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+            valueGetter: (params) => (moment(params.row.created_at).format('DD/MM/YYYY hh:mm A')),
         },
         {
             field: 'grand_total',

@@ -149,18 +149,35 @@ const Customer = () => {
 
     const row = []
 
+    // const searchProducts = useCallback((value: any) => {
+    //     let Results = data?.data?.data?.filter((com: any) =>
+    //         com?.customer_id.toString().includes(value) ||
+    //         com?.users?.mobile.toString().includes(value) ||
+    //         com?.users?.name.toString().includes(value)
+            
+
+    //     );
+
+    //     startTransition(() => {
+    //         setCustomerData(Results);
+    //     });
+    // }, [customerData]);
+
     const searchProducts = useCallback((value: any) => {
+        let lowercaseValue = value.toString().toLowerCase();
+      
         let Results = data?.data?.data?.filter((com: any) =>
-            com?.customer_id.toString().includes(value) ||
-            com?.users?.mobile.toString().includes(value)
+          (com?.customer_id?.toString() || '').toLowerCase().includes(lowercaseValue) || 
+          (com?.users?.mobile?.toString() || '').toLowerCase().includes(lowercaseValue) ||
+          (com?.users?.name?.toString() || '').toLowerCase().includes(lowercaseValue)
         );
-
+      
         startTransition(() => {
-            setCustomerData(Results);
+          setCustomerData(Results);
         });
-    }, [customerData]);
-
-
+      }, [customerData]);
+      
+      
     if (isLoading) {
 
         <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>

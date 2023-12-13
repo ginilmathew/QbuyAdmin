@@ -130,7 +130,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             payment_status: yup.string().max(60, 'payment status required'),
             payment_method: yup.string().max(60, 'payment method required'),
             // name:yup.string().required("name required")
-            email:yup.string().required("email required"),
+            // email:yup.string().required("email required"),
             
         })
         .required();

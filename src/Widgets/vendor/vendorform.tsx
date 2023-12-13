@@ -443,7 +443,7 @@ const Vendorform = ({ res, view, data }: props) => {
             setValue('vendor_mobile', vendorList?.vendor_mobile);
             setValue('vendor_email', vendorList?.vendor_email);
             setValue('store_name', vendorList?.store_name);
-            setValue('store_address', vendorList?.store_address!=="null"?vendorList?.store_address:"");
+            setValue('store_address', vendorList?.store_address !== "null" ? vendorList?.store_address : "");
             setValue('franchise_id', vendorList?.franchise_id);
             setFranchise(vendorList?.franchise_id);
             setAccountType(vendorList?.account_type);
@@ -496,6 +496,7 @@ const Vendorform = ({ res, view, data }: props) => {
         setValue('end_time', value)
         setError('end_time', { message: '' })
     }
+
 
 
     // const onChangeSelectSubCategory = (e:any) => {
@@ -594,6 +595,7 @@ const Vendorform = ({ res, view, data }: props) => {
 
         const URL_CREATE = '/admin/vendor/create'
         const URL_EDIT = '/admin/vendor/update'
+
         let kyc_details = {
             license_number: data?.license_number ? data?.license_number : null,
             ffsai_number: data?.ffsai_number ? data?.ffsai_number : null,
@@ -629,8 +631,17 @@ const Vendorform = ({ res, view, data }: props) => {
         formData.append("franchise_id", data?.franchise_id);
         formData.append("category_id", JSON.stringify(data?.category_id));
         formData.append("subCategory_id", JSON.stringify(data?.subCategory_id));
-        formData.append("start_time", data?.start_time !== "null" ? moment(data?.start_time, 'hh:mm A').format('HH:mm') : "null");
-        formData.append("end_time", data?.end_time !== "null" ? moment(data?.end_time, 'hh:mm A').format('HH:mm') : "null");
+        const formattedStartTime = data?.start_time && data?.start_time !== "Invalid date"
+            ? moment(data?.start_time, 'hh:mm A').format('HH:mm')
+            : '';
+
+        const formattedEndTime = data?.end_time && data?.end_time !== "Invalid date"
+            ? moment(data?.end_time, 'hh:mm A').format('HH:mm')
+            : '';
+        formData.append("start_time", formattedStartTime);
+        formData.append("end_time", formattedEndTime);
+        // formData.append("start_time", data?.start_time !== "null" ? moment(data?.start_time, 'hh:mm A').format('HH:mm') : "null");
+        // formData.append("end_time", data?.end_time !== "null" ? moment(data?.end_time, 'hh:mm A').format('HH:mm') : "null");
         formData.append("store_logo", data?.store_logo);
         formData.append("display_order", data?.display_order);
         formData.append("vendor_location", JSON.stringify(location));
@@ -912,37 +923,37 @@ const Vendorform = ({ res, view, data }: props) => {
                         </Grid>
 
                         <Grid item xs={12} lg={3}>
-                        {!view &&
-                        <Box>
-                            <CustomImageUploader
-                                ICON={""}
-                                viewImage={imagePreview}
-                                error={errors.store_logo}
-                                fieldName="store_logo"
-                                placeholder={``}
-                                fieldLabel={"Store Logo/Image"}
-                                control={control}
-                                height={150}
-                                max={5}
-                                onChangeValue={imageUploder}
-                                preview={imagefile}
-                                previewEditimage={""}
-                                type={"file"}
-                                background="#e7f5f7"
-                                myid="contained-button-file"
-                                width={"100%"}
-                            />
-                        </Box>}
+                            {!view &&
+                                <Box>
+                                    <CustomImageUploader
+                                        ICON={""}
+                                        viewImage={imagePreview}
+                                        error={errors.store_logo}
+                                        fieldName="store_logo"
+                                        placeholder={``}
+                                        fieldLabel={"Store Logo/Image"}
+                                        control={control}
+                                        height={150}
+                                        max={5}
+                                        onChangeValue={imageUploder}
+                                        preview={imagefile}
+                                        previewEditimage={""}
+                                        type={"file"}
+                                        background="#e7f5f7"
+                                        myid="contained-button-file"
+                                        width={"100%"}
+                                    />
+                                </Box>}
 
-                    {view &&
-                        <Box>
-                            <Typography>Store Logo/Image</Typography>
-                            <Avatar variant='square' src={`${IMAGE_URL}${vendorList?.store_logo}`} sx={{ width: '100%', height: 130 }} />
-                        </Box>}
+                            {view &&
+                                <Box>
+                                    <Typography>Store Logo/Image</Typography>
+                                    <Avatar variant='square' src={`${IMAGE_URL}${vendorList?.store_logo}`} sx={{ width: '100%', height: 130 }} />
+                                </Box>}
 
                         </Grid>
                     </Grid>
-                   
+
                 </Box>
                 <Box py={2}>
                     <Divider />
