@@ -122,8 +122,6 @@ const FranchiseeAccountsform = ({ view, res }: props) => {
             )
         }
     ];
-
-
     const columns2: GridColDef[] = [
         {
             field: 'transaction_date',
