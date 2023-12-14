@@ -10,6 +10,7 @@ import CustomInput from '@/components/CustomInput';
 import Custombutton from '@/components/Custombutton';
 import { toast } from 'react-toastify';
 import { postData } from '@/CustomAxios';
+import { isEqual } from 'lodash';
 
 
 type props = {
@@ -74,7 +75,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
             resolver: yupResolver(schema),
             defaultValues: {
                 product_id: data?.product_id,
-                name: `${data?.name} ${data?.title ? `,${data?.title}` : ""}`,
+                name: `${data?.name} (${data?.attributes ? `${data?.attributes?.join(', ')})` : ""}`,
                 quantity: data?.quantity || "",
                 total: (data?.quantity * data?.unitPrice),
                 seller_price: data?.seller_price,
@@ -170,9 +171,17 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                 ...itm
             }));
         } else {
-            product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== item?.product_id).map((itm: any) => ({
-                ...itm
-            }));
+            if(item?.attributes){
+                product = allProduct?.productDetails?.filter((prod: any) => (prod?.product_id === item?.product_id && !isEqual(prod?.attributes?.sort(), item?.attributes?.sort())) ||  prod?.product_id !== item?.product_id).map((itm: any) => ({
+                    ...itm
+                }));
+            }
+            else{
+                product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== item?.product_id).map((itm: any) => ({
+                    ...itm
+                }));
+            }
+            
         }
     
         item.title = data?.title;

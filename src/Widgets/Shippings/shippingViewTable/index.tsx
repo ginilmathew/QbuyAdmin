@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import VendorStatusContext from '@/helpers/shippingStatus';
 import AddNewProductModal from '../Modal/AddNewProductModal';
 import EditProductModal from '../Modal/EditProductModal';
+import { isEqual } from 'lodash';
 type props = {
     res: any,
     readonly: any,
@@ -341,7 +342,13 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
             if (row?.type === "variant") {
                 product = productList?.productDetails?.filter((res: any) => res?.variant_id !== row?.variant_id);
             } else {
-                product = productList?.productDetails?.filter((res: any) => res?.product_id !== row?.product_id);
+                if(row?.attributes){
+                    product = productList?.productDetails?.filter((prod: any) => (prod?.product_id === row?.product_id && !isEqual(prod?.attributes?.sort(), row?.attributes?.sort())) || prod?.product_id !== row?.product_id);
+                }
+                else{
+                    product = productList?.productDetails?.filter((res: any) => res?.product_id !== row?.product_id);
+                }
+                
     
             }
     
@@ -393,7 +400,12 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
             if (row?.type === "variant") {
                 product = productList?.productDetails?.filter((res: any) => res?.variant_id !== row?.variant_id);
             } else {
-                product = productList?.productDetails?.filter((res: any) => res?.product_id !== row?.product_id);
+                if(row?.attributes){
+                    product = productList?.productDetails?.filter((prod: any) => prod?.product_id === row?.product_id && !isEqual(prod?.attributes?.sort(), row?.attributes?.sort()));
+                }
+                else{
+                    product = productList?.productDetails?.filter((res: any) => res?.product_id !== row?.product_id);
+                }
     
             }
     
@@ -475,7 +487,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                                 <TableCell component="th" scope="row">
                                     {/* {row?.name}  {row.title ? (row.title) : ''} */}
                                     {row?.name}
-                                    {(row?.attributes && row?.variant_id) ? `(${row?.attributes?.join(', ')})` : ''}
+                                    {(row?.attributes) ? `(${row?.attributes?.join(', ')})` : ''}
                                 </TableCell>
                                 <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor?.vendor_mobile}{ }</TableCell>
                                 <TableCell align="center">{row.description}</TableCell>

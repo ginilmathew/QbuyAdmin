@@ -723,8 +723,8 @@ console.log({addressfromprevious});
                             fieldName="address_mobile"
                             placeholder={``}
                             fieldLabel={"Mobile Number"}
-                            disabled={resData?false:true}
-                            view={true}
+                            disabled={resData ? true : false}
+                            view={resData ? true : false}
                             defaultValue={""}
                         />
                     </Grid>
@@ -805,7 +805,7 @@ console.log({addressfromprevious});
     endIcon={false}
     startIcon={false}
     height={"30px"}
-    label={"Add"}
+    label={"Add Address"}
     onClick={addAddressSectionSingle}
 />
 </Box>

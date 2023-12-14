@@ -15,6 +15,7 @@ import { fetchData, postData } from '@/CustomAxios';
 import CustomSingleSearch from '@/components/CustomSingleSearch';
 import { getProduct } from '../../../helpers/productHelper/productHelper';
 import { loadGetInitialProps } from 'next/dist/shared/lib/utils';
+import { isEqual } from 'lodash';
 
 
 
@@ -63,6 +64,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const [attributeSelect, setAttributeSelect] = useState<any>([])
     const [vendorDetails, setVendorDetails] = useState<any>(null)
     const [stockvl, setstockvl] = useState<any>(null)
+    const [productsel, setproductsel] = useState<any>(null)
 
 
     const schema = yup
@@ -158,7 +160,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
 
 
     const OnChangeProduct = useCallback(async (value: any) => {
-
+        setproductsel(value)
         setValue("total", "")
         setValue("quantity", "")
         setValue("price", "")
@@ -196,8 +198,10 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         }
     }
 
-    const varientOncheck = (e: any, i: number) => {
+    const varientOncheck = async(e: any, i: number) => {
         const { value } = e.target;
+
+        productData.attributes[i].selected = value
 
         let newArray: any[]
         setVarientSelect((prevArray: any) => {
@@ -205,13 +209,45 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             newArray[i] = value;
             return newArray;
         });
-        const matchedObjects = productData?.variants?.filter((item: any) => newArray.every((attr) => item.attributs.includes(attr)));
-        setAttributeSelect(matchedObjects);
-        setValue("quantity", 1)
-        setValue("seller", matchedObjects[0]?.seller);
-        setValue("total", matchedObjects[0]?.price);
-        setValue('price', matchedObjects[0]?.price);
-        setValue('stock_value', matchedObjects[0]?.stockValue + matchedObjects[0]?.minQty);
+        if (productData?.variants) {
+            const matchedObjects = productData?.variants?.filter((item: any) => newArray.every((attr) => item.attributs.includes(attr)));
+            setAttributeSelect(matchedObjects);
+            setValue("quantity", 1)
+            setValue("seller", matchedObjects[0]?.seller);
+            setValue("total", matchedObjects[0]?.price);
+            setValue('price', matchedObjects[0]?.price);
+            setValue('stock_value', matchedObjects[0]?.stockValue + matchedObjects[0]?.minQty);
+        }
+        else {
+            setValue("total", "")
+            setValue("quantity", "")
+            setValue("price", "")
+            let data = productListRes?.filter((res: any) => res?._id === productsel?.id);
+            let prdctlist: any = await getProduct(data?.[0] || []);
+
+
+            setSelectProduct(prdctlist)
+            let filter = prdctlist || [].filter((res: any) => res?.id === value?.id);
+            if (filter?.variant === false) {
+                setValue('price', filter?.price);
+                setValue("total", filter?.price)
+                setValue("seller", filter?.seller)
+                setValue("quantity", 1)
+            } else {
+                setValue("quantity", 0)
+                setVarientSelect([])
+                setValue('price', "")
+            }
+            setProductData(prdctlist)
+
+        }
+        // const matchedObjects = productData?.variants?.filter((item: any) => newArray.every((attr) => item.attributs.includes(attr)));
+        // setAttributeSelect(matchedObjects);
+        // setValue("quantity", 1)
+        // setValue("seller", matchedObjects[0]?.seller);
+        // setValue("total", matchedObjects[0]?.price);
+        // setValue('price', matchedObjects[0]?.price);
+        // setValue('stock_value', matchedObjects[0]?.stockValue + matchedObjects[0]?.minQty);
     }
     const OnChangeQuantity = (e: any) => {
         const { value } = e.target;
@@ -275,6 +311,20 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         let quntityValidation = parseInt(data?.quantity)
         let stock = selectProduct?.stock;
 
+        let attributes:string[] = [];
+
+        productData?.attributes?.map((attr: any) => {
+            if(attr?.selected){
+                attributes?.push(attr?.selected)
+            }
+        })
+
+
+        if(productData?.attributes && attributes?.length !== productData?.attributes?.length){
+            toast.error("Please select all attributes")
+            return false
+        }
+
 
 
         let stk = selectProduct?.stockValue;
@@ -304,10 +354,26 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         let AllProducts: any = []
         AllProducts = structuredClone(allProduct);
         if (!productData?.variant) {
-            let duplicateProduct = AllProducts?.productDetails?.some((res: any) => res?.product_id === selectProduct?._id);
-            if (duplicateProduct) {
-                toast.warning('Product already exits');
-                return false;
+            if(attributes){
+                let existing = false
+                AllProducts?.productDetails?.map((pro: any) => {
+                    if(isEqual(pro?.attributes?.sort(), attributes?.sort())){
+                        toast.warning('Product already exits');
+                        existing = true;
+                       return false
+                    }
+                })
+
+                if(existing){
+                    return false;
+                }
+            }
+            else{
+                let duplicateProduct = AllProducts?.productDetails?.some((res: any) => res?.product_id === selectProduct?._id);
+                if (duplicateProduct) {
+                    toast.warning('Product already exits');
+                    return false;
+                }
             }
 
         } else {
@@ -347,7 +413,9 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             value["attributes"] = attributeSelect?.[0]?.attributs
             value['stock_value'] = selectProduct.stock ? parseInt(attributeSelect?.[0]?.stockValue) + parseInt(attributeSelect?.[0]?.minQty) : null;
         } else {
-
+            if(attributes){
+                value["attributes"] = attributes
+            }
             // value['fixed_delivery_price'] = selectProduct?.delivery;
             value['type'] = "single";
             value['deliveryPrice'] = selectProduct?.delivery;
@@ -520,7 +588,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                             />
                         </Grid>
 
-                        {(productData && productData?.variant) && productData?.attributes?.map((res: any, i: number) => (
+                        {productData  && productData?.attributes?.map((res: any, i: number) => (
                             <Grid item xs={12} lg={1.5}>
                                 <Customselect
                                     disabled={false}

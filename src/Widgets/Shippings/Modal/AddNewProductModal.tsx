@@ -16,6 +16,7 @@ import CustomSingleSearch from '@/components/CustomSingleSearch';
 import { getProduct } from '../../../helpers/productHelper/productHelper';
 import { loadGetInitialProps } from 'next/dist/shared/lib/utils';
 import { log } from 'console';
+import { isEqual } from 'lodash';
 type props = {
     handleClose: any;
     open: boolean;
@@ -169,7 +170,12 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
 
     }, [productListRes])
     const varientOncheck = async (e: any, i: number) => {
+
+
         const { value } = e.target;
+        productData.attributes[i].selected = value
+
+        //console.log({value, attributes: productData?.attributes})
 
         let newArray: any[]
         setVarientSelect((prevArray: any) => {
@@ -288,9 +294,23 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
     const Submit = async (data: any) => {
 
 
-        console.log({added})
+        //console.log({added, attributes: productData?.attributes})
 
         //return false;
+
+        let attributes:string[] = [];
+
+        productData?.attributes?.map((attr: any) => {
+            if(attr?.selected){
+                attributes?.push(attr?.selected)
+            }
+        })
+
+
+        if(productData?.attributes && attributes?.length !== productData?.attributes?.length){
+            toast.error("Please select all attributes")
+            return false
+        }
 
         let quntityValidation = parseInt(data?.quantity)
         let stock = selectProduct?.stock;
@@ -324,11 +344,28 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
         let AllProducts: any = []
         AllProducts = structuredClone(allProduct);
         if (!productData?.variant) {
-            let duplicateProduct = AllProducts?.productDetails?.some((res: any) => res?.product_id === selectProduct?._id);
-            if (duplicateProduct) {
-                toast.warning('Product already exits');
-                return false;
+            if(attributes){
+                let existing = false
+                AllProducts?.productDetails?.map((pro: any) => {
+                    if(isEqual(pro?.attributes?.sort(), attributes?.sort())){
+                        toast.warning('Product already exits');
+                        existing = true;
+                       return false
+                    }
+                })
+
+                if(existing){
+                    return false;
+                }
             }
+            else{
+                let duplicateProduct = AllProducts?.productDetails?.some((res: any) => res?.product_id === selectProduct?._id);
+                if (duplicateProduct) {
+                    toast.warning('Product already exits');
+                    return false;
+                }
+            }
+            
 
         } else {
             let duplicateVarient = AllProducts?.productDetails?.some((res: any) => res?.variant_id === attributeSelect?.[0]?.id);
@@ -374,9 +411,11 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
             value["attributes"] = attributeSelect?.[0]?.attributs
             value['stock_value'] = selectProduct.stock ? parseInt(attributeSelect?.[0]?.stockValue) + parseInt(attributeSelect?.[0]?.minQty) : null;
         } else {
-            console.log("kggggg");
+            console.log("kggggg",attributeSelect);
 
-
+            if(attributes){
+                value["attributes"] = attributes
+            }
             // value['fixed_delivery_price'] = selectProduct?.delivery;
             value['type'] = "single";
             value['deliveryPrice'] = selectProduct?.delivery;

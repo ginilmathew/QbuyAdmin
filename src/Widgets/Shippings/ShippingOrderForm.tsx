@@ -46,7 +46,8 @@ type Inputs = {
     rider_phone:string,
     payment_status: string;
     refund_amount: string;
-    vendor_status: any
+    vendor_status: any,
+    refund_details: any
 };
 
 type props = {
@@ -403,25 +404,25 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
         vendor_statusP[index]['status'] = value;
         setVendorStatusP(vendor_statusP)
     }
-    const customerList = async () => {
+    // const customerList = async () => {
      
-        try {
-            const fetch = await fetchData('admin/customer-details/list');
-            let result = fetch?.data?.data?.map((userData: any) => ({
-                name: userData?.users?.name,
-                email: userData?.users?.email,
-                phonenumber: userData?.users?.mobile,
-                customer_id:userData?._id,
-                customet_user_id:userData?.user_id
+    //     try {
+    //         const fetch = await fetchData('admin/customer-details/list');
+    //         let result = fetch?.data?.data?.map((userData: any) => ({
+    //             name: userData?.users?.name,
+    //             email: userData?.users?.email,
+    //             phonenumber: userData?.users?.mobile,
+    //             customer_id:userData?._id,
+    //             customet_user_id:userData?.user_id
                  
                
-           }));
-             setcustomerListAll(result);
-        } catch (err: any) {
-            // Handle errors here
+    //        }));
+    //          setcustomerListAll(result);
+    //     } catch (err: any) {
+    //         // Handle errors here
           
-        }
-    };
+    //     }
+    // };
 
    
 
@@ -450,7 +451,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
     useEffect(() => {
         vendorStatus();
         // GetPlatformCharge()
-        customerList()
+        //customerList()
         setValue("order_type",ordertype)
     }, [])
 
@@ -475,6 +476,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             setPaymentStatusSelect(orderviewList?.payment_status);
             setValue("payment_type", orderviewList.payment_type);
             setValue("payment_status", orderviewList?.payment_status);
+            setValue("refund_details", orderviewList?.refund_details ? `Transaction Id: ${orderviewList?.refund_details?.transaction_id}, Refund Amount:  ${orderviewList?.refund_details?.refund_amount}, Remarks: ${orderviewList?.refund_details?.refund_note}` : '')
             SetDeliveryCharge(orderviewList?.delivery_charge)
             setVendorStatusP([...orderviewList?.vendor_status])
         }
@@ -840,7 +842,18 @@ console.log(  orderviewList?.refund_details?.refund_amount);
                     </Customselect>
                         ) }
                     </Grid>
-                   
+                    <Grid item xs={12} lg={2.5}>
+                       <CustomTextarea
+                            control={control}
+                            error={errors.refund_details}
+                            fieldName="refund_details"
+                            placeholder={``}
+                            fieldLabel={"Refund Details"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={``}
+                        />
+                    </Grid>
                 </Grid>
                 {orderviewList?.refundAmount &&
                     <Box display={'flex'} justifyContent={'flex-end'} alignItems={'center'} py={1}>
@@ -854,7 +867,8 @@ console.log(  orderviewList?.refund_details?.refund_amount);
                             height={''}
                             label={'Refund'}
                             disabled={false}
-                            onClick={HandleopenRefund} />
+                            onClick={HandleopenRefund} 
+                        />
                     </Box>}
 
             </CustomBox>
