@@ -283,10 +283,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                 // InitialPost(value)
             }
             else{
-              
-             
-                
-                let value = {
+                 let value = {
                     id: id,
                   
                     productDetails: [...productList.productDetails]
