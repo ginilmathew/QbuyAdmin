@@ -132,7 +132,6 @@ const RiderAccountsform = ({ view, res }: props) => {
             )
         }
     ];
-
     const column1: GridColDef[] = [
         {
             field: 'date',

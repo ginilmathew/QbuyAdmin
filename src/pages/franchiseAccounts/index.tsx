@@ -121,7 +121,6 @@ const FranchiseAccounts = () => {
     });
 }, [data?.data?.data]);
 
-
   return (
     <Box px={5} py={2} pt={10} mt={0}>
       <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
