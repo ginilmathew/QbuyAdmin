@@ -723,8 +723,8 @@ console.log({addressfromprevious});
                             fieldName="address_mobile"
                             placeholder={``}
                             fieldLabel={"Mobile Number"}
-                            disabled={false}
-                            view={false}
+                            disabled={resData?false:true}
+                            view={true}
                             defaultValue={""}
                         />
                     </Grid>
@@ -984,9 +984,11 @@ console.log({addressfromprevious});
                                 <div
                             style={{
                                 position: "relative",
-                                top: "-110px",
+                                top: "-123px",
                                 width: "124px",
                                 height: "36px",
+                                left:"96px"
+                                
                             }}
                         >
                              {/* {i > 0 ? (
@@ -1019,6 +1021,16 @@ console.log({addressfromprevious});
     )}
     
                         </div>
+                        <div
+                         style={{
+                            position: "sticky",
+                            top: "-110px",
+                            width: "124px",
+                            height: "30px",
+                            marginTop:"100px"
+                        }}>
+
+                      
                         {i > 0 ? (
         <Custombutton
             btncolor=""
@@ -1044,7 +1056,7 @@ console.log({addressfromprevious});
             />
         )
     )}
-                       
+                </div>         
                     </Grid>
                   
 

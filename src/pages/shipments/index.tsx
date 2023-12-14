@@ -138,22 +138,22 @@ const Shipments = () => {
                         )}
 
 
-                        {(
-                            (row?.refundAmount
-                            )
-                        ) ? (
-                            <Custombutton
+{(
+  (row?.refundAmount)&&
+  (row?.status === "cancelled" && row?.payment_status === "completed" && row?.payment_type === "online")
+) ? (
+  <Custombutton
+    btncolor='#d39a58'
+    height={25}
+    IconEnd={""}
+    IconStart={''}
+    startIcon={false}
+    endIcon={false}
+    onClick={() => openRefundModal(row)}
+    label='Refund'
+  />
+) : null}
 
-                                btncolor='#d39a58'
-                                height={25}
-                                IconEnd={""}
-                                IconStart={''}
-                                startIcon={false}
-                                endIcon={false}
-                                onClick={() => openRefundModal(row)}
-                                label='Refund'
-                            />
-                        ) : null}
                         {row?.status !== 'cancelled' && row?.status !== 'completed' && (
                             // Add the condition here to show Assign and Reassign buttons
                             (row?.rider_each_order_settlement === null && (
