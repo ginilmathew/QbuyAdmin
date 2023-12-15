@@ -39,7 +39,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
     const [singleList, setSingleList] = useState([]);
     const [mode, setMode] = useState<any>(null)
     const [productList, setProductList] = useState<any>(null);
-    console.log({ productList }, "list")
+
     const [newAddedProduct, setnewAddedProduct] = useState<any>()
     const [platFomCharge, setplatFomCharge] = useState<any>()
 
@@ -126,7 +126,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
         if (res === null && newAddedProduct) {
             onApiSuccess(newAddedProduct)
 
-            console.log({ newAddedProduct });
+    
 
 
             let pricedata = {
@@ -437,14 +437,14 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
     // }
 
-    console.log(productList);
+
 
 
     return (
         <Box>
             <Box>
 
-                {<Box py={1} display={'flex'} justifyContent={'flex-end'}>
+                {readonly && <Box py={1} display={'flex'} justifyContent={'flex-end'}>
 
                     <Custombutton
                         btncolor=''
@@ -495,7 +495,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                                 <TableCell align="center">{(row?.unitPrice)}</TableCell>
                                 <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
                                 {/* {id && ( */}
-                                    <>
+                                    { readonly && <>
                                         <TableCell align="center"> <BorderColorTwoToneIcon
                                             onClick={() => { handleOpen(row, 'product') }}
                                             style={{
@@ -509,8 +509,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                                                 color: 'red',
                                                 cursor: 'pointer'
                                             }}
-                                        /></TableCell>
-                                    </>
+                                        /></TableCell> 
+                                    </> }
                                 {/* )} */}
 
 

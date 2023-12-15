@@ -300,8 +300,6 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                 email: data?.email,
                 customer_group_id: data.customer_group_id,
                 customer_block_status: data.customer_block_status,
-
-
                 address_name: addressfromprevious[0]?.address_name,
                 comments: addressfromprevious[0]?.comments,
                 mobile:data?.address_mobile,
@@ -331,9 +329,10 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                 toast.error("Failed");
             }
         }
-        catch (error) {
-            // toast.error(error?.message)  
-            console.error(error);
+        catch (error:any) {
+ 
+            toast.error(error?.message)  
+        
         } finally {
             setLoading(false);
         }
@@ -412,7 +411,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     };
 
     const onSubmitAddresscreate = async (data: any) => {
-    console.log({customerList});
+
 
         const result = {...data}
          delete result?.Apikey
@@ -452,9 +451,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
             try {
         
                 data.customer_group_id = selectedValue;
-                console.log({addressfromprevious});
-                
-                console.log( addressfromprevious?.name);
+              
                 
       
                 const URL_CREATE = "/admin/customer-details/create-address";
