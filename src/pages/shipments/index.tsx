@@ -26,12 +26,12 @@ import { TransitionProps } from '@mui/material/transitions';
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
-      children: React.ReactElement;
+        children: React.ReactElement;
     },
     ref: React.Ref<unknown>,
-  ) {
+) {
     return <Slide direction="up" ref={ref} {...props} />;
-  });
+});
 
 const fetcher = (url: any) => fetchData(url).then((res) => res);
 
@@ -63,7 +63,7 @@ const Shipments = () => {
     const ShippmentView = (id: string) => {
         // setId(id)
         // setViewModal(true)
-        
+
         router.push(`/shipments/view/${id}`)
     }
 
@@ -138,21 +138,21 @@ const Shipments = () => {
                         )}
 
 
-{(
-  (row?.refundAmount)&&
-  (row?.status === "cancelled" && row?.payment_status === "completed" && row?.payment_type === "online")
-) ? (
-  <Custombutton
-    btncolor='#d39a58'
-    height={25}
-    IconEnd={""}
-    IconStart={''}
-    startIcon={false}
-    endIcon={false}
-    onClick={() => openRefundModal(row)}
-    label='Refund'
-  />
-) : null}
+                        {(
+                            (row?.refundAmount) &&
+                            (row?.status === "cancelled" && row?.payment_status === "completed" && row?.payment_type === "online")
+                        ) ? (
+                            <Custombutton
+                                btncolor='#d39a58'
+                                height={25}
+                                IconEnd={""}
+                                IconStart={''}
+                                startIcon={false}
+                                endIcon={false}
+                                onClick={() => openRefundModal(row)}
+                                label='Refund'
+                            />
+                        ) : null}
 
                         {row?.status !== 'cancelled' && row?.status !== 'completed' && (
                             // Add the condition here to show Assign and Reassign buttons
@@ -271,7 +271,7 @@ const Shipments = () => {
                 return (
                     <div>
                         <Tooltip title={customerName + customerAddress + customerphone}>
-                            <span>{(customerName + ','   + customerAddress + customerphone).slice(0,26) + '...'  }</span>
+                            <span>{(customerName + ',' + customerAddress + customerphone).slice(0, 26) + '...'}</span>
                         </Tooltip>
                     </div>
                 );
@@ -408,7 +408,7 @@ const Shipments = () => {
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-            <Typography style={{ borderBottom: '3px solid #58d36e', paddingBottom: 2, fontFamily: `'Poppins' sans-serif`, }}>{'Orders'}</Typography>
+                <Typography style={{ borderBottom: '3px solid #58d36e', paddingBottom: 2, fontFamily: `'Poppins' sans-serif`, }}>{'Orders'}</Typography>
                 <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='Orders' onClick={addOrderShipmets} addbtn={true} />
 
                 <Box py={5}>
@@ -430,10 +430,10 @@ const Shipments = () => {
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={2} p={2} borderRadius={5} height={'100%'}>
-              
-                <Box sx={{ display: 'flex', justifyContent:'space-between' }}>
-                <Typography style={{ color: '#58d36e', paddingBottom: 2, fontFamily: `'Poppins' sans-serif`, fontSize:30}}>{'Orders'}</Typography>
-                
+
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography style={{ color: '#58d36e', paddingBottom: 2, fontFamily: `'Poppins' sans-serif`, fontSize: 30 }}>{'Orders'}</Typography>
+
                     <Custombutton
                         btncolor='#cfe19d'
                         IconEnd={''}
@@ -444,10 +444,10 @@ const Shipments = () => {
                         label={'Refresh'}
                         disabled={false}
                         onClick={RefreshAgain} />
-                        <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='' onClick={addOrderShipmets} addbtn={true} />
+                    <CustomTableHeader imprtlabel={'Export'} setState={searchProducts} imprtBtn={false} Headerlabel='' onClick={addOrderShipmets} addbtn={true} />
                 </Box>
                 <Box py={1}>
-                    <CustomTable  rowheight={60} dashboard={false} columns={columns} rows={shippingList ? shippingList : []} id={"_id"} bg={'#ffff'} label='Recent Activity' />
+                    <CustomTable rowheight={60} dashboard={false} columns={columns} rows={shippingList ? shippingList : []} id={"_id"} bg={'#ffff'} label='Recent Activity' />
                 </Box>
             </Box>
             {open && <AssignModal
@@ -460,21 +460,21 @@ const Shipments = () => {
             <Dialog
                 fullScreen
                 open={viewModal}
-                onClose={()=> setViewModal(false)}
+                onClose={() => setViewModal(false)}
                 TransitionComponent={Transition}
             >
                 <AppBar sx={{ position: 'relative' }}>
                     <Toolbar>
                         <IconButton
-                        edge="start"
-                        color="inherit"
-                        onClick={()=> setViewModal(false)}
-                        aria-label="close"
+                            edge="start"
+                            color="inherit"
+                            onClick={() => setViewModal(false)}
+                            aria-label="close"
                         >
-                        <GridCloseIcon />
+                            <GridCloseIcon />
                         </IconButton>
                         <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                        View Order
+                            View Order
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -489,15 +489,15 @@ const Shipments = () => {
                 <AppBar sx={{ position: 'relative' }}>
                     <Toolbar>
                         <IconButton
-                        edge="start"
-                        color="inherit"
-                        onClick={closeEditModal}
-                        aria-label="close"
+                            edge="start"
+                            color="inherit"
+                            onClick={closeEditModal}
+                            aria-label="close"
                         >
-                        <GridCloseIcon />
+                            <GridCloseIcon />
                         </IconButton>
                         <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                        Edit Order
+                            Edit Order
                         </Typography>
                     </Toolbar>
                 </AppBar>

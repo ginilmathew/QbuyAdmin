@@ -333,6 +333,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
 
     const removeProduct = async (row: any) => {
+        console.log({row, id})
+        //return false;
         if(id){
             if (productList?.productDetails?.length < 2) {
                 toast.warning('You have to add atleast Two Product !..')
@@ -342,7 +344,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
             if (row?.type === "variant") {
                 product = productList?.productDetails?.filter((res: any) => res?.variant_id !== row?.variant_id);
             } else {
-                if(row?.attributes){
+                if(row?.attributes?.length > 0){
                     product = productList?.productDetails?.filter((prod: any) => (prod?.product_id === row?.product_id && !isEqual(prod?.attributes?.sort(), row?.attributes?.sort())) || prod?.product_id !== row?.product_id);
                 }
                 else{
@@ -396,14 +398,19 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
             
         }
         else{
+            console.log({product: productList?.productDetails, row})
+            //return false;
             let product: any[] = []
             if (row?.type === "variant") {
                 product = productList?.productDetails?.filter((res: any) => res?.variant_id !== row?.variant_id);
-            } else {
-                if(row?.attributes){
-                    product = productList?.productDetails?.filter((prod: any) => prod?.product_id === row?.product_id && !isEqual(prod?.attributes?.sort(), row?.attributes?.sort()));
+            } 
+            else {
+                if(row?.attributes?.length > 0){
+                    product = productList?.productDetails?.filter((prod: any) => (prod?.product_id === row?.product_id && !isEqual(prod?.attributes?.sort(), row?.attributes?.sort())) || prod?.product_id !== row?.product_id);
                 }
                 else{
+                    // console.log({product: productList?.productDetails, row})
+                    // return false;
                     product = productList?.productDetails?.filter((res: any) => res?.product_id !== row?.product_id);
                 }
     
@@ -487,7 +494,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                                 <TableCell component="th" scope="row">
                                     {/* {row?.name}  {row.title ? (row.title) : ''} */}
                                     {row?.name}
-                                    {(row?.attributes) ? `(${row?.attributes?.join(', ')})` : ''}
+                                    {(row?.attributes?.length > 0) ? `(${row?.attributes?.join(', ')})` : ''}
                                 </TableCell>
                                 <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor?.vendor_mobile}{ }</TableCell>
                                 <TableCell align="center">{row.description}</TableCell>

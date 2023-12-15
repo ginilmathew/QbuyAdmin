@@ -354,7 +354,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         let AllProducts: any = []
         AllProducts = structuredClone(allProduct);
         if (!productData?.variant) {
-            if(attributes){
+            if(attributes?.length > 0){
                 let existing = false
                 AllProducts?.productDetails?.map((pro: any) => {
                     if(isEqual(pro?.attributes?.sort(), attributes?.sort())){
