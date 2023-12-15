@@ -313,9 +313,8 @@ const FranchiseeAccountsform = ({ view, res }: props) => {
         let result = franchiseeEarningList?.filter((res: any) => item?.includes(res?._id));
     
         let totalPrice = result.reduce((accumulator: any, total: any) => {
-            console.log('Accumulator:', accumulator);
-            console.log('Current Total Payout Amount:', total.total_payout_amount);
-            return accumulator + parseFloat(total.total_payout_amount);
+   
+            return accumulator + parseFloat(total?.total_payout_amount);
         }, 0);
     
         let roundedTotalPrice = totalPrice.toFixed(2);
@@ -408,13 +407,13 @@ const FranchiseeAccountsform = ({ view, res }: props) => {
                         <CustomViewInput fieldLabel='Total Orders' text={FranchiseeSingleList?.order_count} color='#1675C8' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Earnings' text={FranchiseeSingleList?.total_earnings.toFixed(2)} color='#2EA10C' />
+                        <CustomViewInput fieldLabel='Total Earnings' text={FranchiseeSingleList?.total_earnings?.toFixed(2)} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
                         <CustomViewInput fieldLabel='Promotion Cost' text={FranchiseeSingleList?.promotion_cost} color='#FF7B7B' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Payable'  text={FranchiseeSingleList?.total_outstanding.toFixed(2)} color='#2EA10C' />
+                        <CustomViewInput fieldLabel='Total Payable'  text={FranchiseeSingleList?.total_outstanding?.toFixed(2)} color='#2EA10C' />
                     </Grid>
                     <Grid item direction="row-reverse">
                         <Typography mb={3}></Typography>
@@ -448,10 +447,10 @@ const FranchiseeAccountsform = ({ view, res }: props) => {
             <CustomBox title="Settlements">
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Earnings' text={FranchiseeSingleList?.total_earnings.toFixed(2)} color='#2EA10C' />
+                        <CustomViewInput fieldLabel='Total Earnings' text={FranchiseeSingleList?.total_earnings?.toFixed(2)} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Outstanding' text={FranchiseeSingleList?.total_outstanding.toFixed(2)} color='#FF7B7B' />
+                        <CustomViewInput fieldLabel='Total Outstanding' text={FranchiseeSingleList?.total_outstanding?.toFixed(2)} color='#FF7B7B' />
                     </Grid>
                 </Grid>
                 <Box py={2}>

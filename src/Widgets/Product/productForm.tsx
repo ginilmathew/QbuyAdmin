@@ -135,7 +135,7 @@ type props = {
 const ProductForm = ({ res, view }: props) => {
     let idd = res ? res : view;
 
-    console.log(idd);
+ 
 
     const router = useRouter()
 
@@ -209,6 +209,10 @@ const ProductForm = ({ res, view }: props) => {
         },
 
     ]);
+
+
+    console.log({productList},'PRODUCT LIST')
+    console.log({attributes},'Varient LIST')
 
     const [productCategorySelect, setProductCategorySelect] = useState<string>('')
     const [productTagList, setProductTagList] = useState<any>([])
@@ -535,9 +539,6 @@ const ProductForm = ({ res, view }: props) => {
         let findresult = vendorList?.filter((res: any) => res?._id === e.target.value)
         console.log(findresult);
 
-        console.log(findresult?.approved_by)
-        console.log(findresult?.start_time)
-        console.log(findresult?.end_time)
 
         // if(findresult?.length > 0){
         //     getRecomentedProducts(findresult?.[0]?._id)
