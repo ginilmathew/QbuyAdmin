@@ -435,14 +435,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
     }
 
 
-    // const vendorStatusChange = (e: any, index: number, res: any) => {
-    //     console.log(e, index, res, "EVEMNT RES")
-
-    //     const { value } = e.target;
-    //     vendorStatusData[index]['vendor_id'] = res?._id;
-    //     vendorStatusData[index]['status'] = value;
-
-    // }
+    
 
 
 
