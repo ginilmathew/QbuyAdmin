@@ -31,6 +31,10 @@ type props = {
 
 const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onApiSuccess }: props) => {
 
+    console.log({res})
+    console.log({readonly})
+    console.log({id})
+
     const [modalOpen, setModalOpen] = useState(false);
     const [addModalOpen, setaddModalOpen] = useState(false)
     const [modalDelete, setModalDelete] = useState(false);
@@ -444,7 +448,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
         <Box>
             <Box>
 
-                {readonly && <Box py={1} display={'flex'} justifyContent={'flex-end'}>
+         {(readonly || res === null) && <Box py={1} display={'flex'} justifyContent={'flex-end'}>
 
                     <Custombutton
                         btncolor=''
@@ -456,7 +460,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                         label={'Add'}
                         disabled={false}
                         onClick={handleOpenAddModal} />
-                </Box>}
+                </Box> }
             </Box>
             {productList?.productDetails && <TableContainer component={Paper} >
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -495,7 +499,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                                 <TableCell align="center">{(row?.unitPrice)}</TableCell>
                                 <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
                                 {/* {id && ( */}
-                                    { readonly && <>
+                                    { (readonly || res === null) && <>
                                         <TableCell align="center"> <BorderColorTwoToneIcon
                                             onClick={() => { handleOpen(row, 'product') }}
                                             style={{
@@ -524,8 +528,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                             <TableCell align="center">
                                 ₹ {isNaN(parseFloat(productList?.total_amount)) ? 0 : parseFloat(productList?.total_amount).toFixed(2)}
                             </TableCell>
-                            {readonly && <TableCell align="center"></TableCell>}
-                            {readonly && <TableCell align="center"></TableCell>}
+                            {(readonly || res === null) && <TableCell align="center"></TableCell>}
+                            {(readonly || res === null) && <TableCell align="center"></TableCell>}
                         </TableRow>
 
                         <TableRow>
@@ -533,7 +537,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                             <TableCell colSpan={3}></TableCell>
                             <TableCell align="right" >Delivery Charge (SlotBased)</TableCell>
                             <TableCell align="center">₹ {productList?.delivery_charge}</TableCell>
-                            {(readonly && productList?.productDetails?.length > 0) && <TableCell align="center"> <BorderColorTwoToneIcon
+                            {((readonly || res === null) && productList?.productDetails?.length > 0) && <TableCell align="center"> <BorderColorTwoToneIcon
                                 onClick={() => { handleOpen(productList, 'delivery') }}
                                 style={{
                                     color: '#58D36E',
