@@ -129,7 +129,7 @@ const FranchiseeAccountsform = ({ view, res }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => moment(params?.row?.settlement_list?.map((res:any)=>res?.transaction_date,"YYYY-MM-DD hh:mm A")).format("DD-MM-YYYY hh:mm A")
+            valueGetter: (params) => moment(params?.row?.created_at).format("DD-MM-YYYY hh:mm A")
         },
         {
             field: 'amount',
@@ -286,6 +286,8 @@ const FranchiseeAccountsform = ({ view, res }: props) => {
                 _id: i,
                 ...res
             }))
+
+            console.log({result})
             setFranchisesettlementlist(result)
         }
 

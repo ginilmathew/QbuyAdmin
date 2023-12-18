@@ -343,8 +343,9 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
 
         let AllProducts: any = []
         AllProducts = structuredClone(allProduct);
-        if (!productData?.variant) {
-            if(attributes){
+        //console.log({AllProducts, selectProduct})
+        if (!selectProduct?.variant) {
+            if(attributes?.length > 0){
                 let existing = false
                 AllProducts?.productDetails?.map((pro: any) => {
                     if(isEqual(pro?.attributes?.sort(), attributes?.sort())){
@@ -359,6 +360,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
                 }
             }
             else{
+                console.log({AllProducts, selectProduct})
                 let duplicateProduct = AllProducts?.productDetails?.some((res: any) => res?.product_id === selectProduct?._id);
                 if (duplicateProduct) {
                     toast.warning('Product already exits');

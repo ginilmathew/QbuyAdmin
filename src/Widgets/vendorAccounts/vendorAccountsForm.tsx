@@ -138,7 +138,7 @@ const VendorAccountsForm = ({ idd }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => moment(params.row.transaction_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+            valueGetter: (params) => moment(params.row.created_at).format("DD-MM-YYYY hh:mm A")
         },
         {
             field: 'amount',
@@ -302,6 +302,8 @@ const VendorAccountsForm = ({ idd }: props) => {
                 _id: i,
                 ...res
             }))
+
+            console.log({result})
             setVendorsettlementlist(result)
         }
 
