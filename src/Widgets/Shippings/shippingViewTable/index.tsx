@@ -31,10 +31,7 @@ type props = {
 
 const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onApiSuccess }: props) => {
 
-    console.log({res})
-    console.log({readonly})
-    console.log({id})
-
+  
     const [modalOpen, setModalOpen] = useState(false);
     const [addModalOpen, setaddModalOpen] = useState(false)
     const [modalDelete, setModalDelete] = useState(false);
