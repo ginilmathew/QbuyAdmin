@@ -396,7 +396,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
     const SubmitOrder = async (data: any) => {
 
 
-        console.log({ products: productdetails, datas: dataa, data })
+
 
         //return false;
 

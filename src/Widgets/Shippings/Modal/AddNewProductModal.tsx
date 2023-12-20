@@ -42,7 +42,7 @@ type Inputs = {
 
 const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id, setStoreList, onApiSuccess, added }: props) => {
 
- console.log('ADD nEW PRODUCT}')    
+
 
 
     const [productList, setProductList] = useState<any>([]);
@@ -348,7 +348,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
 
         let AllProducts: any = []
         AllProducts = structuredClone(allProduct);
-        console.log({AllProducts},'GOT ALL PRODUCTS')
+     
         //console.log({AllProducts, selectProduct})
         if (!selectProduct?.variant) {
             if(attributes?.length > 0){
@@ -413,8 +413,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
         console.log({value});
 
         if (selectProduct?.variant === true) {
-            console.log("hfhuuuuuuuuuu");
-
+            
             value['type'] = "variant";
             value['deliveryPrice'] = attributeSelect?.[0]?.delivery;
 
@@ -475,11 +474,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
                 id: added ? added?.product_details?._id : null,
                 productDetails: [...AllProducts.productDetails]
             }
-
-
-            console.log({publishValue})
             //return false;
-
             const response = await postData('admin/order/createproduct', publishValue);
             const AddedProduct = response?.data?.data;
             console.log({ AddedProduct });

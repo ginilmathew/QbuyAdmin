@@ -165,7 +165,7 @@ const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD,
 
     const SubmitButton = async (item: any) => {
 
-        console.log({item, product: allProduct?.productDetails});
+      
         //return false;
         let product = [];
     
@@ -201,8 +201,7 @@ const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD,
                     id: added?.product_details?._id,
                     productDetails: product
                 };
-                console.log({publishValue});
-                console.log('TEAA TESTT TEST')
+            
                 
                 const response = await postData('admin/order/createproduct', publishValue);
                 const AddedProduct = response?.data?.data;

@@ -414,6 +414,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             offer_price: selectProduct?.offer_price,
             store_commission: selectProduct?.store_commission,
             product_commission: selectProduct.product_commission,
+       
         }
 
         if (selectProduct?.variant === true) {

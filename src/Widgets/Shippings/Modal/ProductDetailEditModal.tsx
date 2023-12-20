@@ -212,7 +212,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                     id: order_iD,
                     productDetails: product
                 };
-                console.log({ publishValue });
+                
 
                 const response = await postData('admin/order/edit', publishValue);
 
