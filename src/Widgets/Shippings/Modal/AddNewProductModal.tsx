@@ -41,6 +41,10 @@ type Inputs = {
 };
 
 const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id, setStoreList, onApiSuccess, added }: props) => {
+
+ console.log('ADD nEW PRODUCT}')    
+
+
     const [productList, setProductList] = useState<any>([]);
     const [productListRes, setProductListRes] = useState<any>([]);
     const [franchise, setFranchise] = useState<any>([])
@@ -152,7 +156,8 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
         setValue("price", "")
         let data = productListRes?.filter((res: any) => res?._id === value?.id);
         let prdctlist: any = await getProduct(data?.[0] || []);
-
+ 
+        console.log({prdctlist},'ADD NEW PRODUCT CONSOLE')
 
         setSelectProduct(prdctlist)
         let filter = prdctlist || [].filter((res: any) => res?.id === value?.id);
@@ -343,6 +348,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
 
         let AllProducts: any = []
         AllProducts = structuredClone(allProduct);
+        console.log({AllProducts},'GOT ALL PRODUCTS')
         //console.log({AllProducts, selectProduct})
         if (!selectProduct?.variant) {
             if(attributes?.length > 0){
@@ -396,10 +402,15 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
             title: null,
             stock_value: null,
             deliveryPrice: selectProduct?.delivery,
-            description: selectProduct?.description
+            description: selectProduct?.description,
+            offer_date_from: selectProduct?.offer_date_from,
+            offer_date_to: selectProduct?.offer_date_to,
+            offer_price: selectProduct?.offer_price,
+            store_commission: selectProduct?.store_commission,
+            product_commission: selectProduct.product_commission,
 
         }
-        console.log(selectProduct?.delivery);
+        console.log({value});
 
         if (selectProduct?.variant === true) {
             console.log("hfhuuuuuuuuuu");

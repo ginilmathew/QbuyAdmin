@@ -202,6 +202,7 @@ const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD,
                     productDetails: product
                 };
                 console.log({publishValue});
+                console.log('TEAA TESTT TEST')
                 
                 const response = await postData('admin/order/createproduct', publishValue);
                 const AddedProduct = response?.data?.data;

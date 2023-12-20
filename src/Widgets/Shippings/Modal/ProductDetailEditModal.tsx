@@ -38,7 +38,13 @@ type Inputs = {
     store_name: string,
     vendor_mobile: string,
     delivery: any,
-    attributes: any
+    attributes: any,
+    offer_date_from: any,
+    offer_date_to: any,
+    offer_price: any,
+    store_commission: any,
+    product_commission: any
+
 
 
 
@@ -47,18 +53,20 @@ type Inputs = {
 
 const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge }: props) => {
 
+    console.log({ data }, 'DATA IS VALIDDDDDDD')
+
 
     const schema = yup
         .object()
         .shape({
             quantity: yup
-            .string()
-            .typeError('Quantity is Required')
-            .required('Quantity is Required')
-            .test('is-min-value', 'Quantity must be at least 1', (value) => {
-                // Add your validation logic here
-                return parseInt(value) >= 1; // Validate if quantity is greater than or equal to 1
-            }),  
+                .string()
+                .typeError('Quantity is Required')
+                .required('Quantity is Required')
+                .test('is-min-value', 'Quantity must be at least 1', (value) => {
+                    // Add your validation logic here
+                    return parseInt(value) >= 1; // Validate if quantity is greater than or equal to 1
+                }),
             // seller_price: yup.string().required('Required')
         })
         .required();
@@ -88,7 +96,12 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                 store_name: data?.store_name,
                 vendor_mobile: data?.vendor_mobile,
                 delivery: data?.delivery,
-                attributes: data?.attributes
+                attributes: data?.attributes,
+                offer_date_from: data?.offer_date_from,
+                offer_date_to: data?.offer_date_to,
+                offer_price: data?.offer_price,
+                store_commission: data?.store_commission,
+                product_commission: data.product_commission,
             }
 
         });
@@ -162,54 +175,56 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     }
 
     const SubmitButton = async (item: any) => {
-        console.log({item})
+        console.log({ item })
         //return false
-        let product = [];
-    
+        let product: any = [];
+
+
         if (item?.variant_id) {
             product = allProduct?.productDetails?.filter((res: any) => res?.variant_id !== item?.variant_id).map((itm: any) => ({
                 ...itm
             }));
         } else {
-            if(item?.attributes){
-                product = allProduct?.productDetails?.filter((prod: any) => (prod?.product_id === item?.product_id && !isEqual(prod?.attributes?.sort(), item?.attributes?.sort())) ||  prod?.product_id !== item?.product_id).map((itm: any) => ({
+            if (item?.attributes) {
+                product = allProduct?.productDetails?.filter((prod: any) => (prod?.product_id === item?.product_id && !isEqual(prod?.attributes?.sort(), item?.attributes?.sort())) || prod?.product_id !== item?.product_id).map((itm: any) => ({
                     ...itm
                 }));
             }
-            else{
+            else {
                 product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== item?.product_id).map((itm: any) => ({
                     ...itm
                 }));
             }
-            
+
         }
-    
+
         item.title = data?.title;
         item.name = data?.name;
         item.price = item?.unitPrice * parseFloat(item?.quantity);
-    
+
         const { total, ...alldata } = item;
         product.push(alldata);
-    
+  
+
         try {
-            if(order_iD){
+            if (order_iD) {
                 let publishValue = {
                     id: order_iD,
                     productDetails: product
                 };
-                console.log({publishValue});
-                
+                console.log({ publishValue });
+
                 const response = await postData('admin/order/edit', publishValue);
-        
+
                 const highestDelivery = product.reduce((highest: number, product: any) => {
                     return Math.max(highest, parseFloat(product?.deliveryPrice));
                 }, 0);
-        
+
                 allProduct['delivery_charge'] = highestDelivery;
-        
+
                 const rate = response?.data?.data?.productDetails?.reduce((initial: number, price: any) =>
                     initial + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0);
-        
+
                 let resetValue = {
                     delivery_charge: highestDelivery,
                     grand_total: parseInt(highestDelivery) + rate + allProduct?.platform_charge,
@@ -217,18 +232,18 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                     platform_charge: allProduct?.platform_charge,
                     productDetails: [...response?.data?.data?.productDetails]
                 };
-               
+
                 setProductList(resetValue);
                 toast.success('Order edit Successfully');
-                handleClose(); 
+                handleClose();
             }
-            
-          
+
+
         } catch (err) {
-           
+
         }
     }
-    
+
 
 
     // const DeliverySubmit = () => {
@@ -251,10 +266,10 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
         allProduct['delivery_charge'] = parseInt(deliveryPrice);
         allProduct['grand_total'] =
             allProduct['total_amount'] + allProduct['delivery_charge'] + allProduct['platform_charge'];
-    
+
         handleClose();
     };
-    
+
     return (
         <Dialog
             onClose={handleClose}
@@ -399,7 +414,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                             //disabled={false}
                             disabled={outOfStock || false}
                             onClick={mode === "product" ? handleSubmit(SubmitButton) : DeliverySubmit} />
-                       
+
 
                     </Box>
                 </DialogContent>

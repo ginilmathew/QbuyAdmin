@@ -47,7 +47,7 @@ type Inputs = {
 
 const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id, setStoreList }: props) => {
 
-
+    console.log('PAGE OPEN')
 
 
     const [productList, setProductList] = useState<any>([]);
@@ -65,6 +65,8 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
     const [vendorDetails, setVendorDetails] = useState<any>(null)
     const [stockvl, setstockvl] = useState<any>(null)
     const [productsel, setproductsel] = useState<any>(null)
+
+    console.log({ selectProduct }, 'GOT SELEDCTED')
 
 
     const schema = yup
@@ -165,8 +167,10 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         setValue("quantity", "")
         setValue("price", "")
         let data = productListRes?.filter((res: any) => res?._id === value?.id);
+        console.log({ data }, 'FILTER PRODUCT LIST')
         let prdctlist: any = await getProduct(data?.[0] || []);
 
+        console.log({ prdctlist }, 'GOT PRODUCT LIST SELECTED')
 
         setSelectProduct(prdctlist)
         let filter = prdctlist || [].filter((res: any) => res?.id === value?.id);
@@ -182,7 +186,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         }
         setProductData(prdctlist)
 
-    }, [productListRes])
+    }, [productListRes, selectProduct])
 
     const getFranchiseList = async () => {
         try {
@@ -198,7 +202,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         }
     }
 
-    const varientOncheck = async(e: any, i: number) => {
+    const varientOncheck = async (e: any, i: number) => {
         const { value } = e.target;
 
         productData.attributes[i].selected = value
@@ -311,16 +315,16 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         let quntityValidation = parseInt(data?.quantity)
         let stock = selectProduct?.stock;
 
-        let attributes:string[] = [];
+        let attributes: string[] = [];
 
         productData?.attributes?.map((attr: any) => {
-            if(attr?.selected){
+            if (attr?.selected) {
                 attributes?.push(attr?.selected)
             }
         })
 
 
-        if(productData?.attributes && attributes?.length !== productData?.attributes?.length){
+        if (productData?.attributes && attributes?.length !== productData?.attributes?.length) {
             toast.error("Please select all attributes")
             return false
         }
@@ -353,22 +357,26 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
 
         let AllProducts: any = []
         AllProducts = structuredClone(allProduct);
+
+
+        console.log({ AllProducts })
+
         if (!productData?.variant) {
-            if(attributes?.length > 0){
+            if (attributes?.length > 0) {
                 let existing = false
                 AllProducts?.productDetails?.map((pro: any) => {
-                    if(isEqual(pro?.attributes?.sort(), attributes?.sort())){
+                    if (isEqual(pro?.attributes?.sort(), attributes?.sort())) {
                         toast.warning('Product already exits');
                         existing = true;
-                       return false
+                        return false
                     }
                 })
 
-                if(existing){
+                if (existing) {
                     return false;
                 }
             }
-            else{
+            else {
                 let duplicateProduct = AllProducts?.productDetails?.some((res: any) => res?.product_id === selectProduct?._id);
                 if (duplicateProduct) {
                     toast.warning('Product already exits');
@@ -400,7 +408,12 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             vendor_mobile: vendorDetails?.[0]?.vendor_mobile,
             title: null,
             stock_value: null,
-            deliveryPrice: null
+            deliveryPrice: null,
+            offer_date_from: selectProduct?.offer_date_from,
+            offer_date_to: selectProduct?.offer_date_to,
+            offer_price: selectProduct?.offer_price,
+            store_commission: selectProduct?.store_commission,
+            product_commission: selectProduct.product_commission,
         }
 
         if (selectProduct?.variant === true) {
@@ -413,7 +426,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
             value["attributes"] = attributeSelect?.[0]?.attributs
             value['stock_value'] = selectProduct.stock ? parseInt(attributeSelect?.[0]?.stockValue) + parseInt(attributeSelect?.[0]?.minQty) : null;
         } else {
-            if(attributes){
+            if (attributes) {
                 value["attributes"] = attributes
             }
             // value['fixed_delivery_price'] = selectProduct?.delivery;
@@ -588,7 +601,7 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
                             />
                         </Grid>
 
-                        {productData  && productData?.attributes?.map((res: any, i: number) => (
+                        {productData && productData?.attributes?.map((res: any, i: number) => (
                             <Grid item xs={12} lg={1.5}>
                                 <Customselect
                                     disabled={false}

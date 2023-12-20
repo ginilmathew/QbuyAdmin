@@ -4,9 +4,9 @@ import { min, max } from 'lodash'
 
 export function getProduct(product) {
 
+    console.log({ product }, 'MyPRODUCT')
 
-
-    let { _id, product_id, name, description, store, franchisee, weight, type, image, stock, minimum_qty, product_image, order_count, is_wishlist, viewCount, attributes, video_link, status,seller,delivery } = product
+    let { _id, product_id, name, description, store, franchisee, weight, type, image, stock, minimum_qty, product_image, order_count, is_wishlist, viewCount, attributes, video_link, status, seller, delivery } = product
 
     let variant = product?.variants?.length > 0 ? true : false
     let minQty = minimum_qty ? parseFloat(minimum_qty) : 1
@@ -35,7 +35,12 @@ export function getProduct(product) {
         video_link,
         status: status,
         seller,
-        delivery
+        delivery,
+        offer_date_from: product?.offer_date_from,
+        offer_date_to: product?.offer_date_to,
+        offer_price: product?.offer_price,
+        store_commission: product?.vendors?.additional_details?.commission,
+        product_commission: product.commission,
 
     }
 
@@ -115,8 +120,8 @@ export function getProduct(product) {
                         stockValue,
                         delivery,
                         available: true,
-                        seller:vari?.seller_price ? parseFloat(vari?.seller_price) : 0,
-                        delivery:vari?.fixed_delivery_price ? parseFloat(vari?.fixed_delivery_price) : 0
+                        seller: vari?.seller_price ? parseFloat(vari?.seller_price) : 0,
+                        delivery: vari?.fixed_delivery_price ? parseFloat(vari?.fixed_delivery_price) : 0
                     })
                 }
                 else {
@@ -130,8 +135,8 @@ export function getProduct(product) {
                         stockValue,
                         delivery,
                         available: false,
-                        seller:vari?.seller_price ? parseFloat(vari?.seller_price) : 0 ,
-                        delivery:vari?.fixed_delivery_price ? parseFloat(vari?.fixed_delivery_price) : 0 
+                        seller: vari?.seller_price ? parseFloat(vari?.seller_price) : 0,
+                        delivery: vari?.fixed_delivery_price ? parseFloat(vari?.fixed_delivery_price) : 0
                     })
                 }
             }
@@ -196,7 +201,7 @@ export function getProduct(product) {
                     stockValue,
                     delivery,
                     available: true,
-                    seller:vari?.seller_price ? parseFloat(vari?.seller_price) : 0  
+                    seller: vari?.seller_price ? parseFloat(vari?.seller_price) : 0
                 })
             }
         })
@@ -352,12 +357,12 @@ export function getProduct(product) {
 
             newProduct['price'] = parseFloat(price).toFixed(2);
             newProduct['available'] = true;
-            newProduct['seller'] =seller;
+            newProduct['seller'] = seller;
         }
         newProduct['stockValue'] = stockValue;
         newProduct['delivery'] = delivery;
-        newProduct['seller'] =seller;
-        newProduct['delivery']=delivery;
+        newProduct['seller'] = seller;
+        newProduct['delivery'] = delivery;
     }
 
     return newProduct;

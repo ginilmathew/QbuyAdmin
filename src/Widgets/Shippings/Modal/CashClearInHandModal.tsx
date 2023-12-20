@@ -193,7 +193,7 @@ const Submit = async (data: any) => {
 //       riderBasedOnFranchasee(franchiseData);
 //   }, []);
 
-console.log(SelectedValue);
+
 
     return (
         <Dialog
