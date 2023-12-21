@@ -434,15 +434,13 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
             toast.error("Address pincode is required");
             return;
         }
-        // delete result?.customer_address[0]?.customer_address_id
-        // delete result?.customer_address[0]?.updated_at
-        // delete result?.customer_address[0]?.status
-        // delete result?.customer_address[0]?.default
+
 
         result.default_status = 1
-        result.user_id = customerList?.customer_address[0]?.user_id
-        // result.id = "iuhiuhiu";
-        console.log({ result }, 'got iD')
+        result.user_id = customerList?.user_id
+       
+        console.log({customerList})
+    
         setLoading(true);
 
 
@@ -451,7 +449,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
             data.customer_group_id = selectedValue;
             const URL_CREATE = "/admin/customer-details/create-address";
-            const URL_EDIT = "/admin/customer-details/update-address";
+            // const URL_EDIT = "/admin/customer-details/update-address";
             const response = await postData(
                 URL_CREATE,
                 result
@@ -584,12 +582,12 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
 
 
-    const ChangeStatus = useCallback((e: any) => {
-        const { value } = e.target;
+    // const ChangeStatus = useCallback((e: any) => {
+    //     const { value } = e.target;
 
 
-        setStatusSelect(value)
-    }, [])
+    //     setStatusSelect(value)
+    // }, [])
     useEffect(() => {
 
 
@@ -638,7 +636,6 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
         addressfromprevious[i][mode] = area;
         addressfromprevious[i]["areaObject"] = place
 
-        console.log({ addressfromprevious });
 
 
 
@@ -679,9 +676,9 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
 
 
-    addressfromprevious?.map((addres: any, i: any) => (
-        console.log({ addressfromprevious })
-    ))
+    // addressfromprevious?.map((addres: any, i: any) => (
+    //     console.log({ addressfromprevious })
+    // ))
     return (
         <Box>
             <CustomBox title="Basic Details">
@@ -990,7 +987,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                                     {i > 0 ? (
                                         null
                                     ) : (
-                                        resData && (
+                                       ( resData && !view) &&(
                                             <Custombutton
                                                 btncolor=""
                                                 IconEnd={""}
@@ -1015,7 +1012,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
                                     }}>
 
 
-                                    {(!addres.Apikey && addressfromprevious?.length > 1) ? (
+                                    {(!addres.Apikey && addressfromprevious?.length > 0 && !view) ? (
                                         <Custombutton
                                             btncolor=""
                                             IconEnd={""}
@@ -1052,7 +1049,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
             ))}
 
-            {!view && !resData && (
+            {(!view && !resData) && (
                 <Box py={3}>
                     <Custombutton
                         btncolor=""
