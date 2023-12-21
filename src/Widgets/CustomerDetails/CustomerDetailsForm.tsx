@@ -140,7 +140,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     const [customerList, setCustomerList] = useState<any>(null);
     const [areaofcustomer, setareaofcustomer] = useState<any>({})
     const [addressfromprevious, setaddressfromprevious] = useState<any>([])
- 
+
     const [categoryList, setCategoryList] = useState<any>([]);
     const [type, settype] = useState<string>(`${process.env.NEXT_PUBLIC_TYPE}`);
     const [categories, setCategories] = useState<string[]>([]);
@@ -150,8 +150,8 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
     const CheckBlackList = (e: any) => {
 
-console.log({addressfromprevious},'ADDRES FROM PREVIOUS')
-      
+        console.log({ customerList }, 'customerList FROM PREVIOUS')
+
 
         if (!view) {
             setCustomerBlock(e);
@@ -252,21 +252,8 @@ console.log({addressfromprevious},'ADDRES FROM PREVIOUS')
 
     const onSubmit = async (data: any) => {
         setLoading(true);
-
-
         try {
-
             data.customer_group_id = selectedValue;
-
-
-            const URL_CREATE = "/admin/customer-details/create";
-            // const URL_EDIT = "/admin/customer-details/update";
-            const formData = new FormData();
-            // const addresses = [];
-
-
-            console.log(...addressfromprevious[0],'TEXT')
-
             if (!addressfromprevious[0]?.pincode) {
                 toast.error("Address pincode required")
                 return
@@ -281,11 +268,6 @@ console.log({addressfromprevious},'ADDRES FROM PREVIOUS')
                 toast.error("Address type required")
                 return
             }
-
-
-
-
-
             const values = {
                 name: data?.name,
                 address_mobile: addressfromprevious[0]?.mobile,
@@ -299,41 +281,66 @@ console.log({addressfromprevious},'ADDRES FROM PREVIOUS')
                 address_type: addressfromprevious[0]?.address_type,
                 default_status: addressfromprevious[0]?.default_status,
                 area: addressfromprevious[0]?.area,
-
-
             }
-            const response = await postData(
+            await postData(
                 `/admin/customer-details/create`, values
-
             );
-
-            if (response.status === 201 || response.status === 200) {
-                toast.success(
-                    idd
-                        ? "Customer updated successfully"
-                        : "Customer created successfully"
-                );
-                reset();
-
-
-                router.push("/customerDetails");
-            } else {
-                toast.error("Failed");
-            }
-        }
-        catch (error: any) {
-
+            toast.success(
+                "Customer created successfully"
+            );
+            reset();
+            router.push("/customerDetails");
+        } catch (error: any) {
             toast.error(error?.message)
-
         } finally {
             setLoading(false);
+
         }
+
+
+        // try {
+
+        // data.customer_group_id = selectedValue;
+
+
+        //     // const URL_CREATE = "/admin/customer-details/create";
+        //     // // const URL_EDIT = "/admin/customer-details/update";
+        //     // const formData = new FormData();
+        //     // // const addresses = [];
+
+
+        //     console.log(...addressfromprevious[0],'TEXT')
+
+
+
+
+        //     if (response.status === 201 || response.status === 200) {
+        //         toast.success(
+        //             idd
+        //                 ? "Customer updated successfully"
+        //                 : "Customer created successfully"
+        //         );
+        //         reset();
+
+
+        //         router.push("/customerDetails");
+        //     } else {
+        //         toast.error("Failed");
+        //     }
+        // }
+        // catch (error: any) {
+
+        //     toast.error(error?.message)
+
+        // } finally {
+        //     setLoading(false);
+        // }
     };
     const onSubmitAddress = async (data: any) => {
 
         const result = { ...data }
         delete result?.customer_address?.Apikey
-     
+
         if (!result?.address_name) {
 
             toast.error("Address name is required");
@@ -344,7 +351,6 @@ console.log({addressfromprevious},'ADDRES FROM PREVIOUS')
             return
         }
 
-        console.log(result,'TEXT')
         if (!String(result?.pincode)) {
 
             toast.error("Address pincode is required");
@@ -406,6 +412,7 @@ console.log({addressfromprevious},'ADDRES FROM PREVIOUS')
 
 
         const result = { ...data }
+
         delete result?.Apikey
 
         delete result?.customer_address?.id
@@ -435,7 +442,7 @@ console.log({addressfromprevious},'ADDRES FROM PREVIOUS')
         result.default_status = 1
         result.user_id = customerList?.customer_address[0]?.user_id
         // result.id = "iuhiuhiu";
-        console.log({ result })
+        console.log({ result }, 'got iD')
         setLoading(true);
 
 
@@ -644,7 +651,7 @@ console.log({addressfromprevious},'ADDRES FROM PREVIOUS')
         addressfromprevious[index][key] = value;
 
 
-       
+
 
 
     }
@@ -1008,7 +1015,7 @@ console.log({addressfromprevious},'ADDRES FROM PREVIOUS')
                                     }}>
 
 
-                                    {!addres.Apikey ? (
+                                    {(!addres.Apikey && addressfromprevious?.length > 1) ? (
                                         <Custombutton
                                             btncolor=""
                                             IconEnd={""}
@@ -1016,7 +1023,7 @@ console.log({addressfromprevious},'ADDRES FROM PREVIOUS')
                                             endIcon={false}
                                             startIcon={false}
                                             height={"30px"}
-                                            label={"Saves"}
+                                            label={"Save"}
                                             onClick={() => onSubmitAddresscreate(addres)}
                                         />
                                     ) : (

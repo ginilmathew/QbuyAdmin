@@ -40,7 +40,8 @@ type Inputs = {
     store_name: string,
     vendor_mobile: string,
     delivery: any,
-    attributes: any
+    attributes: any,
+    vendor: any
 
 
 
@@ -49,18 +50,21 @@ type Inputs = {
 
 const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge, added, onApiSuccess }: props) => {
 
+    console.log('EDIT PAGE CALLED')
 
+    console.log({ data }, 'dataatt')
+    console.log({allProduct})
     const schema = yup
         .object()
         .shape({
             quantity: yup
-            .string()
-            .typeError('Quantity is Required')
-            .required('Quantity is Required')
-            .test('is-min-value', 'Quantity must be at least 1', (value) => {
-                // Add your validation logic here
-                return parseInt(value) >= 1; // Validate if quantity is greater than or equal to 1
-            }),  
+                .string()
+                .typeError('Quantity is Required')
+                .required('Quantity is Required')
+                .test('is-min-value', 'Quantity must be at least 1', (value) => {
+                    // Add your validation logic here
+                    return parseInt(value) >= 1; // Validate if quantity is greater than or equal to 1
+                }),
             // seller_price: yup.string().required('Required')
         })
         .required();
@@ -90,7 +94,9 @@ const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD,
                 store_name: data?.store_name,
                 vendor_mobile: data?.vendor_mobile,
                 delivery: data?.delivery,
-                attributes: data?.attributes
+                attributes: data?.attributes,
+                vendor: data?.vendor
+
             }
 
         });
@@ -159,63 +165,67 @@ const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD,
     }
     const onChangeDeliveryCharge = (e: any) => {
         const { value } = e.target;
+        console.log({value})
         setValue('deliveryPrice', value)
         SetDeliveryCharge(value)
     }
 
     const SubmitButton = async (item: any) => {
 
-      
+
         //return false;
-        let product = [];
-    
+        let product:any = [];
+
+  
+
         if (item?.variant_id) {
             product = allProduct?.productDetails?.filter((res: any) => res?.variant_id !== item?.variant_id).map((itm: any) => ({
                 ...itm
             }));
         } else {
-            if(item?.attributes){
+            if (item?.attributes) {
 
-                product = allProduct?.productDetails?.filter((prod: any) => (prod?.product_id === item?.product_id && !isEqual(prod?.attributes?.sort(), item?.attributes?.sort())) ||  prod?.product_id !== item?.product_id).map((itm: any) => ({
+                product = allProduct?.productDetails?.filter((prod: any) => (prod?.product_id === item?.product_id && !isEqual(prod?.attributes?.sort(), item?.attributes?.sort())) || prod?.product_id !== item?.product_id).map((itm: any) => ({
                     ...itm
                 }));
             }
-            else{
+            else {
                 product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== item?.product_id).map((itm: any) => ({
                     ...itm
                 }));
             }
-            
+
         }
-    
+
         item.title = data?.title;
         item.name = data?.name;
         item.price = item?.unitPrice * parseFloat(item?.quantity);
-    
+
         const { total, ...alldata } = item;
         product.push(alldata);
-    
+     
+
         try {
-            if(added){
+            if (added) {
                 let publishValue = {
                     id: added?.product_details?._id,
                     productDetails: product
                 };
-            
-                
+
+
                 const response = await postData('admin/order/createproduct', publishValue);
                 const AddedProduct = response?.data?.data;
                 onApiSuccess(AddedProduct);
-        
+
                 // const highestDelivery = product.reduce((highest: number, product: any) => {
                 //     return Math.max(highest, parseFloat(product?.deliveryPrice));
                 // }, 0);
-        
+
                 // allProduct['delivery_charge'] = highestDelivery;
-        
+
                 // const rate = response?.data?.data?.productDetails?.reduce((initial: number, price: any) =>
                 //     initial + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0);
-        
+
                 // let resetValue = {
                 //     delivery_charge: highestDelivery,
                 //     grand_total: parseInt(highestDelivery) + rate + allProduct?.platform_charge,
@@ -223,18 +233,21 @@ const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD,
                 //     platform_charge: allProduct?.platform_charge,
                 //     productDetails: [...response?.data?.data?.productDetails]
                 // };
-               
+
                 // setProductList(resetValue);
                 toast.success('Order edit Successfully');
-                handleClose(); 
+                handleClose();
             }
-            
-          
-        } catch (err) {
-           
+
+
+        } catch (err:any) {
+            let message = 'Unknown Error';
+            if (err instanceof Error) message = err.message;
+            reportError({ message });
+            toast.error(message);
         }
     }
-    
+
 
 
     // const DeliverySubmit = () => {
@@ -249,6 +262,7 @@ const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD,
     // }
     const DeliverySubmit = () => {
         let deliveryPrice = getValues('deliveryPrice');
+        console.log({deliveryPrice})
         if (parseInt(deliveryPrice) <= 0) {
             toast.warning('Delivery Price Cannot be Zero');
             return false;
@@ -257,10 +271,10 @@ const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD,
         allProduct['delivery_charge'] = parseInt(deliveryPrice);
         allProduct['grand_total'] =
             allProduct['total_amount'] + allProduct['delivery_charge'] + allProduct['platform_charge'];
-    
+
         handleClose();
     };
-    
+
     return (
         <Dialog
             onClose={handleClose}
@@ -405,7 +419,7 @@ const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD,
                             //disabled={false}
                             disabled={outOfStock || false}
                             onClick={mode === "product" ? handleSubmit(SubmitButton) : DeliverySubmit} />
-                       
+
 
                     </Box>
                 </DialogContent>

@@ -123,6 +123,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
     const [vendorStatusList, setVendorStatusList] = useState<any>([])
     const [platformList, setplatformList] = useState<any>(null);
 
+    console.log({storeList})
 
     const schema = yup
         .object()
@@ -507,6 +508,8 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
        if(res){
         let uniqueStore: any[] = Array.from(new Set(storeList));
 
+    
+
         let result = {
             id: idd,
             delivery_charge: Math.ceil(deliveryCharge),
@@ -537,7 +540,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
         }
        }
        else {
-        console.log(selectedcustmraddress,"id");
+       
     
 
 

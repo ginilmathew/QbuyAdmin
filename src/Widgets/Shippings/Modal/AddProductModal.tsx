@@ -167,10 +167,10 @@ const AddProductModal = ({ handleClose, open, allProduct, setaddProductList, Set
         setValue("quantity", "")
         setValue("price", "")
         let data = productListRes?.filter((res: any) => res?._id === value?.id);
-        console.log({ data }, 'FILTER PRODUCT LIST')
+      
         let prdctlist: any = await getProduct(data?.[0] || []);
 
-        console.log({ prdctlist }, 'GOT PRODUCT LIST SELECTED')
+
 
         setSelectProduct(prdctlist)
         let filter = prdctlist || [].filter((res: any) => res?.id === value?.id);

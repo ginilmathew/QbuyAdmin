@@ -449,7 +449,7 @@ const FranchiseeAccountsform = ({ view, res }: props) => {
             <CustomBox title="Settlements">
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={1.5}>
-                        <CustomViewInput fieldLabel='Total Earnings' text={FranchiseeSingleList?.total_earnings?.toFixed(2)} color='#2EA10C' />
+                        <CustomViewInput fieldLabel='Total Earnings' text={  FranchiseeSingleList?.total_earnings?.toFixed(2)} color='#2EA10C' />
                     </Grid>
                     <Grid item xs={12} lg={1.5}>
                         <CustomViewInput fieldLabel='Total Outstanding' text={FranchiseeSingleList?.total_outstanding?.toFixed(2)} color='#FF7B7B' />

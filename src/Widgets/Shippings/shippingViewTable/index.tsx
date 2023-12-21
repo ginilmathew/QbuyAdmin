@@ -102,7 +102,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
             const response = await fetchData('common/platformcharge')
             let { data } = response?.data
-            console.log({ data });
+          
 
             setplatFomCharge(data?.platformCharge)
 
@@ -133,7 +133,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
             onApiSuccess(newAddedProduct)
 
 
-            console.log(parseInt(newAddedProduct), 'NEW ADDED PRODUCT')
+
 
             let pricedata = {
                 delivery_charge: parseInt(newAddedProduct?.delivery_charge),
@@ -171,8 +171,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                 // stock: itm?.type === "single" ? itm?.stock : itm?.variants?.stock,
                 // Add other properties as needed
             }));
-            console.log({ pricedata });
-            console.log({ productDetails });
+        
 
 
             let Combine = {
@@ -196,12 +195,12 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
             let store = productDetails?.map((res: any) => (res?.vendor?._id));
             setStoreList(store)
 
+         
         }
         else if (res) {
 
 
-            console.log(parseInt(newAddedProduct), 'NEW ADDED PRODUCT')
-            console.log({ res }, 'NEW RES PRODUCT')
+       
             let pricedata = {
                 delivery_charge: parseInt(res?.delivery_charge),
                 grand_total: res?.grand_total,
@@ -290,7 +289,6 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
 
 
-    console.log({ productList });
 
 
 
@@ -318,7 +316,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
                     productDetails: [...productList.productDetails]
                 }
-                console.log({ value });
+               
                 InitialPost(value)
             }
 

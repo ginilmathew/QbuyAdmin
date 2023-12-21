@@ -43,7 +43,7 @@ type Inputs = {
 const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, SetDeliveryCharge, order_id, setStoreList, onApiSuccess, added }: props) => {
 
 
-
+console.log('ADD NEW PRODUCT SCREEN')
 
     const [productList, setProductList] = useState<any>([]);
     const [productListRes, setProductListRes] = useState<any>([]);
@@ -366,7 +366,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
                 }
             }
             else{
-                console.log({AllProducts, selectProduct})
+            
                 let duplicateProduct = AllProducts?.productDetails?.some((res: any) => res?.product_id === selectProduct?._id);
                 if (duplicateProduct) {
                     toast.warning('Product already exits');
@@ -382,7 +382,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
                 return false;
             }
         }
-        console.log({ selectProduct });
+   
 
 
         let value: any = {
@@ -410,7 +410,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
             product_commission: selectProduct.product_commission,
 
         }
-        console.log({value});
+      
 
         if (selectProduct?.variant === true) {
             
@@ -423,7 +423,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
             value["attributes"] = attributeSelect?.[0]?.attributs
             value['stock_value'] = selectProduct.stock ? parseInt(attributeSelect?.[0]?.stockValue) + parseInt(attributeSelect?.[0]?.minQty) : null;
         } else {
-            console.log("kggggg",attributeSelect);
+       
 
             if(attributes){
                 value["attributes"] = attributes
@@ -452,7 +452,7 @@ const AddNewProductModal = ({ handleClose, open, allProduct, setaddProductList, 
             return Math.max(highest, delivery.deliveryPrice);
         }, 0);
 
-        console.log({ highestDelivery });
+    
 
         SetDeliveryCharge(highestDelivery)
         // AllProducts['delivery_charge'] = allProduct?.delivery_charge;

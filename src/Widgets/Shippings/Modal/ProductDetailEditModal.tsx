@@ -43,7 +43,8 @@ type Inputs = {
     offer_date_to: any,
     offer_price: any,
     store_commission: any,
-    product_commission: any
+    product_commission: any,
+    vendor:any
 
 
 
@@ -102,6 +103,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                 offer_price: data?.offer_price,
                 store_commission: data?.store_commission,
                 product_commission: data.product_commission,
+                vendor: data?.vendor
             }
 
         });
@@ -240,7 +242,10 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
 
         } catch (err) {
-
+            let message = 'Unknown Error';
+            if (err instanceof Error) message = err.message;
+            reportError({ message });
+            toast.error(message);
         }
     }
 
@@ -258,6 +263,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     // }
     const DeliverySubmit = () => {
         let deliveryPrice = getValues('deliveryPrice');
+      
         if (parseInt(deliveryPrice) <= 0) {
             toast.warning('Delivery Price Cannot be Zero');
             return false;
