@@ -52,11 +52,12 @@ const Shipments = () => {
 
     const { data, error, isLoading, mutate } = useSWR(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
 
+    console.log({shippingList})
+
     useEffect(() => {
         if (data?.data?.data) {
             setShippingList(data?.data?.data)
-            console.log(data);
-
+           
         }
     }, [data?.data?.data])
 

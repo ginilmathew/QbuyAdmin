@@ -249,10 +249,13 @@ const AddProducts = () => {
         try {
             setLoding(true)
             const response = await postData('admin/product/status-update', value)
+            console.log({response})
             // setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
             mutate()
         }
         catch (err: any) {
+
+            console.log({err})
             toast.warning(err?.message)
         } finally {
             setLoding(false)

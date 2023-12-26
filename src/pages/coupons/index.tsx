@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
@@ -7,10 +7,12 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { useRouter } from 'next/router';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
-
+import { fetchData } from '@/CustomAxios';
+import useSWR from 'swr';
+const fetcher = (url: any) => fetchData(url).then((res) => res);
 const Coupons = () => {
+    const { data, error, isLoading,mutate } = useSWR(`/admin/coupons/list/${process.env.NEXT_PUBLIC_TYPE}`, fetcher)
 
-    
     const router = useRouter();
 
     const columns: GridColDef[] = [
@@ -82,13 +84,13 @@ const Coupons = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-
+                        onClick={() => viewcouponPage(row?.id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
                         }} />
                     <BorderColorTwoToneIcon
-
+                        onClick={() => EditcouponPage(row?.id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -118,9 +120,16 @@ const Coupons = () => {
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
     ];
 
-    const addcoupns = ()=>{
+    const addcoupns = () => {
         router.push('/coupons/addCoupons')
 
+    }
+    const viewcouponPage = (id: string) => {
+        router.push(`/coupons/view/${id}`)
+    }
+
+    const EditcouponPage = (id: string) => {
+        router.push(`/coupons/edit/${id}`)
     }
 
 

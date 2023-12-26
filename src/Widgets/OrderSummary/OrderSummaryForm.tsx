@@ -51,6 +51,9 @@ type Inputs = {
     created_dropoff: string;
     created_completed: string;
     customer_group: string;
+    refund_amount:any;
+    transaction_id:string;
+    refund_note:string
 };
 
 
@@ -228,6 +231,9 @@ const OrderSummaryForm = ({ resData, view,readonly }: props) => {
         if (summaryList) {
             if (summaryList?.billaddress?.name) {
                 const formattedDate = moment(summaryList?.created_at).format('DD/MM/YYYY hh:mm A');
+                setValue('refund_amount',summaryList?.refund_details?.refund_amount)
+                setValue('transaction_id',summaryList?.refund_details?.transaction_id)
+                setValue('refund_note',summaryList?.refund_details?.refund_note)
                 setValue('name', summaryList?.billaddress?.name);
                 setValue('mobile', summaryList?.billaddress?.mobile);
                 setValue('order_id', summaryList?.order_id);
@@ -474,6 +480,50 @@ const OrderSummaryForm = ({ resData, view,readonly }: props) => {
                     </Grid>
                 </Grid>
             </CustomBox>
+            <CustomBox title="Refund Details">
+                <Grid container spacing={2}>
+                    <Grid item xs={3} lg={3}>
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={''}
+                            fieldName="refund_amount"
+                            placeholder={``}
+                            fieldLabel={"Refund Amount"}
+                            disabled={false}
+                            view={view ? true : false}
+
+                        />
+                    </Grid>
+                    <Grid item xs={3} lg={3}>
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={''}
+                            fieldName="transaction_id"
+                            placeholder={``}
+                            fieldLabel={"Transaction ID"}
+                            disabled={false}
+                            view={view ? true : false}
+
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={3}>
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={''}
+                            fieldName="refund_note"
+                            placeholder={``}
+                            fieldLabel={"Refund Note"}
+                            disabled={false}
+                            view={view ? true : false}
+
+                        />
+                    </Grid>
+                </Grid>
+            </CustomBox>
+
             <CustomBox title="Rider Details">
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2}>

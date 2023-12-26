@@ -61,7 +61,7 @@ const ordersummarylist = () => {
         {
             field: 'created_at',
             headerName: 'Order Placed On',
-            flex: 1,
+            width:200,
             valueGetter: (params) => moment(params?.row?.created_at).format("DD-MM-YYYY hh:mm A")
         },
         {
