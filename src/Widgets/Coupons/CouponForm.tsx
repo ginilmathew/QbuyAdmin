@@ -23,7 +23,7 @@ type props = {
 }
 const CouponForm = ({ res, view }: props) => {
 
-    console.log({res})
+    
     const router = useRouter()
     type IFormInput = {
         coupon_title: string,
@@ -65,7 +65,7 @@ const CouponForm = ({ res, view }: props) => {
             .string()
             .matches(/^[a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ\s\-0-9\/]+$/, 'Please enter valid name')
             .max(40)
-            .required(),
+            .required('Required'),
         discount_type: yup
             .string().required('Required'),
         coupon_for: yup
@@ -92,7 +92,7 @@ const CouponForm = ({ res, view }: props) => {
         setError,
         formState: { errors },
         reset,
-        setValue, } = useForm<any>(
+        setValue, } = useForm<IFormInput>(
             {
                 resolver: yupResolver(schema),
                 defaultValues: {
@@ -278,7 +278,7 @@ const CouponForm = ({ res, view }: props) => {
         try {
             setLoading(true)
             await postData(res ? EditUrl : CreateURL, { ...data });
-            toast.success('Created Successfully');
+            toast.success( res ? 'Updated Successfully' :'Created Successfully');
             router.push('/coupons')
             reset();
         } catch (err: any) {

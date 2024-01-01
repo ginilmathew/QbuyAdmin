@@ -29,7 +29,7 @@ const Coupons = () => {
         }
     }, [data?.data?.data])
 
-    console.log({ data })
+   
 
     const router = useRouter();
 

@@ -482,7 +482,7 @@ const Vendorform = ({ res, view, data }: props) => {
         }
     }, [vendorList])
 
-    console.log({ paths });
+   
 
 
     const onChangeStartTime = (value: any) => {
