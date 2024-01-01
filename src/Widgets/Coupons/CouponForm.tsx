@@ -1,3 +1,4 @@
+
 import CustomInput from '@/components/CustomInput'
 import { Box, Grid, MenuItem } from '@mui/material'
 import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
@@ -14,20 +15,22 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import moment from 'moment';
 import { useRouter } from 'next/router';
+import CustomMultiselect from '@/components/CustomMultiselect';
 
 type props = {
     res?: any
     view?: any
 }
 const CouponForm = ({ res, view }: props) => {
-    const router = useRouter()
 
+    console.log({res})
+    const router = useRouter()
     type IFormInput = {
         coupon_title: string,
         discount_type: string,
         coupon_value: string,
-        coupon_code: string,
-        expiry_date: string,
+        coupon_code: any,
+        expiry_date: any,
         limitation: any,
         minimum_cart_value: any,
         coupon_description: string,
@@ -38,25 +41,50 @@ const CouponForm = ({ res, view }: props) => {
 
     }
 
+    const { id } = router.query
+    const [type, setType] = useState<string | null>(null);
+
+    const [franchiseList, setFranchiseList] = useState<any>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [singleList, setSingleList] = useState<any>(null)
+    const [franchiseSelect, setFranchiseSelect] = useState<any>(null);
+    const [vendorList, setVendorList] = useState<any>([])
+    const [vendorSelect, setvendorSelect] = useState<any>(null);
+    const [discount, setDiscount] = useState<null | string>(null)
+    const [dateE, setDateE] = useState<any>(null)
+    const [multpleArray, setMultipleArray] = useState<any>([]);
+
+
+ 
+
+
     const orderValidation = /^[0-9]*$/
+
+       let validationS = {
+        coupon_title: yup
+            .string()
+            .matches(/^[a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ\s\-0-9\/]+$/, 'Please enter valid name')
+            .max(40)
+            .required(),
+        discount_type: yup
+            .string().required('Required'),
+        coupon_for: yup
+            .string().required('Required'),
+        coupon_value: yup.string().matches(orderValidation, 'Accept only positive number').nullable().required('Required'),
+        coupon_code: yup.string().matches(/^[(a-z 0-9)]+$/gi, 'Accept only positive number').nullable().required('Required'),
+        limitation: yup.string().matches(orderValidation, 'Accept only positive number').nullable().required('Required'),
+        minimum_cart_value: yup.string().matches(orderValidation, 'Accept only positive number').nullable().required('Required')
+      
+    }
+  
+   
+  
+
+
+
     const schema = yup
         .object()
-        .shape({
-            coupon_title: yup
-                .string()
-                .matches(/^[a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ\s\-0-9\/]+$/, 'Please enter valid name')
-                .max(40)
-                .required(),
-            discount_type: yup
-                .string().required('Required'),
-            coupon_for: yup
-                .string().required('Required'),
-            coupon_value: yup.string().matches(orderValidation, 'Accept only positive number').nullable().required('Required'),
-            coupon_code: yup.string().matches(/^[(a-z 0-9)]+$/gi, 'Accept only positive number').nullable().required('Required'),
-            limitation: yup.string().matches(orderValidation, 'Accept only positive number').nullable().required('Required'),
-            minimum_cart_value: yup.string().matches(orderValidation, 'Accept only positive number').nullable().required('Required')
-
-        })
+        .shape(validationS)
 
     const { register,
         handleSubmit,
@@ -64,7 +92,7 @@ const CouponForm = ({ res, view }: props) => {
         setError,
         formState: { errors },
         reset,
-        setValue, } = useForm<IFormInput>(
+        setValue, } = useForm<any>(
             {
                 resolver: yupResolver(schema),
                 defaultValues: {
@@ -76,15 +104,9 @@ const CouponForm = ({ res, view }: props) => {
         );
 
 
-    const [type, setType] = useState<string | null>(null);
+  
 
-    const [franchiseList, setFranchiseList] = useState<any>([]);
-    const [loading, setLoading] = useState<boolean>(false)
-    const [franchiseSelect, setFranchiseSelect] = useState<any>(null);
-    const [vendorList, setVendorList] = useState<any>([])
-    const [vendorSelect, setvendorSelect] = useState<any>(null);
-    const [discount, setDiscount] = useState<null | string>(null)
-    const [dateE, setDateE] = useState<any>(null)
+   
 
     const getFranchiseList = async () => {
         try {
@@ -133,6 +155,7 @@ const CouponForm = ({ res, view }: props) => {
         setFranchiseSelect(e.target.value)
         try {
             setLoading(true)
+             setvendorSelect(null)
             const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
 
             setVendorList(response?.data?.data)
@@ -149,7 +172,63 @@ const CouponForm = ({ res, view }: props) => {
 
     }
 
+    const getSingleShow = async () => {
 
+        try {
+            setLoading(true)
+            const resp = await fetchData(`admin/coupons/show/${id}`)
+            setSingleList(resp?.data?.data)
+        } catch (err: any) {
+
+        } finally {
+            setLoading(false)
+        }
+
+    }
+
+
+    useEffect(() => {
+        if (view || res) {
+            getSingleShow()
+        }
+    }, [])
+
+    useEffect(() => {
+        const fetchDataAndSetValues = async () => {
+            if (singleList && franchiseList) {
+                setValue('coupon_code', singleList.coupon_code);
+                setValue('coupon_title', singleList.coupon_title);
+                setValue('coupon_description', singleList.coupon_description);
+                setValue('limitation', singleList.limitation);
+                setValue('minimum_cart_value', singleList.minimum_cart_value);
+                setValue('coupon_value', singleList.coupon_value);
+                setType(singleList.coupon_for);
+                setDiscount(singleList?.discount_type)
+                setValue('discount_type', singleList?.discount_type)
+                setValue('coupon_for', singleList.coupon_for);
+                setValue('expiry_date', singleList?.expiry_date ? moment(singleList?.expiry_date, 'YYYY-MM-DD') : null)
+                setDateE(singleList?.expiry_date ? moment(singleList?.expiry_date, 'YYYY-MM-DD') : null)
+
+                if (singleList.coupon_for === "franchise") {
+                    setValue('franchise_id', singleList.franchise_id);
+                    setFranchiseSelect(singleList.franchise_id)
+                } else if (singleList.coupon_for === "store") {
+                    try {
+                        setValue('franchise_id', singleList.franchise_id);
+                        setFranchiseSelect(singleList.franchise_id)
+                        const response = await fetchData(`admin/vendor-list/${singleList.franchise_id}/${process.env.NEXT_PUBLIC_TYPE}`);
+                        setVendorList(response?.data?.data);
+                        setvendorSelect(singleList?.store_id)
+                    } catch (error) {
+                        // Handle error
+                        console.error("Error fetching vendor list:", error);
+                    }
+                }
+            }
+        };
+
+        fetchDataAndSetValues();
+    }, [singleList, franchiseList]);
 
     const onSelectStore = (e: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -172,7 +251,7 @@ const CouponForm = ({ res, view }: props) => {
 
     const onChangeExper = (e: any) => {
         setDateE(e)
-        setValue('expiry_date', moment(e).format('YYYY-MM-DD'))
+        setValue('expiry_date',e)
 
     }
 
@@ -180,16 +259,28 @@ const CouponForm = ({ res, view }: props) => {
 
 
     const submitCoupon = async (data: any) => {
+ 
         const CreateURL = 'admin/coupons/create'
+        const EditUrl = 'admin/coupons/update'
+        // data.store_id = Array.from(new Set(data?.store_id))
+        data.expiry_date = moment(data.expiry_date).format('YYYY-MM-DD')
+        if(type === 'franchise' && !franchiseSelect){
+            toast.warn('Franchise is required');
+            return false
+        }else if (type === "store" && !vendorSelect && !franchiseSelect){
+            toast.warn('Franchise and store is required');
+            return false
+        }
 
+        if(res){
+            data.id = id
+        }
         try {
             setLoading(true)
-            await postData(CreateURL, { ...data });
-            toast.success( 'Created Successfully');
-            router?.push('/coupons')
-            reset()
-            
-
+            await postData(res ? EditUrl : CreateURL, { ...data });
+            toast.success('Created Successfully');
+            router.push('/coupons')
+            reset();
         } catch (err: any) {
             toast.error(err.message)
 
@@ -212,12 +303,13 @@ const CouponForm = ({ res, view }: props) => {
                             placeholder={``}
                             fieldLabel={"Coupon Title"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.4}>
                         <Customselect
+                            disabled={view ? true : false}
                             type='text'
                             control={control}
                             error={errors.discount_type}
@@ -247,7 +339,7 @@ const CouponForm = ({ res, view }: props) => {
                             placeholder={``}
                             fieldLabel={"Coupon Value"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -260,7 +352,7 @@ const CouponForm = ({ res, view }: props) => {
                             placeholder={``}
                             fieldLabel={"Coupon Code"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -283,7 +375,7 @@ const CouponForm = ({ res, view }: props) => {
                             placeholder={``}
                             fieldLabel={"Limitations"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -296,13 +388,14 @@ const CouponForm = ({ res, view }: props) => {
                             fieldName="minimum_cart_value"
                             placeholder={``}
                             fieldLabel={"Minimum Cart Value"}
-                            disabled={false}
-                            view={false}
+                            disabled={view ? true : false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.4}>
                         <Customselect
+                            disabled={view ? true : false}
                             type='text'
                             control={control}
                             error={errors.coupon_for}
@@ -350,16 +443,17 @@ const CouponForm = ({ res, view }: props) => {
                                 ))}
                             </Customselect>
                         </Grid>}
+
                     {type == "store" &&
                         <Grid item xs={12} lg={2.4}>
-                            <Customselect
-                                disabled={false}
+                         <Customselect
+                                disabled={view ? true : false}
                                 type='text'
                                 control={control}
                                 error={errors.store_id}
                                 fieldName="store_id"
                                 placeholder={``}
-                                fieldLabel={"Store Name"}
+                                fieldLabel={"Store"}
                                 selectvalue={""}
                                 height={40}
                                 label={''}
@@ -370,12 +464,13 @@ const CouponForm = ({ res, view }: props) => {
                                 background={'#fff'}
                             >
                                 <MenuItem value="" disabled >
-                                    <>Select Store</>
+                                    <>Select Franchise</>
                                 </MenuItem>
-                                {vendorList && vendorList?.map((res: any) => (
+                                {vendorList && vendorList.map((res: any) => (
                                     <MenuItem value={res?._id}>{res?.store_name}</MenuItem>
                                 ))}
                             </Customselect>
+                            
                         </Grid>}
                     {/* <Grid item xs={12} lg={2.4}>
                         <CustomInput
@@ -399,7 +494,7 @@ const CouponForm = ({ res, view }: props) => {
                             placeholder={``}
                             fieldLabel={"Coupon/Promo Description"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>

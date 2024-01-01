@@ -124,7 +124,7 @@ const Vendorform = ({ res, view, data }: props) => {
     const [accounttype, setAccountType] = useState<any>([]);
 
 
-    console.log({ vendorList })
+   
 
 
     const orderValidation = /^[0-9]*$/

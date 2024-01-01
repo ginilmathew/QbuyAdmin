@@ -254,8 +254,6 @@ const AddProducts = () => {
             mutate()
         }
         catch (err: any) {
-
-            console.log({err})
             toast.warning(err?.message)
         } finally {
             setLoding(false)
