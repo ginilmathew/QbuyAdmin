@@ -71,7 +71,8 @@ const CouponForm = ({ res, view }: props) => {
         coupon_for: yup
             .string().required('Required'),
         coupon_value: yup.string().matches(orderValidation, 'Accept only positive number').nullable().required('Required'),
-        coupon_code: yup.string().matches(/^[(a-z 0-9)]+$/gi, 'Accept only positive number').nullable().required('Required'),
+        coupon_code: yup.string().matches(/^(?=.*[A-Z])(?=.*\d).{8}$/
+        , 'use uppercase or number and 8 character ').nullable().required('Required'),
         limitation: yup.string().matches(orderValidation, 'Accept only positive number').nullable().required('Required'),
         minimum_cart_value: yup.string().matches(orderValidation, 'Accept only positive number').nullable().required('Required')
       
