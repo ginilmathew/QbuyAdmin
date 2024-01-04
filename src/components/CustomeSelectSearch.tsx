@@ -5,30 +5,31 @@ import { Controller } from "react-hook-form";
 import Select from '@mui/material/Select';
 import Autocomplete from '@mui/material/Autocomplete';
 type props = {
-    fieldName:string,
-    control:any,
-    fieldLabel?:string,
-    error?:any,
-    children?:any,
-    max?:any,
-    isMultiple?:any,
-    selectvalue?:any,
-    onChangeValue?:any,
-    options?:any,
-    background?:any,
-    height?:any,
-    disabled?:any,
-    size?:any,
-    value?:any,
-    label?:any,
-    defaultValue?:any,
-    onInputChange?:any,
-    inputValue?:any,
-    getOptionLabel?:any,
-    open?:any,
-    renderOption?:any,
-    filterOptions?:any,
-    placeholder?:any
+    fieldName: string,
+    control: any,
+    fieldLabel?: string,
+    error?: any,
+    children?: any,
+    max?: any,
+    isMultiple?: any,
+    selectvalue?: any,
+    onChangeValue?: any,
+    options?: any,
+    background?: any,
+    height?: any,
+    disabled?: any,
+    size?: any,
+    value?: any,
+    label?: any,
+    defaultValue?: any,
+    onInputChange?: any,
+    inputValue?: any,
+    getOptionLabel?: any,
+    open?: any,
+    renderOption?: any,
+    filterOptions?: any,
+    placeholder?: any,
+    multiple?: boolean,
 
 }
 const CustomSelectSearch = ({
@@ -62,20 +63,20 @@ const CustomSelectSearch = ({
             <FormGroup>
                 <Typography sx={{
                     fontSize: {
-                        lg: size,
+                        lg: 16,
                         md: 14,
-                        sm: 13,
-                        xs: 12,
+                        sm: 12,
+                        xs: 11,
                     },
-                    fontFamily: 'Quicksand',
-                    fontWeight: "bold"
+                    fontFamily: `'Poppins' sans-serif`,
+
                 }}>{fieldLabel}</Typography>
                 <Controller
                     name={fieldName}
                     control={control}
                     render={({ field: { onChange, onBlur, value } }) => (
                         <Autocomplete
-
+                            multiple={isMultiple ? isMultiple : false}
                             // open={open}
                             filterOptions={filterOptions}
                             renderOption={renderOption}
@@ -100,7 +101,7 @@ const CustomSelectSearch = ({
 
                         />
                     )}
-                
+
                 />
                 {error && (
                     <p

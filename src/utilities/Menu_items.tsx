@@ -396,7 +396,7 @@ export const support_item = [
     {
         id: 4,
         item: 'Customer Group',
-        path: '/dashboard',
+        path: '/customerGroups',
     },
     {
         id: 5,
@@ -428,5 +428,6 @@ export const support_item = [
         item: 'Order Summary',
         path: '/ordersummary',
     },
+ 
 
 ]

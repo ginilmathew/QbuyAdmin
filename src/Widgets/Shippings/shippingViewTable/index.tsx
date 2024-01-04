@@ -31,6 +31,10 @@ type props = {
 
 const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onApiSuccess }: props) => {
 
+
+
+
+
     const [modalOpen, setModalOpen] = useState(false);
     const [addModalOpen, setaddModalOpen] = useState(false)
     const [modalDelete, setModalDelete] = useState(false);
@@ -44,6 +48,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
     const [platFomCharge, setplatFomCharge] = useState<any>()
 
 
+    console.log({ productList }, 'PRODUCT LIST')
+
 
     const handleClose = useCallback(() => {
         setModalOpen(false);
@@ -52,14 +58,14 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
     }, [modalOpen, singleList, mode]);
 
     const handleOpen = useCallback((data: any, mode: string) => {
-        if(id){
+        if (id) {
             setSingleList(data);
             setModalOpen(true);
-            console.log({data});
-    
+            console.log({ data });
+
             setMode(mode)
         }
-        else{
+        else {
             setSingleList(data);
             setEditModal(true);
 
@@ -96,7 +102,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
             const response = await fetchData('common/platformcharge')
             let { data } = response?.data
-            console.log({ data });
+          
 
             setplatFomCharge(data?.platformCharge)
 
@@ -126,7 +132,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
         if (res === null && newAddedProduct) {
             onApiSuccess(newAddedProduct)
 
-    
+
 
 
             let pricedata = {
@@ -165,8 +171,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                 // stock: itm?.type === "single" ? itm?.stock : itm?.variants?.stock,
                 // Add other properties as needed
             }));
-            console.log({ pricedata });
-            console.log({ productDetails });
+        
 
 
             let Combine = {
@@ -190,8 +195,12 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
             let store = productDetails?.map((res: any) => (res?.vendor?._id));
             setStoreList(store)
 
+         
         }
         else if (res) {
+
+
+       
             let pricedata = {
                 delivery_charge: parseInt(res?.delivery_charge),
                 grand_total: res?.grand_total,
@@ -218,7 +227,12 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                 stock_value: itm?.type === "single" ? (itm?.stock_value + parseFloat(itm?.quantity)) : (itm?.variants?.stock_value + parseFloat(itm?.quantity)),
                 stock: itm?.type === "single" ? itm?.stock : itm?.variants?.stock,
                 attributes: itm?.attributes,
-                description: itm?.description
+                description: itm?.description,
+                offer_date_from: itm?.offer_date_from,
+                offer_date_to: itm?.offer_date_to,
+                offer_price: itm?.offer_price,
+                store_commission:itm?.store_commission,
+                product_commission:itm?.product_commission
 
             }))
 
@@ -247,10 +261,10 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
     }, [res, newAddedProduct])
 
-    useEffect(() => {
-        console.log(productList);
+    // useEffect(() => {
+    //     console.log(productList);
 
-    }, [productList])
+    // }, [productList])
 
 
 
@@ -275,7 +289,6 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
 
 
-    console.log({ productList });
 
 
 
@@ -303,7 +316,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
                     productDetails: [...productList.productDetails]
                 }
-                console.log({ value });
+               
                 InitialPost(value)
             }
 
@@ -333,9 +346,9 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
 
     const removeProduct = async (row: any) => {
-        console.log({row, id})
+        console.log({ row, id })
         //return false;
-        if(id){
+        if (id) {
             if (productList?.productDetails?.length < 2) {
                 toast.warning('You have to add atleast Two Product !..')
                 return false;
@@ -344,25 +357,25 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
             if (row?.type === "variant") {
                 product = productList?.productDetails?.filter((res: any) => res?.variant_id !== row?.variant_id);
             } else {
-                if(row?.attributes?.length > 0){
+                if (row?.attributes?.length > 0) {
                     product = productList?.productDetails?.filter((prod: any) => (prod?.product_id === row?.product_id && !isEqual(prod?.attributes?.sort(), row?.attributes?.sort())) || prod?.product_id !== row?.product_id);
                 }
-                else{
+                else {
                     product = productList?.productDetails?.filter((res: any) => res?.product_id !== row?.product_id);
                 }
-                
-    
+
+
             }
-    
+
             const highestDelivery = product.reduce((highest: any, delivery: any) => {
                 return Math.max(highest, delivery.deliveryPrice);
             }, 0);
-    
-    
-    
+
+
+
             const res = await removeItemApi(row?.product_id);
-    
-    
+
+
             if (res?.data?.message === "Success") {
                 SetDeliveryCharge(highestDelivery)
                 if (product?.length > 0) {
@@ -379,7 +392,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                     });
                     let store = product?.map((res: any) => (res?.vendor?._id));
                     setStoreList(store)
-    
+
                 } else {
                     let pricedata = {
                         delivery_charge: "",
@@ -390,32 +403,32 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                         ...pricedata,
                         productDetails: [...product],
                     });
-    
+
                     let store = product?.map((res: any) => (res?.vendor?._id));
                     setStoreList(store)
                 }
             }
-            
+
         }
-        else{
-            console.log({product: productList?.productDetails, row})
+        else {
+            console.log({ product: productList?.productDetails, row })
             //return false;
             let product: any[] = []
             if (row?.type === "variant") {
                 product = productList?.productDetails?.filter((res: any) => res?.variant_id !== row?.variant_id);
-            } 
+            }
             else {
-                if(row?.attributes?.length > 0){
+                if (row?.attributes?.length > 0) {
                     product = productList?.productDetails?.filter((prod: any) => (prod?.product_id === row?.product_id && !isEqual(prod?.attributes?.sort(), row?.attributes?.sort())) || prod?.product_id !== row?.product_id);
                 }
-                else{
+                else {
                     // console.log({product: productList?.productDetails, row})
                     // return false;
                     product = productList?.productDetails?.filter((res: any) => res?.product_id !== row?.product_id);
                 }
-    
+
             }
-    
+
             const highestDelivery = product.reduce((highest: any, delivery: any) => {
                 return Math.max(highest, delivery.deliveryPrice);
             }, 0);
@@ -431,11 +444,11 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
             handleApiSuccess(AddedProduct)
 
         }
-        
+
     }
 
 
-    
+
 
 
 
@@ -444,7 +457,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
         <Box>
             <Box>
 
-                {readonly && <Box py={1} display={'flex'} justifyContent={'flex-end'}>
+                {(readonly || res === null) && <Box py={1} display={'flex'} justifyContent={'flex-end'}>
 
                     <Custombutton
                         btncolor=''
@@ -478,24 +491,24 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                     </TableHead>
                     <TableBody>
                         {productList?.productDetails?.map((row: any) => {
-                            console.log({row})
-                            return(
-                            <TableRow
-                                key={row.name}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row">
-                                    {/* {row?.name}  {row.title ? (row.title) : ''} */}
-                                    {row?.name}
-                                    {(row?.attributes?.length > 0) ? `(${row?.attributes?.join(', ')})` : ''}
-                                </TableCell>
-                                <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor?.vendor_mobile}{ }</TableCell>
-                                <TableCell align="center">{row.description}</TableCell>
-                                <TableCell align="center">{row.quantity}</TableCell>
-                                <TableCell align="center">{(row?.unitPrice)}</TableCell>
-                                <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
-                                {/* {id && ( */}
-                                    { readonly && <>
+                            console.log({ row })
+                            return (
+                                <TableRow
+                                    key={row.name}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        {/* {row?.name}  {row.title ? (row.title) : ''} */}
+                                        {row?.name}
+                                        {(row?.attributes?.length > 0) ? `(${row?.attributes?.join(', ')})` : ''}
+                                    </TableCell>
+                                    <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor?.vendor_mobile}{ }</TableCell>
+                                    <TableCell align="center">{row.description}</TableCell>
+                                    <TableCell align="center">{row.quantity}</TableCell>
+                                    <TableCell align="center">{(row?.unitPrice)}</TableCell>
+                                    <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
+                                    {/* {id && ( */}
+                                    {(readonly || res === null) && <>
                                         <TableCell align="center"> <BorderColorTwoToneIcon
                                             onClick={() => { handleOpen(row, 'product') }}
                                             style={{
@@ -509,13 +522,14 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                                                 color: 'red',
                                                 cursor: 'pointer'
                                             }}
-                                        /></TableCell> 
-                                    </> }
-                                {/* )} */}
+                                        /></TableCell>
+                                    </>}
+                                    {/* )} */}
 
 
-                            </TableRow>
-                        )})}
+                                </TableRow>
+                            )
+                        })}
 
                         <TableRow>
                             <TableCell rowSpan={5} />
@@ -524,8 +538,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                             <TableCell align="center">
                                 ₹ {isNaN(parseFloat(productList?.total_amount)) ? 0 : parseFloat(productList?.total_amount).toFixed(2)}
                             </TableCell>
-                            {readonly && <TableCell align="center"></TableCell>}
-                            {readonly && <TableCell align="center"></TableCell>}
+                            {(readonly || res === null) && <TableCell align="center"></TableCell>}
+                            {(readonly || res === null) && <TableCell align="center"></TableCell>}
                         </TableRow>
 
                         <TableRow>
@@ -533,7 +547,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                             <TableCell colSpan={3}></TableCell>
                             <TableCell align="right" >Delivery Charge (SlotBased)</TableCell>
                             <TableCell align="center">₹ {productList?.delivery_charge}</TableCell>
-                            {(readonly && productList?.productDetails?.length > 0) && <TableCell align="center"> <BorderColorTwoToneIcon
+                            {((readonly || res === null) && productList?.productDetails?.length > 0) && <TableCell align="center"> <BorderColorTwoToneIcon
                                 onClick={() => { handleOpen(productList, 'delivery') }}
                                 style={{
                                     color: '#58D36E',

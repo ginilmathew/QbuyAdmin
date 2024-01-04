@@ -81,13 +81,13 @@ const Offers = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-
+                        onClick={() => viewCustomerGroup(row?.id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
                         }} />
                     <BorderColorTwoToneIcon
-
+                        onClick={() => EditofferPage(row?.id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
@@ -120,6 +120,15 @@ const Offers = () => {
     const addOffers = () => {
         router.push('/offers/addOffers')
 
+    }
+    const viewCustomerGroup = (id: any) => {
+        router.push(`/offers/view/${id}`)
+    }
+
+
+
+    const EditofferPage = (id: string) => {
+        router.push(`/offers/edit/${id}`)
     }
 
     return (

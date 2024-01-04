@@ -140,7 +140,7 @@ const CustomerAccountForm = ({ resData, view }: props) => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => moment(params?.row?.viewed_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A")
+            valueGetter: (params) => moment(params?.row?.viewed_date).format("DD-MM-YYYY hh:mm:ss A")
         },
 
 

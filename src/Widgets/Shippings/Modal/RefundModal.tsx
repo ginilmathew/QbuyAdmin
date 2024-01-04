@@ -73,7 +73,10 @@ const RefundModal = ({ handleClose, open, res,functioncall }: props) => {
             handleClose()
     
         } catch (err:any) {
-            toast.error(err?.message);
+            let message = 'Unknown Error';
+            if (err instanceof Error) message = err.message;
+            reportError({ message });
+            toast.error(message);
         }
     }
 

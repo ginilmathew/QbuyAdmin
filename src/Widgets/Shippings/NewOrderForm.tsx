@@ -124,6 +124,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
     const [vendorStatusList, setVendorStatusList] = useState<any>([])
     const [platformList, setplatformList] = useState<any>(null);
 
+    
 
     const schema = yup
         .object()
@@ -395,12 +396,12 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
 
     const SubmitOrder = async (data: any) => {
 
+console.log('SUBMIT ORDERRR')
 
-        console.log({ products: productdetails, datas: dataa, data })
 
         //return false;
 
-
+console.log({deliveryCharge})
 
 
         //console.log(selectedcustmraddress, "id");
@@ -424,7 +425,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
 
 
         let store = productdetails?.product_details?.productDetails?.map((prod: any) => prod?.vendor?._id)
-
+console.log({store:productdetails?.product_details?.productDetails})
 
 
         let resultadd = {
@@ -434,7 +435,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
             payment_status: data?.payment_status,
             payment_type: data?.payment_type,
             store: store,
-            delivery_charge: productdetails?.delivery_charge,
+            delivery_charge:deliveryCharge ? deliveryCharge * 1 : productdetails?.delivery_charge,
             shipping_address: data?.shipping_address_delivery_address,
             billing_address: data?.shipping_address_delivery_address,
             total_amount: productdetails?.total_amount,
@@ -445,7 +446,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
         }
 
 
-        console.log({resultadd});
+    
 
         //return false;
 

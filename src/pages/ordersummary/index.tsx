@@ -21,7 +21,7 @@ const fetcher = (url: any) => fetchData(url).then((res) => res);
 const ordersummarylist = () => {
     const { data, error, isLoading, mutate } = useSWR(`admin/order-summary`, fetcher);
     const router = useRouter()
-    const [summaryData, setSummaryData] = useState([]);
+    const [summaryData, setSummaryData] = useState(null);
     const [pending, startTransition] = useTransition();
     const [_id, set_id] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);
@@ -61,7 +61,7 @@ const ordersummarylist = () => {
         {
             field: 'created_at',
             headerName: 'Order Placed On',
-            flex: 1,
+            width:200,
             valueGetter: (params) => moment(params?.row?.created_at).format("DD-MM-YYYY hh:mm A")
         },
         {
@@ -164,9 +164,9 @@ const ordersummarylist = () => {
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader setState={searchProducts} imprtBtn={false} Headerlabel='Orders Summary' onClick={[]} addbtn={true} />
+                <CustomTableHeader setState={searchProducts} imprtBtn={false} Headerlabel='Orders Summary' onClick={[]} addbtn={false} />
                 <Box py={5}>
-                    <CustomTable dashboard={false} columns={columns} rows={summaryData} id={"order_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={summaryData ? summaryData : []} id={"order_id"} bg={"#ffff"} label='Recent Activity' />
 
                 </Box>
             </Box>
