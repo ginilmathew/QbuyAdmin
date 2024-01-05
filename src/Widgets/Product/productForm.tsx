@@ -211,8 +211,6 @@ const ProductForm = ({ res, view }: props) => {
     ]);
 
 
-    console.log({productList},'PRODUCT LIST')
-    console.log({attributes},'Varient LIST')
 
     const [productCategorySelect, setProductCategorySelect] = useState<string>('')
     const [productTagList, setProductTagList] = useState<any>([])
@@ -1106,7 +1104,6 @@ const ProductForm = ({ res, view }: props) => {
 
     }
 
-    console.log({ errors })
 
     //posting products ...................................................................................................
 
@@ -1114,7 +1111,6 @@ const ProductForm = ({ res, view }: props) => {
 
 
 
-        console.log({ data })
         //return false;
         //Check All Attributes have values
         let attributeCheck = attributes?.find((att: any) => isEmpty(att?.name) || att?.options?.length === 0);
