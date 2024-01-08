@@ -6,6 +6,7 @@ import RateCardTab from '@/pages/RateCradTab';
 import WorkDetailsTab from '@/pages/WorkDetailsTab';
 import Payout from '@/pages/Payout';
 import Cashinhand from '@/pages/Cashinhand';
+import RiderTicketTable from '@/Widgets/RiderTickets/RiderTicketTable';
 
 const Tabs = () => {
   const [activeTab, setActiveTab] = useState('profile');
@@ -61,12 +62,19 @@ const Tabs = () => {
         >
           Work Details
         </li>
+        <li
+          className={`tab-item ${activeTab === 'tickets' ? 'active' : ''}`}
+          onClick={() => handleTabClick('tickets')}
+        >
+          Tickets
+        </li>
 
       </ul>
 
       <div className="tab-content">
         {activeTab === 'profile' && <RiderSupportform res={id} />}
         {activeTab === 'shipments' && <ShipmentSupport res={id} />}
+        {activeTab === 'tickets' && <RiderTicketTable id={id}/>}
 
 
         {activeTab === 'payout' && <div>
@@ -74,6 +82,7 @@ const Tabs = () => {
           <Payout res={id} />
         </div>}
 
+        
 
         {activeTab === 'cash' && <Cashinhand res={id} />}
         {activeTab === 'workdetails' && <WorkDetailsTab res={id} />}

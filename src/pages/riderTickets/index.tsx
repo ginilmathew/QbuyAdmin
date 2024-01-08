@@ -154,13 +154,14 @@ const index = () => {
               color: '#58D36E',
               cursor: 'pointer'
             }} />
+            {row?.status?.status !== "Closed" &&
           <BorderColorTwoToneIcon
             onClick={() => editPage(row?._id)}
             style={{
               color: '#58D36E',
               cursor: 'pointer'
             }}
-          />
+          /> }
 
         </Stack>
       )
@@ -204,7 +205,7 @@ const index = () => {
             {listCount.map((res: any) => (
               <Box width={150} sx={{ position: 'relative', cursor: 'pointer', }} onClick={() => handleButtonClick(res?.name)}>
                 {res.count &&
-                  <Box sx={{ position: 'absolute', right: -5, top: -10, background: 'red', p: .5, borderRadius: 25 }} >
+                  <Box sx={{ position: 'absolute', right: -5, top: -10, background: 'red', p: .5, borderRadius: 25,minWidth:25,display:'flex',alignItems:'center',justifyContent:'center'}} >
                     <Typography fontSize={12} fontWeight={'bold'} color="#fff" letterSpacing={1} sx={{ fontFamily: `'Poppins' sans-serif`, }} >{res?.count}</Typography>
                   </Box>}
                 <Box sx={{ background: background === res?.name ? '#f5f5f5' : '', px: 1, py: 1.5, borderRadius: 3, justifyContent: 'center', alignItems: 'center', border: '1px solid #58D36E', display: 'flex' }}>

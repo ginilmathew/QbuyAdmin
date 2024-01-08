@@ -9,8 +9,14 @@ import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
 import CustomSwitch from '@/components/CustomSwitch';
 import CustomDelete from '@/Widgets/CustomDelete';
+import { fetchData } from '@/CustomAxios';
+import useSWR from 'swr';
 
+
+
+const fetcher = (url: any) => fetchData(url).then((res) => res);
 const RateCard = () => {
+    const { data, error, isLoading, mutate } = useSWR(`/admin/rate-card/list/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
     const router = useRouter()
 
     const [open, setOpen] = useState<boolean>(false)

@@ -111,7 +111,8 @@ const RiderTicketForm = ({ res, view }: props) => {
             setloading(true)
             await postData('admin/ticket/update', { ...pass })
             toast.success('Updated Successfully');
-            router.push('/riderTickets')
+            // router.push('/riderTickets')
+            router.back();
 
         } catch (err: any) {
             toast.error(err.message)
