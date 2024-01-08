@@ -22,6 +22,8 @@ import { useRouter } from 'next/router';
 import CustomImageUploader from '@/components/CustomImageUploader';
 import { IMAGE_URL } from '@/Config';
 
+
+
 type props = {
   res?: any,
   view?: any,
@@ -44,11 +46,12 @@ const OfferForm = ({ res, view }: props) => {
     customer_specific_offer: boolean,
     image: any,
     customers: any,
-    type: string
+    type: string,
+    customer: any
   }
 
 
-  const [singleList, setSingleList] = useState('')
+  const [singleList, setSingleList] = useState<any>([])
   const [inputValue, setInputValue] = useState<any>('');
   const [custArray, setCustArray] = useState([])
   const [type, setType] = useState<string | null>(null);
@@ -65,7 +68,6 @@ const OfferForm = ({ res, view }: props) => {
   const [thumbnailPreview, setthumbnailPreview] = useState<any>(null);
   const [imagefile, setImagefile] = useState<null | File>(null)
 
-  console.log({imagefile})
   useEffect(() => {
     const fetchDatas = async () => {
       try {
@@ -80,9 +82,11 @@ const OfferForm = ({ res, view }: props) => {
         setvendorSelect(response?.data?.data?.store)
         setFranchiseSelect(response?.data?.data?.franchise)
         setCheckBox(response?.data?.data?.customer_specific_offer === "false" ? false : true)
+
         let data = response?.data?.data;
+        console.log({ data })
         data.expiry_date = data.expiry_date ? moment(data.expiry_date, 'YYYY-MM-DD hh:mm A') : null
-   
+
         reset(data)
 
         // Do something with the data
@@ -174,7 +178,7 @@ const OfferForm = ({ res, view }: props) => {
 
         return nameMatches || phoneMatches;
       });
-    
+
       setCustArray(filteredCust)
     } catch (err: any) {
 
@@ -256,7 +260,7 @@ const OfferForm = ({ res, view }: props) => {
 
 
   const onChangeCheck = (e: any) => {
-    if(view) return false;
+    if (view) return false;
     setValue('customer_specific_offer', e)
     setCheckBox(e)
   }
@@ -285,16 +289,16 @@ const OfferForm = ({ res, view }: props) => {
 
     const CreateURL = 'admin/offers/create'
     const EditUrl = 'admin/offers/update'
-    if(res){
+    if (res) {
       data.id = id;
     }
-    if(imagefile){
+    if (imagefile) {
       data.image = imagefile;
-    }else {
+    } else {
       delete data.image
     }
     data.expiry_date = moment(data.expiry_date).format('YYYY-MM-DD hh:mm')
-   
+
     let formData = new FormData();
 
 
@@ -320,7 +324,7 @@ const OfferForm = ({ res, view }: props) => {
 
   }
 
-  
+
 
   return (
     <Box>
@@ -430,7 +434,7 @@ const OfferForm = ({ res, view }: props) => {
             </Grid>}
           <Grid item xs={12} lg={2.5}>
             <CustomDateTimePicker
-            disabled={view ? true : false}
+              disabled={view ? true : false}
               values={time}
               changeValue={(value: any) => OnChangeDate(value)}
               fieldName='expiry_date'
@@ -458,6 +462,20 @@ const OfferForm = ({ res, view }: props) => {
             <Typography mt={3}></Typography>
             <CustomCheckBox isChecked={checkbox} label='' onChange={onChangeCheck} title='Customer Specific Offer' />
 
+          </Grid>}
+
+
+        {(checkbox && view)&&<Grid item xs={12} lg={2.5}>
+            <CustomTextarea
+              control={control}
+              error={errors.customer}
+              fieldName="customer"
+              placeholder={``}
+              fieldLabel={"customers"}
+              disabled={false}
+              view={view ? true : false}
+              defaultValue={singleList.customers?.map((res: any) => res?.name)?.join()}
+            />
           </Grid>}
           {(checkbox && !res && !view) &&
             <Grid item xs={12} lg={2.5}>
@@ -516,10 +534,10 @@ const OfferForm = ({ res, view }: props) => {
 
       </CustomBox>
       {!view &&
-      <Box py={3}>
-        <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={res ? 'Edit Offer' : 'Add Offer'}
-          onClick={handleSubmit(handleSubmitForm)} />
-      </Box> }
+        <Box py={3}>
+          <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={res ? 'Edit Offer' : 'Add Offer'}
+            onClick={handleSubmit(handleSubmitForm)} />
+        </Box>}
 
     </Box>
   )
