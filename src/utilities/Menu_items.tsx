@@ -386,7 +386,7 @@ export const support_item = [
     {
         id: 2,
         item: 'Rider Tickets',
-        path: '/dashboard',
+        path: '/riderTickets',
     },
     {
         id: 3,

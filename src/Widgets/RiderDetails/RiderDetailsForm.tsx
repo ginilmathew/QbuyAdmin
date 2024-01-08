@@ -115,18 +115,18 @@ const RiderDetailsform = ({ res, view }: props) => {
         name: yup.string()
             .matches(/^[A-Za-z]+(?: [A-Za-z]+)*$/, "Rider Name should contain only characters")
             .required("Rider Name is required"),
-            city: yup.string()
-            
+        city: yup.string()
+
             .required("city is required"),
-            vehicle_number: yup.string()
-            
+        vehicle_number: yup.string()
+
             .required("vehicle number  is required"),
         mobile: yup.string()
             .required("Mobile Number is required")
             .matches(/^[0-9]{10}$/, "Mobile Number must be 10 digits long and contain only numeric characters"),
         emergency_contact: yup.string()
             .matches(/(^[0-9]{10}$)|^$/, "Emergency Contact must be 10 digits long and contain only numeric characters")
-          .required("Emergency Contact is required"),
+            .required("Emergency Contact is required"),
 
         aadhar_card_number: yup.string()
             .matches(/^$|^[0-9]{12}$/, "Aadhaar Number should be 12 digits long and contain only numeric characters")
@@ -139,10 +139,10 @@ const RiderDetailsform = ({ res, view }: props) => {
             .nullable()
             .notRequired(),
         account_name: yup.string()
-        .matches(/^[A-Za-z]+(?: [A-Za-z]+)*$/, "Account Name should contain only characters")
+            .matches(/^[A-Za-z]+(?: [A-Za-z]+)*$/, "Account Name should contain only characters")
             .nullable()
             .notRequired(),
-            
+
     });
 
 
@@ -246,7 +246,7 @@ const RiderDetailsform = ({ res, view }: props) => {
         getdatas()
     }, []);
 
-    const getdatas = async() => {
+    const getdatas = async () => {
         await fetchFranchiseList();
         await getOnboardingList();
     }
@@ -358,7 +358,7 @@ const RiderDetailsform = ({ res, view }: props) => {
         }
     };
 
-    
+
 
 
 
@@ -366,9 +366,9 @@ const RiderDetailsform = ({ res, view }: props) => {
     const onSubmit = async (data: IFormInput) => {
         setLoading(true);
         data.status = statusSelect;
-    
-    console.log(data.city);
-    
+
+        console.log(data.city);
+
         try {
             const formData = new FormData();
             const URL_UPDATE = "/admin/onboarding/update";
@@ -609,55 +609,55 @@ const RiderDetailsform = ({ res, view }: props) => {
                                 ))}
                             </Customselect>
                         </Grid>
-                       
-                        {selectedFranchisees.map((franchiseId, index) => (
-    <Grid item xs={12} lg={3} key={index}>
-        <div style={{ position: 'relative' }}>
-            <Customselect
-                type="text"
-                control={control}
-                error={errors.franchise_id}
-                fieldName={`franchise_id_${index}`}
-                placeholder={``}
-                fieldLabel={`Secondary Franchisee `}
-                selectvalue={selectedFranchisees[index]}
-                height={40}
-                label={""}
-                size={16}
-                value={selectedFranchisees[index]}
-                onChangeValue={(e: any) => handleFranchiseSelects(index, e)}
-                background={"#fff"}
-                disabled={view ? true : false}
-                options={franchiseList}
-            >
-                {franchiseList.map((franchise) => (
-                    <MenuItem
-                        key={franchise._id}
-                        value={franchise._id}
-                    >
-                        {franchise?.franchise_name}
-                    </MenuItem>
-                ))}
-            </Customselect>
 
-            {!view && (
-                <DeleteOutlineTwoToneIcon
-                    aria-label="Delete"
-                    style={{
-                        position: 'absolute',
-                        right: 0,
-                        top: '21%',
-                        transform: 'translateY(-50%)',
-                        color: 'red',
-                        cursor: 'pointer'
-                    }}
-                    onClick={() => removeFranchisee(index)}
-                >
-                </DeleteOutlineTwoToneIcon>
-            )}
-        </div>
-    </Grid>
-))}
+                        {selectedFranchisees.map((franchiseId, index) => (
+                            <Grid item xs={12} lg={3} key={index}>
+                                <div style={{ position: 'relative' }}>
+                                    <Customselect
+                                        type="text"
+                                        control={control}
+                                        error={errors.franchise_id}
+                                        fieldName={`franchise_id_${index}`}
+                                        placeholder={``}
+                                        fieldLabel={`Secondary Franchisee `}
+                                        selectvalue={selectedFranchisees[index]}
+                                        height={40}
+                                        label={""}
+                                        size={16}
+                                        value={selectedFranchisees[index]}
+                                        onChangeValue={(e: any) => handleFranchiseSelects(index, e)}
+                                        background={"#fff"}
+                                        disabled={view ? true : false}
+                                        options={franchiseList}
+                                    >
+                                        {franchiseList.map((franchise) => (
+                                            <MenuItem
+                                                key={franchise._id}
+                                                value={franchise._id}
+                                            >
+                                                {franchise?.franchise_name}
+                                            </MenuItem>
+                                        ))}
+                                    </Customselect>
+
+                                    {!view && (
+                                        <DeleteOutlineTwoToneIcon
+                                            aria-label="Delete"
+                                            style={{
+                                                position: 'absolute',
+                                                right: 0,
+                                                top: '21%',
+                                                transform: 'translateY(-50%)',
+                                                color: 'red',
+                                                cursor: 'pointer'
+                                            }}
+                                            onClick={() => removeFranchisee(index)}
+                                        >
+                                        </DeleteOutlineTwoToneIcon>
+                                    )}
+                                </div>
+                            </Grid>
+                        ))}
 
 
                     </Grid>
@@ -679,7 +679,7 @@ const RiderDetailsform = ({ res, view }: props) => {
                             >
                                 Add More Franchisee
                             </button> */}
-                         
+
                             <Custombutton
                                 btncolor='#F71C1C'
                                 IconEnd={''}

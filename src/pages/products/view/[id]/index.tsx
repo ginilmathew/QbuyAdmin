@@ -8,14 +8,15 @@ import { toast } from 'react-toastify'
 const ProductView = () => {
     const router = useRouter()
     const { id } = router.query
- 
 
-  
+
+
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <CustomHeaderBack backlabel='View Product' />
             <ProductForm view={id} />
+            
         </Box>
     )
 }

@@ -220,9 +220,9 @@ const OfferForm = ({ res, view }: props) => {
   useEffect(() => {
     getFranchiseList()
   }, [])
+
+  
   const onselectFranchise = async (e: React.ChangeEvent<HTMLInputElement>) => {
-
-
     setValue('franchise', e.target?.value)
     setValue('store', null)
     setError('franchise', { message: '' })
@@ -231,10 +231,7 @@ const OfferForm = ({ res, view }: props) => {
       setLoading(true)
       setvendorSelect(null)
       const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
-
       setVendorList(response?.data?.data)
-
-
     } catch (err: any) {
       toast.error(err.message)
       setLoading(false)
@@ -286,7 +283,6 @@ const OfferForm = ({ res, view }: props) => {
   const handleSubmitForm = async (data: any) => {
 
     data.customers = JSON.stringify(data?.customers);
-
     const CreateURL = 'admin/offers/create'
     const EditUrl = 'admin/offers/update'
     if (res) {
@@ -474,7 +470,7 @@ const OfferForm = ({ res, view }: props) => {
               fieldLabel={"customers"}
               disabled={false}
               view={view ? true : false}
-              defaultValue={singleList.customers?.map((res: any) => res?.name)?.join()}
+              defaultValue={singleList?.customers?.map((res: any) => res?.name)?.join()}
             />
           </Grid>}
           {(checkbox && !res && !view) &&
