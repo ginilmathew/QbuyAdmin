@@ -162,11 +162,11 @@ export const Admin_item = [
                 item: 'Slider Management',
                 path: '/sliderManagement',
             },
-            {
-                id: 10.2,
-                item: 'Feedbacks',
-                path: '/feedbacks',
-            },
+            // {
+            //     id: 10.2,
+            //     item: 'Feedbacks',
+            //     path: '/feedbacks',
+            // },
             {
                 id: 10.3,
                 item: 'Message Banner',
@@ -411,7 +411,7 @@ export const support_item = [
     {
         id: 7,
         item: 'Affiliate Onboarding',
-        path: '/dashboard',
+        path: '/affliates',
     },
     {
         id: 8,

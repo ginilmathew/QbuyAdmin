@@ -8,6 +8,7 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import { toast } from 'react-toastify';
 import { fetchData } from '@/CustomAxios';
+import moment from 'moment';
 
 
 const PickupAndDrop = () => {
@@ -37,26 +38,29 @@ const PickdropEdit=(id:string)=>{
 
 
     const columns: GridColDef[] = [
-        { field: 'Ticket ID', headerName: 'Ticket ID', flex: 1, },
+        { field: 'Ticket ID', headerName: 'Ticket ID', flex: 1, headerAlign: 'center',
+        align: 'center', },
         {
             field: 'item_name',
-            headerName: 'Product Item Name',
+            headerName: 'Created Date',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => moment(params.row.created_at).format("DD/MM/YYYY"),
 
         },
         {
-            field: 'description',
-            headerName: 'Description',
+            field: 'customer',
+            headerName: 'Customer Name',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params.row.customer?.users?.name,
 
         },
         {
             field: 'pickup_location',
-            headerName: 'Pick Up Location',
+            headerName: 'Phone Number',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
@@ -64,7 +68,7 @@ const PickdropEdit=(id:string)=>{
         },
         {
             field: 'drop_off_location',
-            headerName: 'Drop Off Location',
+            headerName: 'Store Name',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
@@ -72,10 +76,19 @@ const PickdropEdit=(id:string)=>{
         },
         {
             field: 'weight',
-            headerName: 'Weight',
+            headerName: 'Assign Rider',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+
+        },
+        {
+            field: 'vehicle_stype',
+            headerName: 'Rider Number',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            
 
         },
         {
@@ -84,6 +97,7 @@ const PickdropEdit=(id:string)=>{
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params.row.vehicle_type?.name
 
         },
      
@@ -129,8 +143,7 @@ const PickdropEdit=(id:string)=>{
         try {
             setLoading(true)
             const response = await fetchData(`admin/pickup-drop`)
-            console.log(response);
-            
+            console.log({RESPONSE:response?.data?.data});
             setShippingList(response?.data?.data)
             setSearchList(response?.data?.data)
         } catch (err: any) {

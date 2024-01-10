@@ -9,7 +9,7 @@ type Inputs = {
     startIcon: boolean,
     IconStart: any,
     IconEnd: any,
-    height:any,
+    height?:any,
     btncolor:string,
     disabled?:boolean
 

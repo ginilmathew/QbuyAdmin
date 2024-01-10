@@ -160,7 +160,7 @@ function RushHour() {
     try {
       setLoding(true)
       const response = await postData('admin/rush-hour/status', value)
-      console.log({ response })
+   
       // setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
       mutate()
     }

@@ -7,12 +7,12 @@ import React, { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 const index = () => {
     const router = useRouter()
-    const { id } = router.query
+
 
     return (
         <Box px={5} py={2} pt={10} mt={0}>
             <CustomHeaderBack backlabel='Edit Customer Complaint' />
-            <CustomerComplaintForm view={id} />
+            <CustomerComplaintForm resData={true} />
         </Box>
     )
 }

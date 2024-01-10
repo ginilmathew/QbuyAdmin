@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { Avatar } from '@mui/material';
-
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 
 import { useRouter } from 'next/router';
@@ -400,20 +400,24 @@ const PickUp = ({ view, res, edit }: props) => {
         setValue('pickup_time', e)
     }
     console.log(defaultImage);
+    const removeImage = (name: string) => {
+        const result = defaultImage?.filter((res: any) => res !== name)
+        setdefaultImage([...result])
+
+    }
+
 
 
     return (
         <Box>
             <CustomBox title='Customer Details'>
                 <Grid container spacing={2}>
-
-
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
                             control={control}
                             error={errors.customer_name}
-                            fieldName="Customer Name"
+                            fieldName="customer_name"
                             placeholder={``}
                             fieldLabel={"Customer Name"}
                             disabled={false}
@@ -426,7 +430,7 @@ const PickUp = ({ view, res, edit }: props) => {
                             type='text'
                             control={control}
                             error={errors.email}
-                            fieldName="Email Address"
+                            fieldName="email"
                             placeholder={``}
                             fieldLabel={"Emial Address"}
                             disabled={false}
@@ -439,7 +443,7 @@ const PickUp = ({ view, res, edit }: props) => {
                             type='text'
                             control={control}
                             error={errors.mobile}
-                            fieldName="Mobile Number"
+                            fieldName="mobile"
                             placeholder={``}
                             fieldLabel={"Mobile Number"}
                             disabled={false}
@@ -452,7 +456,7 @@ const PickUp = ({ view, res, edit }: props) => {
                             type='text'
                             control={control}
                             error={errors.customer_group}
-                            fieldName="Customer Group"
+                            fieldName="customer_group"
                             placeholder={``}
                             fieldLabel={"Customer group"}
                             disabled={false}
@@ -526,7 +530,7 @@ const PickUp = ({ view, res, edit }: props) => {
                             fieldName='pickup_date'
                             control={control}
                             error={errors.pickup_date}
-                            fieldLabel={'Expiry Date'}
+                            fieldLabel={'Pickup Date'}
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
@@ -536,22 +540,11 @@ const PickUp = ({ view, res, edit }: props) => {
                             control={control}
                             disabled={view ? true : false}
                             error={errors.pickup_time}
-                            fieldLabel={'Expiry Time(Hrs)'} />
+                            fieldLabel={'Pickup Time'} />
 
 
                     </Grid>
-                    {/* <Grid item xs={12} lg={2.5}>
-                        <CustomTextarea
-                            control={control}
-                            error={errors.payment_address_pickup_address}
-                            fieldName="payment_address_pickup_address"
-                            placeholder={``}
-                            fieldLabel={"Payment Address or Pickup Address"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={''}
-                        />
-                    </Grid> */}
+
                     <Grid item xs={12} lg={4.7}>
                         <CustomTextarea
                             // type='text'
@@ -578,190 +571,113 @@ const PickUp = ({ view, res, edit }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                </Grid>
-                {/* {view &&
-                        <Grid item xs={12} lg={3}>
-                            {/* <Avatar variant='square' src={`${IMAGE_URL}${productList?.product_image}`} sx={{ width: '100%', height: 130 }} /> */}
-                {/* </Grid> */}
-                {/* {!view &&
-                        <Grid item xs={12} lg={3}>
-                            <CustomImageUploader
-                                ICON={""}
-                                viewImage={imagePreview}
-                                error={errors.image}
-                                fieldName="image"
-                                placeholder={``}
-                                fieldLabel={"Product Image"}
-                                control={control}
-                                height={130}
-                                max={5}
-                                onChangeValue={imageUploder}
-                                preview={imagefile}
-                                previewEditimage={""}
-                                type={"file"}
-                                background="#e7f5f7"
-                                myid="contained-button-file"
-                                width={"100%"}
-                            />
-
-                        </Grid>}
-             */}
-
-                <Grid container spacing={2}>
-
                     <Grid item xs={12} lg={6}>
+
                         {/* this only in edit image code ************************************** */}
-                        <div style={{ marginTop: "15px" }} />
+
                         {defaultImage.length > 0 && !view &&
                             <>
-                                {/* <Box display={'flex'} gap={2} >
-            {defaultImage && defaultImage?.map((res: any, i: number) => (
-                <Box position={'relative'}>
-                    <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 100, height: 100, }} />
-                    <Box position={'absolute'} top={0} right={0}><HighlightOffIcon sx={{ color: 'red', cursor: 'pointer' }} onClick={() => removeImage(res)} /></Box>
-                </Box>
-            ))}
-        </Box> */}
-                            </>
-                        }
-                        {view &&
-                            <>
-                                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
-                                    sx={{
-                                        fontSize: {
-                                            lg: 16,
-                                            md: 14,
-                                            sm: 12,
-                                            xs: 11,
-                                        },
-                                        fontFamily: `'Poppins' sans-serif`,
-                                    }}
-                                >{'Additional Images'}
-                                </Typography>
-                                <Box display={'flex'} gap={2}   >
+                                <Box display={'flex'} gap={2} style={{ height: '200px', overflow: 'auto' }} >
                                     {defaultImage && defaultImage?.map((res: any, i: number) => (
-                                        <Box>
-                                            <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 130, height: 130, }} />
+                                        <Box position={'relative'}>
+                                            <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 100, height: 100, }} />
+                                            <Box position={'absolute'} top={0} right={0}><HighlightOffIcon sx={{ color: 'red', cursor: 'pointer' }} onClick={() => removeImage(res)} /></Box>
                                         </Box>
+
                                     ))}
                                 </Box>
                             </>
                         }
-                        {<CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='' />}
+
+
+                        {view &&
+                            <div style={{ height: '200px', overflow: 'auto' }}>
+                                <>
+                                    <Typography letterSpacing={0.5} px={3} mb={3}
+                                        sx={{
+                                            fontSize: {
+                                                lg: 16,
+                                                md: 14,
+                                                sm: 12,
+                                                xs: 11,
+                                            },
+                                            fontFamily: `'Poppins' sans-serif`,
+                                        }}
+                                    >{'Additional Images'}</Typography>
+                                    <Box display="flex" gap={2}>
+                                        {defaultImage && defaultImage.map((res: any, i: number) => (
+                                            <Box key={i}>
+                                                <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 130, height: 130 }} />
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                </>
+                            </div>
+                        }
+
+                        {/* {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />} */}
+                        <div style={{ height: '200px', overflow: 'auto' }}>
+                            {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />}
+                        </div>
+
                     </Grid>
-
-
-
-                    {/* <Grid item xs={12} lg={2.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.sub_total}
-                            fieldName="sub_total"
-                            placeholder={``}
-                            fieldLabel={"Sub Total"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={''}
-                        />
-
-                    </Grid>
-                    <Grid item xs={12} lg={2.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.extra_total}
-                            fieldName="extra_total"
-                            placeholder={``}
-                            fieldLabel={"Extra Total"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-
-                    </Grid>
-                    <Grid item xs={12} lg={2.5}>
-                    <CustomInput
-                                type='text'
-                                control={control}
-                                error={errors.total_charge}
-                                fieldName="total_charge"
-                                placeholder={``}
-                                fieldLabel={"Total Charges"}
-                                disabled={false}
-                                view={view ? true : false}
-                                defaultValue={''}
-                            />
-                    </Grid> */}
                 </Grid>
             </CustomBox>
-            {/* <CustomBox title='Product Details'>
-                {orderviewList &&
-                    // <ShippingTable res={orderviewList} readonly={res} id={idd} SetDeliveryCharge={SetDeliveryCharge} />}
-            </CustomBox> */}
 
+            <CustomBox title='Other Details'>
+                <Grid container spacing={2}>
+                <Grid item xs={12} lg={3} >
 
+                    <Customselect
+                        type='text'
+                        control={control}
+                        error={errors.assign_rider}
+                        fieldName="Assign Rider"
+                        placeholder={``}
+                        fieldLabel={"Assign Rider"}
+                        selectvalue={""}
+                        height={40}
+                        label={''}
+                        size={20}
+                        value={type}
+                        options={''}
+                        onChangeValue={onChangeSelect}
+                        background={'#fff'}
+                    ><MenuItem value="" disabled >
+                            <>Select Rider</>
+                        </MenuItem>
+                        <MenuItem value={10}>Ten</MenuItem>
+                        <MenuItem value={20}>Twenty</MenuItem>
+                        <MenuItem value={30}>Thirty</MenuItem>
+                    </Customselect>
+                </Grid>
+                <Grid item xs={12} lg={3} >
 
-            {/* {idd && <HistoryTable res={orderviewList?.order_history} />} */}
-            <Grid container lg={12} spacing={0.5} display={'flex'} direction={"row"} >
-                <CustomBox title='Rider'>
-                    <Grid item xs={12} lg={12} >
-
-                        <Customselect
-                            type='text'
-                            control={control}
-                            error={errors.assign_rider}
-                            fieldName="Assign Rider"
-                            placeholder={``}
-                            fieldLabel={"Assign Rider"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={20}
-                            value={type}
-                            options={''}
-                            onChangeValue={onChangeSelect}
-                            background={'#fff'}
-                        ><MenuItem value="" disabled >
-                                <>Select Rider</>
-                            </MenuItem>
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
-                        </Customselect>
-                    </Grid>
-                </CustomBox>
-
-                {/* Add spacing between CustomBox components */}
-                <div style={{ marginLeft: "20px" }} />
-
-                <CustomBox title='Status'>
-                    <Grid item xs={12} lg={12} >
-                        <Customselect
-                            type='text'
-                            control={control}
-                            error={errors.assign_rider}
-                            fieldName="Choose Status"
-                            placeholder={``}
-                            fieldLabel={"Choose Status"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={20}
-                            value={type}
-                            options={''}
-                            onChangeValue={onChangeSelect}
-                            background={'#fff'}
-                        ><MenuItem disabled><>select Status</></MenuItem>
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
-                        </Customselect>
-                    </Grid>
-                </CustomBox>
-            </Grid>
-
-
+                    <Customselect
+                        type='text'
+                        control={control}
+                        error={errors.assign_rider}
+                        fieldName="Assign Rider"
+                        placeholder={``}
+                        fieldLabel={"Status"}
+                        selectvalue={""}
+                        height={40}
+                        label={''}
+                        size={20}
+                        value={type}
+                        options={''}
+                        onChangeValue={onChangeSelect}
+                        background={'#fff'}
+                    ><MenuItem value="" disabled >
+                            <>Select Rider</>
+                        </MenuItem>
+                        <MenuItem value={10}>Ten</MenuItem>
+                        <MenuItem value={20}>Twenty</MenuItem>
+                        <MenuItem value={30}>Thirty</MenuItem>
+                    </Customselect>
+                </Grid>
+                </Grid>
+            </CustomBox>
 
             {<Box py={3} display={'flex-container'} justifyContent={'center'}>
                 <Custombutton
@@ -770,7 +686,7 @@ const PickUp = ({ view, res, edit }: props) => {
                     IconStart={''}
                     endIcon={false}
                     startIcon={false}
-                    height={''}
+                    height={40}
                     label={edit ? 'update' : 'Add details'}
                     disabled={loading}
                     onClick={handleSubmit(SubmitOrder)} />

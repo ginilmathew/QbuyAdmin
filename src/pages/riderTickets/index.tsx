@@ -32,17 +32,21 @@ const index = () => {
   const [listCount, setListCount] = useState([{
     name: 'All',
     count: null,
+    key:false
   },
   {
     name: 'Processing',
-    count: 0
+    count: 0,
+    key:true
   },
   {
     name: 'Picked',
-    count: 0
+    count: 0,
+    key:true
   },
   {
-    name: 'Closed', count: 0
+    name: 'Closed', count: 0,
+    key:true
   }])
 
   useEffect(() => {
@@ -204,7 +208,7 @@ const index = () => {
           <Box sx={{ display: 'flex', gap: 2 }}>
             {listCount.map((res: any) => (
               <Box width={150} sx={{ position: 'relative', cursor: 'pointer', }} onClick={() => handleButtonClick(res?.name)}>
-                {res.count &&
+                {res.key &&
                   <Box sx={{ position: 'absolute', right: -5, top: -10, background: 'red', p: .5, borderRadius: 25,minWidth:25,display:'flex',alignItems:'center',justifyContent:'center'}} >
                     <Typography fontSize={12} fontWeight={'bold'} color="#fff" letterSpacing={1} sx={{ fontFamily: `'Poppins' sans-serif`, }} >{res?.count}</Typography>
                   </Box>}
