@@ -151,7 +151,6 @@ function RushHour() {
   ];
 
   const OnchangeCheck = async (e: any, id: string) => {
-
     let value = {
       id: id,
       status: e.target.checked === true ? "active" : "inactive"
@@ -159,8 +158,8 @@ function RushHour() {
 
     try {
       setLoding(true)
-      const response = await postData('admin/rush-hour/status', value)
-   
+      await postData('admin/rush-hour/status', value)
+
       // setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
       mutate()
     }
@@ -177,12 +176,12 @@ function RushHour() {
 
   const searchItem = useCallback((value: any) => {
     let competitiions = data?.data?.data?.filter((com: any) => com?.franchisee?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) ||
-        com?.message.toString().toLowerCase().includes(value.toLowerCase()) 
+      com?.message.toString().toLowerCase().includes(value.toLowerCase())
     )
     startTransition(() => {
-        setItem(competitiions)
+      setItem(competitiions)
     })
-}, [item])
+  }, [item])
 
 
   return (

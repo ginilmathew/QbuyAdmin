@@ -127,7 +127,7 @@ const CustomerComplaintForm = ({ resData, view }: props) => {
 
     const onSubmit = async (data: any) => {
 
-        console.log({ data })
+
 
         let payload = {
             comments: data?.comments,
@@ -137,13 +137,11 @@ const CustomerComplaintForm = ({ resData, view }: props) => {
 
         try {
             setLoading(true);
-
             const response = await postData("admin/customer-complaints/update", payload);
             console.log(response);
             toast.success("Updated Successfully");
             router.back()
         } catch (err: any) {
-
             toast.error(err?.messsage);
         } finally {
             setLoading(false);

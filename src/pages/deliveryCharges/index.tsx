@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { startTransition, useCallback, useEffect, useState } from 'react'
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
@@ -9,66 +9,102 @@ import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import DeleteOutlineTwoToneIcon from '@mui/icons-material/DeleteOutlineTwoTone';
 import CustomSwitch from '@/components/CustomSwitch';
 import CustomDelete from '@/Widgets/CustomDelete';
+import useSWR from 'swr';
+import { fetchData } from '@/CustomAxios';
+import moment from 'moment';
+
+
+
+
+const fetcher = (url: any) => fetchData(url).then((res) => res);
 
 const DeliveryCharges = () => {
     const router = useRouter()
+    const { data, error, isLoading, mutate } = useSWR(`admin/delivery-charge/list`, fetcher);
+    const [open, setOpen] = useState<boolean>(false);
+    const [item, setItem] = useState([]);
+    const [_id, set_id] = useState<string>('');
+    const [loading, setLoding] = useState<boolean>(false);
 
 
-    const [open, setOpen] = useState<boolean>(false)
 
-  
+    useEffect(() => {
+        if (data?.data?.data) {
+            setItem(data?.data?.data)
+        }
+    }, [data?.data?.data])
+
     const handleClose = () => {
         setOpen(false)
     }
-  
-    const handleOpen = () => {
+
+    const handleOpen = (id: any) => {
+        set_id(id)
         setOpen(true)
     }
-  
-    const addproductItems = () => {
-        router.push('/products/addProduct')
-  
+    const viewPage = (row: any) => {
+
+        router.push(
+            `/deliveryCharges/view/${row}`,
+
+        );
+        // router.push(`/deliveryCharges/view/${id}`)
     }
-  
-  
-  
-  
+
+    const editPage = (row: any) => {
+        router.push(
+            `/deliveryCharges/edit/${row}`);
+    }
+
+
+    const addDeliveryCharge = () => {
+        router.push('/deliveryCharges/addDeliveryCharges')
+
+    }
+
+
+
+
     const columns: GridColDef[] = [
-        { field: 'Dated Added', headerName: 'Dated Added', flex: 1, },
+        {
+            field: 'Dated Added', headerName: 'Dated Added', flex: 1, headerAlign: 'center',
+            align: 'center', valueGetter: (params) => moment(params.row.created_at).format("DD/MM/YYYY")
+        },
         {
             field: 'Locality',
             headerName: 'Locality',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-  
+            valueGetter: (params) => params?.row?.locality?.franchise_name
+
         },
         {
-            field: 'Within(Kms)',
+            field: 'within',
             headerName: 'Within(Kms)',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-  
+
         },
-  
+
         {
-            field: 'Normal Charges',
+            field: 'normal_charge',
             headerName: 'Normal Charges',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-  
+
         },
         {
-            field: 'Rate Per Km',
+            field: 'rate_per_km',
             headerName: 'Rate Per Km',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-  
+
         },
-      
+
         {
             field: 'Actions',
             headerName: 'Actions',
@@ -78,20 +114,20 @@ const DeliveryCharges = () => {
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-  
+                        onClick={() => viewPage(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
                         }} />
                     <BorderColorTwoToneIcon
-  
+                        onClick={() => editPage(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
                         }}
                     />
                     <DeleteOutlineTwoToneIcon
-                        onClick={() => handleOpen()}
+                        onClick={() => handleOpen(row?._id)}
                         sx={{
                             color: '#58D36E',
                             cursor: 'pointer',
@@ -100,32 +136,37 @@ const DeliveryCharges = () => {
             )
         }
     ];
-  
-    const rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-    ];
-  
-  return (
-    <Box px={5} py={2} pt={10} mt={0}>
 
-    <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-        <CustomTableHeader imprtBtn={false} Headerlabel='' onClick={()=>null} addbtn={true} />
-        <Box py={5}>
-            <CustomTable dashboard={false} columns={columns} rows={rows} id={"id"} bg={"#ffff"} label='Recent Activity' />
+    const searchItem = useCallback((value: any) => {
+        let competitiions = data?.data?.data?.filter((com: any) => com?.locality?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) ||
+            com?.within.toString().toLowerCase().includes(value.toLowerCase()) || com?.normal_charge.toString().toLowerCase().includes(value.toLowerCase()) || com?.rate_per_km.toString().toLowerCase().includes(value.toLowerCase())
+        )
+        startTransition(() => {
+            setItem(competitiions)
+        })
+    }, [item])
+
+
+    return (
+        <Box px={5} py={2} pt={10} mt={0}>
+
+            <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
+                <CustomTableHeader setState={searchItem} imprtBtn={false} Headerlabel='Delivery Charges' onClick={addDeliveryCharge} addbtn={true} />
+                <Box py={5}>
+                    <CustomTable dashboard={false} columns={columns} rows={item} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                </Box>
+            </Box>
+            {open && <CustomDelete
+                heading='Delivery Charge'
+                paragraph='delivery charge'
+                _id={_id}
+                setData={setItem}
+                data={item}
+                url={`admin/delivery-charge/delete/${_id}`}
+                onClose={handleClose}
+                open={open} />}
         </Box>
-    </Box>
-
-    {open && <CustomDelete  _id='' data={''} setData={''} url='' onClose={() => handleClose()} open={open} />}
-</Box>
-  )
+    )
 }
 
 export default DeliveryCharges

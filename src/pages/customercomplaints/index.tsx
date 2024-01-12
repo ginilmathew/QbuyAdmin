@@ -81,6 +81,25 @@ const customerComplaints = () => {
         setOpen(true)
     }
 
+    const coloredStatusCell = (params: any) => {
+        const statsus = params?.row?.status;
+        console.log({statsus})
+    
+        let color = 'black'; // Default color
+    
+        if (statsus === 'processing') {
+          color = '#16af67';
+        }
+        else if (statsus === 'picked') {
+          color = '#6b5b95';
+        } else if (statsus === 'resolved') {
+          color = 'red'
+        }
+    
+        return <div style={{ color, fontWeight: 'bold' }}>{statsus}</div>;
+      };
+    
+    
 
     const columns: GridColDef[] = [
         {
@@ -133,6 +152,7 @@ const customerComplaints = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            renderCell: (params) => coloredStatusCell(params),
 
         },
         {
@@ -181,6 +201,8 @@ const customerComplaints = () => {
         })
     }, [customerComplaint])
 
+
+  
 
     class Changetab {
         static changetab(value: any) {
