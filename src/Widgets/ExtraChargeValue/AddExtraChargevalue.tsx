@@ -20,8 +20,8 @@ import CustomDateTimePicker from '@/components/CustomDateTimePicker';
 type IFormInput = {
     extra_charge_id: any,
     type: string,
-    label1: string,
-    label2: string,
+    label1: any,
+    label2: any,
     franchise: any,
     charge: string,
     expiry_date_time: any
@@ -52,7 +52,7 @@ const AddExtraChargevalue = ({ view, res }: props) => {
 
     let valiation1 = {
         extra_charge_id: yup.string().required('Required'),
-        charge: yup.string().required('Required'),
+        charge: yup.string().matches(/^[0-9]+$/, 'not valid').required('Required'),
         franchise: yup.string().required('Required'),
         expiry_date_time: yup.string().required('Required'),
         label1: yup.string().required('Required'),
@@ -64,12 +64,14 @@ const AddExtraChargevalue = ({ view, res }: props) => {
     let valiation2 = {
         label1: yup.string().required('Required'),
         extra_charge_id: yup.string().required('Required'),
-        charge: yup.string().required('Required'),
+        charge: yup.string().matches(/^[0-9]+$/, 'not valid').required('Required'),
         franchise: yup.string().required('Required'),
         expiry_date_time: yup.string().required('Required'),
         // If selectType is not 'text', label2 is require
         type: yup.string().required('Required'),
     }
+
+
 
 
 
@@ -113,9 +115,54 @@ const AddExtraChargevalue = ({ view, res }: props) => {
 
     }, [])
 
+
+
+    useEffect(() => {
+        if (id) {
+            const getSingleList = async () => {
+                try {
+                    const resp = await fetchData(`admin/extra-charge-value/show/${id}`)
+                    console.log({ resp })
+                    const data = resp?.data?.data;
+                    setValue('charge', resp?.data?.data?.charge);
+                    setValue('franchise',data?.franchise?.franchise_id)
+                    setValue('extra_charge_id',data?.extra_charge_id?.extra_charge_id)
+                    setValue('type',data?.type)
+                    setValue('expiry_date_time', data.expiry_date_time ? moment(data.expiry_date_time, 'YYYY-MM-DD hh:mm A') : null);
+                    if (data?.type === "dateRange") {
+                        setValue('label1', data.label1 ? moment(data.label1, 'YYYY-MM-DD') : null)
+                        setValue('label2', data.label2 ? moment(data.label1, 'YYYY-MM-DD') : null)
+                    }
+                    if (data?.type === "timeRange") {
+                        setValue('label1', data.label1 ? moment(data.label1, 'hh:mm A') : null)
+                        setValue('label2', data.label2 ? moment(data.label1, 'hh:mm A') : null)
+                    }
+                    if (data?.type === 'text') {
+                        setValue('label1', data.label1 ? data.label1 : null)
+                        setValue('label2', data.label2 ? data.label1 : null)
+                    }
+                    UpdateTask({
+                        extraChargeSelect: data?.extra_charge_id?.extra_charge_id,
+                        franchiseSelect: data?.franchise?.franchise_id,
+                        extraChargeType: data?.type,
+                        label1: data?.extra_charge_id?.label1,
+                        label2: data?.extra_charge_id?.label2,
+                    })
+                } catch (err: any) {
+
+                } finally {
+
+                }
+            }
+
+            getSingleList()
+        }
+
+    }, [id])
+
     const selectExtraCharge = (e: any) => {
         const { value } = e.target;
-        const { label1, label2, type, extra_charge_id, name: extra_charge_name } = task?.extraChargeList?.find((res: any) => res?._id === value);
+        const { label1, label2, type } = task?.extraChargeList?.find((res: any) => res?.extra_charge_id === value);
         setValue('extra_charge_id', value)
         setValue('type', type)
         UpdateTask({
@@ -139,8 +186,8 @@ const AddExtraChargevalue = ({ view, res }: props) => {
 
     class DateFilter {
         static startDate(value: any) {
-            let val = moment(value).format('YYYY-MM-DD')
-            setValue('label1', val)
+            // let val = moment(value).format('YYYY-MM-DD')
+            setValue('label1', value)
             UpdateTask({
                 fromDate: value
             })
@@ -148,8 +195,8 @@ const AddExtraChargevalue = ({ view, res }: props) => {
         }
 
         static endDate(value: any) {
-            let val = moment(value).format('YYYY-MM-DD')
-            setValue('label2', val)
+            // let val = moment(value).format('YYYY-MM-DD')
+            setValue('label2', value)
             UpdateTask({
                 toDate: value
             })
@@ -159,17 +206,18 @@ const AddExtraChargevalue = ({ view, res }: props) => {
 
     class TimeFilter {
         static startTime(value: any) {
-            let val = moment(value).format('hh:mm A')
-            setValue('label1', val)
+            // let val = moment(value).format('hh:mm A')
+            setValue('label1', value)
             setError('label1', { message: "" })
         }
         static endTime(value: any) {
-            let val = moment(value).format('hh:mm A')
-            setValue('label2', val)
+            // let val = moment(value).format('hh:mm A')
+            setValue('label2', value)
             setError('label2', { message: "" })
 
         }
     }
+
     class dateFilter {
         static expirary(value: any) {
             setValue('expiry_date_time', value)
@@ -183,13 +231,25 @@ const AddExtraChargevalue = ({ view, res }: props) => {
 
     const Submit = async (data: any) => {
 
-
         let { _id: franchise_id, franchise_name } = task?.franchiseList?.find((res: any) => res?._id === task?.franchiseSelect);
-        const { extra_charge_id, name: extra_charge_name } = task?.extraChargeList?.find((res: any) => res?._id === task?.extraChargeSelect);
-
+        const { extra_charge_id, name: extra_charge_name, label1, label2, } = task?.extraChargeList?.find((res: any) => res?.extra_charge_id === task?.extraChargeSelect);
         data.franchise = { franchise_id, franchise_name }
         data.expiry_date_time = moment(data.expiry_date_time).format('YYYY-MM-DD hh:mm');
-        data.extra_charge_id = { extra_charge_id, extra_charge_name }
+        if(data?.type === 'dateRange'){
+            data.label1 = data.label1 ? moment(data.label1).format('YYYY-MM-DD') : null
+            data.label2 = data.label2 ? moment(data.label2).format('YYYY-MM-DD') : null
+        }
+        if(data?.type === 'timeRange'){
+            data.label1 = data.label1 ? moment(data.label1).format('hh:mm A') : null
+            data.label2 = data.label2 ? moment(data.label2).format('hh:mm A') : null
+        }
+       
+        data.extra_charge_id = { extra_charge_id, extra_charge_name, label1, label2 }
+        if (id) {
+            data.id = id;
+        }
+
+
 
         const CREATE = 'admin/extra-charge-value/create'
         const UPDATE = 'admin/extra-charge-value/update'
@@ -233,7 +293,7 @@ const AddExtraChargevalue = ({ view, res }: props) => {
                                 <>Select ExtraCharge</>
                             </MenuItem>
                             {task?.extraChargeList?.map((res: any) => (
-                                <MenuItem value={res?._id}>{res?.type}</MenuItem>
+                                <MenuItem value={res?.extra_charge_id}>{res?.type}</MenuItem>
                             ))}
                         </Customselect>
                     </Grid>
@@ -346,7 +406,7 @@ const AddExtraChargevalue = ({ view, res }: props) => {
                     </Grid>
                 </Grid>
             </CustomBox>
-           {!view && <Box py={3}>
+            {!view && <Box py={3}>
                 <Custombutton
                     btncolor=""
                     IconEnd={""}

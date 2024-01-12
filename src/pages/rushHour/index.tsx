@@ -54,7 +54,7 @@ function RushHour() {
       `/rushHour/view/${row?._id}`,
 
     );
-    // router.push(`/rushHour/view/${id}`)
+
   }
 
   const editPage = (row: any) => {
