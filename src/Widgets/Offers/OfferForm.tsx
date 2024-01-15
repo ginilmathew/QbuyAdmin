@@ -103,6 +103,7 @@ const OfferForm = ({ res, view }: props) => {
 
 
   const orderValidation = /^[0-9]*$/
+  const orderOffer = /^[1-9][0-9]?$|^100$/
   const schema = yup
     .object()
     .shape({
@@ -113,7 +114,7 @@ const OfferForm = ({ res, view }: props) => {
         .required('Required'),
       offer_type: yup
         .string().required('Required'),
-      offer_value: yup.string().matches(orderValidation, 'Accept only positive number').nullable().required('Required'),
+      offer_value: yup.string().matches(orderOffer, 'Accept only number').nullable().required('Required'),
       store: yup
         .string().required('Required'),
       franchise: yup
@@ -221,7 +222,7 @@ const OfferForm = ({ res, view }: props) => {
     getFranchiseList()
   }, [])
 
-  
+
   const onselectFranchise = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue('franchise', e.target?.value)
     setValue('store', null)
@@ -430,6 +431,7 @@ const OfferForm = ({ res, view }: props) => {
             </Grid>}
           <Grid item xs={12} lg={2.5}>
             <CustomDateTimePicker
+             
               disabled={view ? true : false}
               values={time}
               changeValue={(value: any) => OnChangeDate(value)}
@@ -461,7 +463,7 @@ const OfferForm = ({ res, view }: props) => {
           </Grid>}
 
 
-        {(checkbox && view)&&<Grid item xs={12} lg={2.5}>
+          {(checkbox && view) && <Grid item xs={12} lg={2.5}>
             <CustomTextarea
               control={control}
               error={errors.customer}

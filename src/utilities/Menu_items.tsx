@@ -406,7 +406,7 @@ export const support_item = [
     {
         id: 6,
         item: 'Latest Order Reviews',
-        path: '/dashboard',
+        path: '/latestOrderReview',
     },
     {
         id: 7,

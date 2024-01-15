@@ -1,5 +1,3 @@
-'use client'
-
 import { FormInputs } from '@/utilities/types';
 import React, { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -24,14 +22,14 @@ type props = {
 
 }
 type IFormInput = {
-    store: any,
+
     promotion_description: string,
     promotion_amount: string,
     start_date: string,
     franchise: any,
     end_date: string
 }
-const MerchantMarketingForm = ({ res, view }: props) => {
+const FranchiseMarketingForm = ({ res, view }: props) => {
     const router = useRouter()
     const { id }: any = router.query;
 
@@ -41,19 +39,14 @@ const MerchantMarketingForm = ({ res, view }: props) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [franchiseSelect, setFranchiseSelect] = useState<any>(null);
     const [type, setType] = useState<any>(null)
-    const [vendorList, setVendorList] = useState<any>([])
-    const [vendorSelect, setvendorSelect] = useState<any>(null);
+
 
 
     const orderValidation = /^[0-9]*$/
     const schema = yup
         .object()
         .shape({
-            store: yup.object().shape({
-
-            }).nullable()
-
-                .required('Required'),
+          
 
             start_date: yup
                 .string()
@@ -110,13 +103,12 @@ const MerchantMarketingForm = ({ res, view }: props) => {
             const singleList = async () => {
                 try {
 
-                    let resp = await fetchData(`admin/merchant-marketing/show/${id}`)
-                    const response = await fetchData(`admin/vendor-list/${resp?.data?.data?.franchise?.id}/${process.env.NEXT_PUBLIC_TYPE}`)
-                    setVendorList(response?.data?.data)
+                    let resp = await fetchData(`admin/franchise-marketing/show/${id}`)
+              
                     const data = resp?.data?.data
                     console.log({data})
                     setFranchiseSelect(data?.franchise?.id)
-                    setvendorSelect(data?.store?.id)
+                  
                         // setEndDate(data?.end_date)
                         // setStartDate(data?.start_date)
                     data.start_date = data?.start_date?  moment(data?.start_date, 'YYYY-MM-DD') : null
@@ -143,37 +135,13 @@ const MerchantMarketingForm = ({ res, view }: props) => {
         let { _id: id, franchise_name: name } = franchiseList?.find((res: any) => res?._id === e.target.value);
 
         setValue('franchise', { id, name })
-        setValue('store', null)
+  
         setError('franchise', { message: '' })
         setFranchiseSelect(e.target.value)
-        try {
-            setLoading(true)
-            setvendorSelect(null)
-            const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
-
-            setVendorList(response?.data?.data)
-
-
-        } catch (err: any) {
-            toast.error(err.message)
-            setLoading(false)
-        } finally {
-            setLoading(false)
-
-        }
-
+       
 
     }
 
-    const onSelectStore = (e: React.ChangeEvent<HTMLInputElement>) => {
-
-        let { _id: id, vendor_name: name } = vendorList?.find((res: any) => res?._id === e.target.value)
-        setvendorSelect(e.target.value)
-        setValue('store', { id, name })
-        setError('store', { message: '' })
-
-
-    }
 
 
     class DateFilter {
@@ -196,8 +164,8 @@ const MerchantMarketingForm = ({ res, view }: props) => {
     const submit = async (data: any) => {
         data.start_date = data.start_date ? moment(data.start_date).format('YYYY-MM-DD') : null;
         data.end_date = data.end_date ? moment(data.end_date).format('YYYY-MM-DD') : null;
-        const CREATE = 'admin/merchant-marketing/create'
-        const UPDATE = 'admin/merchant-marketing/update'
+        const CREATE = 'admin/franchise-marketing/create'
+        const UPDATE = 'admin/franchise-marketing/update'
 
         if (res) {
             data.id = id;
@@ -250,34 +218,7 @@ const MerchantMarketingForm = ({ res, view }: props) => {
 
                     </Grid>
 
-                    <Grid item xs={12} lg={2}>
-                        <Customselect
-                            disabled={view ? true : false}
-                            type='text'
-                            control={control}
-                            error={errors.store}
-                            fieldName="store"
-                            placeholder={``}
-                            fieldLabel={"Store"}
-                            selectvalue={""}
-                            height={40}
-                            label={''}
-                            size={16}
-                            value={vendorSelect}
-                            options={''}
-                            onChangeValue={onSelectStore}
-                            background={'#fff'}
-                        >
-                            <MenuItem value="" disabled >
-                                <>Select Store</>
-                            </MenuItem>
-                            {vendorList && vendorList.map((res: any) => (
-                                <MenuItem value={res?._id}>{res?.store_name}</MenuItem>
-                            ))}
-                        </Customselect>
-
-
-                    </Grid>
+                  
                     <Grid item xs={12} lg={2}>
                         <CustomInput
                             type='text'
@@ -293,6 +234,7 @@ const MerchantMarketingForm = ({ res, view }: props) => {
                     </Grid>
                     <Grid item lg={2} xs={12}>
                         <CustomDatePicker
+                          
                             fieldName={"start_date"}
                             control={control}
                             error={errors?.start_date}
@@ -337,4 +279,4 @@ const MerchantMarketingForm = ({ res, view }: props) => {
     )
 }
 
-export default MerchantMarketingForm
+export default FranchiseMarketingForm

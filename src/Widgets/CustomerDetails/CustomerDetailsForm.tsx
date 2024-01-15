@@ -219,7 +219,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
     const fetchCustomerGroupOptions = async () => {
         try {
-            const response = await fetchData("/admin/customer-group");
+            const response = await fetchData(`/admin/customer-group/${process.env.NEXT_PUBLIC_TYPE}`);
             const customerGroupData = response.data.data;
 
             setCustomerGroupOptions(customerGroupData);
