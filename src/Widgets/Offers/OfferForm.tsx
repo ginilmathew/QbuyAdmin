@@ -167,7 +167,7 @@ const OfferForm = ({ res, view }: props) => {
 
     try {
       const resp = await postData('/admin/customer-details/searchcustomer', { search: newInputValue })
-      console.log({ resp })
+
       const filteredCust = resp?.data?.data?.filter((patient: any) => {
         const { name, mobile } = patient;
 

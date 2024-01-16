@@ -224,7 +224,7 @@ const SliderManagementForm = ({ res }: Props) => {
                 setProductListRes(responseProduct?.data?.data)
                 setProductList(Filter)
 
-            } catch (err:any) {
+            } catch (err: any) {
 
             }
 
@@ -325,7 +325,7 @@ const SliderManagementForm = ({ res }: Props) => {
 
     const onChangeType = useCallback((e: any) => {
         const { value } = e.target;
-        if(value !== "reset"){
+        if (value !== "reset") {
             if (value === "store") {
                 setSingleProduct([])
                 setValue("product_id", "")
@@ -334,11 +334,11 @@ const SliderManagementForm = ({ res }: Props) => {
             }
             setSelectType(value)
             setValue("screentype", value)
-        }else{
+        } else {
             setSelectType(null)
             setValue("screentype", "")
         }
-       
+
     }, [])
 
 

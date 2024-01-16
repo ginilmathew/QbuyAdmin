@@ -167,11 +167,11 @@ export const Admin_item = [
             //     item: 'Feedbacks',
             //     path: '/feedbacks',
             // },
-            {
-                id: 10.3,
-                item: 'Message Banner',
-                path: '/messageBanner',
-            },
+            // {
+            //     id: 10.3,
+            //     item: 'Message Banner',
+            //     path: '/messageBanner',
+            // },
             {
                 id: 10.4,
                 item: 'Rush Hour',

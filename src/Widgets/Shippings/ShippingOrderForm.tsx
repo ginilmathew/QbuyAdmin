@@ -658,7 +658,7 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
     setproductdetails(newAddedProduct)
 
   };
-console.log(  orderviewList?.refund_details?.refund_amount);
+
 
 
     return (
