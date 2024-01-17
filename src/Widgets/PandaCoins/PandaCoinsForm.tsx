@@ -23,8 +23,6 @@ type IFormInput = {
     user_group: any,
     users: any,
     value: any,
-
-
 }
 
 type props = {
@@ -42,18 +40,21 @@ const PandaCoinsForm = ({ view, res }: props) => {
     const [franchiseSelect, setFranchiseSelect] = useState<any>(null)
     const [customerList, setCustomerList] = useState<any>([])
     const [userGroupSelect, setUserGroupSelect] = useState<any>(null)
-    const [dataa, setDataa] = useState<any>('');
-    const [inputValue, setInputValue] = useState<any>('');
-    const [user, setUser] = useState<any>([])
 
 
 
 
 
 
+    const orderValidation = /^[0-9]*$/
     const schema = yup
         .object()
-        .shape({})
+        .shape({
+            type: yup
+                .string().required('Required'),
+            value: yup.string().matches(orderValidation, 'Accept only number').nullable().required('Required'),
+
+        })
     const { register,
         handleSubmit,
         control,
@@ -64,7 +65,8 @@ const PandaCoinsForm = ({ view, res }: props) => {
     } = useForm<IFormInput>({
         resolver: yupResolver(schema),
         defaultValues: {
-
+            users: null,
+            user_group: null
         }
     });
 
@@ -75,6 +77,7 @@ const PandaCoinsForm = ({ view, res }: props) => {
         setFranchiseSelect(null)
         setValue('franchise_id', null)
         setValue('user_group', null)
+        setValue('users', null)
         setValue('type', value)
         setError('type', { message: '' })
     }
@@ -93,7 +96,7 @@ const PandaCoinsForm = ({ view, res }: props) => {
                 setCustomerGroup(resp?.data?.data)
 
             } catch (err: any) {
-
+                toast.error(err?.message)
             }
         }
         getList()
@@ -111,7 +114,7 @@ const PandaCoinsForm = ({ view, res }: props) => {
                     setType(data?.type)
                     setValue('type', data?.type)
                     setValue('value', data?.value)
-                    console.log({ data })
+
                     if (data?.type === 'user') {
                         setFranchiseSelect(data?.franchise_id)
                         setValue('franchise_id', data?.franchise_id)
@@ -122,7 +125,7 @@ const PandaCoinsForm = ({ view, res }: props) => {
                         setValue('user_group', data?.user_group)
                     }
                 } catch (err: any) {
-
+                    toast.error(err?.message)
                 }
 
 
@@ -142,7 +145,7 @@ const PandaCoinsForm = ({ view, res }: props) => {
             setCustomerList(response?.data?.data)
 
         } catch (err: any) {
-
+            toast.error(err?.message)
         }
 
         setError('franchise_id', { message: "" })
@@ -163,14 +166,8 @@ const PandaCoinsForm = ({ view, res }: props) => {
 
 
     const onChngeMUltiSerch = (values: any, newvalue: any) => {
-        // newvalue.forEach((movie:any) => {
-        //     console.log('Selected Movie ID:', movie._id);
-        //     console.log('Selected Movie Name:', movie.name);
-        //     // Perform other actions with id and name as needed
-        // });
         let uniqCustomer: any[] = Array.from(new Set(newvalue));
         let result = uniqCustomer?.map((res: any) => (res?._id))
-
         setValue('users', result)
 
 
@@ -180,11 +177,23 @@ const PandaCoinsForm = ({ view, res }: props) => {
 
 
     const submit = async (data: any) => {
+
+        console.log({ data })
+
         const CREATE = 'admin/panda-coins/create';
         const UPDATe = 'admin/panda-coins/update'
         if (type === "user") {
-            delete data.user_group
+            delete data.user_group;
+            if (!franchiseSelect || !data.users) {
+                toast.warning('Franchise & Users is Required')
+                return false;
+            }
+
         } else {
+            if (!data.user_group) {
+                toast.warning(' Users Group is Required')
+                return false;
+            }
             delete data.franchise_id
             delete data.users
         }
@@ -260,7 +269,7 @@ const PandaCoinsForm = ({ view, res }: props) => {
                                 ))}
                             </Customselect>
                         </Grid>}
-                        {view && <Grid item xs={12} lg={2.4}>
+                        {(view && type === "user") && <Grid item xs={12} lg={2.4}>
                             <CustomInput
                                 type='text'
                                 control={control}

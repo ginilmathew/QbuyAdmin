@@ -17,7 +17,7 @@ type props = {
     fieldLabel: string,
     error: any,
     changeValue: (value: any) => void,
-    values: any,
+    values?: any,
     disabled?: boolean
     disablePast?: boolean
 }

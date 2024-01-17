@@ -8,10 +8,8 @@ import CustomFormModal from '../../../components/CustomFormModal'
 
 const addPickAndDrop = () => {
 
-	let type = process.env.NEXT_PUBLIC_TYPE;
-console.log("add page");
 
-	console.log({ type })
+
 	return (
 		<Box px={5} py={2} pt={10} mt={0}>
 			<CustomHeaderBack backlabel='Add PickUp And Drop' />
