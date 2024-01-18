@@ -253,7 +253,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
 
 
 
-        console.log({ customers })
+   
 
 
         setPatientArray(customers)
@@ -269,7 +269,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
             return false
         }
         setDataa(newvalue)
-        console.log({ value, newvalue })
+  
         //setDataa(newvalue)
         setValue('name', newvalue?.name)
         // setValue('user_id', data?.user_id)
@@ -396,12 +396,6 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
 
     const SubmitOrder = async (data: any) => {
 
-console.log('SUBMIT ORDERRR')
-
-
-        //return false;
-
-console.log({deliveryCharge})
 
 
         //console.log(selectedcustmraddress, "id");
@@ -425,7 +419,7 @@ console.log({deliveryCharge})
 
 
         let store = productdetails?.product_details?.productDetails?.map((prod: any) => prod?.vendor?._id)
-console.log({store:productdetails?.product_details?.productDetails})
+
 
 
         let resultadd = {

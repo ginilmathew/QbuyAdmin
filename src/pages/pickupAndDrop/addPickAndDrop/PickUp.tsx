@@ -263,8 +263,7 @@ const PickUp = ({ view, res, edit }: props) => {
 
 
     const handlePlaceSelectedPick = (place: any) => {
-        console.log('PICK UP SETT')
-        console.log({ place }, 'TEXT')
+
         const area = {
             address: place?.formatted_address,
             location: place?.formatted_address,
@@ -285,7 +284,7 @@ const PickUp = ({ view, res, edit }: props) => {
 
     };
     const handlePlaceSelectedDrop = (place: any) => {
-        console.log('flkfldkfj')
+       
         const area = {
             address: place?.formatted_address,
             location: place?.formatted_address,
@@ -346,7 +345,7 @@ const PickUp = ({ view, res, edit }: props) => {
             try {
                 const resp = await postData('customer/pickup-drop-charge', value)
                 const data = resp?.data?.data;
-                console.log({ data })
+              
                 setValue('grand_total', data.pickup_and_drop_charge_amount)
 
                 setValue('franchise', resp?.data?.data?.franchise_id)
@@ -488,7 +487,7 @@ const PickUp = ({ view, res, edit }: props) => {
                             error={errors.email}
                             fieldName="email"
                             placeholder={``}
-                            fieldLabel={"Emial Address"}
+                            fieldLabel={"Email Address"}
                             disabled={false}
                             view={false}
                             defaultValue={''}
@@ -748,10 +747,10 @@ const PickUp = ({ view, res, edit }: props) => {
                         >{'Images'}
 
                         </Typography>
-                        {imagePreview && imagePreview.length > 0 &&
+                        {imagePreview && imagePreview?.length > 0 &&
                             <>
                                 <Box display={'flex'} gap={2} style={{ height: '200px', overflow: 'auto' }} >
-                                    {imagePreview && imagePreview?.map((res: any, i: number) => (
+                                    {(imagePreview && Array.isArray(imagePreview)) && imagePreview?.map((res: any, i: number) => (
                                         <Box position={'relative'}>
                                             <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 100, height: 100, }} />
 
