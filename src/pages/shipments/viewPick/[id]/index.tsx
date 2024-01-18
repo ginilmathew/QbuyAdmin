@@ -238,7 +238,7 @@ const index = () => {
     }
     return (
         <Box px={5} py={2} pt={10} mt={0}>
-            <CustomHeaderBack backlabel='Edit Pick Up Order' />
+            <CustomHeaderBack backlabel='View Pick Up Order' />
             <CustomBox title='Customer Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
@@ -473,7 +473,7 @@ const index = () => {
                     <Grid item xs={12} lg={2.5}>
                         <Customselect
                             type='text'
-                            disabled={(orderviewList?.payment_status === "completed" || orderviewList?.payment_status === "cancelled") ? true : false}
+                            disabled={true}
                             control={control}
                             error={errors.payment_status}
                             fieldName="payment_status"
@@ -510,6 +510,7 @@ const index = () => {
                             fieldLabel={"Order Status"}
                             selectvalue={""}
                             height={40}
+                            disabled={true}
                             label={''}
                             size={16}
                             value={orderSelect}
@@ -529,16 +530,7 @@ const index = () => {
                     </Grid>
                 </Grid>
             </CustomBox>
-            <Custombutton
-                btncolor=''
-                IconEnd={''}
-                IconStart={''}
-                endIcon={false}
-                startIcon={false}
-                height={''}
-                label={'Update Order'}
-                disabled={loading}
-                onClick={handleSubmit(SubmitOrder)} />
+          
 
 
         </Box>

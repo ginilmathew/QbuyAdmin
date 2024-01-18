@@ -137,7 +137,7 @@ export const Admin_item = [
             {
                 id: 8.11,
                 item: "Products Viewed",
-                path: '/dashboard',
+                path: '/productReportView',
             },
             {
                 id: 8.12,

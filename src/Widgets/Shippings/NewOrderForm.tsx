@@ -102,7 +102,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
     const [dataa, setDataa] = useState<any>('')
     const [inputValue, setInputValue] = useState<any>('');
     const [productdetails, setproductdetails] = useState<any>()
-    const [customerGroupData, setcustomerGroupData] = useState<any>('')
+
     const [platFomCharge, setplatFomCharge] = useState<any>('')
     const [customeraddressList, setcustomeraddressList] = useState<any>([]);
     const [orderStatusSelect, setOrderStatus] = useState<any>([
@@ -231,9 +231,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
     const onChangeCustomer = async (value: any) => {
 
         let details = await axiosInstance.post(`admin/customer-details/searchcustomer`, {
-          
                 "search": value
-            
         });
 
 
@@ -250,12 +248,6 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
                 user_id: cus?.user_id
             }
         })
-
-
-
-   
-
-
         setPatientArray(customers)
 
     }
@@ -306,7 +298,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
 
         }
 
-        console.log({ newvalue });
+    
 
         // customerDetailsAddressGet()
 

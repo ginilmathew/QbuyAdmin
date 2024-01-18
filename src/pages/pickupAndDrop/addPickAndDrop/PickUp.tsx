@@ -5,9 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import CustomBox from '../../../Widgets/CustomBox'
 import { useForm, SubmitHandler, set } from "react-hook-form";
 import Custombutton from '@/components/Custombutton';
-import CustomImageUploader from '@/components/CustomImageUploader';
 import Customselect from '@/components/Customselect';
-import { useJsApiLoader } from "@react-google-maps/api";
 import { fetchData } from '@/CustomAxios';
 import CustomTimepicker from '@/components/CustomTimepicker';
 import { postData } from '@/CustomAxios';
@@ -17,17 +15,13 @@ import * as yup from 'yup';
 import { Avatar } from '@mui/material';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import GoogleAutocomplete from "react-google-autocomplete";
-
 import { useRouter } from 'next/router';
-
 import CustomLoader from '@/components/CustomLoader';
-
 import CustomDatePicker from '@/components/CustomDatePicker';
 import { CustomMultipleImageUploader } from '@/components/CustomMultipleImageUploder';
 import { IMAGE_URL } from '@/Config';
-
 import moment from 'moment';
-import axios from 'axios';
+
 
 // import ShippingTable from './shippingViewTable';
 // import HistoryTable from './shippingViewTable/History';
@@ -112,8 +106,6 @@ const PickUp = ({ view, res, edit }: props) => {
     const schema = yup
         .object()
         .shape({
-
-
             item_name: yup.string().required('Required'),
             name: yup
                 .string()
@@ -123,15 +115,16 @@ const PickUp = ({ view, res, edit }: props) => {
             email: yup.string().email().required('Required'),
             description: yup.string().required('Required'),
             grand_total: yup.string().required('Required'),
-            mobile:yup.string().matches(orderValidation,'not valid').max(13).min(10).required('Required'),
+            mobile: yup.string().matches(orderValidation, 'not valid').max(13).min(10).required('Required'),
             weight: yup
                 .number()
                 .typeError('Weight must be a number')
                 .required('Required'),
             vehicle_type: yup.string().required('Required'),
-
             pickup_location: yup.string().required('Required'),
             drop_off_location: yup.string().required('Required'),
+            payment_status: yup.string().required('Required'),
+            payment_type: yup.string().required('Required')
 
         })
         .required();
@@ -160,7 +153,7 @@ const PickUp = ({ view, res, edit }: props) => {
     const multipleImageUploder = async (image: any) => {
         setMultipleImage(image)
         setError('image', { message: '' })
-        console.log({ multipleImage });
+
 
     }
 
@@ -178,7 +171,7 @@ const PickUp = ({ view, res, edit }: props) => {
             let data = response?.data?.data
 
             const find = vechicleList?.find((res: any) => res?.name === data?.vehicle_type)
-            console.log({ find })
+
             data.pickup_date = data.pickup_date ? moment(data.pickup_date, 'YYYY-MM-DD') : null
             data.pickup_time = data.pickup_time ? moment(data.pickup_time, 'hh:mm') : null
             setValue('name', data?.name)
@@ -242,15 +235,6 @@ const PickUp = ({ view, res, edit }: props) => {
 
 
 
-
-
-
-
-
-
-
-
-
     useEffect(() => {
         if (idd) {
             getVenderListShow()
@@ -284,7 +268,7 @@ const PickUp = ({ view, res, edit }: props) => {
 
     };
     const handlePlaceSelectedDrop = (place: any) => {
-       
+
         const area = {
             address: place?.formatted_address,
             location: place?.formatted_address,
@@ -345,11 +329,9 @@ const PickUp = ({ view, res, edit }: props) => {
             try {
                 const resp = await postData('customer/pickup-drop-charge', value)
                 const data = resp?.data?.data;
-              
                 setValue('grand_total', data.pickup_and_drop_charge_amount)
-
                 setValue('franchise', resp?.data?.data?.franchise_id)
-
+                setError('grand_total', { message: '' })
             } catch (err: any) {
                 setValue('grand_total', '')
                 setValue('franchise', '')

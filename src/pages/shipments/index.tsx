@@ -61,11 +61,16 @@ const Shipments = () => {
         }
     }, [data?.data?.data])
 
-    const ShippmentView = (id: string) => {
-        // setId(id)
-        // setViewModal(true)
+    const ShippmentView = (row: any) => {
+        let key = new Set(Object.keys(row))
 
-        router.push(`/shipments/view/${id}`)
+        if (key.has('order_type')) {
+            router.push(`/shipments/viewPick/${row._id}`)
+        } else {
+            router.push(`/shipments/view/${row._id}`)
+        }
+
+      
     }
 
     const ShippmentEdit = (row: any) => {
@@ -121,7 +126,7 @@ const Shipments = () => {
                 <Stack alignItems={'center'} gap={1} justifyContent={'space-evenly'} direction={'column'} padding={10}>
                     <Stack alignItems={'center'} gap={1} direction={'row'} paddingTop={"20px"}>
                         <RemoveRedEyeIcon
-                            onClick={() => ShippmentView(row?._id)}
+                            onClick={() => ShippmentView(row)}
                             style={{
                                 color: '#58D36E',
                                 cursor: 'pointer'
