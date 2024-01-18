@@ -107,24 +107,31 @@ const PickUp = ({ view, res, edit }: props) => {
     })
 
 
-
+    const orderValidation = /^[0-9]*$/
 
     const schema = yup
         .object()
         .shape({
 
 
-            item_name: yup.string().required('Item Name is required'),
-            description: yup.string().required('Description is required'),
-
+            item_name: yup.string().required('Required'),
+            name: yup
+                .string()
+                .matches(/^[a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ\s\-0-9\/]+$/, 'Please enter valid name')
+                .max(40)
+                .required('Required'),
+            email: yup.string().email().required('Required'),
+            description: yup.string().required('Required'),
+            grand_total: yup.string().required('Required'),
+            mobile:yup.string().matches(orderValidation,'not valid').max(13).min(10).required('Required'),
             weight: yup
                 .number()
                 .typeError('Weight must be a number')
-                .required('Weight is required'),
-            vehicle_type: yup.string().required('Vehicle Type is required'),
+                .required('Required'),
+            vehicle_type: yup.string().required('Required'),
 
-            pickup_location: yup.string().required('Pickup Location is required'),
-            drop_off_location: yup.string().required('Delivery Location is required'),
+            pickup_location: yup.string().required('Required'),
+            drop_off_location: yup.string().required('Required'),
 
         })
         .required();
@@ -257,7 +264,7 @@ const PickUp = ({ view, res, edit }: props) => {
 
     const handlePlaceSelectedPick = (place: any) => {
         console.log('PICK UP SETT')
-        console.log({place},'TEXT')
+        console.log({ place }, 'TEXT')
         const area = {
             address: place?.formatted_address,
             location: place?.formatted_address,
@@ -265,12 +272,12 @@ const PickUp = ({ view, res, edit }: props) => {
             longitude: place?.geometry.location.lng(),
 
         }
-   
-        setKilometer((prevKilometer:any) => ({
+
+        setKilometer((prevKilometer: any) => ({
             ...prevKilometer,
             pick_lat: area.latitude,
-            pick_lng:area.longitude
-          }));
+            pick_lng: area.longitude
+        }));
         setValue('pickup_location_coordinates', [area.latitude, area.longitude])
         setValue('pickup_location', area.address)
         setValue('shipping_address', area.address)
@@ -290,12 +297,12 @@ const PickUp = ({ view, res, edit }: props) => {
         setValue('drop_off_location_coordinates', [area.latitude, area.longitude])
         setValue('drop_off_location', area.address)
         setValue('billing_address', area.address)
-      
-        setKilometer((prevKilometer:any) => ({
+
+        setKilometer((prevKilometer: any) => ({
             ...prevKilometer,
             drop_lat: area.latitude,
-            drop_lng:area.longitude
-          }));
+            drop_lng: area.longitude
+        }));
     };
 
 
@@ -305,7 +312,7 @@ const PickUp = ({ view, res, edit }: props) => {
     useEffect(() => {
         // Check if all the required latitude and longitude values are not null
 
-        if ( kilometer.pick_lat !== null && kilometer.pick_lng !== null && kilometer.drop_lat !== null && kilometer.drop_lng !== null) {
+        if (kilometer.pick_lat !== null && kilometer.pick_lng !== null && kilometer.drop_lat !== null && kilometer.drop_lng !== null) {
             // Create LatLng objects
             const origin = new window.google.maps.LatLng(kilometer.pick_lat, kilometer.pick_lng);
             const destination = new window.google.maps.LatLng(kilometer.drop_lat, kilometer.drop_lng);
@@ -322,7 +329,7 @@ const PickUp = ({ view, res, edit }: props) => {
                 callback
             );
         }
-    }, [kilometer,vechicleSelect]);
+    }, [kilometer, vechicleSelect]);
 
     async function callback(response: any, status: any) {
         if (status === 'OK') {
@@ -339,14 +346,14 @@ const PickUp = ({ view, res, edit }: props) => {
             try {
                 const resp = await postData('customer/pickup-drop-charge', value)
                 const data = resp?.data?.data;
-                console.log({data})
+                console.log({ data })
                 setValue('grand_total', data.pickup_and_drop_charge_amount)
 
                 setValue('franchise', resp?.data?.data?.franchise_id)
-              
+
             } catch (err: any) {
-              setValue('grand_total','')
-              setValue('franchise','')
+                setValue('grand_total', '')
+                setValue('franchise', '')
                 toast.error(err?.message)
 
             }
@@ -651,11 +658,11 @@ const PickUp = ({ view, res, edit }: props) => {
 
                         </Typography>
                         <GoogleAutocomplete
-                            
+
                             apiKey={process.env.NEXT_PUBLIC_GOOGLEKEY}
                             style={{ height: 40, width: '100%' }}
                             onPlaceSelected={(e: any) => handlePlaceSelectedPick(e)}
-                    
+
                             types={['(regions)']}
                         />
 
@@ -722,12 +729,12 @@ const PickUp = ({ view, res, edit }: props) => {
                             placeholder={``}
                             fieldLabel={"Grand Total"}
                             disabled={false}
-                            view={view ? true : false}
+                            view={true}
                             defaultValue={''}
                         />
                     </Grid>
                     {idd && <Grid item xs={12} lg={6}>
-                    <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                        <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
                             sx={{
                                 fontSize: {
                                     lg: 16,

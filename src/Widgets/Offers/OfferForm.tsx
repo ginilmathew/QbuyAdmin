@@ -84,7 +84,7 @@ const OfferForm = ({ res, view }: props) => {
         setCheckBox(response?.data?.data?.customer_specific_offer === "false" ? false : true)
 
         let data = response?.data?.data;
-        console.log({ data })
+ 
         data.expiry_date = data.expiry_date ? moment(data.expiry_date, 'YYYY-MM-DD hh:mm A') : null
 
         reset(data)

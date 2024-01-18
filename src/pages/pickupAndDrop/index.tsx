@@ -65,7 +65,7 @@ const PickupAndDrop = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-          
+
 
         },
         {
@@ -82,7 +82,7 @@ const PickupAndDrop = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => params.row.email &&  params.row.email === "undefined" ?'_' : params.row.email,
+            valueGetter: (params) => params.row.email && params.row.email === "undefined" ? '_' : params.row.email,
 
         },
         {
@@ -156,7 +156,7 @@ const PickupAndDrop = () => {
     }
     const searchItem = useCallback((value: any) => {
         let competitiions = data?.data?.data?.filter((com: any) => com?.order_id.toString().toLowerCase().includes(value.toLowerCase()) ||
-            com?.name.toString().toLowerCase().includes(value.toLowerCase()) || com?.mobile.toString().toLowerCase().includes(value.toLowerCase())||com?.email.toString().toLowerCase().includes(value.toLowerCase()) || com?.franchisee?.franchise_name.toString().toLowerCase().includes(value.toLowerCase())
+            com?.name.toString().toLowerCase().includes(value.toLowerCase()) || com?.mobile.toString().toLowerCase().includes(value.toLowerCase()) || com?.email.toString().toLowerCase().includes(value.toLowerCase()) || com?.franchisee?.franchise_name.toString().toLowerCase().includes(value.toLowerCase())
         )
         startTransition(() => {
             setShippingList(competitiions)
