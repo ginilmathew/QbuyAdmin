@@ -172,7 +172,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
 
             const response = await fetchData('common/platformcharge')
             let { data } = response?.data
-            console.log({ data });
+          
 
             setplatFomCharge(data?.platformCharge)
 
@@ -230,10 +230,10 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
 
     const onChangeCustomer = async (value: any) => {
 
-        let details = await axiosInstance.get(`admin/customer-details/searchcustomer`, {
-            params: {
+        let details = await axiosInstance.post(`admin/customer-details/searchcustomer`, {
+          
                 "search": value
-            }
+            
         });
 
 

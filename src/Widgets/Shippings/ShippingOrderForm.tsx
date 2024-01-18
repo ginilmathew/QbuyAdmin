@@ -123,7 +123,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
     const [vendorStatusList, setVendorStatusList] = useState<any>([])
     const [platformList, setplatformList] = useState<any>(null);
 
-    console.log({storeList})
+   
 
     const schema = yup
         .object()
@@ -167,7 +167,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
         }
 
     }
-    console.log({res});
+ 
     
     const fetchCustomerGroupOptions = async () => {
         try {
@@ -308,11 +308,11 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             const response = await fetchData(`admin/order/show/${idd}`)
             setOrderViewList(response?.data?.data)
 
-            setLoader(false)
+         
 
         } catch (err: any) {
             toast.error(err?.message)
-            setLoader(false)
+        
 
         } finally {
             setLoader(false)
