@@ -76,7 +76,6 @@ const index = () => {
       headerAlign: 'center',
       align: 'center',
       valueGetter: (params) => moment(params.row.created_at).format("DD/MM/YYYY"),
-
     },
     {
       field: 'mobile',
@@ -102,13 +101,8 @@ const index = () => {
       flex: 1,
       headerAlign: 'center',
       align: 'center',
-      valueGetter: (params) => (params.row.product && Array.isArray(params.row.product)) && params.row?.product?.map((res:any)=>res?.name).join()
-     
-
+      valueGetter: (params) => (params.row.product && Array.isArray(params.row.product)) && params.row?.product?.map((res: any) => res?.name).join()
     },
-
-    
-
     {
       field: 'Actions',
       headerName: 'Actions',
@@ -118,7 +112,7 @@ const index = () => {
       renderCell: ({ row }) => (
         <Stack alignItems={'center'} gap={1} direction={'row'}>
           <RemoveRedEyeIcon
-            onClick={() => ViewPage(row?._id)}
+            onClick={() => ViewPage(row)}
             style={{
               color: '#58D36E',
               cursor: 'pointer'
@@ -150,41 +144,27 @@ const index = () => {
 
 
   const ViewPage = (row: any) => {
-
-
     router.push({
-      pathname: `/productReportView/view/${row?._id}`,
-      query: { hello: 'hello' },
+      pathname: `/productReportView/view/${row?.customer?._id}`,
+      // query: { customer: 'hello' },
     });
   }
 
-  const searchProducts = useCallback((value: any) => {
-    let Results = data?.data?.data?.filter((com: any) =>
-      com?.user_id.toString().includes(value) ||
-      com?.mobile.toString().includes(value)
-    );
-
+  const searchItem = useCallback((value: any) => {
+    let competitiions = data?.data?.data?.filter((com: any) => com?.customer?.name && com.customer?.name.toString().toLowerCase().includes(value.toLowerCase()) ||
+      com?.customer.mobile && com.customer?.mobile.toString().toLowerCase().includes(value.toLowerCase())
+    )
     startTransition(() => {
-      setItem(Results);
-    });
-  }, [item]);
+      setItem(competitiions)
+    })
+  }, [item])
 
-  const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  ];
+
 
   if (isLoading) {
     <Box px={5} py={2} pt={10} mt={0}>
       <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-        <CustomTableHeader addbtn={false} setState={searchProducts} imprtBtn={false} Headerlabel='OTP View' onClick={() => null} />
+        <CustomTableHeader addbtn={false} imprtBtn={false} Headerlabel='OTP View' onClick={() => null} />
         <Box py={5}>
           <CustomTable dashboard={false} columns={columns} loading={true} rows={[]} id={"id"} bg={"#ffff"} label='Recent Activity' />
         </Box>
@@ -195,6 +175,9 @@ const index = () => {
   if (error) {
     toast.error(error?.message);
   }
+
+
+
 
   return (
     <Box px={5} py={2} pt={10} mt={0}>
@@ -227,12 +210,9 @@ const index = () => {
               </Grid>
               <Grid item xs={12} lg={4}>
                 <Box mt={3}></Box>
-                <CutomSearch setState={searchProducts} />
+                <CutomSearch setState={searchItem} />
               </Grid>
             </Grid>
-
-
-
           </Box>
         </Box>
         {/* <CustomTableHeader addbtn={false} setState={searchProducts} imprtBtn={false} Headerlabel='Product Viewed Report' onClick={() => null} /> */}
