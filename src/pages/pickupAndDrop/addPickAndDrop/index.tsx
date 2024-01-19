@@ -2,9 +2,9 @@ import React, { memo } from 'react'
 import { Box } from '@mui/material'
 
 import CustomHeaderBack from '@/Widgets/CustomHeaderBack'
-import PickupAndDropModal from '../PickupAndDropModal';
+
 import PickUp from './PickUp';
-import CustomFormModal from '../../../components/CustomFormModal'
+
 
 const addPickAndDrop = () => {
 
