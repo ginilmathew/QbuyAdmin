@@ -114,18 +114,18 @@ const MerchantMarketingForm = ({ res, view }: props) => {
                     const response = await fetchData(`admin/vendor-list/${resp?.data?.data?.franchise?.id}/${process.env.NEXT_PUBLIC_TYPE}`)
                     setVendorList(response?.data?.data)
                     const data = resp?.data?.data
-                    console.log({data})
+                    console.log({ data })
                     setFranchiseSelect(data?.franchise?.id)
                     setvendorSelect(data?.store?.id)
-                        // setEndDate(data?.end_date)
-                        // setStartDate(data?.start_date)
-                    data.start_date = data?.start_date?  moment(data?.start_date, 'YYYY-MM-DD') : null
-                    data.end_date = data?.end_date?  moment(data?.end_date, 'YYYY-MM-DD') : null
+                    // setEndDate(data?.end_date)
+                    // setStartDate(data?.start_date)
+                    data.start_date = data?.start_date ? moment(data?.start_date, 'YYYY-MM-DD') : null
+                    data.end_date = data?.end_date ? moment(data?.end_date, 'YYYY-MM-DD') : null
                     delete data?._id
                     delete data?.updated_at
                     delete data?.created_at
                     reset(data)
-                    
+
 
 
                 } catch (err: any) {
@@ -150,10 +150,7 @@ const MerchantMarketingForm = ({ res, view }: props) => {
             setLoading(true)
             setvendorSelect(null)
             const response = await fetchData(`admin/vendor-list/${e.target.value}/${process.env.NEXT_PUBLIC_TYPE}`)
-
             setVendorList(response?.data?.data)
-
-
         } catch (err: any) {
             toast.error(err.message)
             setLoading(false)
@@ -327,9 +324,9 @@ const MerchantMarketingForm = ({ res, view }: props) => {
                 </Grid>
 
             </CustomBox>
-           {!view && <Box py={3}>
+            {!view && <Box py={3}>
                 <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={res ? 'Update Details' : 'Add Details'} onClick={handleSubmit(submit)} />
-            </Box> }
+            </Box>}
 
 
 

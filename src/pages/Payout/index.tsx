@@ -27,7 +27,7 @@ type props = {
 }
 
 const Payout = ({ res, view }: props) => {
-    console.log({ res })
+
     const idd = res ? res : view;
     const router = useRouter();
     const { data, error, isLoading, mutate } = useSWR(`admin/rider-support/payout/${res}`, fetcher);
@@ -129,7 +129,7 @@ const Payout = ({ res, view }: props) => {
         <Box px={0} py={1} pt={0} mt={0}>
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
                 <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="center" mt={3}>
-                    <div >
+                    <div>
                         <CustomDatePicker
                             fieldName='fromDate'
                             control={control}

@@ -52,8 +52,14 @@ const CustomDatePicker = ({
                     render={({ field: { value, onChange, onBlur } }) => (
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                             <DatePicker
+                            
                                 disablePast={past? false :true}
                                 format='DD/MM/YYYY'
+                                slotProps={{
+                                    actionBar: {
+                                      actions: ['clear']
+                                    }
+                                  }}
                                 disabled={disabled}
                                 sx={{
                                     "& .MuiInputBase-input": {

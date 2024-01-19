@@ -265,22 +265,6 @@ const AddProducts = () => {
 
 
 
-    // const fetchproduct = async () => {
-    //     try {
-    //         setLoding(true)
-    //         const response = await fetchData(`/admin/product/list/${process.env.NEXT_PUBLIC_TYPE}`)
-         
-    //         setProductList(response?.data?.data)
-    //         setSearchList(response.data.data);
-    //     } catch (err: any) {
-    //         setLoding(false)
-    //         toast.error(err?.message)
-    //     }
-    //     finally {
-    //         setLoding(false)
-    //     }
-    // }
-
 
     const searchProducts = useCallback((value: any) => {
         let competitiions = data?.data?.data?.filter((com: any) => com?.name.toString().toLowerCase().includes(value.toLowerCase()) ||
