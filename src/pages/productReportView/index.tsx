@@ -193,7 +193,7 @@ const index = () => {
                   fieldName={"start_date"}
                   control={control}
                   error={errors?.start_date}
-                  past={false}
+                  past={true}
                   fieldLabel={"Start Date"}
                   values={startDate}
                   changeValue={(date) => DateFilter.startDate(date)} />
