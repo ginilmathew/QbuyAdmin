@@ -33,6 +33,8 @@ const Transition = React.forwardRef(function Transition(
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
+
+
 const fetcher = (url: any) => fetchData(url).then((res) => res);
 
 const Shipments = () => {
@@ -51,6 +53,23 @@ const Shipments = () => {
     const [id, setId] = useState<any>('')
 
     const { data, error, isLoading, mutate } = useSWR(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
+
+
+    const customDataSource: DataSource = {
+        getRows: async (params: GetRowsParams): GetRowsResponse => {
+          // fetch data from server
+          const response = await fetch('https://my-api.com/data', {
+            method: 'GET',
+            body: JSON.stringify(params),
+          });
+          const data = await response.json();
+          // return the data and the total number of rows
+          return {
+            rows: data.rows,
+            rowCount: data.totalCount,
+          };
+        },
+      }
 
     console.log({shippingList})
 
