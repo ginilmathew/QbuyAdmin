@@ -8,7 +8,6 @@ const addDeliveryCharges = () => {
     <Box px={5} py={2} pt={10} mt={0} >
       <CustomHeaderBack backlabel='Add Delivery Charge' />
       <CustomDeliveryCharge />
-
     </Box>
   )
 }

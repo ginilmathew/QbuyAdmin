@@ -20,7 +20,7 @@ const fetcher = (url: any) => fetchData(url).then((res) => res);
 
 const DeliveryCharges = () => {
     const router = useRouter()
-    const { data, error, isLoading, mutate } = useSWR(`admin/delivery-charge/list`, fetcher);
+    const { data, error, isLoading, mutate } = useSWR(`admin/delivery-charge/list/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
     const [open, setOpen] = useState<boolean>(false);
     const [item, setItem] = useState([]);
     const [_id, set_id] = useState<string>('');
