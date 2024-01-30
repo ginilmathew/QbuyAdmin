@@ -4,29 +4,33 @@
 
 // 1- corporate, 2-ta, 3-customer, 4 -supplier
 
-export const env = "dev"
+export const env = "demo"
 
 const URLS = {
     live: "https://apiqbuygreen.diginestsolutions.in/public/api/",
     testing: "https://qbuygreenapi.diginestsolutions.in/public/api/",
-    dev: "https://apiqbuypanda.diginestsolutions.in/public/api/"
+    dev: "https://apiqbuypanda.diginestsolutions.in/public/api/",
+    demo:"http://apigreenstore.diginestsolutions.in/public/api/"
 }
 const url = {
     dev: "https://apibulletinly.diginestsolutions.in/public/api",
     live: "https://apiqbuygreen.diginestsolutions.in/public/api",
     testing: "https://qbuygreenapi.diginestsolutions.in/public/api/",
+    demo:"http://apigreenstore.diginestsolutions.in/public/api/"
 }
 
 const IMG_URL = {
     live: "https://apiqbuygreen.diginestsolutions.in/public/",
     testing: "https://qbuygreenapi.diginestsolutions.in/public/",
-    dev: "https://apiqbuypanda.diginestsolutions.in/public/"
+    dev: "https://apiqbuypanda.diginestsolutions.in/public/",
+    demo:"http://apigreenstore.diginestsolutions.in/public/"
 }
 
-const key = {
+const key:any = {
     live: "nGw3tbaew9KgjGiXf3JwVnNEDUS4pmsA",
     dev: "nGw3tbaew9KgjGiXf3JwVnNEDUS4pmsA",
-    testing: "nGw3tbaew9KgjGiXf3JwVnNEDUS4pmsA"
+    testing: "nGw3tbaew9KgjGiXf3JwVnNEDUS4pmsA",
+    demo:"nGw3tbaew9KgjGiXf3JwVnNEDUS4pmsA",
 }
 
 //'https://apidev.myfutton.com' //Dev mode= http://apidev.myfutton.com //Live Mode='http://api.myfutton.com';

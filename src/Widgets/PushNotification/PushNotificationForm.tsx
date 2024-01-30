@@ -79,7 +79,6 @@ const PushNotificationForm = ({ resData, view }: props) => {
     const [instantBlock, setInstantBlock] = useState<boolean>(false);
     const [notificationBlock, setNotificationBlock] = useState<boolean>(false);
     const [notificationList, setNotificationList] = useState<any>([]);
-    console.log({ notificationList }, "listdply")
     const [time, setTime] = useState<any>(null);
     const [notiType, setNotiType] = useState<any>(null);
 

@@ -33,8 +33,9 @@ const CustomDeliveryCharge = ({ res, view }: props) => {
         within: string,
         normal_charge: string,
         rate_per_km: string,
-        express_charge: string,
-        express_rate_per_km: string
+        time_label: string,
+        charge_name: string
+        type:any
 
     }
 
@@ -47,8 +48,8 @@ const CustomDeliveryCharge = ({ res, view }: props) => {
             within: yup.string().matches(/^[0-9]+$/, 'not valid').required('Required'),
             normal_charge: yup.string().matches(/^[0-9]+$/, 'not valid').required('Required'),
             rate_per_km: yup.string().matches(/^[0-9]+$/, 'not valid').required('Required'),
-            express_charge: yup.string().matches(/^[0-9]+$/, 'not valid').required('Required'),
-            express_rate_per_km: yup.string().matches(/^[0-9]+$/, 'not valid').required('Required')
+            time_label: yup.string().required('Required'),
+            charge_name: yup.string().required('Required')
         })
 
 
@@ -59,7 +60,10 @@ const CustomDeliveryCharge = ({ res, view }: props) => {
         reset,
         setError,
         setValue, } = useForm<IFormInput>({
-            resolver: yupResolver(schema)
+            resolver: yupResolver(schema),
+            defaultValues:{
+                type:process.env.NEXT_PUBLIC_TYPE
+            }
         });
 
     useEffect(() => {
@@ -211,10 +215,10 @@ const CustomDeliveryCharge = ({ res, view }: props) => {
                         <CustomInput
                             type='text'
                             control={control}
-                            error={errors.express_charge}
-                            fieldName="express_charge"
+                            error={errors.time_label}
+                            fieldName="time_label"
                             placeholder={``}
-                            fieldLabel={"Express Charge"}
+                            fieldLabel={"Time Label(10-20 min)"}
                             disabled={false}
                             view={view ? true : false}
                             defaultValue={''}
@@ -224,10 +228,10 @@ const CustomDeliveryCharge = ({ res, view }: props) => {
                         <CustomInput
                             type='text'
                             control={control}
-                            error={errors.express_rate_per_km}
-                            fieldName="express_rate_per_km"
+                            error={errors.charge_name}
+                            fieldName="charge_name"
                             placeholder={``}
-                            fieldLabel={"Express Charge Per (km)"}
+                            fieldLabel={"Charge Name"}
                             disabled={false}
                             view={view ? true : false}
                             defaultValue={''}

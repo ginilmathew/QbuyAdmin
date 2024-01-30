@@ -31,7 +31,8 @@ type IFormInput = {
     order_number: any,
     image: any,
     seo_title: any,
-    seo_description: any
+    seo_description: any,
+    tax:any
 
 }
 
@@ -65,6 +66,7 @@ const CategoryForm = ({ resData, view }: props) => {
         // type: yup.string().required('Type is Required'),
         // seo_description: yup.string().max(100, 'Maximum Character Exceeds'),
         order_number: yup.string().matches(orderValidation, 'Accept only number').nullable(),
+        tax:yup.string().matches(orderValidation, 'Accept only number').nullable(),
         image: yup
             .mixed()
             .required('Image is Required')
@@ -153,6 +155,7 @@ const CategoryForm = ({ resData, view }: props) => {
             formData.append("image", data?.image);
         }
         formData.append("type", type);
+        formData.append("tax", data?.tax);
         // formData.append("seo_title", data?.name);
         formData.append("seo_description", data?.seo_description);
         try {
@@ -181,6 +184,7 @@ const CategoryForm = ({ resData, view }: props) => {
             setValue('seo_description', CategoryList?.seo_description)
             setValue('seo_title', CategoryList?.seo_title)
             setValue('image', CategoryList?.image)
+            setValue('tax',CategoryList?.tax)
             setImagePreview(`${IMAGE_URL}${CategoryList?.image}`)
         }
     }, [CategoryList])
@@ -194,7 +198,7 @@ const CategoryForm = ({ resData, view }: props) => {
         <Box>
             <CustomBox title='Basic Details'>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} lg={2.5}>
+                    <Grid item xs={12} lg={2}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -207,7 +211,7 @@ const CategoryForm = ({ resData, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
+                    <Grid item xs={12} lg={2}>
                         <CustomInput
                             type='number'
                             control={control}
@@ -220,7 +224,20 @@ const CategoryForm = ({ resData, view }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
+                    <Grid item xs={12} lg={2}>
+                        <CustomInput
+                            type='number'
+                            control={control}
+                            error={errors.tax}
+                            fieldName="tax"
+                            placeholder={``}
+                            fieldLabel={"Tax"}
+                            disabled={false}
+                            view={view ? true : false}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
                         <CustomInput
                             type='text'
                             control={control}

@@ -68,88 +68,88 @@ const RestauranRefferalForm = () => {
 
     return (
         <Box>
-             <CustomBox title='Refferal Details'>
-            <Grid container spacing={2}>
-                <Grid item xs={12} lg={2}>
-                    <CustomInput
-                        type='text'
-                        control={control}
-                        error={errors.name}
-                        fieldName={"name"}
-                        placeholder={``}
-                        fieldLabel={"name"}
-                        disabled={false}
-                        view={true}
-                        defaultValue={''}
-                    />
-                </Grid>
-                <Grid item xs={12} lg={2}>
-                    <CustomInput
-                        type='text'
-                        control={control}
-                        error={errors.mobile}
-                        fieldName={"mobile"}
-                        placeholder={``}
-                        fieldLabel={"Phone Number"}
-                        disabled={false}
-                        view={true}
-                        defaultValue={''}
-                    />
-                </Grid>
-                <Grid item xs={12} lg={2}>
-                    <CustomInput
-                        type='text'
-                        control={control}
-                        error={errors.referral_restaurant_id}
-                        fieldName={"referral_restaurant_id"}
-                        placeholder={``}
-                        fieldLabel={"Restaurant ID"}
-                        disabled={false}
-                        view={true}
-                        defaultValue={''}
-                    />
-                </Grid>
-                <Grid item xs={12} lg={2}>
-                    <CustomInput
-                        type='text'
-                        control={control}
-                        error={errors.restaurant_name}
-                        fieldName={"restaurant_name"}
-                        placeholder={``}
-                        fieldLabel={"Restaurant Name"}
-                        disabled={false}
-                        view={true}
-                        defaultValue={''}
-                    />
-                </Grid>
-                <Grid item xs={12} lg={2}>
-                    <CustomInput
-                        type='text'
-                        control={control}
-                        error={errors.city}
-                        fieldName={"city"}
-                        placeholder={``}
-                        fieldLabel={"City"}
-                        disabled={false}
-                        view={true}
-                        defaultValue={''}
-                    />
-                </Grid>
-                <Grid item xs={12} lg={2}>
-                    <CustomInput
-                        type='text'
-                        control={control}
-                        error={errors.location}
-                        fieldName={"location"}
-                        placeholder={``}
-                        fieldLabel={"Location"}
-                        disabled={false}
-                        view={true}
-                        defaultValue={''}
-                    />
-                </Grid>
-                <Grid item xs={12} lg={3}>
-                <CustomTextarea
+            <CustomBox title='Refferal Details'>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} lg={2}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.name}
+                            fieldName={"name"}
+                            placeholder={``}
+                            fieldLabel={"name"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.mobile}
+                            fieldName={"mobile"}
+                            placeholder={``}
+                            fieldLabel={"Phone Number"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.referral_restaurant_id}
+                            fieldName={"referral_restaurant_id"}
+                            placeholder={``}
+                            fieldLabel={"Restaurant ID"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.restaurant_name}
+                            fieldName={"restaurant_name"}
+                            placeholder={``}
+                            fieldLabel={"Restaurant Name"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.city}
+                            fieldName={"city"}
+                            placeholder={``}
+                            fieldLabel={"City"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.location}
+                            fieldName={"location"}
+                            placeholder={``}
+                            fieldLabel={"Location"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={3}>
+                        <CustomTextarea
                             // type='text'
                             control={control}
                             error={errors.comments}
@@ -160,8 +160,8 @@ const RestauranRefferalForm = () => {
                             view={true}
                             defaultValue={''}
                         />
+                    </Grid>
                 </Grid>
-            </Grid>
             </CustomBox>
         </Box >
     )

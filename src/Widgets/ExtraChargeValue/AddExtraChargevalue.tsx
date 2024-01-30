@@ -108,7 +108,7 @@ const AddExtraChargevalue = ({ view, res }: props) => {
                 })
 
             } catch (err: any) {
-
+                toast.error(err?.messsage);
             }
         }
         getList()
@@ -122,7 +122,7 @@ const AddExtraChargevalue = ({ view, res }: props) => {
             const getSingleList = async () => {
                 try {
                     const resp = await fetchData(`admin/extra-charge-value/show/${id}`)
-                    console.log({ resp })
+             
                     const data = resp?.data?.data;
                     setValue('charge', resp?.data?.data?.charge);
                     setValue('franchise',data?.franchise?.franchise_id)
@@ -149,6 +149,7 @@ const AddExtraChargevalue = ({ view, res }: props) => {
                         label2: data?.extra_charge_id?.label2,
                     })
                 } catch (err: any) {
+                    toast.error(err?.messsage);
 
                 } finally {
 
