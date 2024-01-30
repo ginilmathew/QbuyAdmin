@@ -54,43 +54,36 @@ const Shipments = () => {
 
     const { data, error, isLoading, mutate } = useSWR(`admin/orders/${process.env.NEXT_PUBLIC_TYPE}`, fetcher);
 
-
-    const customDataSource: DataSource = {
-        getRows: async (params: GetRowsParams): GetRowsResponse => {
-          // fetch data from server
-          const response = await fetch('https://my-api.com/data', {
-            method: 'GET',
-            body: JSON.stringify(params),
-          });
-          const data = await response.json();
-          // return the data and the total number of rows
-          return {
-            rows: data.rows,
-            rowCount: data.totalCount,
-          };
-        },
-      }
-
-    console.log({shippingList})
+    console.log({ shippingList })
 
     useEffect(() => {
         if (data?.data?.data) {
             setShippingList(data?.data?.data)
-           
+
         }
     }, [data?.data?.data])
 
-    const ShippmentView = (id: string) => {
-        // setId(id)
-        // setViewModal(true)
+    const ShippmentView = (row: any) => {
+        let key = new Set(Object.keys(row))
 
-        router.push(`/shipments/view/${id}`)
+        if (key.has('order_type')) {
+            router.push(`/shipments/viewPick/${row._id}`)
+        } else {
+            router.push(`/shipments/view/${row._id}`)
+        }
+
+      
     }
 
-    const ShippmentEdit = (id: string) => {
-        // setId(id)
-        // setEditModal(true)
-        router.push(`/shipments/edit/${id}`)
+    const ShippmentEdit = (row: any) => {
+
+        let key = new Set(Object.keys(row))
+
+        if (key.has('order_type')) {
+            router.push(`/shipments/editPick/${row._id}`)
+        } else {
+            router.push(`/shipments/edit/${row._id}`)
+        }
     }
 
 
@@ -101,15 +94,9 @@ const Shipments = () => {
     }
 
     const openAssignModal = useCallback((row: any) => {
-
-
         setfranchiseData(row)
-
-
         setopen(true)
     },
-
-
         [open]
     )
     const handleCloseAddModal = useCallback(() => {
@@ -141,7 +128,7 @@ const Shipments = () => {
                 <Stack alignItems={'center'} gap={1} justifyContent={'space-evenly'} direction={'column'} padding={10}>
                     <Stack alignItems={'center'} gap={1} direction={'row'} paddingTop={"20px"}>
                         <RemoveRedEyeIcon
-                            onClick={() => ShippmentView(row?._id)}
+                            onClick={() => ShippmentView(row)}
                             style={{
                                 color: '#58D36E',
                                 cursor: 'pointer'
@@ -149,7 +136,7 @@ const Shipments = () => {
                         />
                         {(!['completed', 'cancelled'].includes(row?.status)) && (
                             <BorderColorTwoToneIcon
-                                onClick={() => ShippmentEdit(row?._id)}
+                                onClick={() => ShippmentEdit(row)}
                                 style={{
                                     color: '#58D36E',
                                     cursor: 'pointer'
@@ -291,7 +278,7 @@ const Shipments = () => {
                 return (
                     <div>
                         <Tooltip title={customerName + customerAddress + customerphone}>
-                            <span>{(customerName + ',' + customerAddress + customerphone).slice(0, 26) + '...'}</span>
+                            <span>{(customerName + ',' + customerAddress + customerphone)?.slice(0, 26) + '...'}</span>
                         </Tooltip>
                     </div>
                 );
@@ -307,7 +294,7 @@ const Shipments = () => {
             width: matches ? 150 : 200,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => params.row.grand_total?.toFixed(2),
+            valueGetter: (params) => params.row?.grand_total ? (params.row?.grand_total * 1)?.toFixed(2) : '',
 
         },
 
@@ -366,16 +353,6 @@ const Shipments = () => {
 
     ];
 
-
-    // const searchProducts = useCallback((value: any) => {
-    //     let competitiions = data?.data?.data?.filter((com: any) => com?.order_id.toString().toLowerCase().includes(value.toLowerCase())
-    //         || com?.user?.mobile.toString().toLowerCase().includes(value.toLowerCase()) ||
-    //         com?.franchisee?.franchise_name.toString().toLowerCase().includes(value.toLowerCase())
-    //     )
-    //     startTransition(() => {
-    //         setShippingList(competitiions)
-    //     })
-    // }, [shippingList])
 
 
     const RefreshAgain = () => {

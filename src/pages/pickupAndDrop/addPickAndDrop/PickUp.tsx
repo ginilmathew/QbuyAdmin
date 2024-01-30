@@ -5,9 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import CustomBox from '../../../Widgets/CustomBox'
 import { useForm, SubmitHandler, set } from "react-hook-form";
 import Custombutton from '@/components/Custombutton';
-import CustomImageUploader from '@/components/CustomImageUploader';
 import Customselect from '@/components/Customselect';
-import { useJsApiLoader } from "@react-google-maps/api";
 import { fetchData } from '@/CustomAxios';
 import CustomTimepicker from '@/components/CustomTimepicker';
 import { postData } from '@/CustomAxios';
@@ -15,42 +13,45 @@ import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { Avatar } from '@mui/material';
-
-
-
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import GoogleAutocomplete from "react-google-autocomplete";
 import { useRouter } from 'next/router';
-
-import CustomTextarea from '@/components/CustomTextarea';
 import CustomLoader from '@/components/CustomLoader';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import CustomDatePicker from '@/components/CustomDatePicker';
 import { CustomMultipleImageUploader } from '@/components/CustomMultipleImageUploder';
 import { IMAGE_URL } from '@/Config';
-import RenderResult from 'next/dist/server/render-result';
 import moment from 'moment';
+
+
 // import ShippingTable from './shippingViewTable';
 // import HistoryTable from './shippingViewTable/History';
 
 
 type Inputs = {
-    customer_name: string,
-    email: string,
-    mobile: number,
-    assign_rider: string,
-    customer_group: string,
-    item_name: string,
-    description: string,
-    weight: number,
-    vehicle_type: string,
-    pickup_date: Date,
-    pickup_time: Date,
-    pickup_location: string,
-    drop_off_location: string,
-    image: string[],
-    sub_total: string;
-    extra_total: string;
-    total_charge: string;
-    store: any
+    name: any,
+    email: any,
+    mobile: any,
+    assign_rider: any,
+    item_name: any,
+    description: any,
+    weight: any,
+    vehicle_type: any,
+    pickup_date: any,
+    pickup_time: any,
+    pickup_location: any,
+    drop_off_location: any,
+    image: any,
+    payment_type: any,
+    payment_status: any,
+    pickup_location_coordinates: any,
+    drop_off_location_coordinates: any
+    billing_address: any,
+    shipping_address: any,
+    delivery_date: any,
+    grand_total: any,
+    franchise: any,
+    type: any
+
 };
 
 type props = {
@@ -66,10 +67,8 @@ const PickUp = ({ view, res, edit }: props) => {
     const router = useRouter()
 
     const idd = view ? view : res;
-    console.log(idd);
-    const [type, settype] = useState<string>("");
-    const [orderhistory, setOrderhistory] = useState<any>()
-    const [customerGroupSelect, setCustomerGroupSelect] = useState<string>('')
+    const [vechicleList, setVechicleList] = useState<any>([])
+    const [vechicleSelect, setVechicleSelect] = useState<any>(null)
     const [paymentMethodList, setPaymentMethodList] = useState<any>([
         {
             id: 1,
@@ -83,53 +82,50 @@ const PickUp = ({ view, res, edit }: props) => {
         },
 
     ])
-    const [uploadedImages, setUploadedImages] = useState<string[]>([]);
-    const [PickUpand, setPickUpand] = useState<string[]>([])
-    const [description, setdescription] = useState<string>('')
-    const [weight, setweight] = useState<any>([])
-    const [pickup_location, setpickup_location] = useState<string>('')
-    const [drop_off_location, setdrop_off_location] = useState<any>([])
-    const [item_name, setitem_name] = useState<string>('')
-    const [orderhistoryList, setOrderHistoryList] = useState<any>([])
-    const [orderhistorySelect, setOrderHistorySelect] = useState<string>('')
+
     const [loading, setLoading] = useState<boolean>(false)
     const [loader, setLoader] = useState<boolean>(false)
     const [orderviewList, setOrderViewList] = useState<any>(null)
-    const [vendor_statusP, setVendorStatusP] = useState<any>(null)
-    const [defaultStatus, setDefaultStatus] = useState<any>(null)
+    const [paymentMethodSelect, setPaymentMethodSelect] = useState<string>('')
+    const [paymentStatusList, setPaymentStatusList] = useState<any>([])
+    const [paymentStatusSelect, setPaymentStatusSelect] = useState<string>('')
     const [multipleImage, setMultipleImage] = useState<any>([])
-
     const [imagePreview, setImagePreview] = useState<any>(null);
     const [imagefile, setImagefile] = useState<null | File>(null)
-
-    console.log({ orderviewList })
-
     const [defaultImage, setdefaultImage] = useState<any>([])
+    const [kilometer, setKilometer] = useState<any>({
+        pick_lat: null,
+        pick_lng: null,
+        drop_lat: null,
+        drop_lng: null
+    })
 
+
+    const orderValidation = /^[0-9]*$/
 
     const schema = yup
         .object()
         .shape({
-
-            //             customer_name: yup.string().required('Customer Name is required'),
-            //   email: yup.string().email('Invalid email').required('Email is required'),
-            //   mobile: yup.number().required('Mobile Number is required'),
-            //   customer_group: yup.string().required('Customer Group is required'),
-            item_name: yup.string().required('Item Name is required'),
-            description: yup.string().required('Description is required'),
-
+            item_name: yup.string().required('Required'),
+            name: yup
+                .string()
+                .matches(/^[a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ\s\-0-9\/]+$/, 'Please enter valid name')
+                .max(40)
+                .required('Required'),
+            email: yup.string().email().required('Required'),
+            description: yup.string().required('Required'),
+            grand_total: yup.string().required('Required'),
+            mobile: yup.string().matches(orderValidation, 'not valid').max(13).min(10).required('Required'),
             weight: yup
                 .number()
                 .typeError('Weight must be a number')
-                .required('Weight is required'),
-            vehicle_type: yup.string().required('Vehicle Type is required'),
-            //    pickup_date:yup.date().required("Pickup Date required"),
-            // pickup_time: yup.string().matches(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time format (HH:mm:aa)').required('Pickup Time is required'),
-            pickup_location: yup.string().required('Pickup Location is required'),
-            drop_off_location: yup.string().required('Delivery Location is required'),
-            //  sub_total:yup.string().required('Sub Total is required'),
-            //    extra_total:yup.string().required('Extra Total is required'),
-            //    total_charge:yup.string().required('Total Charges is required')
+                .required('Required'),
+            vehicle_type: yup.string().required('Required'),
+            pickup_location: yup.string().required('Required'),
+            drop_off_location: yup.string().required('Required'),
+            payment_status: yup.string().required('Required'),
+            payment_type: yup.string().required('Required')
+
         })
         .required();
 
@@ -144,67 +140,62 @@ const PickUp = ({ view, res, edit }: props) => {
         setError,
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
+            defaultValues: {
+                delivery_date: moment(),
+                billing_address: ' ',
+                shipping_address: ' '
+            }
 
         });
 
 
 
-    const CustomerGroupChange = (e: any) => {
-
-    }
-    const orderTypeChange = (e: any) => {
-
-    }
     const multipleImageUploder = async (image: any) => {
         setMultipleImage(image)
         setError('image', { message: '' })
-        console.log({ multipleImage });
-
-    }
-
-
-    const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        settype(e.target.value)
 
 
     }
-    console.log(view);
 
 
-    const imageUploder = async (file: any) => {
-        if (file.size <= 1000000) {
-            setImagefile(file)
-            setImagePreview(null)
-            setValue('image', file)
-            setError('image', { message: '' })
-            const formData = new FormData();
-            formData.append("image", file);
-            try {
-                setLoading(true)
-                const response = await postData('admin/product/uploadimage', formData)
-                setValue('image', response?.data?.data)
-                setError('image', { message: '' })
-            } catch (err: any) {
-                toast.error(err?.message)
-                setLoading(false)
-            } finally {
-                setLoading(false)
-            }
-        } else {
-            setImagePreview(null)
-            setImagefile(null)
-            toast.warning('Image should be less than or equal 1MB')
-        }
 
 
-    }
+
 
     const getVenderListShow = async () => {
+
 
         try {
             setLoader(true)
             const response = await fetchData(`admin/pickup-drop/show/${idd}`)
-            setOrderViewList(response?.data?.data)
+            let data = response?.data?.data
+
+            const find = vechicleList?.find((res: any) => res?.name === data?.vehicle_type)
+
+            data.pickup_date = data.pickup_date ? moment(data.pickup_date, 'YYYY-MM-DD') : null
+            data.pickup_time = data.pickup_time ? moment(data.pickup_time, 'hh:mm') : null
+            setValue('name', data?.name)
+            setValue('email', data?.email)
+            setValue('mobile', data?.mobile)
+            setValue('item_name', data?.item_name)
+            setValue('description', data?.description)
+            setValue('description', data?.description)
+            setValue('weight', data?.weight)
+            setValue('pickup_date', data?.pickup_date)
+            setValue('pickup_time', data?.pickup_time)
+            setValue('vehicle_type', find?._id)
+            setValue('grand_total', data?.grand_total)
+            setValue('pickup_location', data?.pickup_location)
+            setValue('drop_off_location', data?.drop_off_location)
+            setVechicleSelect(find?._id)
+            setPaymentMethodSelect(data?.payment_type)
+            setPaymentStatusSelect(data?.payment_status)
+            console.log({ response: response?.data?.data })
+            if (data?.image) {
+                setImagePreview(data?.image)
+            }
+
+            // setOrderViewList(response?.data?.data)
 
             setLoader(false)
 
@@ -220,70 +211,26 @@ const PickUp = ({ view, res, edit }: props) => {
 
 
 
-    const vendorStatusChange = (e: any, index: number, res: any) => {
-        const { value } = e.target;
-        vendor_statusP[index]['status'] = value;
-        setVendorStatusP(vendor_statusP)
-    }
-
-
-    // const GetPlatformCharge = async () => {
-    //     try {
-
-    //         const response = await fetchData('common/platformcharge')
-    //         setplatformList(response?.data?.data)
-
-    //     } catch (err) {
-
-    //     }
-    // }
-
-
-
-    const fetchDefaultImages = async () => {
-        try {
-            // Replace this with your logic to fetch image URLs based on the ID
-            const response = await fetchData(`admin/pickup-drop/images/${idd}`);
-            return response?.data?.data || [];
-        } catch (error) {
-            console.error('Error fetching default images:', error);
-            return [];
-        }
-    };
-
-
-
-
-
     useEffect(() => {
-        if (orderviewList) {
-            console.log(orderviewList);
-            const formattedPickupDate = new Date(orderviewList.pickup_date);
-            setValue('pickup_date', formattedPickupDate);
-            setValue('item_name', orderviewList?.item_name)
-            setitem_name(orderviewList?.item_name)
-            setValue('description', orderviewList?.description)
-            setdescription(orderviewList?.description)
-            setValue('weight', orderviewList?.weight)
-            setweight(orderviewList?.weight)
-            setValue('vehicle_type', orderviewList?.vehicle_type)
-            setValue('pickup_date', formattedPickupDate);
-            // setValue('pickup_time', formattedPickupTime);
-            setValue("pickup_location", orderviewList?.pickup_location);
-            setpickup_location(orderviewList?.pickup_location)
-            setValue("drop_off_location", orderviewList?.drop_off_location);
-            setdrop_off_location(orderviewList?.drop_off_location)
-            setValue("image", orderviewList?.image);
-            if (edit) {
-                // Replace 'fetchDefaultImages' with your actual function to fetch image URLs
-                fetchDefaultImages().then((images) => {
-                    setdefaultImage(images);
-                });
-            }
+        const getmapList = async () => {
+            try {
+                setLoading(true)
+                const resp = await fetchData('/admin/vehicle-type')
+                const response = await fetchData('common/payment-status-list');
+                setPaymentStatusList(response?.data?.data)
+                setVechicleList(resp?.data?.data)
 
+            } catch (err: any) {
+                toast.error(err?.message)
+                setLoading(false)
+            } finally {
+                setLoading(false)
+            }
         }
 
-    }, [orderviewList])
+        getmapList()
+    }, [])
+
 
 
 
@@ -297,123 +244,217 @@ const PickUp = ({ view, res, edit }: props) => {
 
 
 
-    const SubmitOrder = async (data: any) => {
-        const formData = new FormData();
-        if (orderviewList) {
-            formData.append('id', orderviewList?._id)
-            formData.append('description', description);
-            formData.append('status', orderviewList?.status)
-            //  formData.append('pickup_date', result?.pickup_date)
-            // formData.append('pickup_time', result?.pickup_time)
-            // formData.append('vehicle_type', result?.vehicle_type)
-            formData.append('weight', weight)
-            formData.append('pickup_location', pickup_location)
-            formData.append("drop_off_location", drop_off_location)
-            formData.append('item_name', item_name)
-            // formData.append('customer_name',result?.customer_name)
-            // formData.append('email',result?.email)
-            // formData.append('mobile',result?.mobile)
-            // formData.append('customer_group',result?.customer_group)
-
-            console.log({ formData });
-
-            try {
-
-                await postData('admin/pickup-drop/update', formData)
 
 
-                // router.push('/shipments')
-                toast.success('Order Updated Successfully')
-                setValue("description", "")
+    const handlePlaceSelectedPick = (place: any) => {
 
-            } catch (err) {
-                let message = 'Unknown Error'
-                if (err instanceof Error) message = err.message
-                reportError({ message })
-                toast.error(message)
-            }
+        const area = {
+            address: place?.formatted_address,
+            location: place?.formatted_address,
+            latitude: place?.geometry.location.lat(),
+            longitude: place?.geometry.location.lng(),
 
-
-
-
-        } else {
-
-            if (multipleImage?.length > 0) {
-
-
-                multipleImage?.map((img: any, i: number) => {
-                    formData.append(`image[${i}]`, img.file);
-                })
-
-
-
-                let result = {
-
-
-
-                    ...data,
-                }
-                console.log({ result });
-
-                formData.append('description', result?.description);
-                formData.append('pickup_date', result?.pickup_date)
-                formData.append('pickup_time', result?.pickup_time)
-                formData.append('vehicle_type', result?.vehicle_type)
-                formData.append('weight', result?.weight)
-                formData.append('pickup_location', result?.pickup_location)
-                formData.append("drop_off_location", result?.drop_off_location)
-                formData.append('item_name', result?.item_name)
-                formData.append('customer_name', result?.customer_name)
-                formData.append('email', result?.email)
-                formData.append('mobile', result?.mobile)
-                formData.append('customer_group', result?.customer_group)
-
-                console.log({ formData });
-
-                try {
-
-                    await postData('admin/pickup-drop/create', formData)
-
-
-                    // router.push('/shipments')
-                    toast.success('Order Updated Successfully')
-                    setValue("description", "")
-
-                } catch (err) {
-                    let message = 'Unknown Error'
-                    if (err instanceof Error) message = err.message
-                    reportError({ message })
-                    toast.error(message)
-                }
-            }
         }
 
-    }
-    if (loader) {
-        return <><CustomLoader /></>
-    }
-    const pickupDate = (e: any) => {
-        setValue('pickup_date', e)
+        setKilometer((prevKilometer: any) => ({
+            ...prevKilometer,
+            pick_lat: area.latitude,
+            pick_lng: area.longitude
+        }));
+        setValue('pickup_location_coordinates', [area.latitude, area.longitude])
+        setValue('pickup_location', area.address)
+        setValue('shipping_address', area.address)
 
+
+    };
+    const handlePlaceSelectedDrop = (place: any) => {
+
+        const area = {
+            address: place?.formatted_address,
+            location: place?.formatted_address,
+            latitude: place?.geometry.location.lat(),
+            longitude: place?.geometry.location.lng(),
+
+        }
+
+        setValue('drop_off_location_coordinates', [area.latitude, area.longitude])
+        setValue('drop_off_location', area.address)
+        setValue('billing_address', area.address)
+
+        setKilometer((prevKilometer: any) => ({
+            ...prevKilometer,
+            drop_lat: area.latitude,
+            drop_lng: area.longitude
+        }));
+    };
+
+
+
+
+
+    useEffect(() => {
+        // Check if all the required latitude and longitude values are not null
+
+        if (kilometer.pick_lat !== null && kilometer.pick_lng !== null && kilometer.drop_lat !== null && kilometer.drop_lng !== null) {
+            // Create LatLng objects
+            const origin = new window.google.maps.LatLng(kilometer.pick_lat, kilometer.pick_lng);
+            const destination = new window.google.maps.LatLng(kilometer.drop_lat, kilometer.drop_lng);
+
+            // Call the distance matrix service
+            const service = new window.google.maps.DistanceMatrixService();
+            service.getDistanceMatrix(
+                {
+                    origins: [origin],
+                    destinations: [destination],
+                    travelMode: google.maps.TravelMode.DRIVING,
+                    unitSystem: window.google.maps.UnitSystem.METRIC,
+                },
+                callback
+            );
+        }
+    }, [kilometer, vechicleSelect]);
+
+    async function callback(response: any, status: any) {
+        if (status === 'OK') {
+            const distanceInMeters = response.rows[0].elements[0].distance.value;
+            const distanceInKm = distanceInMeters / 1000;
+            //   setDistance(distanceInKm.toFixed(2));
+
+
+            const value: any = {
+                vehicle_type: getValues('vehicle_type'),
+                pickup_location_coordinates: [kilometer.pick_lat, kilometer.pick_lng],
+                kilometer: distanceInKm.toFixed(2)
+            }
+            try {
+                const resp = await postData('customer/pickup-drop-charge', value)
+                const data = resp?.data?.data;
+                setValue('grand_total', data.pickup_and_drop_charge_amount)
+                setValue('franchise', resp?.data?.data?.franchise_id)
+                setError('grand_total', { message: '' })
+            } catch (err: any) {
+                setValue('grand_total', '')
+                setValue('franchise', '')
+                toast.error(err?.message)
+
+            }
+
+        } else {
+            console.error('Error:', status);
+        }
     }
+
+
+    const onselectVechicle = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+        const find = vechicleList?.find((res: any) => res?._id === value)
+        setValue('vehicle_type', find?.name)
+        setError('vehicle_type', { message: '' })
+        setVechicleSelect(value)
+    }
+
+    const pickupDate = (e: any) => {
+
+        setValue('pickup_date', e)
+    }
+
+
     const pickupTime = (e: any) => {
         setValue('pickup_time', e)
     }
-    console.log(defaultImage);
+
+    // const DateTimeFilter = (e: any) => {
+    //     setValue('delivery_date', e)
+    // }
+
+    const removeImage = (name: string) => {
+        const result = defaultImage?.filter((res: any) => res !== name)
+        setdefaultImage([...result])
+
+    }
+
+    const paymentMethodChange = (e: any) => {
+        const { value } = e.target;
+        setValue("payment_type", value)
+        setPaymentMethodSelect(value)
+    }
+
+    const paymentStatusChange = (e: any) => {
+        const { value } = e.target;
+        setValue("payment_status", value)
+        setPaymentStatusSelect(value)
+    }
+
+
+    const SubmitOrder = async (data: any) => {
+        console.log({ data })
+        const formData = new FormData();
+        const type: any = process?.env?.NEXT_PUBLIC_TYPE
+
+        if (multipleImage?.length > 0) {
+            multipleImage?.map((img: any, i: number) => {
+                formData.append(`images[${i}]`, img.file);
+            })
+
+
+        }
+        formData.append('name', data.name)
+        formData.append('mobile', data.mobile)
+        formData.append('email', data.email)
+        formData.append('item_name', data.item_name)
+        formData.append('description', data.description)
+        formData.append('weight', data.weight)
+        formData.append('vehicle_type', data.vehicle_type)
+        formData.append('pickup_location', data.pickup_location)
+        formData.append('drop_off_location', data.drop_off_location)
+        formData.append('payment_type', data.payment_type)
+        formData.append('payment_status', data.payment_status)
+        formData.append('pickup_location_coordinates', JSON.stringify(data.pickup_location_coordinates))
+        formData.append('drop_off_location_coordinates', JSON.stringify(data.drop_off_location_coordinates))
+        formData.append('billing_address', data.billing_address)
+        formData.append('shipping_address', data.shipping_address)
+        formData.append('grand_total', data.grand_total)
+        formData.append('franchise', data.franchise)
+        formData.append('pickup_date', moment(data.pickup_date).format('YYYY-MM-DD'))
+        formData.append('pickup_time', moment(data.pickup_time).format('hh:mm'))
+        formData.append('delivery_date', moment(data.delivery_date).format('YYYY-MM-DD hh:mm'))
+        formData.append('type', type)
+
+
+
+        try {
+
+            await postData('admin/pickup-drop/create', formData)
+            // router.push('/shipments')
+            toast.success('Order Create Successfully')
+            router.back()
+
+        } catch (err) {
+            let message = 'Unknown Error'
+            if (err instanceof Error) message = err.message
+            reportError({ message })
+            toast.error(message)
+        }
+
+        // }
+
+    }
+
+    if (loader) {
+        return <><CustomLoader /></>
+    }
 
 
     return (
         <Box>
             <CustomBox title='Customer Details'>
                 <Grid container spacing={2}>
-
-
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput
                             type='text'
                             control={control}
-                            error={errors.customer_name}
-                            fieldName="Customer Name"
+                            error={errors.name}
+                            fieldName="name"
                             placeholder={``}
                             fieldLabel={"Customer Name"}
                             disabled={false}
@@ -426,9 +467,9 @@ const PickUp = ({ view, res, edit }: props) => {
                             type='text'
                             control={control}
                             error={errors.email}
-                            fieldName="Email Address"
+                            fieldName="email"
                             placeholder={``}
-                            fieldLabel={"Emial Address"}
+                            fieldLabel={"Email Address"}
                             disabled={false}
                             view={false}
                             defaultValue={''}
@@ -439,7 +480,7 @@ const PickUp = ({ view, res, edit }: props) => {
                             type='text'
                             control={control}
                             error={errors.mobile}
-                            fieldName="Mobile Number"
+                            fieldName="mobile"
                             placeholder={``}
                             fieldLabel={"Mobile Number"}
                             disabled={false}
@@ -447,19 +488,7 @@ const PickUp = ({ view, res, edit }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.customer_group}
-                            fieldName="Customer Group"
-                            placeholder={``}
-                            fieldLabel={"Customer group"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-                    </Grid>
+
                 </Grid>
             </CustomBox>
             <CustomBox title='Pickup And Drop Details'>
@@ -471,13 +500,13 @@ const PickUp = ({ view, res, edit }: props) => {
                             error={errors.item_name}
                             fieldName="item_name"
                             placeholder={``}
-                            fieldLabel={" PickUp Item Name"}
+                            fieldLabel={"PickUp Item Name"}
                             disabled={false}
                             view={view ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={7}>
+                    <Grid item xs={12} lg={5}>
                         <CustomInput
                             type='text'
                             control={control}
@@ -504,273 +533,342 @@ const PickUp = ({ view, res, edit }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={4.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.vehicle_type}
-                            fieldName="vehicle_type"
+
+                    {/* <Grid item xs={12} lg={2}>
+                        <CustomDateTimePicker
                             disabled={view ? true : false}
-                            placeholder={``}
-                            fieldLabel={"Vehicle Type Needed"}
-                            view={view ? true : false}
 
-                            defaultValue={''} />
+                            changeValue={(value: any) => DateTimeFilter(value)}
+                            fieldName='delivery_date'
+                            control={control}
+                            error={errors.delivery_date}
+                            fieldLabel={'Delivery Date & Time'}
+                        />
+                    </Grid> */}
 
-                    </Grid>
-                    <Grid item xs={12} lg={2.5}>
+                    <Grid item xs={12} lg={2}>
                         <CustomDatePicker
                             values={''}
                             disabled={view ? true : false}
-                            changeValue={(e) => pickupDate}
+                            changeValue={(e) => pickupDate(e)}
                             fieldName='pickup_date'
                             control={control}
                             error={errors.pickup_date}
-                            fieldLabel={'Expiry Date'}
+                            fieldLabel={'Pickup Date'}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2.5}>
+                    <Grid item xs={12} lg={2}>
                         <CustomTimepicker
-                            changeValue={() => pickupTime}
+                            changeValue={(e) => pickupTime(e)}
                             fieldName='pickup_time'
                             control={control}
                             disabled={view ? true : false}
                             error={errors.pickup_time}
-                            fieldLabel={'Expiry Time(Hrs)'} />
+                            fieldLabel={'Pickup Time'} />
 
 
                     </Grid>
-                    {/* <Grid item xs={12} lg={2.5}>
-                        <CustomTextarea
-                            control={control}
-                            error={errors.payment_address_pickup_address}
-                            fieldName="payment_address_pickup_address"
-                            placeholder={``}
-                            fieldLabel={"Payment Address or Pickup Address"}
-                            disabled={false}
-                            view={view ? true : false}
-                            defaultValue={''}
-                        />
-                    </Grid> */}
-                    <Grid item xs={12} lg={4.7}>
-                        <CustomTextarea
-                            // type='text'
+                    {idd && <Grid item xs={12} lg={3}>
+                        <CustomInput
+                            type='text'
                             control={control}
                             error={errors.pickup_location}
                             fieldName="pickup_location"
                             placeholder={``}
-                            fieldLabel={"pickup_location"}
-                            disabled={false}
-                            view={idd ? true : false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={4.7}>
-                        <CustomTextarea
-                            control={control}
-                            // type='text'
-                            error={errors.drop_off_location}
-                            fieldName="drop_off_location"
-                            placeholder={``}
-                            fieldLabel={"Delivery Location"}
-                            disabled={false}
-                            view={idd ? true : false}
-                            defaultValue={''}
-                        />
-                    </Grid>
-                </Grid>
-                {/* {view &&
-                        <Grid item xs={12} lg={3}>
-                            {/* <Avatar variant='square' src={`${IMAGE_URL}${productList?.product_image}`} sx={{ width: '100%', height: 130 }} /> */}
-                {/* </Grid> */}
-                {/* {!view &&
-                        <Grid item xs={12} lg={3}>
-                            <CustomImageUploader
-                                ICON={""}
-                                viewImage={imagePreview}
-                                error={errors.image}
-                                fieldName="image"
-                                placeholder={``}
-                                fieldLabel={"Product Image"}
-                                control={control}
-                                height={130}
-                                max={5}
-                                onChangeValue={imageUploder}
-                                preview={imagefile}
-                                previewEditimage={""}
-                                type={"file"}
-                                background="#e7f5f7"
-                                myid="contained-button-file"
-                                width={"100%"}
-                            />
-
-                        </Grid>}
-             */}
-
-                <Grid container spacing={2}>
-
-                    <Grid item xs={12} lg={6}>
-                        {/* this only in edit image code ************************************** */}
-                        <div style={{ marginTop: "15px" }} />
-                        {defaultImage.length > 0 && !view &&
-                            <>
-                                {/* <Box display={'flex'} gap={2} >
-            {defaultImage && defaultImage?.map((res: any, i: number) => (
-                <Box position={'relative'}>
-                    <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 100, height: 100, }} />
-                    <Box position={'absolute'} top={0} right={0}><HighlightOffIcon sx={{ color: 'red', cursor: 'pointer' }} onClick={() => removeImage(res)} /></Box>
-                </Box>
-            ))}
-        </Box> */}
-                            </>
-                        }
-                        {view &&
-                            <>
-                                <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
-                                    sx={{
-                                        fontSize: {
-                                            lg: 16,
-                                            md: 14,
-                                            sm: 12,
-                                            xs: 11,
-                                        },
-                                        fontFamily: `'Poppins' sans-serif`,
-                                    }}
-                                >{'Additional Images'}
-                                </Typography>
-                                <Box display={'flex'} gap={2}   >
-                                    {defaultImage && defaultImage?.map((res: any, i: number) => (
-                                        <Box>
-                                            <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 130, height: 130, }} />
-                                        </Box>
-                                    ))}
-                                </Box>
-                            </>
-                        }
-                        {<CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='' />}
-                    </Grid>
-
-
-
-                    {/* <Grid item xs={12} lg={2.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.sub_total}
-                            fieldName="sub_total"
-                            placeholder={``}
-                            fieldLabel={"Sub Total"}
+                            fieldLabel={"Pickup Location"}
                             disabled={false}
                             view={view ? true : false}
                             defaultValue={''}
                         />
-
-                    </Grid>
-                    <Grid item xs={12} lg={2.5}>
-                        <CustomInput
-                            type='text'
-                            control={control}
-                            error={errors.extra_total}
-                            fieldName="extra_total"
-                            placeholder={``}
-                            fieldLabel={"Extra Total"}
-                            disabled={false}
-                            view={false}
-                            defaultValue={''}
-                        />
-
-                    </Grid>
-                    <Grid item xs={12} lg={2.5}>
-                    <CustomInput
+                    </Grid>}
+                    {view &&
+                        <Grid item xs={12} lg={3}>
+                            <CustomInput
                                 type='text'
                                 control={control}
-                                error={errors.total_charge}
-                                fieldName="total_charge"
+                                error={errors.drop_off_location}
+                                fieldName="drop_off_location"
                                 placeholder={``}
-                                fieldLabel={"Total Charges"}
+                                fieldLabel={"Drop Off Location"}
                                 disabled={false}
                                 view={view ? true : false}
                                 defaultValue={''}
                             />
+                        </Grid>}
+
+                    {/* <Grid item xs={12} lg={3}>
+                        <CustomTextarea
+                            // type='text'
+                            control={control}
+                            error={errors.billing_address}
+                            fieldName=".billing_address"
+                            placeholder={``}
+                            fieldLabel={"Billing Address"}
+                            disabled={false}
+                            view={idd ? true : false}
+                            defaultValue={''}
+                        />
                     </Grid> */}
+                    {/* <Grid item xs={12} lg={3}>
+                        <CustomTextarea
+                            control={control}
+                            // type='text'
+                            error={errors.shipping_address}
+                            fieldName="shipping_address"
+                            placeholder={``}
+                            fieldLabel={"Shipping Address"}
+                            disabled={false}
+                            view={idd ? true : false}
+                            defaultValue={''}
+                        />
+                    </Grid> */}
+
+                    {!idd && <Grid item xs={12} lg={3}>
+                        <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                            sx={{
+                                fontSize: {
+                                    lg: 16,
+                                    md: 14,
+                                    sm: 12,
+                                    xs: 11,
+                                },
+                                fontFamily: `'Poppins' sans-serif`,
+
+                            }}
+                        >{'Pickup Location'}
+
+                        </Typography>
+                        <GoogleAutocomplete
+
+                            apiKey={process.env.NEXT_PUBLIC_GOOGLEKEY}
+                            style={{ height: 40, width: '100%' }}
+                            onPlaceSelected={(e: any) => handlePlaceSelectedPick(e)}
+
+                            types={['(regions)']}
+                        />
+
+                    </Grid>}
+                    {!idd &&
+                        <Grid item xs={12} lg={3}>
+                            <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                                sx={{
+                                    fontSize: {
+                                        lg: 16,
+                                        md: 14,
+                                        sm: 12,
+                                        xs: 11,
+                                    },
+                                    fontFamily: `'Poppins' sans-serif`,
+
+                                }}
+                            >{'DropUp Location'}
+
+                            </Typography>
+                            <GoogleAutocomplete
+                                apiKey={process.env.NEXT_PUBLIC_GOOGLEKEY}
+                                style={{ height: 40, width: '100%' }}
+                                onPlaceSelected={(e: any) => handlePlaceSelectedDrop(e)}
+                                types={['(regions)']}
+
+                            />
+
+                        </Grid>}
+                    <Grid item xs={12} lg={2}>
+                        <Customselect
+                            disabled={view ? true : false}
+                            type='text'
+                            control={control}
+                            error={errors.vehicle_type}
+                            fieldName="vehicle_type"
+                            placeholder={``}
+                            fieldLabel={"Vechicle Type"}
+                            selectvalue={""}
+                            height={40}
+                            label={''}
+                            size={16}
+                            value={vechicleSelect}
+                            options={''}
+                            onChangeValue={onselectVechicle}
+                            background={'#fff'}
+                        >
+                            <MenuItem value="" disabled >
+                                <>Select Franchise</>
+                            </MenuItem>
+                            {vechicleList && vechicleList?.map((res: any) => (
+                                <MenuItem value={res?._id}>{res?.name}</MenuItem>
+                            ))}
+                        </Customselect>
+
+
+                    </Grid>
+                    <Grid item xs={12} lg={2}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.grand_total}
+                            fieldName="grand_total"
+                            placeholder={``}
+                            fieldLabel={"Grand Total"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
+                    </Grid>
+                    {idd && <Grid item xs={12} lg={6}>
+                        <Typography letterSpacing={.5} px={'3px'} mb={'3px'}
+                            sx={{
+                                fontSize: {
+                                    lg: 16,
+                                    md: 14,
+                                    sm: 12,
+                                    xs: 11,
+                                },
+                                fontFamily: `'Poppins' sans-serif`,
+
+                            }}
+                        >{'Images'}
+
+                        </Typography>
+                        {imagePreview && imagePreview?.length > 0 &&
+                            <>
+                                <Box display={'flex'} gap={2} style={{ height: '200px', overflow: 'auto' }} >
+                                    {(imagePreview && Array.isArray(imagePreview)) && imagePreview?.map((res: any, i: number) => (
+                                        <Box position={'relative'}>
+                                            <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 100, height: 100, }} />
+
+                                        </Box>
+
+                                    ))}
+                                </Box>
+                            </>
+                        }
+
+                    </Grid>}
+                    {!idd &&
+                        <Grid item xs={12} lg={6}>
+
+                            {/* this only in edit image code ************************************** */}
+
+                            {defaultImage.length > 0 && !view &&
+                                <>
+                                    <Box display={'flex'} gap={2} style={{ height: '200px', overflow: 'auto' }} >
+                                        {defaultImage && defaultImage?.map((res: any, i: number) => (
+                                            <Box position={'relative'}>
+                                                <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 100, height: 100, }} />
+                                                <Box position={'absolute'} top={0} right={0}><HighlightOffIcon sx={{ color: 'red', cursor: 'pointer' }} onClick={() => removeImage(res)} /></Box>
+                                            </Box>
+
+                                        ))}
+                                    </Box>
+                                </>
+                            }
+
+
+                            {view &&
+                                <div style={{ height: '200px', overflow: 'auto' }}>
+                                    <>
+                                        <Typography letterSpacing={0.5} px={3} mb={3}
+                                            sx={{
+                                                fontSize: {
+                                                    lg: 16,
+                                                    md: 14,
+                                                    sm: 12,
+                                                    xs: 11,
+                                                },
+                                                fontFamily: `'Poppins' sans-serif`,
+                                            }}
+                                        >{'Additional Images'}</Typography>
+                                        <Box display="flex" gap={2}>
+                                            {defaultImage && defaultImage.map((res: any, i: number) => (
+                                                <Box key={i}>
+                                                    <Avatar variant="square" src={`${IMAGE_URL}${res}`} sx={{ width: 130, height: 130 }} />
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                    </>
+                                </div>
+                            }
+
+
+                            <div style={{ height: '200px', overflow: 'auto' }}>
+                                {!view && <CustomMultipleImageUploader state={multipleImage} onChangeImage={multipleImageUploder} fieldLabel='Add Additional Images' />}
+                            </div>
+
+                        </Grid>}
                 </Grid>
             </CustomBox>
-            {/* <CustomBox title='Product Details'>
-                {orderviewList &&
-                    // <ShippingTable res={orderviewList} readonly={res} id={idd} SetDeliveryCharge={SetDeliveryCharge} />}
-            </CustomBox> */}
-
-
-
-            {/* {idd && <HistoryTable res={orderviewList?.order_history} />} */}
-            <Grid container lg={12} spacing={0.5} display={'flex'} direction={"row"} >
-                <CustomBox title='Rider'>
-                    <Grid item xs={12} lg={12} >
-
+            <CustomBox title='Payment'>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} lg={2.5}>
                         <Customselect
+                            disabled={view ? true : false}
                             type='text'
                             control={control}
-                            error={errors.assign_rider}
-                            fieldName="Assign Rider"
+                            error={errors.payment_type}
+                            fieldName="payment_type"
                             placeholder={``}
-                            fieldLabel={"Assign Rider"}
+                            fieldLabel={"Payment Method"}
                             selectvalue={""}
                             height={40}
                             label={''}
-                            size={20}
-                            value={type}
+                            size={16}
+                            value={paymentMethodSelect}
                             options={''}
-                            onChangeValue={onChangeSelect}
+                            onChangeValue={paymentMethodChange}
                             background={'#fff'}
-                        ><MenuItem value="" disabled >
-                                <>Select Rider</>
+                        >
+                            <MenuItem value="" disabled >
+                                <>Select PaymentMethod</>
                             </MenuItem>
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                            {paymentMethodList && paymentMethodList.map((res: any) => (
+                                <MenuItem value={res?.value}  >
+                                    <Typography>{res?.name}</Typography>
+                                </MenuItem>
+                            ))}
+
                         </Customselect>
                     </Grid>
-                </CustomBox>
-
-                {/* Add spacing between CustomBox components */}
-                <div style={{ marginLeft: "20px" }} />
-
-                <CustomBox title='Status'>
-                    <Grid item xs={12} lg={12} >
+                    <Grid item xs={12} lg={2.5}>
                         <Customselect
                             type='text'
+                            disabled={view || (orderviewList?.payment_status === "completed" || orderviewList?.payment_status === "cancelled") ? true : false}
                             control={control}
-                            error={errors.assign_rider}
-                            fieldName="Choose Status"
+                            error={errors.payment_status}
+                            fieldName="payment_status"
                             placeholder={``}
-                            fieldLabel={"Choose Status"}
+                            fieldLabel={"Payment Status"}
                             selectvalue={""}
                             height={40}
                             label={''}
-                            size={20}
-                            value={type}
+                            size={16}
+                            value={paymentStatusSelect}
                             options={''}
-                            onChangeValue={onChangeSelect}
+                            onChangeValue={paymentStatusChange}
                             background={'#fff'}
-                        ><MenuItem disabled><>select Status</></MenuItem>
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                        >
+                            <MenuItem value="" disabled >
+                                <>Select PaymentStatus</>
+                            </MenuItem>
+                            {paymentStatusList && paymentStatusList?.map((res: any) => (
+                                <MenuItem value={res?.status_name}>
+                                    <Typography>{res?.status_name}</Typography>
+                                </MenuItem>
+                            ))}
+
+
                         </Customselect>
                     </Grid>
-                </CustomBox>
-            </Grid>
+                </Grid>
+            </CustomBox>
 
-
-
-            {<Box py={3} display={'flex-container'} justifyContent={'center'}>
+            {!idd && <Box py={3} display={'flex-container'} justifyContent={'center'}>
                 <Custombutton
                     btncolor=''
                     IconEnd={''}
                     IconStart={''}
                     endIcon={false}
                     startIcon={false}
-                    height={''}
+                    height={40}
                     label={edit ? 'update' : 'Add details'}
                     disabled={loading}
                     onClick={handleSubmit(SubmitOrder)} />

@@ -21,7 +21,7 @@ const Coupons = () => {
     const [_id, set_id] = useState<string>('');
     const [loading, setLoding] = useState<boolean>(false);
 
-    console.log({ item })
+   
 
     useEffect(() => {
         if (data?.data?.data) {
@@ -45,7 +45,7 @@ const Coupons = () => {
         try {
             setLoding(true)
             const response = await postData('admin/coupons/status', value)
-            console.log({response})
+       
             // setProductList((prev: any) => ([response?.data?.data, ...prev?.filter((res: any) => res?._id !== response?.data?.data?._id)]))
             mutate()
         }
@@ -130,9 +130,7 @@ const Coupons = () => {
                     <CustomSwitch
                         changeRole={(e: any) => OnchangeCheck(e, row?._id)}
                         checked={row?.status === 'active' ? true : false}
-
                     />
-
                 </Stack>
             )
         },
@@ -210,7 +208,7 @@ const Coupons = () => {
                 </Box>
                 {open && <CustomDelete
                     heading='Coupon'
-                    paragraph='coupn'
+                    paragraph='coupon'
                     _id={_id}
                     setData={setItem}
                     data={item}

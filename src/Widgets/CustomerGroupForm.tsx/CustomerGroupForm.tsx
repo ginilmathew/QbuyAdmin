@@ -186,7 +186,7 @@ const CustomerGroupForm = ({ view, res }: props) => {
       </CustomBox>
       {!view &&
         <Box py={3}>
-          <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={res ? "Edit Coupon" : 'Add Coupon'} onClick={handleSubmit(submitForm)} />
+          <Custombutton btncolor='' IconEnd={''} IconStart={''} endIcon={false} startIcon={false} height={''} label={res ? "Edit Group" : 'Add Group'} onClick={handleSubmit(submitForm)} />
         </Box>}
     </Box>
   )

@@ -80,12 +80,12 @@ const CustomSelectSearch = ({
                             // open={open}
                             filterOptions={filterOptions}
                             renderOption={renderOption}
-                            value={value}
+                            // value={value}
 
                             onBlur={onBlur}
                             disablePortal
                             id="combo-box-demo"
-                            options={options}
+                            options={options || []}
                             inputValue={inputValue}
                             disabled={disabled}
                             onChange={onChangeValue}

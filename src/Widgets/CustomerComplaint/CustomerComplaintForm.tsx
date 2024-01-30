@@ -18,16 +18,13 @@ import { fetchData, postData } from "@/CustomAxios";
 import { SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/router";
 import CustomTextarea from '@/components/CustomTextarea';
-import CustomTable from '@/components/CustomTable';
-import { GridColDef } from '@mui/x-data-grid';
-import moment from 'moment';
-import CustomMultiselect from '@/components/CustomMultiselect';
+
 
 
 
 type props = {
     resData?: any;
-    view?: any;
+    view?: boolean;
 };
 
 type IFormInput = {
@@ -36,26 +33,24 @@ type IFormInput = {
     mobile: string;
     complaint: string;
     status: string;
+    comments: string
 }
-type FormData = {
-    order_id: string;
-    name: string;
-    mobile: string;
-    complaint: string;
-    status: string;
-};
+
 
 const CustomerComplaintForm = ({ resData, view }: props) => {
-    const idd = resData ? resData : view;
+
+    const router = useRouter()
+    const { id } = router.query
+
     const [type, settype] = useState<string>("");
-    const [multpleArrayFoodType, setMultipleArrayFoodType] = useState<any>([]);
     const [loading, setLoading] = useState(false);
     const [complaintList, setComplaintList] = useState<any>([]);
-    console.log({complaintList}, 'riderlist')
+
     const schema = yup
         .object()
         .shape({
-
+            comments: yup.string().required('Required'),
+            status: yup.string().required('Required')
 
 
         })
@@ -73,11 +68,7 @@ const CustomerComplaintForm = ({ resData, view }: props) => {
     } = useForm<IFormInput>({
         resolver: yupResolver(schema),
         defaultValues: {
-            order_id: "",
-            name: "",
-            mobile: "",
-            complaint: "",
-            status:""
+
         },
     });
     const [genderOptions, setGenderOptions] = useState<any>([
@@ -85,6 +76,7 @@ const CustomerComplaintForm = ({ resData, view }: props) => {
             value: 'Resolved',
             name: 'resolved'
         },
+
         {
             value: 'Processing',
             name: 'processing'
@@ -94,60 +86,70 @@ const CustomerComplaintForm = ({ resData, view }: props) => {
             name: 'picked'
         }
     ]);
+
+
     const onChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedGender = e.target.value;
-        settype(selectedGender);
+        const { value } = e.target;
+        settype(value);
+        setValue('status', value)
 
     }
 
 
-    const complaintview = async () => {
+
+    // ...
+    useEffect(() => {
+        if (id) {
+            const complaintview = async () => {
+                try {
+                    setLoading(true);
+                    const response = await fetchData(
+                        `admin/customer-complaints/show/${id}`);
+                    setValue("mobile", response?.data?.data?.user?.mobile);
+                    setValue("name", response?.data?.data?.user?.name);
+                    setValue("order_id", response?.data?.data?.order_id);
+                    setValue("status", response?.data?.data?.status);
+                    setValue('complaint',response?.data?.data?.complaint)
+                    setValue('comments',response?.data?.data?.comments)
+                    settype(response?.data?.data?.status)
+                } catch (err: any) {
+                    toast.error(err.message);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            complaintview()
+
+        }
+    }, [id]);
+
+
+
+    const onSubmit = async (data: any) => {
+
+
+
+        let payload = {
+            comments: data?.comments,
+            id: id,
+            status: data?.status
+        }
+
         try {
             setLoading(true);
-            const response = await fetchData(
-                `admin/customer-complaints/show/${idd}`
-            );
-            console.log({ response }, "datavalue")
-            reset(response?.data?.data);
-            setComplaintList(response?.data?.data);
+            const response = await postData("admin/customer-complaints/update", payload);
+            console.log(response);
+            toast.success("Updated Successfully");
+            router.back()
         } catch (err: any) {
-            toast.error(err.message || "Error fetching data");
+            toast.error(err?.messsage);
         } finally {
             setLoading(false);
         }
     };
 
-   // ...
-useEffect(() => {
-    if (idd) {
-        complaintview();
-      
-        setValue("mobile", complaintList?.user?.mobile || "");
-        setValue("order_id", complaintList?.order?.order_id || "");
-        setValue("status", complaintList?.order?.status || "");
-    }
-}, [idd, complaintList, setValue]);
 
 
-
-    // const onSubmit = async (formData: Inputs) => {
-    //     setLoading(true);
-    //     try {
-    //         const payload = {
-    //             slot_based: formData.slot_based,
-    //             express_delivery: formData.express_delivery,
-    //             multi_shop_charge: formData.multi_shop_charge,
-    //         };
-    //         const response = await postData("admin/panda-config/create", payload);
-    //         console.log(response);
-    //         toast.success("Panda config successfully added");
-    //     } catch (err) {
-    //         console.error(err);
-    //         toast.error("Error creating Panda Config");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
 
     return (
@@ -158,26 +160,26 @@ useEffect(() => {
                         <CustomInput
                             type="text"
                             control={control}
-                            error={''}
+                            error={errors?.name}
                             fieldName="name"
                             placeholder={``}
                             fieldLabel={"Customer Name "}
                             disabled={false}
-                            view={view ? true : false}
+                            view={true}
                             defaultValue={''}
                         />
                     </Grid>
                     <Grid item xs={12} lg={2}>
-                    
+
                         <CustomInput
                             type="text"
                             control={control}
                             error={''}
-                            fieldName="mobile" 
+                            fieldName="mobile"
                             placeholder={``}
                             fieldLabel={"Phone Number"}
                             disabled={false}
-                            view={view ? true : false}
+                            view={true}
                             defaultValue={''}
 
                         />
@@ -192,7 +194,7 @@ useEffect(() => {
                             placeholder={``}
                             fieldLabel={"Order ID"}
                             disabled={false}
-                            view={view ? true : false}
+                            view={true}
                             defaultValue={''}
                         />
                     </Grid>
@@ -204,8 +206,8 @@ useEffect(() => {
                             placeholder={``}
                             fieldLabel={"Complaint Description"}
                             disabled={false}
-                            view={view ? true : false}
-                            defaultValue={complaintList?.complaint || ''}
+                            view={true}
+                            defaultValue={''}
                         />
                     </Grid>
 
@@ -216,9 +218,10 @@ useEffect(() => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2}>
                         <Customselect
+                            disabled={view ? true : false}
                             type="text"
                             control={control}
-                            error={''}
+                            error={errors.status}
                             fieldName="status"
                             placeholder=""
                             fieldLabel="Status"
@@ -232,8 +235,8 @@ useEffect(() => {
                             size={20}
                         >
                             {genderOptions.map((option: any) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.name}
+                                <MenuItem key={option.value} value={option.name}>
+                                    {option.value}
                                 </MenuItem>
                             ))}
                         </Customselect>
@@ -241,29 +244,29 @@ useEffect(() => {
                     <Grid item xs={12} lg={6} >
                         <CustomTextarea
                             control={control}
-                            error={''}
-                            fieldName="description"
+                            error={errors.comments}
+                            fieldName="comments"
                             placeholder={``}
                             fieldLabel={"Comments"}
                             disabled={false}
-                            view={false}
+                            view={view ? true : false}
                             defaultValue={""}
                         />
                     </Grid>
                 </Grid>
 
-                {/* <Box py={6}>
+                {resData && <Box py={2} display={'flex'} justifyContent={'flex-end'}>
                     <Custombutton
                         btncolor=""
                         IconEnd={""}
                         IconStart={""}
                         endIcon={false}
                         startIcon={false}
-                        height={"30px"}
+                        height={''}
                         label={"Update Status"}
                         onClick={handleSubmit(onSubmit)}
                     />
-                </Box> */}
+                </Box>}
 
             </CustomBox>
 

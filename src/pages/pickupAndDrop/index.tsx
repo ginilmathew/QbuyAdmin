@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import React, { useState,useEffect} from 'react'
+import React, { useState, useEffect, useCallback, startTransition } from 'react'
 import { GridColDef } from '@mui/x-data-grid';
 import { Box, Stack } from '@mui/material';
 import CustomTableHeader from '@/Widgets/CustomTableHeader';
@@ -8,16 +8,25 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import BorderColorTwoToneIcon from '@mui/icons-material/BorderColorTwoTone';
 import { toast } from 'react-toastify';
 import { fetchData } from '@/CustomAxios';
+import moment from 'moment';
+import useSWR from 'swr';
 
 
+const fetcher = (url: any) => fetchData(url).then((res) => res);
 const PickupAndDrop = () => {
+    const { data, error, isLoading, mutate } = useSWR(`admin/pickup-drop`, fetcher)
+    useEffect(() => {
+        if (data?.data?.data) {
+            setShippingList(data?.data?.data)
+        }
+    }, [data?.data?.data])
+
     const router = useRouter()
-    const [Loading, setLoading] =useState<boolean>(false);
-    const [ShippingList,setShippingList] = useState<any>([])
-    const [serachList, setSearchList] = useState<any>([])
+    const [ShippingList, setShippingList] = useState<any>([])
+
     const [open, setOpen] = useState<boolean>(false)
 
-    console.log({ open })
+
 
     const handleClose = () => {
         setOpen(false)
@@ -27,47 +36,62 @@ const PickupAndDrop = () => {
         setOpen(true)
     }
 
-  
+
     const ShippmentView = (id: string) => {
         router.push(`/pickupAndDrop/edit/${id}`)
     }
-const PickdropEdit=(id:string)=>{
-    router.push(`/pickupAndDrop/view/${id}`)
-}
+    const PickdropEdit = (id: string) => {
+        router.push(`/pickupAndDrop/view/${id}`)
+    }
 
 
     const columns: GridColDef[] = [
-        { field: 'Ticket ID', headerName: 'Ticket ID', flex: 1, },
+        {
+            field: 'order_id', headerName: 'Ticket ID', flex: 1, headerAlign: 'center',
+            align: 'center',
+        },
         {
             field: 'item_name',
-            headerName: 'Product Item Name',
+            headerName: 'Created Date',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => moment(params.row.created_at).format("DD/MM/YYYY"),
+
+        },
+        {
+            field: 'name',
+            headerName: 'Customer Name',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+
+        },
+        {
+            field: 'mobile',
+            headerName: 'Phone Number',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
 
         },
         {
-            field: 'description',
-            headerName: 'Description',
+            field: 'email',
+            headerName: 'Email',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => params.row.email && params.row.email === "undefined" ? '_' : params.row.email,
 
         },
         {
-            field: 'pickup_location',
-            headerName: 'Pick Up Location',
+            field: 'Franchise',
+            headerName: 'Franchise',
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-
-        },
-        {
-            field: 'drop_off_location',
-            headerName: 'Drop Off Location',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
+            valueGetter: (params) => params.row.franchisee?.franchise_name,
 
         },
         {
@@ -78,6 +102,7 @@ const PickdropEdit=(id:string)=>{
             align: 'center',
 
         },
+
         {
             field: 'vehicle_type',
             headerName: 'Vehicle Type',
@@ -85,8 +110,9 @@ const PickdropEdit=(id:string)=>{
             headerAlign: 'center',
             align: 'center',
 
+
         },
-     
+
         {
             field: 'status',
             headerName: ' Status',
@@ -95,7 +121,7 @@ const PickdropEdit=(id:string)=>{
             align: 'center',
 
         },
-        
+
         {
             field: 'Actions',
             headerName: 'Actions',
@@ -105,57 +131,45 @@ const PickdropEdit=(id:string)=>{
             renderCell: ({ row }) => (
                 <Stack alignItems={'center'} gap={1} direction={'row'}>
                     <RemoveRedEyeIcon
-                        onClick={()=>ShippmentView(row?._id)}
+                        onClick={() => ShippmentView(row?._id)}
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
                         }} />
-                    <BorderColorTwoToneIcon
+                    {/* <BorderColorTwoToneIcon
                     onClick={()=>PickdropEdit(row?._id)}
 
                         style={{
                             color: '#58D36E',
                             cursor: 'pointer'
                         }}
-                    />
-                    
+                    /> */}
+
                 </Stack>
             )
         }
     ];
 
-    const ShippingOrders = async () => {
 
-        try {
-            setLoading(true)
-            const response = await fetchData(`admin/pickup-drop`)
-            console.log(response);
-            
-            setShippingList(response?.data?.data)
-            setSearchList(response?.data?.data)
-        } catch (err: any) {
-            toast.error(err.message)
-            setLoading(false)
-
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    useEffect(() => {
-        ShippingOrders()
-    }, [])
- 
     const addPickAndDrop = () => {
         router.push('/pickupAndDrop/addPickAndDrop')
     }
+    const searchItem = useCallback((value: any) => {
+        let competitiions = data?.data?.data?.filter((com: any) => com?.order_id.toString().toLowerCase().includes(value.toLowerCase()) ||
+            com?.name.toString().toLowerCase().includes(value.toLowerCase()) || com?.mobile.toString().toLowerCase().includes(value.toLowerCase()) || com?.email.toString().toLowerCase().includes(value.toLowerCase()) || com?.franchisee?.franchise_name.toString().toLowerCase().includes(value.toLowerCase())
+        )
+        startTransition(() => {
+            setShippingList(competitiions)
+        })
+    }, [ShippingList])
+
     return (
         <Box px={5} py={2} pt={10} mt={0}>
 
             <Box bgcolor={"#ffff"} mt={3} p={2} borderRadius={5} height={'85vh'}>
-                <CustomTableHeader imprtBtn={false} Headerlabel='Pick up & Drop' onClick={ addPickAndDrop} addbtn={true} />
+                <CustomTableHeader setState={searchItem} imprtBtn={false} Headerlabel='Pick up & Drop' onClick={addPickAndDrop} addbtn={true} />
                 <Box py={5}>
-                    <CustomTable dashboard={false} columns={columns} rows={ShippingList? ShippingList : []} id={"_id"} bg={"#ffff"} label='Recent Activity' />
+                    <CustomTable dashboard={false} columns={columns} rows={ShippingList ? ShippingList : []} id={"_id"} bg={"#ffff"} label='Recent Activity' />
                 </Box>
             </Box>
         </Box>

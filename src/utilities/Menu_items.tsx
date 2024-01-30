@@ -137,7 +137,7 @@ export const Admin_item = [
             {
                 id: 8.11,
                 item: "Products Viewed",
-                path: '/dashboard',
+                path: '/productReportView',
             },
             {
                 id: 8.12,
@@ -162,16 +162,16 @@ export const Admin_item = [
                 item: 'Slider Management',
                 path: '/sliderManagement',
             },
-            {
-                id: 10.2,
-                item: 'Feedbacks',
-                path: '/feedbacks',
-            },
-            {
-                id: 10.3,
-                item: 'Message Banner',
-                path: '/messageBanner',
-            },
+            // {
+            //     id: 10.2,
+            //     item: 'Feedbacks',
+            //     path: '/feedbacks',
+            // },
+            // {
+            //     id: 10.3,
+            //     item: 'Message Banner',
+            //     path: '/messageBanner',
+            // },
             {
                 id: 10.4,
                 item: 'Rush Hour',
@@ -386,7 +386,7 @@ export const support_item = [
     {
         id: 2,
         item: 'Rider Tickets',
-        path: '/dashboard',
+        path: '/riderTickets',
     },
     {
         id: 3,
@@ -406,12 +406,12 @@ export const support_item = [
     {
         id: 6,
         item: 'Latest Order Reviews',
-        path: '/dashboard',
+        path: '/latestOrderReview',
     },
     {
         id: 7,
         item: 'Affiliate Onboarding',
-        path: '/dashboard',
+        path: '/affliates',
     },
     {
         id: 8,

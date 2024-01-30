@@ -44,8 +44,6 @@ const Cashinhand =({ res }: props)=> {
       const [addOpen, setaddOpen] = useState<any>(false)
       const [openBootModal, setopenBootModal] = useState(false)
       const [isDateFilterApplied, setIsDateFilterApplied] = useState(false);
-
-
       const [fromDate, setFromDate] = useState<Date | null>(null);
       const [toDate, setToDate] = useState<Date | null>(null);
       const { register,

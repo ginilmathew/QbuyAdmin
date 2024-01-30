@@ -465,7 +465,7 @@ const CouponForm = ({ res, view }: props) => {
                                 background={'#fff'}
                             >
                                 <MenuItem value="" disabled >
-                                    <>Select Franchise</>
+                                    <>Select Store</>
                                 </MenuItem>
                                 {vendorList && vendorList.map((res: any) => (
                                     <MenuItem value={res?._id}>{res?.store_name}</MenuItem>

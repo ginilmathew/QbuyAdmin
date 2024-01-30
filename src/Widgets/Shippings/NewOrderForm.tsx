@@ -102,7 +102,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
     const [dataa, setDataa] = useState<any>('')
     const [inputValue, setInputValue] = useState<any>('');
     const [productdetails, setproductdetails] = useState<any>()
-    const [customerGroupData, setcustomerGroupData] = useState<any>('')
+
     const [platFomCharge, setplatFomCharge] = useState<any>('')
     const [customeraddressList, setcustomeraddressList] = useState<any>([]);
     const [orderStatusSelect, setOrderStatus] = useState<any>([
@@ -172,7 +172,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
 
             const response = await fetchData('common/platformcharge')
             let { data } = response?.data
-            console.log({ data });
+          
 
             setplatFomCharge(data?.platformCharge)
 
@@ -230,10 +230,8 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
 
     const onChangeCustomer = async (value: any) => {
 
-        let details = await axiosInstance.get(`admin/customer-details/searchcustomer`, {
-            params: {
+        let details = await axiosInstance.post(`admin/customer-details/searchcustomer`, {
                 "search": value
-            }
         });
 
 
@@ -250,12 +248,6 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
                 user_id: cus?.user_id
             }
         })
-
-
-
-        console.log({ customers })
-
-
         setPatientArray(customers)
 
     }
@@ -269,7 +261,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
             return false
         }
         setDataa(newvalue)
-        console.log({ value, newvalue })
+  
         //setDataa(newvalue)
         setValue('name', newvalue?.name)
         // setValue('user_id', data?.user_id)
@@ -306,7 +298,7 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
 
         }
 
-        console.log({ newvalue });
+    
 
         // customerDetailsAddressGet()
 
@@ -396,12 +388,6 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
 
     const SubmitOrder = async (data: any) => {
 
-console.log('SUBMIT ORDERRR')
-
-
-        //return false;
-
-console.log({deliveryCharge})
 
 
         //console.log(selectedcustmraddress, "id");
@@ -425,7 +411,7 @@ console.log({deliveryCharge})
 
 
         let store = productdetails?.product_details?.productDetails?.map((prod: any) => prod?.vendor?._id)
-console.log({store:productdetails?.product_details?.productDetails})
+
 
 
         let resultadd = {
