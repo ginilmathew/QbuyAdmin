@@ -22,7 +22,6 @@ const ExtraCharges = () => {
     const { data: extraCharge, error, isLoading } = useSWR(`admin/extra-charge/list`, fetcher);
     const { data, mutate } = useSWR(`admin/extra-charge-value/list`, fetcher);
 
-    console.log({ data })
 
 
     useEffect(() => {
@@ -58,6 +57,7 @@ const ExtraCharges = () => {
         },
     ])
 
+    console.log({ item2 })
 
 
     const handleClose = () => {
@@ -271,12 +271,15 @@ const ExtraCharges = () => {
 
     const searchItem = useCallback((value: any) => {
         let competitiions = extraCharge?.data?.data?.filter((com: any) => com?.name?.toString().toLowerCase().includes(value.toLowerCase()) ||
-            com?.charge.toString().toLowerCase().includes(value.toLowerCase()) || com?.label2?.toString().toLowerCase().includes(value.toLowerCase())
+            com?.label2?.toString().toLowerCase().includes(value.toLowerCase()) ||
+            com?.label1?.toString().toLowerCase().includes(value.toLowerCase())
         )
         startTransition(() => {
             setItem2(competitiions)
         })
     }, [item2])
+
+
     const searchItem2 = useCallback((value: any) => {
         let competitiions = data?.data?.data?.filter((com: any) => com?.charge?.toString().toLowerCase().includes(value.toLowerCase()) ||
             com?.franchise?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) || com?.extra_charge_id?.extra_charge_name?.toString().toLowerCase().includes(value.toLowerCase())

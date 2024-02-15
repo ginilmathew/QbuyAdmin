@@ -54,7 +54,7 @@ const AddExtraChargevalue = ({ view, res }: props) => {
         extra_charge_id: yup.string().required('Required'),
         charge: yup.string().matches(/^[0-9]+$/, 'not valid').required('Required'),
         franchise: yup.string().required('Required'),
-        expiry_date_time: yup.string().required('Required'),
+    
         label1: yup.string().required('Required'),
         label2: yup.string()
             .required('Required'),
@@ -62,6 +62,7 @@ const AddExtraChargevalue = ({ view, res }: props) => {
         type: yup.string().required('Required'),
     }
     let valiation2 = {
+        
         label1: yup.string().required('Required'),
         extra_charge_id: yup.string().required('Required'),
         charge: yup.string().matches(/^[0-9]+$/, 'not valid').required('Required'),
@@ -122,24 +123,26 @@ const AddExtraChargevalue = ({ view, res }: props) => {
             const getSingleList = async () => {
                 try {
                     const resp = await fetchData(`admin/extra-charge-value/show/${id}`)
-             
+
                     const data = resp?.data?.data;
+                
                     setValue('charge', resp?.data?.data?.charge);
-                    setValue('franchise',data?.franchise?.franchise_id)
-                    setValue('extra_charge_id',data?.extra_charge_id?.extra_charge_id)
-                    setValue('type',data?.type)
-                    setValue('expiry_date_time', data.expiry_date_time ? moment(data.expiry_date_time, 'YYYY-MM-DD hh:mm A') : null);
+                    setValue('franchise', data?.franchise?.franchise_id)
+                    setValue('extra_charge_id', data?.extra_charge_id?.extra_charge_id)
+                    setValue('type', data?.type)
+                   
                     if (data?.type === "dateRange") {
                         setValue('label1', data.label1 ? moment(data.label1, 'YYYY-MM-DD') : null)
-                        setValue('label2', data.label2 ? moment(data.label1, 'YYYY-MM-DD') : null)
+                        setValue('label2', data.label2 ? moment(data.label2, 'YYYY-MM-DD') : null)
                     }
                     if (data?.type === "timeRange") {
                         setValue('label1', data.label1 ? moment(data.label1, 'hh:mm A') : null)
-                        setValue('label2', data.label2 ? moment(data.label1, 'hh:mm A') : null)
+                        setValue('label2', data.label2 ? moment(data.label2, 'hh:mm A') : null)
+                        setValue('expiry_date_time', data.expiry_date_time ? moment(data.expiry_date_time, 'YYYY-MM-DD') : null);
                     }
                     if (data?.type === 'text') {
                         setValue('label1', data.label1 ? data.label1 : null)
-                        setValue('label2', data.label2 ? data.label1 : null)
+                        setValue('label2', data.label2 ? data.label2 : null)
                     }
                     UpdateTask({
                         extraChargeSelect: data?.extra_charge_id?.extra_charge_id,
@@ -235,16 +238,17 @@ const AddExtraChargevalue = ({ view, res }: props) => {
         let { _id: franchise_id, franchise_name } = task?.franchiseList?.find((res: any) => res?._id === task?.franchiseSelect);
         const { extra_charge_id, name: extra_charge_name, label1, label2, } = task?.extraChargeList?.find((res: any) => res?.extra_charge_id === task?.extraChargeSelect);
         data.franchise = { franchise_id, franchise_name }
-        data.expiry_date_time = moment(data.expiry_date_time).format('YYYY-MM-DD hh:mm');
-        if(data?.type === 'dateRange'){
+       
+        if (data?.type === 'dateRange') {
             data.label1 = data.label1 ? moment(data.label1).format('YYYY-MM-DD') : null
             data.label2 = data.label2 ? moment(data.label2).format('YYYY-MM-DD') : null
         }
-        if(data?.type === 'timeRange'){
+        if (data?.type === 'timeRange') {
             data.label1 = data.label1 ? moment(data.label1).format('hh:mm A') : null
             data.label2 = data.label2 ? moment(data.label2).format('hh:mm A') : null
+            data.expiry_date_time = moment(data.expiry_date_time).format('YYYY-MM-DD');
         }
-       
+
         data.extra_charge_id = { extra_charge_id, extra_charge_name, label1, label2 }
         if (id) {
             data.id = id;
@@ -291,7 +295,7 @@ const AddExtraChargevalue = ({ view, res }: props) => {
                             background={'#fff'}
                         >
                             <MenuItem value="" disabled >
-                                <>Select ExtraCharge</>
+                                <>Select Extra Charge Value  </>
                             </MenuItem>
                             {task?.extraChargeList?.map((res: any) => (
                                 <MenuItem value={res?.extra_charge_id}>{res?.type}</MenuItem>
@@ -394,8 +398,18 @@ const AddExtraChargevalue = ({ view, res }: props) => {
                             defaultValue={''}
                         />
                     </Grid>
-                    <Grid item xs={12} lg={2}>
-                        <CustomDateTimePicker
+                  {task.extraChargeType === 'timeRange' && <Grid item xs={12} lg={2}>
+                        <CustomDatePicker
+                            fieldName={"expiry_date_time"}
+                            control={control}
+                            error={errors?.expiry_date_time}
+                            past={true}
+                            fieldLabel={'Expiry Date'}
+                            values={task.toDate}
+                            // changeValue={(date) => DateFilter.endDate(date)} 
+                            changeValue={(value: any) => dateFilter.expirary(value)}
+                        />
+                        {/* <CustomDateTimePicker
                             disabled={false}
                             values={task.expiry_date_time}
                             changeValue={(value: any) => dateFilter.expirary(value)}
@@ -403,8 +417,8 @@ const AddExtraChargevalue = ({ view, res }: props) => {
                             control={control}
                             error={errors.expiry_date_time}
                             fieldLabel={'Expiry Date & Time'}
-                        />
-                    </Grid>
+                        /> */}
+                    </Grid>}
                 </Grid>
             </CustomBox>
             {!view && <Box py={3}>

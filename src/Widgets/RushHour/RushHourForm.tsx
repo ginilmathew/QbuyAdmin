@@ -93,7 +93,6 @@ const RushHourForm = ({ res, view }: props) => {
                 setLoading(false)
             }
         }
-
         getFranchiseList()
     }, [])
 
@@ -161,8 +160,8 @@ const RushHourForm = ({ res, view }: props) => {
             franchise_name: filterResult?.franchise_name
         }
         data.locality = locality
-        data.start_date_time = moment(data.start_date_time).format('YYYY-MM-DD hh:mm')
-        data.end_date_time = moment(data.end_date_time).format('YYYY-MM-DD hh:mm')
+        data.start_date_time = moment(data.start_date_time).format('YYYY-MM-DD hh:mm A')
+        data.end_date_time = moment(data.end_date_time).format('YYYY-MM-DD hh:mm A')
         if (res) {
             data.id = id;
         }

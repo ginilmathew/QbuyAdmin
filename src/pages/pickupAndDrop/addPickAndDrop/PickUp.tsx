@@ -171,7 +171,7 @@ const PickUp = ({ view, res, edit }: props) => {
             let data = response?.data?.data
 
             const find = vechicleList?.find((res: any) => res?.name === data?.vehicle_type)
-
+         
             data.pickup_date = data.pickup_date ? moment(data.pickup_date, 'YYYY-MM-DD') : null
             data.pickup_time = data.pickup_time ? moment(data.pickup_time, 'hh:mm') : null
             setValue('name', data?.name)
@@ -236,10 +236,10 @@ const PickUp = ({ view, res, edit }: props) => {
 
 
     useEffect(() => {
-        if (idd) {
+        if (idd && vechicleList?.length > 0) {
             getVenderListShow()
         }
-    }, [idd])
+    }, [idd,vechicleList])
 
 
 

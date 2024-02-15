@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import RiderSupportform from '@/Widgets/RiderSupport/RiderSupportForm';
 import { useRouter } from 'next/router';
 import ShipmentSupport from '@/pages/shipmenttab';
@@ -9,7 +9,9 @@ import Cashinhand from '@/pages/Cashinhand';
 import RiderTicketTable from '@/Widgets/RiderTickets/RiderTicketTable';
 
 const Tabs = () => {
-  const [activeTab, setActiveTab] = useState('profile');
+
+  const TAbMANGEMENT = localStorage.getItem("tab");
+  const [activeTab, setActiveTab] = useState<any>(TAbMANGEMENT);
   const router = useRouter();
   const { id } = router.query;
   const [open, setOpen] = useState(false);
@@ -18,8 +20,14 @@ const Tabs = () => {
   };
 
   const handleTabClick = (tabName: string) => {
+    localStorage.setItem("tab", tabName);
     setActiveTab(tabName);
   };
+
+
+  useEffect(() => {
+    return setActiveTab(TAbMANGEMENT);
+  }, [TAbMANGEMENT])
 
   return (
     <div>
@@ -74,7 +82,7 @@ const Tabs = () => {
       <div className="tab-content">
         {activeTab === 'profile' && <RiderSupportform res={id} />}
         {activeTab === 'shipments' && <ShipmentSupport res={id} />}
-        {activeTab === 'tickets' && <RiderTicketTable id={id}/>}
+        {activeTab === 'tickets' && <RiderTicketTable id={id} />}
 
 
         {activeTab === 'payout' && <div>
@@ -82,7 +90,7 @@ const Tabs = () => {
           <Payout res={id} />
         </div>}
 
-        
+
 
         {activeTab === 'cash' && <Cashinhand res={id} />}
         {activeTab === 'workdetails' && <WorkDetailsTab res={id} />}

@@ -777,7 +777,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
 
                 </Grid>
             </CustomBox>
-            {addressfromprevious.length ? "" : <Box style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '15px', paddingTop: '10px' }}>
+            {(addressfromprevious.length || !idd) ? "" : <Box style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '15px', paddingTop: '10px' }}>
 
                 <Custombutton
                     btncolor=""

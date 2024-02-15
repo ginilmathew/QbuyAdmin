@@ -21,16 +21,20 @@ const fetcher = (url: any) => fetchData(url).then((res) => res);
 const RiderSupport = () => {
     const { data, error, isLoading, mutate } = useSWR(`admin/rider-support/list`, fetcher);
     const router = useRouter()
+console.log(router.pathname)
+    
+
     const [ridersupportData, setRiderSupportData] = useState([]);
     const [pending, startTransition] = useTransition();
 
     useEffect(() => {
         if (data?.data?.data) {
             setRiderSupportData(data?.data?.data);
-            console.log("RiderSupport Data:", data?.data?.data);
+            localStorage.setItem("tab", 'profile');
         }
     }, [data?.data?.data]);
 
+ 
     // const editRiderSupport = (id: any) => {
     //     router.push(`/riderSupport/edit/${id}`)
     // }

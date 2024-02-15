@@ -139,7 +139,7 @@ const RiderDetailsform = ({ res, view }: props) => {
             .nullable()
             .notRequired(),
         account_name: yup.string()
-            .matches(/^[A-Za-z]+(?: [A-Za-z]+)*$/, "Account Name should contain only characters")
+            .matches(/^[A-Za-z]+(?:[A-Za-z]+)*$/, "Account Name should contain only characters")
             .nullable()
             .notRequired(),
 
@@ -286,8 +286,7 @@ const RiderDetailsform = ({ res, view }: props) => {
             setValue('gender', subOnboardingList?.gender);
             setSelectedGender(subOnboardingList?.gender);
             setStatusSelect(subOnboardingList?.status || '');
-            console.log('Primary franchise ID:', subOnboardingList.primary_franchise);
-            console.log('Secondary franchises:', subOnboardingList.secondary_franchise);
+    
             if (subOnboardingList.primary_franchise) {
                 console.log('haii')
                 setValue('franchise_id', subOnboardingList?.primary_franchise?.franchise_id);

@@ -1,5 +1,5 @@
 import CustomInput from '@/components/CustomInput'
-import { Box, Grid, MenuItem, Typography } from '@mui/material'
+import { Avatar, Box, Grid, MenuItem, Typography } from '@mui/material'
 import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
 import CustomBox from '../CustomBox'
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -84,8 +84,8 @@ const OfferForm = ({ res, view }: props) => {
         setCheckBox(response?.data?.data?.customer_specific_offer === "false" ? false : true)
 
         let data = response?.data?.data;
- 
-        data.expiry_date = data.expiry_date ? moment(data.expiry_date, 'YYYY-MM-DD hh:mm A') : null
+
+        data.expiry_date = data.expiry_date ? moment(data.expiry_date,'YYYY-MM-DD HH:mm') : null
 
         reset(data)
 
@@ -114,7 +114,7 @@ const OfferForm = ({ res, view }: props) => {
         .required('Required'),
       offer_type: yup
         .string().required('Required'),
-      offer_value: yup.string().matches(orderOffer, 'Accept only number').nullable().required('Required'),
+      offer_value: yup.string().matches(orderOffer, 'Should be 100% maximum').nullable().required('Required'),
       store: yup
         .string().required('Required'),
       franchise: yup
@@ -294,7 +294,7 @@ const OfferForm = ({ res, view }: props) => {
     } else {
       delete data.image
     }
-    data.expiry_date = moment(data.expiry_date).format('YYYY-MM-DD hh:mm')
+    data.expiry_date = moment(data.expiry_date).format('YYYY-MM-DD HH:mm')
 
     let formData = new FormData();
 
@@ -351,6 +351,7 @@ const OfferForm = ({ res, view }: props) => {
               selectvalue={""}
               height={40}
               label={''}
+              disabled={view ? true : false}
               size={16}
               value={discount}
               options={''}
@@ -431,7 +432,7 @@ const OfferForm = ({ res, view }: props) => {
             </Grid>}
           <Grid item xs={12} lg={2.5}>
             <CustomDateTimePicker
-             
+
               disabled={view ? true : false}
               values={time}
               changeValue={(value: any) => OnChangeDate(value)}
@@ -494,8 +495,16 @@ const OfferForm = ({ res, view }: props) => {
                 onInputChange={Debouncefun}
               />
             </Grid>}
+
           <Grid item xs={12} lg={2.5}>
-            <CustomImageUploader
+            {view &&
+                 <Box>
+                  <Box height={30}></Box>
+                 <Avatar variant='square' src={imagePreview} sx={{ width: '100%', height: 130 }} /></Box>
+              
+            }
+            {!view && <CustomImageUploader
+
               ICON={""}
               viewImage={imagePreview}
               error={errors.image}
@@ -512,7 +521,8 @@ const OfferForm = ({ res, view }: props) => {
               background="#e7f5f7"
               myid="contained-button-file"
               width={"100%"}
-            />
+              disabled={view ? true : false}
+            />}
           </Grid>
           <Grid item xs={12} lg={4} xl={4}>
             <CustomTextarea

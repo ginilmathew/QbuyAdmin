@@ -55,6 +55,7 @@ const CustomDateTimePicker = ({
                     render={({ field: { value, onChange, onBlur } }) => (
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                             <MobileDateTimePicker
+                                disabled={disabled}
                                 // disablePast={'past'}
                                 minDateTime={disablePast ? moment() : null}
                                 maxDateTime={disablePast ? moment() :null}
