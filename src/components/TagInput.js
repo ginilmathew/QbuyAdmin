@@ -10,7 +10,7 @@ const TagInput = ({ tagValues, values, close }) => {
         if (tags.includes(e.target.value)) {
             return false
         }
-        let modifiedString = e.target.value?.replace(' ', '_');
+        let modifiedString = e.target.value?.split(" ").join("-");
         if (e.target.value?.length >= 1 && modifiedString) {
 
             if (e.key === 'Enter') {
