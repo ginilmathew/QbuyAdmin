@@ -28,6 +28,8 @@ const DeliveryCharges = () => {
 
 
 
+    console.log({item},'DELIVEY CHARGE')
+
     useEffect(() => {
         if (data?.data?.data) {
             setItem(data?.data?.data)
@@ -71,6 +73,14 @@ const DeliveryCharges = () => {
             align: 'center', valueGetter: (params) => moment(params.row.created_at).format("DD/MM/YYYY")
         },
         {
+            field: 'charge_name',
+            headerName: 'Delivery Charge Name',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+        {
             field: 'Locality',
             headerName: 'Locality',
             flex: 1,
@@ -87,6 +97,7 @@ const DeliveryCharges = () => {
             align: 'center',
 
         },
+      
 
         {
             field: 'normal_charge',
@@ -139,7 +150,7 @@ const DeliveryCharges = () => {
 
     const searchItem = useCallback((value: any) => {
         let competitiions = data?.data?.data?.filter((com: any) => com?.locality?.franchise_name.toString().toLowerCase().includes(value.toLowerCase()) ||
-            com?.within.toString().toLowerCase().includes(value.toLowerCase()) || com?.normal_charge.toString().toLowerCase().includes(value.toLowerCase()) || com?.rate_per_km.toString().toLowerCase().includes(value.toLowerCase())
+            com?.within.toString().toLowerCase().includes(value.toLowerCase()) || com?.normal_charge.toString().toLowerCase().includes(value.toLowerCase()) || com?.rate_per_km.toString().toLowerCase().includes(value.toLowerCase()) || com?.charge_name.toString().toLowerCase().includes(value.toLowerCase())
         )
         startTransition(() => {
             setItem(competitiions)
