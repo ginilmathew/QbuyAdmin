@@ -1312,14 +1312,14 @@ const ProductForm = ({ res, view }: props) => {
         let varientarrayfilter = null
         varientarrayfilter = varientsarray?.length > 0 && varientsarray?.filter((vari: any) => vari.seller_price !== '')
 
-
+        console.log({varientsarray})
 
         let varrientsWithDate = []
         if (varientsarray) {
             varrientsWithDate = varientsarray?.map((res: any) => ({
                 ...res,
-                offer_date_from: moment(res?.offer_date_from).format('YYYY-MM-DD'),
-                offer_date_to: moment(res?.offer_date_to).format('YYYY-MM-DD')
+                offer_date_from: moment(res?.offer_date_from, "YYYY-MM-DD").isValid() ? moment(res?.offer_date_from).format('YYYY-MM-DD') : null,
+                offer_date_to: moment(res?.offer_date_to, "YYYY-MM-DD").isValid() ? moment(res?.offer_date_to).format('YYYY-MM-DD') : null
             }))
         }
 
@@ -1385,7 +1385,7 @@ const ProductForm = ({ res, view }: props) => {
             fixed_delivery_price: data?.fixed_delivery_price,
             offer_date_from: data?.offer_date_from ? moment(data?.offer_date_from, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
             offer_date_to: data?.offer_date_to ? moment(data?.offer_date_to, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
-            variant: varientsarray?.length > 0 ? true : false,
+            variant: varrientsWithDate?.length > 0 ? true : false,
             variants: varrientsWithDate?.length > 0 ? varrientsWithDate : null,
             approval_status: statusSelect ? statusSelect : 'approved'
         }
