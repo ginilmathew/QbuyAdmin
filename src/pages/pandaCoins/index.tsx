@@ -28,6 +28,7 @@ const PandaCoins = () => {
   }, [data?.data?.data])
 
 
+  console.log({item},'ITEM PANDA COINS')
 
 
   const columns: GridColDef[] = [
@@ -46,17 +47,25 @@ const PandaCoins = () => {
       headerAlign: 'center',
       align: 'center',
     },
-    
-
     {
-      field: 'Discount Type',
-      headerName: 'Franchise',
+      field: 'User',
+      headerName: 'User',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
-      valueGetter: (params) => params.row.franchise?.franchise_name,
+      valueGetter: (params) => params.row.user?.name,
 
     },
+
+    // {
+    //   field: 'Discount Type',
+    //   headerName: 'Franchise',
+    //   flex: 1,
+    //   headerAlign: 'center',
+    //   align: 'center',
+    //   valueGetter: (params) => params.row.franchise?.franchise_name,
+
+    // },
     {
       field: 'value',
       headerName: 'Value',

@@ -33,14 +33,15 @@ const PandaCoinsForm = ({ view, res }: props) => {
 
     const router = useRouter()
     const { id } = router.query
-
+    const [inputValue, setInputValue] = useState<any>('');
+    const [custArray, setCustArray] = useState([])
     const [type, setType] = useState(null);
     const [franchiseList, setFranchiseList] = useState<any>([]);
     const [customerGroup, setCustomerGroup] = useState<any>([])
     const [franchiseSelect, setFranchiseSelect] = useState<any>(null)
     const [customerList, setCustomerList] = useState<any>([])
     const [userGroupSelect, setUserGroupSelect] = useState<any>(null)
-
+    const [dataa, setDataa] = useState<any>('');
 
 
 
@@ -75,7 +76,7 @@ const PandaCoinsForm = ({ view, res }: props) => {
         setType(value)
         setCustomerList([])
         setFranchiseSelect(null)
-        setValue('franchise_id', null)
+        // setValue('franchise_id', null)
         setValue('user_group', null)
         setValue('users', null)
         setValue('type', value)
@@ -91,8 +92,8 @@ const PandaCoinsForm = ({ view, res }: props) => {
         const getList = async () => {
             try {
                 const resp = await fetchData(`/admin/customer-group/${process.env.NEXT_PUBLIC_TYPE}`);
-                const response = await fetchData('/admin/franchise/list');
-                setFranchiseList(response?.data?.data);
+                // const response = await fetchData('/admin/franchise/list');
+                // setFranchiseList(response?.data?.data);
                 setCustomerGroup(resp?.data?.data)
 
             } catch (err: any) {
@@ -116,8 +117,8 @@ const PandaCoinsForm = ({ view, res }: props) => {
                     setValue('value', data?.value)
 
                     if (data?.type === 'user') {
-                        setFranchiseSelect(data?.franchise_id)
-                        setValue('franchise_id', data?.franchise_id)
+                        // setFranchiseSelect(data?.franchise_id)
+                        // setValue('franchise_id', data?.franchise_id)
                         setValue('users', data?.user?.name ? data?.user?.name + data?.user?.mobile : data?.user?.mobile)
 
                     } else {
@@ -134,22 +135,22 @@ const PandaCoinsForm = ({ view, res }: props) => {
         }
     }, [])
 
-    const selectFranchisChange = async (e: any) => {
-        const { value } = e.target;
-        setValue('franchise_id', value)
-        setFranchiseSelect(value)
-        try {
-            const response = await postData(`admin/panda-coins/customer`, { franchise_id: value })
+    // const selectFranchisChange = async (e: any) => {
+    //     const { value } = e.target;
+    //     setValue('franchise_id', value)
+    //     setFranchiseSelect(value)
+    //     try {
+    //         const response = await postData(`admin/panda-coins/customer`, { franchise_id: value })
 
 
-            setCustomerList(response?.data?.data)
+    //         setCustomerList(response?.data?.data)
 
-        } catch (err: any) {
-            toast.error(err?.message)
-        }
+    //     } catch (err: any) {
+    //         toast.error(err?.message)
+    //     }
 
-        setError('franchise_id', { message: "" })
-    }
+    //     setError('franchise_id', { message: "" })
+    // }
 
 
     const selectuserGroup = (e: any) => {
@@ -178,29 +179,29 @@ const PandaCoinsForm = ({ view, res }: props) => {
 
     const submit = async (data: any) => {
 
-        console.log({ data })
+      
 
         const CREATE = 'admin/panda-coins/create';
         const UPDATe = 'admin/panda-coins/update'
         if (type === "user") {
             delete data.user_group;
-            if (!franchiseSelect || !data.users) {
-                toast.warning('Franchise & Users is Required')
-                return false;
-            }
+            // if (!franchiseSelect || !data.users) {
+            //     toast.warning('Franchise & Users is Required')
+            //     return false;
+            // }
 
         } else {
             if (!data.user_group) {
                 toast.warning(' Users Group is Required')
                 return false;
             }
-            delete data.franchise_id
+            // delete data.franchise_id
             delete data.users
         }
         if (res) {
             data.id = id
             delete data.user_group
-            delete data.franchise_id
+            // delete data.franchise_id
             delete data.users
         }
         try {
@@ -214,6 +215,55 @@ const PandaCoinsForm = ({ view, res }: props) => {
 
     }
 
+    const CustmerSearch = (value: any, newvalue: any) => {
+        setDataa(newvalue);
+        // setValue('users', newvalue?.map((res: any) => ({
+        //     "id": res?._id,
+        //     "name": res?.name,
+        //     "mobile": res?.mobile
+        // })) || []);
+        setValue('users', newvalue?.map((res: any) => (res?._id)) || []);
+
+        // customerDetailsAddressGet()
+
+
+    }
+
+
+
+    const CustOnchangeInput = async (event: any, newInputValue: any) => {
+
+
+        try {
+            const resp = await postData('/admin/customer-details/searchcustomer', { search: newInputValue })
+
+            const filteredCust = resp?.data?.data?.filter((patient: any) => {
+                const { name, mobile } = patient;
+
+                const nameMatches = name?.toLowerCase().startsWith(newInputValue?.toLowerCase());
+
+
+                const isNumeric = !isNaN(newInputValue);
+                const phoneMatches = isNumeric && mobile?.includes(newInputValue);
+
+                return nameMatches || phoneMatches;
+            });
+
+            setCustArray(filteredCust)
+        } catch (err: any) {
+
+        } finally {
+
+        }
+    };
+
+
+    const debounceFn = useCallback(_debounce(CustOnchangeInput, 1000), []);
+    const Debouncefun = (event: any, newInputValue: any) => {
+        setInputValue(newInputValue);
+        debounceFn(_, newInputValue)
+
+    }
 
     return (
         <Box>
@@ -243,7 +293,7 @@ const PandaCoinsForm = ({ view, res }: props) => {
 
                             </Customselect>
                         </Grid>}
-                        {(type === "user" && !res) && <Grid item xs={12} lg={2.4}>
+                        {/* {(type === "user" && !res) && <Grid item xs={12} lg={2.4}>
                             <Customselect
                                 disabled={view ? true : false}
                                 type='text'
@@ -268,7 +318,7 @@ const PandaCoinsForm = ({ view, res }: props) => {
                                     <MenuItem key={res?._id} value={res?._id}>{res?.franchise_name}</MenuItem>
                                 ))}
                             </Customselect>
-                        </Grid>}
+                        </Grid>} */}
                         {(view && type === "user") && <Grid item xs={12} lg={2.4}>
                             <CustomInput
                                 type='text'
@@ -282,8 +332,27 @@ const PandaCoinsForm = ({ view, res }: props) => {
                                 view={view ? true : false}
                                 defaultValue={''}
                             />
-                        </Grid>}
-                        {(type === "user" && !res && !view) && <Grid item xs={12} lg={2.4}>
+                        </Grid>} 
+                             {(type === "user" && !res && !view) &&
+                            <Grid item xs={12} lg={2.4}>
+                                <CustomSelectSearch
+                                isMultiple={true}
+                                control={control}
+                                error={errors.users}
+                                fieldName="users"
+                                fieldLabel="Search Customer"
+                                background="#FFFFFF"
+                                height="40px"
+                                size="16px"
+                                options={custArray}
+                                getOptionLabel={({ name, mobile }: any) => `${name}  ${mobile}`}
+                                onChangeValue={CustmerSearch}
+                                inputValue={inputValue}
+                                placeholder='Search by Name,Mobile'
+                                onInputChange={Debouncefun}
+                            />
+                            </Grid>}
+                        {/* {(type === "user" && !res && !view) && <Grid item xs={12} lg={2.4}>
                             <Typography>Users</Typography>
 
                             <Autocomplete
@@ -299,7 +368,7 @@ const PandaCoinsForm = ({ view, res }: props) => {
                                 sx={{ width: '100%', maxHeight: 120 }}
                                 renderInput={(params: any) => <TextField {...params} label="Users" sx={{ height: 20 }} />}
                             />
-                        </Grid>}
+                        </Grid>} */}
                         {(type === 'user group' && !res) && <Grid item xs={12} lg={2.4}>
                             <Customselect
                                 disabled={view ? true : false}
