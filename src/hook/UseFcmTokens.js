@@ -30,7 +30,7 @@ const UseFcmTokens = () => {
                     // Check if permission is granted before retrieving the token
                     if (permission === 'granted') {
                         const currentToken = await getToken(messaging, {
-                            vapidKey: "BO5TkDnPCb4x1cvcJn5OW2dmZbKljNrRxR5hzgGGvNqIQWeLzsKYNUBrSmhiQGFQrSUZW1mMhARCarsqmbKl43k"
+                            vapidKey: "BAXw9vD2zmaThBpPp_sBujjw54jHK2lGlThX--3jJagxWSCEXQpIcemOebkBgYqJ3DABIWe5Nqa6qs0Rc3dS"
                         });
 
                         console.log({ currentToken }, 'GOT TOKENNN')
