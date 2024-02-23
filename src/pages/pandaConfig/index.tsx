@@ -18,17 +18,25 @@ type Inputs = {
     slot_based: any;
     express_delivery: any;
     multi_shop_charge: string;
+    panda_coin_percentage:string;
+    afiliated_order_value:string;
+    afiliated_panda_coin:string;
+    order_tax_amount:string;
 };
 
 const pandaConfig = ({ resData, view }: Props) => {
     const [loading, setLoading] = useState(false);
     const [notificationBlock, setNotificationBlock] = useState<boolean>(false);
     const [expressDeliveryBlock, setExpressDeliveryBlock] = useState<boolean>(false);
-
+ const percentage = /^([1-9][0-9]?|100)$/
     const schema = yup.object().shape({
         slot_based: yup.string().required("Slot Based Delivery is required"),
         express_delivery: yup.string().required("Express Based Delivery is required"),
         multi_shop_charge: yup.string().required("Multi Shop Charge is required"),
+        panda_coin_percentage:yup.string().matches(percentage,'maximum 100%').required('Panda Coin Percentage is required'),
+        order_tax_amount:yup.string().matches(percentage,'maximum 100%').required('Order tax Percentage is required'),
+        afiliated_order_value:yup.string().required('Afiliated order value required'),
+        afiliated_panda_coin:yup.string().required('Afiliated panda coin required')
     });
 
     const {
@@ -55,11 +63,14 @@ const pandaConfig = ({ resData, view }: Props) => {
             const response = await fetchData("admin/panda-config/show");
             console.log({ response }, "panda");
             if (response && response.data) {
-                const { slot_based, express_delivery, multi_shop_charge } =
-                    response.data.data;
+                const { slot_based, express_delivery, multi_shop_charge,panda_coin_percentage,order_tax_amount,afiliated_order_value,afiliated_panda_coin } = response.data.data;
                 setValue("slot_based", slot_based);
                 setValue("express_delivery", express_delivery);
                 setValue("multi_shop_charge", multi_shop_charge);
+                setValue("panda_coin_percentage", panda_coin_percentage);
+                setValue("order_tax_amount", order_tax_amount);
+                setValue("afiliated_order_value", afiliated_order_value);
+                setValue("afiliated_panda_coin", afiliated_panda_coin);
             }
         } catch (err) {
             toast.error("Error fetching Panda Config data");
@@ -75,16 +86,18 @@ const pandaConfig = ({ resData, view }: Props) => {
     const onSubmit = async (formData: Inputs) => {
         setLoading(true);
         try {
-            const payload = {
-                slot_based: formData.slot_based,
-                express_delivery: formData.express_delivery,
-                multi_shop_charge: formData.multi_shop_charge,
-            };
-            const response = await postData("admin/panda-config/create", payload);
-            console.log(response);
+            // const payload = {
+            //     slot_based: formData.slot_based,
+            //     express_delivery: formData.express_delivery,
+            //     multi_shop_charge: formData.multi_shop_charge,
+            // };
+
+       
+            await postData("admin/panda-config/create", formData);
+     
             toast.success("Panda config successfully added");
         } catch (err) {
-            console.error(err);
+        
             toast.error("Error creating Panda Config");
         } finally {
             setLoading(false);
@@ -116,55 +129,35 @@ const pandaConfig = ({ resData, view }: Props) => {
             </Typography>
             <Box>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}  lg={2}>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                            <CustomInput
-                                type="text"
-                                control={control}
-                                error={errors.slot_based}
-                                fieldName="slot_based"
-                                placeholder=""
-                                fieldLabel={"Slot Based Delivery"}
-                                view={false}
-                                disabled={!notificationBlock}
-                            />
-                            {/* <div
-                                style={{
-                                    marginLeft: "-13px"
-                                }}
-                            >
-                                <CustomCheckBox
-                                    isChecked={notificationBlock}
-                                    label=""
-                                    onChange={(isChecked) => CheckBlackLists(isChecked)}
-                                    title=""
-                                />
-                            </div> */}
-                        </div>
+                    {/* <Grid item xs={12} sm={6} lg={2}>
+
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={errors.slot_based}
+                            fieldName="slot_based"
+                            placeholder=""
+                            fieldLabel={"Slot Based Delivery"}
+                            view={false}
+                            disabled={!notificationBlock}
+                        />
+
                     </Grid>
-                    <Grid item xs={12} sm={6}  lg={2}>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                            <CustomInput
-                                type="text"
-                                control={control}
-                                error={errors.express_delivery}
-                                fieldName="express_delivery"
-                                placeholder=""
-                                fieldLabel={"Express Based Delivery"}
-                                disabled={!expressDeliveryBlock}
-                                view={false}
-                            />
-                            {/* <div style={{ marginLeft: "-13px" }}>
-                                <CustomCheckBox
-                                    isChecked={expressDeliveryBlock}
-                                    label=""
-                                    onChange={(isChecked) => CheckExpressDelivery(isChecked)}
-                                    title=""
-                                />
-                            </div> */}
-                        </div>
-                    </Grid>
-                    <Grid item xs={12} sm={6}  lg={2}>
+                    <Grid item xs={12} sm={6} lg={2}>
+
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={errors.express_delivery}
+                            fieldName="express_delivery"
+                            placeholder=""
+                            fieldLabel={"Express Based Delivery"}
+                            disabled={!expressDeliveryBlock}
+                            view={false}
+                        />
+
+                    </Grid> */}
+                    <Grid item xs={12} sm={6} lg={2}>
                         <CustomInput
                             type="text"
                             control={control}
@@ -172,6 +165,54 @@ const pandaConfig = ({ resData, view }: Props) => {
                             fieldName="multi_shop_charge"
                             placeholder=""
                             fieldLabel={"Multi Shop Charge"}
+                            disabled={false}
+                            view={false}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} lg={2}>
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={errors.panda_coin_percentage}
+                            fieldName="panda_coin_percentage"
+                            placeholder=""
+                            fieldLabel={"Panda Coin Percentage (%)"}
+                            disabled={false}
+                            view={false}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} lg={2}>
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={errors.afiliated_order_value}
+                            fieldName="afiliated_order_value"
+                            placeholder=""
+                            fieldLabel={"Afiliated Order Value"}
+                            disabled={false}
+                            view={false}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} lg={2}>
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={errors.afiliated_panda_coin}
+                            fieldName="afiliated_panda_coin"
+                            placeholder=""
+                            fieldLabel={"Afiliated Panda Coin"}
+                            disabled={false}
+                            view={false}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} lg={2}>
+                        <CustomInput
+                            type="text"
+                            control={control}
+                            error={errors.order_tax_amount}
+                            fieldName="order_tax_amount"
+                            placeholder=""
+                            fieldLabel={"Order Tax Percentage(%)"}
                             disabled={false}
                             view={false}
                         />
