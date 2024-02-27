@@ -28,7 +28,7 @@ const DeliveryCharges = () => {
 
 
 
-    console.log({item},'DELIVEY CHARGE')
+ 
 
     useEffect(() => {
         if (data?.data?.data) {

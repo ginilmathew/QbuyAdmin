@@ -171,9 +171,9 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
     
     const fetchCustomerGroupOptions = async () => {
         try {
-            const response = await fetchData("/admin/customer-group");
+            const response = await fetchData(`/admin/customer-group/${process.env.NEXT_PUBLIC_TYPE}`);
             const customerGroupData = response.data.data;
-            console.log("API Response:", customerGroupData);
+  
             setcustomerGroupData(customerGroupData)
         } catch (error) {
             console.error("Failed to fetch customer groups:", error);
