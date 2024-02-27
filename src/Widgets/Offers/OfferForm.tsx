@@ -108,9 +108,7 @@ const OfferForm = ({ res, view }: props) => {
         .object()
         .shape({
             offer_title: yup
-                .string()
-                .matches(/^[a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ\s\-0-9\/]+$/, 'Please enter valid name')
-                .max(40)
+                .string().max(40)
                 .required('Required'),
             offer_type: yup
                 .string().required('Required'),

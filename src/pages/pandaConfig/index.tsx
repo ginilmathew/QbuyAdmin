@@ -30,8 +30,8 @@ const pandaConfig = ({ resData, view }: Props) => {
     const [expressDeliveryBlock, setExpressDeliveryBlock] = useState<boolean>(false);
  const percentage = /^([1-9][0-9]?|100)$/
     const schema = yup.object().shape({
-        slot_based: yup.string().required("Slot Based Delivery is required"),
-        express_delivery: yup.string().required("Express Based Delivery is required"),
+        //slot_based: yup.string().required("Slot Based Delivery is required"),
+        //express_delivery: yup.string().required("Express Based Delivery is required"),
         multi_shop_charge: yup.string().required("Multi Shop Charge is required"),
         panda_coin_percentage:yup.string().matches(percentage,'maximum 100%').required('Panda Coin Percentage is required'),
         order_tax_amount:yup.string().matches(percentage,'maximum 100%').required('Order tax Percentage is required'),
@@ -51,8 +51,6 @@ const pandaConfig = ({ resData, view }: Props) => {
     } = useForm<Inputs>({
         resolver: yupResolver(schema),
         defaultValues: {
-            slot_based: "",
-            express_delivery: "",
             multi_shop_charge: "",
         },
     });
@@ -64,8 +62,6 @@ const pandaConfig = ({ resData, view }: Props) => {
             console.log({ response }, "panda");
             if (response && response.data) {
                 const { slot_based, express_delivery, multi_shop_charge,panda_coin_percentage,order_tax_amount,afiliated_order_value,afiliated_panda_coin } = response.data.data;
-                setValue("slot_based", slot_based);
-                setValue("express_delivery", express_delivery);
                 setValue("multi_shop_charge", multi_shop_charge);
                 setValue("panda_coin_percentage", panda_coin_percentage);
                 setValue("order_tax_amount", order_tax_amount);
