@@ -461,7 +461,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
 
     useEffect(() => {
         if (orderviewList) {
-            setValue('name', orderviewList?.user?.name)
+            setValue('name', orderviewList?.user?.name ? orderviewList?.user?.name : orderviewList?.shipaddress?.name)
             setValue('mobile', orderviewList?.user?.mobile)
             setValue('email', orderviewList?.user?.email)
             setValue('order_id', orderviewList?.order_id)
@@ -1045,7 +1045,15 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
             </CustomBox>
          {  <CustomBox title='Product Details'>
                 { 
-                    <ShippingTable res={orderviewList}  onApiSuccess={handleApiSuccess}  readonly={res} id={idd} SetDeliveryCharge={SetDeliveryCharge} setStoreList={setStoreList}/>}
+                    <ShippingTable 
+                        res={orderviewList}  
+                        onApiSuccess={handleApiSuccess}  
+                        readonly={res} 
+                        id={idd} 
+                        SetDeliveryCharge={SetDeliveryCharge} 
+                        setStoreList={setStoreList}
+                    />
+                }
             </CustomBox>}
       {idd&&
             <CustomBox title='Vendor Status'>

@@ -32,7 +32,7 @@ type props = {
 const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onApiSuccess }: props) => {
 
 
-
+    console.log({breakup: res?.price_breakup})
 
 
     const [modalOpen, setModalOpen] = useState(false);
@@ -102,7 +102,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
             const response = await fetchData('common/platformcharge')
             let { data } = response?.data
-          
+
 
             setplatFomCharge(data?.platformCharge)
 
@@ -171,7 +171,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                 // stock: itm?.type === "single" ? itm?.stock : itm?.variants?.stock,
                 // Add other properties as needed
             }));
-        
+
 
 
             let Combine = {
@@ -195,12 +195,12 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
             let store = productDetails?.map((res: any) => (res?.vendor?._id));
             setStoreList(store)
 
-         
+
         }
         else if (res) {
 
 
-       
+
             let pricedata = {
                 delivery_charge: parseInt(res?.delivery_charge),
                 grand_total: res?.grand_total,
@@ -231,8 +231,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                 offer_date_from: itm?.offer_date_from,
                 offer_date_to: itm?.offer_date_to,
                 offer_price: itm?.offer_price,
-                store_commission:itm?.store_commission,
-                product_commission:itm?.product_commission
+                store_commission: itm?.store_commission,
+                product_commission: itm?.product_commission
 
             }))
 
@@ -316,7 +316,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
                     productDetails: [...productList.productDetails]
                 }
-               
+
                 InitialPost(value)
             }
 
@@ -505,8 +505,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                                     <TableCell align="center">{row.store_name},{row?.store_address},{row.vendor?.vendor_mobile}{ }</TableCell>
                                     <TableCell align="center">{row.description}</TableCell>
                                     <TableCell align="center">{row.quantity}</TableCell>
-                                    <TableCell align="center">{(row?.unitPrice)}</TableCell>
-                                    <TableCell align="center">{(row?.quantity * row?.unitPrice).toFixed(2)}</TableCell>
+                                    <TableCell align="center">{(row?.price)}</TableCell>
+                                    <TableCell align="center">{(row?.quantity * parseFloat(row?.price)).toFixed(2)}</TableCell>
                                     {/* {id && ( */}
                                     {(readonly || res === null) && <>
                                         <TableCell align="center"> <BorderColorTwoToneIcon
@@ -541,29 +541,33 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                             {(readonly || res === null) && <TableCell align="center"></TableCell>}
                             {(readonly || res === null) && <TableCell align="center"></TableCell>}
                         </TableRow>
+                        {res?.price_breakup?.map((breakup: any) => {
+                            return (
+                                <TableRow>
 
-                        <TableRow>
+                                    <TableCell colSpan={3}></TableCell>
+                                    <TableCell align="right" >{breakup?.charge_name}</TableCell>
+                                    <TableCell align="center">₹ {breakup?.price}</TableCell>
+                                    {((readonly || res === null) && productList?.productDetails?.length > 0 && breakup?.charge_name === "Delivery Charge") && <TableCell align="center"> <BorderColorTwoToneIcon
+                                        onClick={() => { handleOpen(productList, 'delivery') }}
+                                        style={{
+                                            color: '#58D36E',
+                                            cursor: 'pointer'
+                                        }}
+                                    /></TableCell>}
+                                </TableRow>
+                            )
+                        })}
 
-                            <TableCell colSpan={3}></TableCell>
-                            <TableCell align="right" >Delivery Charge (SlotBased)</TableCell>
-                            <TableCell align="center">₹ {productList?.delivery_charge}</TableCell>
-                            {((readonly || res === null) && productList?.productDetails?.length > 0) && <TableCell align="center"> <BorderColorTwoToneIcon
-                                onClick={() => { handleOpen(productList, 'delivery') }}
-                                style={{
-                                    color: '#58D36E',
-                                    cursor: 'pointer'
-                                }}
-                            /></TableCell>}
-                        </TableRow>
 
 
-                        <TableRow>
+                        {/* <TableRow>
                             <TableCell colSpan={3}></TableCell>
                             <TableCell align="right">Platform Charge</TableCell>
                             <TableCell align="center">
                                 ₹ {isNaN(parseFloat(productList?.platform_charge)) ? 0 : parseFloat(productList?.platform_charge).toFixed(2)}
                             </TableCell>
-                        </TableRow>
+                        </TableRow> */}
 
 
 
