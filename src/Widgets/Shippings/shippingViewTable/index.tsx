@@ -32,7 +32,7 @@ type props = {
 const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onApiSuccess }: props) => {
 
 
-    console.log({breakup: res?.price_breakup})
+    console.log({ breakup: res?.price_breakup })
 
 
     const [modalOpen, setModalOpen] = useState(false);
@@ -48,7 +48,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
     const [platFomCharge, setplatFomCharge] = useState<any>()
 
 
-    console.log({ productList }, 'PRODUCT LIST')
+    console.log({ productList }, 'PRODUCTLIST')
 
 
     const handleClose = useCallback(() => {
@@ -134,12 +134,12 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
 
 
-
             let pricedata = {
                 delivery_charge: parseInt(newAddedProduct?.delivery_charge),
                 grand_total: parseInt(newAddedProduct?.delivery_charge) + parseInt(newAddedProduct?.total_amount) + platFomCharge,
                 total_amount: parseInt(newAddedProduct?.total_amount),
-                platform_charge: platFomCharge,
+                // platform_charge: platFomCharge,
+
             }
 
 
@@ -200,12 +200,12 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
         else if (res) {
 
 
-
             let pricedata = {
                 delivery_charge: parseInt(res?.delivery_charge),
                 grand_total: res?.grand_total,
                 total_amount: res?.total_amount,
                 platform_charge: res?.platform_charge,
+
             }
             let productDetails: []
             productDetails = res?.product_details?.map((itm: any) => ({
@@ -274,7 +274,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
     const InitialPost = useCallback(async (data: any) => {
 
-        console.log({ data });
+
 
         try {
             await postData('admin/order/edit', data);
@@ -297,8 +297,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
     useEffect(() => {
         if (productList) {
             if (newAddedProduct) {
-                console.log({ newAddedProduct });
-                console.log({ id });
+
 
                 let value = {
                     id: newAddedProduct?.product_details?.product_id,
@@ -313,7 +312,8 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
                 let value = {
                     id: id,
-
+                    delivery_charge: productList?.delivery_charge,
+                    productDetailsChangeStatus: false,
                     productDetails: [...productList.productDetails]
                 }
 
@@ -541,7 +541,21 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                             {(readonly || res === null) && <TableCell align="center"></TableCell>}
                             {(readonly || res === null) && <TableCell align="center"></TableCell>}
                         </TableRow>
+                        <TableRow>
+
+                            <TableCell colSpan={3}></TableCell>
+                            <TableCell align="right" >{'Delivery Charge'}</TableCell>
+                            <TableCell align="center">₹ {productList?.delivery_charge}</TableCell>
+                            {(readonly || res === null) &&  <TableCell align="center"> <BorderColorTwoToneIcon
+                                onClick={() => { handleOpen(productList, 'delivery') }}
+                                style={{
+                                    color: '#58D36E',
+                                    cursor: 'pointer'
+                                }}
+                            /></TableCell>}
+                        </TableRow>
                         {res?.price_breakup?.map((breakup: any) => {
+                            if(breakup?.charge_name === "Delivery Charge")  return false;
                             return (
                                 <TableRow>
 

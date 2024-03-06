@@ -180,25 +180,25 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             toast.error("Failed to fetch customer groups");
         } };
 
-        const getPlatFormCharge = async () => {
+        // const getPlatFormCharge = async () => {
      
-            try {
+        //     try {
                 
-                const response = await fetchData('common/platformcharge')
-                let { data } = response?.data
-                console.log({data});
+        //         const response = await fetchData('common/platformcharge')
+        //         let { data } = response?.data
+        //         console.log({data});
                 
-                 setplatFomCharge(data?.platformCharge)
+        //          setplatFomCharge(data?.platformCharge)
     
-            } catch (err) {
-                toast.error("cant't find platform charge")
+        //     } catch (err) {
+        //         toast.error("cant't find platform charge")
              
     
-            } 
-        }
+        //     } 
+        // }
     useEffect(() => {
         fetchCustomerGroupOptions();
-        getPlatFormCharge()
+        // getPlatFormCharge()
     }, []);
     useEffect(() => {
          if (dataa ) {
@@ -559,7 +559,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             type:process.env.NEXT_PUBLIC_TYPE,
             delivery_date:new Date().toISOString().slice(0, 19).replace("T", " "),
             delivery_type:ordertype ,
-            platform_charge:platFomCharge
+            // platform_charge:platFomCharge
           
             
         }));

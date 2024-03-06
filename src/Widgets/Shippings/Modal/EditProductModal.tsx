@@ -262,7 +262,7 @@ const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD,
     // }
     const DeliverySubmit = () => {
         let deliveryPrice = getValues('deliveryPrice');
-        console.log({deliveryPrice})
+     
         if (parseInt(deliveryPrice) <= 0) {
             toast.warning('Delivery Price Cannot be Zero');
             return false;

@@ -11,6 +11,7 @@ import Custombutton from '@/components/Custombutton';
 import { toast } from 'react-toastify';
 import { postData } from '@/CustomAxios';
 import { isEqual } from 'lodash';
+import { useRouter } from 'next/router';
 
 
 type props = {
@@ -44,7 +45,7 @@ type Inputs = {
     offer_price: any,
     store_commission: any,
     product_commission: any,
-    vendor:any
+    vendor: any
 
 
 
@@ -54,7 +55,9 @@ type Inputs = {
 
 const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge }: props) => {
 
-    console.log({ data }, 'DATA IS VALIDDDDDDD')
+ 
+    const { query } = useRouter()
+    console.log({ query })
 
 
     const schema = yup
@@ -170,14 +173,35 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
             setOutOfStock(false);
         }
     }
+
+
+    const InitialPost = useCallback(async (data:any) => {
+        try {
+            await postData('admin/order/edit', data);
+        } catch (err) {
+            let message = 'Unknown Error'
+            if (err instanceof Error) message = err.message
+            reportError({ message })
+            toast.error(message)
+        }
+
+    }, [])
+
+
+
+
+
+
     const onChangeDeliveryCharge = (e: any) => {
         const { value } = e.target;
+     
         setValue('deliveryPrice', value)
         SetDeliveryCharge(value)
+    
     }
 
     const SubmitButton = async (item: any) => {
-        console.log({ item })
+
         //return false
         let product: any = [];
 
@@ -206,15 +230,16 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
         const { total, ...alldata } = item;
         product.push(alldata);
-  
+
 
         try {
             if (order_iD) {
                 let publishValue = {
                     id: order_iD,
-                    productDetails: product
+                    productDetails: product,
+                    productDetailsChangeStatus: true,
                 };
-                
+
 
                 const response = await postData('admin/order/edit', publishValue);
 
@@ -263,7 +288,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     // }
     const DeliverySubmit = () => {
         let deliveryPrice = getValues('deliveryPrice');
-      
+
         if (parseInt(deliveryPrice) <= 0) {
             toast.warning('Delivery Price Cannot be Zero');
             return false;
@@ -272,7 +297,14 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
         allProduct['delivery_charge'] = parseInt(deliveryPrice);
         allProduct['grand_total'] =
             allProduct['total_amount'] + allProduct['delivery_charge'] + allProduct['platform_charge'];
-
+            let values = {
+                id:query?.id,
+                delivery_charge: deliveryPrice,
+                productDetailsChangeStatus: true,
+                productDetails: [...allProduct.productDetails]
+            }
+            InitialPost(values)
+        
         handleClose();
     };
 
@@ -366,7 +398,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                             <Grid item xs={12} lg={6}>
                                 <CustomInput
                                     onChangeValue={(e: any) => onChangeQuantity(e)}
-                                    type='number~'
+                                    type='number'
                                     control={control}
                                     error={errors.quantity}
                                     fieldName="quantity"
