@@ -33,6 +33,8 @@ const Offers = () => {
     }, [data?.data?.data])
 
 
+    console.log({data})
+
     const OnchangeCheck = async (e: any, id: string) => {
 
         let value = {
@@ -84,6 +86,14 @@ const Offers = () => {
         {
             field: 'offer_type',
             headerName: 'Offer Type',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+
+        },
+        {
+            field: 'customer_specific_offer',
+            headerName: 'Cust Specific Offer',
             flex: 1,
             headerAlign: 'center',
             align: 'center',

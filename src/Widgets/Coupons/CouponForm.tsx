@@ -55,7 +55,7 @@ const CouponForm = ({ res, view }: props) => {
     const [multpleArray, setMultipleArray] = useState<any>([]);
 
 
- 
+
 
 
     const orderValidation = /^[0-9]*$/
@@ -148,7 +148,7 @@ const CouponForm = ({ res, view }: props) => {
     }
 
     const onselectFranchise = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.value)
+      
 
         setValue('franchise_id', e.target?.value)
         setValue('store_id', null)
@@ -304,13 +304,13 @@ const CouponForm = ({ res, view }: props) => {
                             placeholder={``}
                             fieldLabel={"Coupon Title"}
                             disabled={false}
-                            view={view ? true : false}
+                            view={(view || singleList?.offer_applied) ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
                     <Grid item xs={12} lg={2.4}>
                         <Customselect
-                            disabled={view ? true : false}
+                            disabled={(view || singleList?.offer_applied) ? true : false}
                             type='text'
                             control={control}
                             error={errors.discount_type}
@@ -340,7 +340,7 @@ const CouponForm = ({ res, view }: props) => {
                             placeholder={``}
                             fieldLabel={"Coupon Value"}
                             disabled={false}
-                            view={view ? true : false}
+                            view={(view || singleList?.offer_applied) ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -353,7 +353,7 @@ const CouponForm = ({ res, view }: props) => {
                             placeholder={``}
                             fieldLabel={"Coupon Code"}
                             disabled={false}
-                            view={view ? true : false}
+                            view={(view || singleList?.offer_applied) ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -396,7 +396,7 @@ const CouponForm = ({ res, view }: props) => {
                     </Grid>
                     <Grid item xs={12} lg={2.4}>
                         <Customselect
-                            disabled={view ? true : false}
+                            disabled={(view || singleList?.offer_applied) ? true : false}
                             type='text'
                             control={control}
                             error={errors.coupon_for}

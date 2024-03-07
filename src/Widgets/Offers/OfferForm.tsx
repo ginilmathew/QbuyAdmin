@@ -34,6 +34,9 @@ const OfferForm = ({ res, view }: props) => {
     const router = useRouter()
     const { id } = router.query;
 
+
+
+
     type IFormInput = {
         offer_title: string,
         offer_type: string,
@@ -66,7 +69,10 @@ const OfferForm = ({ res, view }: props) => {
     const [checkbox, setCheckBox] = useState<any>(false);
     const [imagePreview, setImagePreview] = useState<any>(null);
     const [thumbnailPreview, setthumbnailPreview] = useState<any>(null);
-    const [imagefile, setImagefile] = useState<null | File>(null)
+    const [imagefile, setImagefile] = useState<null | File>(null);
+
+
+    console.log({ singleList })
 
     useEffect(() => {
         const fetchDatas = async () => {
@@ -333,7 +339,7 @@ const OfferForm = ({ res, view }: props) => {
                             placeholder={``}
                             fieldLabel={"Offer Title"}
                             disabled={false}
-                            view={view ? true : false}
+                            view={(view || singleList?.offer_applied) ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -348,7 +354,7 @@ const OfferForm = ({ res, view }: props) => {
                             selectvalue={""}
                             height={40}
                             label={''}
-                            disabled={view ? true : false}
+                            disabled={(view || singleList?.offer_applied) ? true : false}
                             size={16}
                             value={discount}
                             options={''}
@@ -369,7 +375,7 @@ const OfferForm = ({ res, view }: props) => {
                             placeholder={``}
                             fieldLabel={"Offer Value"}
                             disabled={false}
-                            view={view ? true : false}
+                            view={(view || singleList?.offer_applied) ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
