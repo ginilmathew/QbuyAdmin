@@ -416,7 +416,6 @@ console.log('ADD NEW PRODUCT SCREEN')
             
             value['type'] = "variant";
             value['deliveryPrice'] = attributeSelect?.[0]?.delivery;
-
             // value['fixed_delivery_price']=attributeSelect?.[0]?.delivery;
             value['title'] = attributeSelect?.[0]?.title;
             value['variant_id'] = attributeSelect?.[0]?.id;
@@ -477,7 +476,7 @@ console.log('ADD NEW PRODUCT SCREEN')
             //return false;
             const response = await postData('admin/order/createproduct', publishValue);
             const AddedProduct = response?.data?.data;
-            console.log({ AddedProduct });
+    
 
             onApiSuccess(AddedProduct);
             let find = publishValue?.productDetails?.map((res) => (res?.vendor?._id));

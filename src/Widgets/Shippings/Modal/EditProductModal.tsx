@@ -23,7 +23,8 @@ type props = {
     setProductList: any,
     SetDeliveryCharge?: any,
     added: any,
-    onApiSuccess: any
+    onApiSuccess: any,
+    setproductDetailsChangeStatus:any
 }
 type Inputs = {
     name: string,
@@ -48,12 +49,8 @@ type Inputs = {
 
 };
 
-const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge, added, onApiSuccess }: props) => {
+const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge, added, onApiSuccess,setproductDetailsChangeStatus }: props) => {
 
-    console.log('EDIT PAGE CALLED')
-
-    console.log({ data }, 'dataatt')
-    console.log({allProduct})
     const schema = yup
         .object()
         .shape({
@@ -217,24 +214,30 @@ const EditProductModal = ({ handleClose, open, data, mode, allProduct, order_iD,
                 const AddedProduct = response?.data?.data;
                 onApiSuccess(AddedProduct);
 
-                // const highestDelivery = product.reduce((highest: number, product: any) => {
-                //     return Math.max(highest, parseFloat(product?.deliveryPrice));
-                // }, 0);
+                const highestDelivery = product.reduce((highest: number, product: any) => {
+                    return Math.max(highest, parseFloat(product?.deliveryPrice));
+                }, 0);
 
-                // allProduct['delivery_charge'] = highestDelivery;
+                allProduct['delivery_charge'] = highestDelivery;
 
-                // const rate = response?.data?.data?.productDetails?.reduce((initial: number, price: any) =>
-                //     initial + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0);
+                const rate = response?.data?.data?.productDetails?.reduce((initial: number, price: any) =>
+                    initial + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0);
 
-                // let resetValue = {
-                //     delivery_charge: highestDelivery,
-                //     grand_total: parseInt(highestDelivery) + rate + allProduct?.platform_charge,
-                //     total_amount: rate,
-                //     platform_charge: allProduct?.platform_charge,
-                //     productDetails: [...response?.data?.data?.productDetails]
-                // };
+                let resetValue = {
+                    delivery_charge: highestDelivery,
+                    common_tax_charge:response?.data?.data?.common_tax_charge,
+                    franchise_id:response?.data?.data?.franchise_id,
+                    productDetailsChangeStatus:response?.data?.data?.productDetailsChangeStatus,
+                    grand_total: parseInt(highestDelivery) + rate + allProduct?.platform_charge,
+                    total_amount: rate,
+                    total_price:rate,
+                    type:response?.data?.data?.type,
+                    platform_charge: allProduct?.platform_charge,
+                    productDetails: [...response?.data?.data?.productDetails],
+                    other_charges:response?.data?.data?.other_charges
+                };
 
-                // setProductList(resetValue);
+                setProductList(resetValue);
                 toast.success('Order edit Successfully');
                 handleClose();
             }

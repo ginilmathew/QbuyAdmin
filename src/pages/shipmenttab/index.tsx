@@ -24,7 +24,7 @@ type props = {
 }
 const ShipmentSupport = ({ res, view }: props) => {
 
-    console.log({ res })
+
     const idd = res ? res : view;
 
     const router = useRouter();
