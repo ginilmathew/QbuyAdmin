@@ -23,6 +23,7 @@ type props = {
     order_iD: string;
     setProductList: any,
     SetDeliveryCharge?: any
+    setproductDetailsChangeStatus:any
 }
 type Inputs = {
     name: string,
@@ -45,7 +46,10 @@ type Inputs = {
     offer_price: any,
     store_commission: any,
     product_commission: any,
-    vendor: any
+    vendor: any,
+    variants:any
+
+    
 
 
 
@@ -53,11 +57,11 @@ type Inputs = {
 
 };
 
-const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge }: props) => {
+const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge,setproductDetailsChangeStatus }: props) => {
 
  
     const { query } = useRouter()
-    console.log({ query })
+
 
 
     const schema = yup
@@ -98,7 +102,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                 variant_id: data?.variant_id,
                 store_address: data?.store_address,
                 store_name: data?.store_name,
-                vendor_mobile: data?.vendor_mobile,
+                vendor_mobile: data?.vendor_mobile ? data?.vendor_mobile  : null,
                 delivery: data?.delivery,
                 attributes: data?.attributes,
                 offer_date_from: data?.offer_date_from,
@@ -106,7 +110,8 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                 offer_price: data?.offer_price,
                 store_commission: data?.store_commission,
                 product_commission: data.product_commission,
-                vendor: data?.vendor
+                vendor: data?.vendor,
+                variants:data?.variants
             }
 
         });
@@ -201,7 +206,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     }
 
     const SubmitButton = async (item: any) => {
-
+        setproductDetailsChangeStatus(true)
         //return false
         let product: any = [];
 
@@ -230,6 +235,8 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
         const { total, ...alldata } = item;
         product.push(alldata);
+     
+
 
 
         try {
@@ -238,11 +245,22 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                     id: order_iD,
                     productDetails: product,
                     productDetailsChangeStatus: true,
+                    franchise_id:allProduct?.franchise_id,
+                    common_tax_charge:allProduct?.common_tax_charge,
+                    grand_total:allProduct?.grand_total,
+                    price_breakup:allProduct?.price_breakup,
+                    type:allProduct?.type,
+                    total_price:allProduct?.total_price,
+                    delivery_charge_details:allProduct?.delivery_charge_details,
+                  
                 };
 
+                
 
                 const response = await postData('admin/order/edit', publishValue);
 
+
+              
                 const highestDelivery = product.reduce((highest: number, product: any) => {
                     return Math.max(highest, parseFloat(product?.deliveryPrice));
                 }, 0);
@@ -253,12 +271,20 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                     initial + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0);
 
                 let resetValue = {
+                    franchise_id:allProduct?.franchise_id,
+                    common_tax_charge:allProduct?.common_tax_charge,
+                    delivery_charge_details:allProduct?.delivery_charge_details,
+                    price_breakup:allProduct?.price_breakup,
+                    type:allProduct?.type,
+                    total_price:allProduct?.total_price,
                     delivery_charge: highestDelivery,
                     grand_total: parseInt(highestDelivery) + rate + allProduct?.platform_charge,
                     total_amount: rate,
                     platform_charge: allProduct?.platform_charge,
                     productDetails: [...response?.data?.data?.productDetails]
                 };
+
+
 
                 setProductList(resetValue);
                 toast.success('Order edit Successfully');
@@ -287,6 +313,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     //     handleClose()
     // }
     const DeliverySubmit = () => {
+        setproductDetailsChangeStatus(true)
         let deliveryPrice = getValues('deliveryPrice');
 
         if (parseInt(deliveryPrice) <= 0) {
@@ -298,9 +325,16 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
         allProduct['grand_total'] =
             allProduct['total_amount'] + allProduct['delivery_charge'] + allProduct['platform_charge'];
             let values = {
+                franchise_id:allProduct?.franchise_id,
+                common_tax_charge:allProduct?.common_tax_charge,
+                grand_total:allProduct?.grand_total,
+                price_breakup:allProduct?.price_breakup,
+                type:allProduct?.type,
+                total_price:allProduct?.total_price,
                 id:query?.id,
                 delivery_charge: deliveryPrice,
                 productDetailsChangeStatus: true,
+                delivery_charge_details:allProduct?.delivery_charge_details,
                 productDetails: [...allProduct.productDetails]
             }
             InitialPost(values)
