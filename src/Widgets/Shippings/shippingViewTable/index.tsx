@@ -47,6 +47,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
     const [newAddedProduct, setnewAddedProduct] = useState<any>()
     const [platFomCharge, setplatFomCharge] = useState<any>()
+    const [productDatas, setProductDatas] = useState<any>(null)
 
 
 
@@ -92,35 +93,35 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
     }, [res]);
 
 
-    useEffect(() => {
-        getPlatFormCharge()
-    }, [])
+    // useEffect(() => {
+    //     getPlatFormCharge()
+    // }, [])
 
 
-    const getPlatFormCharge = async () => {
+    // const getPlatFormCharge = async () => {
 
-        try {
+    //     try {
 
-            const response = await fetchData('common/platformcharge')
-            let { data } = response?.data
-
-
-            setplatFomCharge(data?.platformCharge)
-
-        } catch (err) {
-            toast.error("cant't find platform charge")
+    //         const response = await fetchData('common/platformcharge')
+    //         let { data } = response?.data
 
 
-        }
-    }
+    //         setplatFomCharge(data?.platformCharge)
 
-    const handleOpenDeleteModal = useCallback(() => {
-        setModalDelete(true)
-    }, [modalDelete])
+    //     } catch (err) {
+    //         toast.error("cant't find platform charge")
 
-    const handleCloseDeleteModal = useCallback(() => {
-        setModalDelete(false)
-    }, [modalDelete])
+
+    //     }
+    // }
+
+    // const handleOpenDeleteModal = useCallback(() => {
+    //     setModalDelete(true)
+    // }, [modalDelete])
+
+    // const handleCloseDeleteModal = useCallback(() => {
+    //     setModalDelete(false)
+    // }, [modalDelete])
 
     const handleApiSuccess = (AddedProduct: string) => {
         setnewAddedProduct(AddedProduct)
@@ -172,6 +173,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                 description: itm?.description,
                 attributes: itm?.attributes,
                 variants:itm?.selected_variants,
+                product_tax: itm?.product_tax
                
 
 
@@ -253,6 +255,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                 store_commission: itm?.store_commission,
                 product_commission: itm?.product_commission,
                 variants:itm?.selected_variants,
+                product_tax: itm?.product_tax
                
             }))
 
@@ -297,7 +300,10 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
 
         try {
-            await postData('admin/order/edit', data);
+            let postDatas = await postData('admin/order/edit', data);
+            setProductDatas(postDatas?.data?.data)
+            console.log({postDatas})
+
         } catch (err) {
             let message = 'Unknown Error'
             if (err instanceof Error) message = err.message
@@ -306,6 +312,9 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
         }
 
     }, [productList])
+
+
+    console.log({productDatas}, "product")
 
 
 
@@ -327,6 +336,14 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
             else {
 
 
+                console.log({productList}, "productList");
+
+                let products = productList.productDetails?.map((prod: any) => {
+                    const { vendor, ...other} = prod
+                    return{
+                        ...other
+                    }
+                })
 
                 let value = {
                     id: id,
@@ -338,7 +355,9 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                     common_tax_charge:productList?.common_tax_charge,
                     other_charges:productList?.other_charges,
                     price_breakup:productList?.price_breakup,
-                    productDetails: [...productList.productDetails]
+                    productDetails: products,
+                    grand_total: productList?.grand_total,
+                    product_tax: productList?.product_tax
                 }
 
                 InitialPost(value)
@@ -514,7 +533,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {productList?.productDetails?.map((row: any) => {
+                        {productDatas?.productDetails?.map((row: any) => {
                             console.log({ row })
                             return (
                                 <TableRow
@@ -560,7 +579,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                             <TableCell colSpan={3}></TableCell>
                             <TableCell align="right">Sub-Total</TableCell>
                             <TableCell align="center">
-                                ₹ {isNaN(parseFloat(productList?.total_amount)) ? 0 : parseFloat(productList?.total_amount).toFixed(2)}
+                                ₹ {isNaN(parseFloat(productDatas?.total_price)) ? 0 : parseFloat(productDatas?.total_price).toFixed(2)}
                             </TableCell>
                             {(readonly || res === null) && <TableCell align="center"></TableCell>}
                             {(readonly || res === null) && <TableCell align="center"></TableCell>}
@@ -569,30 +588,23 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
 
                             <TableCell colSpan={3}></TableCell>
                             <TableCell align="right" >{'Delivery Charge'}</TableCell>
-                            <TableCell align="center">₹ {productList?.delivery_charge}</TableCell>
+                            <TableCell align="center">₹ {productDatas?.delivery_charge}</TableCell>
                             {(readonly || res === null) && <TableCell align="center"> <BorderColorTwoToneIcon
-                                onClick={() => { handleOpen(productList, 'delivery') }}
+                                onClick={() => { handleOpen(productDatas, 'delivery') }}
                                 style={{
                                     color: '#58D36E',
                                     cursor: 'pointer'
                                 }}
                             /></TableCell>}
                         </TableRow>
-                        {res?.price_breakup?.map((breakup: any) => {
-                            if (breakup?.charge_name === "Delivery Charge") return false;
+                        {productDatas?.price_breakup?.map((breakup: any) => {
+                            if (breakup?.charge_name?.toLowerCase().includes('delivery charge')) return false;
                             return (
                                 <TableRow>
 
                                     <TableCell colSpan={3}></TableCell>
                                     <TableCell align="right" >{breakup?.charge_name}</TableCell>
                                     <TableCell align="center">₹ {breakup?.price}</TableCell>
-                                    {((readonly || res === null) && productList?.productDetails?.length > 0 && breakup?.charge_name === "Delivery Charge") && <TableCell align="center"> <BorderColorTwoToneIcon
-                                        onClick={() => { handleOpen(productList, 'delivery') }}
-                                        style={{
-                                            color: '#58D36E',
-                                            cursor: 'pointer'
-                                        }}
-                                    /></TableCell>}
                                 </TableRow>
                             )
                         })}
@@ -612,7 +624,7 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                         <TableRow>
                             <TableCell colSpan={3}></TableCell>
                             <TableCell align="right">Total</TableCell>
-                            <TableCell align="center">  ₹ {isNaN(parseFloat(productList?.grand_total)) ? 0 : parseFloat(productList?.grand_total).toFixed(2)}</TableCell>
+                            <TableCell align="center">  ₹ {isNaN(parseFloat(productDatas?.grand_total)) ? 0 : parseFloat(productDatas?.grand_total).toFixed(2)}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
@@ -625,12 +637,13 @@ const ShippingTable = ({ res, readonly, id, SetDeliveryCharge, setStoreList, onA
                     setproductDetailsChangeStatus={setproductDetailsChangeStatus}
                     SetDeliveryCharge={SetDeliveryCharge}
                     order_iD={id}
-                    allProduct={productList}
+                    allProduct={productDatas}
                     open={modalOpen}
                     handleClose={handleClose}
                     data={singleList}
                     mode={mode}
                     setProductList={setProductList}
+                    setProductDatas={setProductDatas}
                 />}
 
             {editModal &&

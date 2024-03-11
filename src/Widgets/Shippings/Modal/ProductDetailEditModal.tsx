@@ -23,33 +23,34 @@ type props = {
     order_iD: string;
     setProductList: any,
     SetDeliveryCharge?: any
-    setproductDetailsChangeStatus:any
+    setproductDetailsChangeStatus: any,
+    setProductDatas: any
 }
 type Inputs = {
     name: string,
     quantity: string,
     total: number,
     seller_price: any,
-    unitPrice: any,
-    deliveryPrice: any,
+    unitPrice?: any,
+    deliveryPrice?: any,
     product_id: string,
-    image: string,
+    image?: string,
     type: any,
-    variant_id: any,
-    store_address: string,
-    store_name: string,
-    vendor_mobile: string,
-    delivery: any,
-    attributes: any,
-    offer_date_from: any,
-    offer_date_to: any,
-    offer_price: any,
-    store_commission: any,
-    product_commission: any,
-    vendor: any,
-    variants:any
+    variant_id?: any,
+    store_address?: string,
+    store_name?: string,
+    vendor_mobile?: string,
+    delivery?: any,
+    attributes?: any,
+    offer_date_from?: any,
+    offer_date_to?: any,
+    offer_price?: any,
+    store_commission?: any,
+    product_commission?: any,
+    vendor?: any,
+    variants?: any,
+    //setProductDatas: any
 
-    
 
 
 
@@ -57,10 +58,60 @@ type Inputs = {
 
 };
 
-const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge,setproductDetailsChangeStatus }: props) => {
+const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, order_iD, setProductList, SetDeliveryCharge, setproductDetailsChangeStatus, setProductDatas }: props) => {
 
- 
+
     const { query } = useRouter()
+
+
+    useEffect(() => {
+
+        async function getProductsPriceWithoutOffers() {
+            if(mode === "product"){
+                let datas = {
+                    type: process.env.NEXT_PUBLIC_TYPE,
+                    productDetails:{
+                        product_id: data?.product_id,
+                        type: data?.type,
+                        variants: data?.type === "variant" ? data?.variants : [],
+                        quantity: data?.quantity
+                    }
+                
+                }
+    
+                const response = await postData('admin/order/get-product-normal-price', datas);
+
+                let formDatas = {
+                    name: `${data?.name} ${data?.attributes ? '(' + data?.attributes.join(', ') + ')' : ''}`,
+                    seller_price: response?.data?.data?.seller_price,
+                    quantity: response?.data?.data?.quantity,
+                    unitPrice: response?.data?.data?.regular_price,
+                    total: parseFloat(response?.data?.data?.regular_price) * parseFloat(response?.data?.data?.quantity),
+                    product_id: response?.data?.data?.product_id,
+                    variant_id: response?.data?.data?.variant_id,
+                    type: response?.data?.data?.type,
+                    id:  order_iD,
+                    variants: response?.data?.data?.variants,
+                    product_tax: response?.data?.data?.product_tax
+                }
+                reset(formDatas)
+            }
+            else{
+
+                let formDatas = {
+                    deliveryPrice: data?.delivery_charge
+                }
+                reset(formDatas)
+            }
+
+            
+            //setProductDatas(response.data.data)
+        }
+
+        getProductsPriceWithoutOffers()
+      
+    }, [data, mode])
+    
 
 
 
@@ -89,30 +140,33 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
         setError,
         setValue, } = useForm<Inputs>({
             resolver: yupResolver(schema),
-            defaultValues: {
-                product_id: data?.product_id,
-                name: `${data?.name} (${data?.attributes ? `${data?.attributes?.join(', ')})` : ""}`,
-                quantity: data?.quantity || "",
-                total: (data?.quantity * data?.unitPrice),
-                seller_price: data?.seller_price,
-                unitPrice: data?.unitPrice,
-                deliveryPrice: allProduct?.delivery_charge,
-                image: data?.image,
-                type: data?.type,
-                variant_id: data?.variant_id,
-                store_address: data?.store_address,
-                store_name: data?.store_name,
-                vendor_mobile: data?.vendor_mobile ? data?.vendor_mobile  : null,
-                delivery: data?.delivery,
-                attributes: data?.attributes,
-                offer_date_from: data?.offer_date_from,
-                offer_date_to: data?.offer_date_to,
-                offer_price: data?.offer_price,
-                store_commission: data?.store_commission,
-                product_commission: data.product_commission,
-                vendor: data?.vendor,
-                variants:data?.variants
-            }
+            // defaultValues: mode === 'product' ? {
+            //     product_id: data?.product_id,
+            //     name: `${data?.name} ${data?.attributes ? `(${data?.attributes?.join(', ')})` : ""}`,
+            //     quantity: data?.quantity || "",
+            //     total: (data?.quantity * data?.price),
+            //     seller_price: data?.seller_price,
+            //     unitPrice: data?.unitPrice,
+            //     //deliveryPrice: allProduct?.delivery_charge,
+            //     image: data?.image,
+            //     type: data?.type,
+            //     variant_id: data?.variant_id,
+            //     store_address: data?.store_address,
+            //     store_name: data?.store_name,
+            //     vendor_mobile: data?.vendor_mobile ? data?.vendor_mobile : null,
+            //     //delivery: data?.delivery,
+            //     attributes: data?.attributes,
+            //     //offer_date_from: data?.offer_date_from,
+            //     //offer_date_to: data?.offer_date_to,
+            //     //offer_price: data?.offer_price,
+            //     //store_commission: data?.store_commission,
+            //     //product_commission: data.product_commission,
+            //     //vendor: data?.vendor,
+            //     //variants: data?.variants
+            // } : {
+            //     delivery: data?.delivery_charge,
+            //     deliveryPrice: data?.delivery_charge,
+            // }
 
         });
 
@@ -153,10 +207,11 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
     const onChangeQuantity = (e: any) => {
         const { value } = e.target;
+        let data : any = getValues()
         setValue('quantity', value);
 
         if (parseInt(value) <= 0 || value === "") {
-            setValue('unitPrice', data?.quantity * data?.unitPrice);
+            setValue('unitPrice', data?.unitPrice);
             setValue('seller_price', data?.seller_price);
             setError('quantity', { message: 'Minimum Quantity Required' });
             setOutOfStock(false);
@@ -171,18 +226,24 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                 }
             }
             setError('quantity', { message: '' });
-            let unitprz = (parseInt(data?.unitPrice) * parseFloat(value));
+            //let unitprz = (parseInt(data?.unitPrice) * parseInt(value));
             setValue('unitPrice', data?.unitPrice);
             setValue('seller_price', data?.seller_price);
-            setValue('total', unitprz);
+            setValue('total', (parseInt(data?.unitPrice) * parseInt(value)));
             setOutOfStock(false);
         }
     }
 
 
-    const InitialPost = useCallback(async (data:any) => {
+    const InitialPost = useCallback(async (data: any) => {
         try {
-            await postData('admin/order/edit', data);
+            data.id = order_iD;
+            //data.productDetailsChangeStatus = true
+            let datas = await postData('admin/order/edit', data);
+            setProductDatas(datas?.data?.data)
+            handleClose()
+            toast.success('Product Updated Successfully')
+
         } catch (err) {
             let message = 'Unknown Error'
             if (err instanceof Error) message = err.message
@@ -199,105 +260,130 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
 
     const onChangeDeliveryCharge = (e: any) => {
         const { value } = e.target;
-     
+
         setValue('deliveryPrice', value)
         SetDeliveryCharge(value)
-    
+
     }
 
     const SubmitButton = async (item: any) => {
-        setproductDetailsChangeStatus(true)
-        //return false
-        let product: any = [];
+
+        data.seller_price = item?.seller_price
+        data.unitPrice = item?.unitPrice
+        data.quantity = item?.quantity
+        data.total = item?.total
+        data.product_tax = item?.product_tax
+        data.price = item?.unitPrice
+
+        let products = allProduct?.productDetails?.findIndex((res: any) => res?.product_id === item?.product_id && res?.variant_id === item?.variant_id);
 
 
-        if (item?.variant_id) {
-            product = allProduct?.productDetails?.filter((res: any) => res?.variant_id !== item?.variant_id).map((itm: any) => ({
-                ...itm
-            }));
-        } else {
-            if (item?.attributes) {
-                product = allProduct?.productDetails?.filter((prod: any) => (prod?.product_id === item?.product_id && !isEqual(prod?.attributes?.sort(), item?.attributes?.sort())) || prod?.product_id !== item?.product_id).map((itm: any) => ({
-                    ...itm
-                }));
-            }
-            else {
-                product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== item?.product_id).map((itm: any) => ({
-                    ...itm
-                }));
-            }
-
+        if (products !== -1) {
+            allProduct.productDetails[products] = data
         }
 
-        item.title = data?.title;
-        item.name = data?.name;
-        item.price = item?.unitPrice * parseFloat(item?.quantity);
+        allProduct.id= order_iD
+        allProduct.productDetailsChangeStatus= true
 
-        const { total, ...alldata } = item;
-        product.push(alldata);
-     
+        InitialPost(allProduct)
 
+        //const response = await postData('admin/order/edit', allProduct);
 
+        // console.log({data, item, allProduct})
+        // return false
 
-        try {
-            if (order_iD) {
-                let publishValue = {
-                    id: order_iD,
-                    productDetails: product,
-                    productDetailsChangeStatus: true,
-                    franchise_id:allProduct?.franchise_id,
-                    common_tax_charge:allProduct?.common_tax_charge,
-                    grand_total:allProduct?.grand_total,
-                    price_breakup:allProduct?.price_breakup,
-                    type:allProduct?.type,
-                    total_price:allProduct?.total_price,
-                    delivery_charge_details:allProduct?.delivery_charge_details,
-                  
-                };
-
-                
-
-                const response = await postData('admin/order/edit', publishValue);
+        // setproductDetailsChangeStatus(true)
+        // //return false
+        // let product: any = [];
 
 
-              
-                const highestDelivery = product.reduce((highest: number, product: any) => {
-                    return Math.max(highest, parseFloat(product?.deliveryPrice));
-                }, 0);
+        // if (item?.variant_id) {
+        //     product = allProduct?.productDetails?.filter((res: any) => res?.variant_id !== item?.variant_id).map((itm: any) => ({
+        //         ...itm
+        //     }));
+        // } else {
+        //     if (item?.attributes) {
+        //         product = allProduct?.productDetails?.filter((prod: any) => (prod?.product_id === item?.product_id && !isEqual(prod?.attributes?.sort(), item?.attributes?.sort())) || prod?.product_id !== item?.product_id).map((itm: any) => ({
+        //             ...itm
+        //         }));
+        //     }
+        //     else {
+        //         product = allProduct?.productDetails?.filter((res: any) => res?.product_id !== item?.product_id).map((itm: any) => ({
+        //             ...itm
+        //         }));
+        //     }
 
-                allProduct['delivery_charge'] = highestDelivery;
+        // }
 
-                const rate = response?.data?.data?.productDetails?.reduce((initial: number, price: any) =>
-                    initial + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0);
+        // item.title = data?.title;
+        // item.name = data?.name;
+        // item.price = item?.unitPrice * parseFloat(item?.quantity);
 
-                let resetValue = {
-                    franchise_id:allProduct?.franchise_id,
-                    common_tax_charge:allProduct?.common_tax_charge,
-                    delivery_charge_details:allProduct?.delivery_charge_details,
-                    price_breakup:allProduct?.price_breakup,
-                    type:allProduct?.type,
-                    total_price:allProduct?.total_price,
-                    delivery_charge: highestDelivery,
-                    grand_total: parseInt(highestDelivery) + rate + allProduct?.platform_charge,
-                    total_amount: rate,
-                    platform_charge: allProduct?.platform_charge,
-                    productDetails: [...response?.data?.data?.productDetails]
-                };
+        // const { total, ...alldata } = item;
+        // product.push(alldata);
 
 
 
-                setProductList(resetValue);
-                toast.success('Order edit Successfully');
-                handleClose();
-            }
+
+        // try {
+        //     if (order_iD) {
+        //         let publishValue = {
+        //             id: order_iD,
+        //             productDetails: product,
+        //             productDetailsChangeStatus: true,
+        //             franchise_id: allProduct?.franchise_id,
+        //             common_tax_charge: allProduct?.common_tax_charge,
+        //             grand_total: allProduct?.grand_total,
+        //             price_breakup: allProduct?.price_breakup,
+        //             type: allProduct?.type,
+        //             total_price: allProduct?.total_price,
+        //             delivery_charge_details: allProduct?.delivery_charge_details,
+
+        //         };
 
 
-        } catch (err) {
-            let message = 'Unknown Error';
-            if (err instanceof Error) message = err.message;
-            reportError({ message });
-            toast.error(message);
-        }
+
+        //         const response = await postData('admin/order/edit', publishValue);
+
+
+
+        //         const highestDelivery = product.reduce((highest: number, product: any) => {
+        //             return Math.max(highest, parseFloat(product?.deliveryPrice));
+        //         }, 0);
+
+        //         allProduct['delivery_charge'] = highestDelivery;
+
+        //         const rate = response?.data?.data?.productDetails?.reduce((initial: number, price: any) =>
+        //             initial + (parseInt(price?.unitPrice) * parseInt(price?.quantity)), 0);
+
+        //         let resetValue = {
+        //             franchise_id: allProduct?.franchise_id,
+        //             common_tax_charge: allProduct?.common_tax_charge,
+        //             delivery_charge_details: allProduct?.delivery_charge_details,
+        //             price_breakup: allProduct?.price_breakup,
+        //             type: allProduct?.type,
+        //             total_price: allProduct?.total_price,
+        //             delivery_charge: highestDelivery,
+        //             grand_total: parseInt(highestDelivery) + rate + allProduct?.platform_charge,
+        //             total_amount: rate,
+        //             platform_charge: allProduct?.platform_charge,
+        //             productDetails: [...response?.data?.data?.productDetails]
+        //         };
+
+
+
+        //         setProductList(resetValue);
+        //         toast.success('Order edit Successfully');
+        //         handleClose();
+        //     }
+
+
+        // } catch (err) {
+        //     let message = 'Unknown Error';
+        //     if (err instanceof Error) message = err.message;
+        //     reportError({ message });
+        //     toast.error(message);
+        // }
     }
 
 
@@ -313,7 +399,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
     //     handleClose()
     // }
     const DeliverySubmit = () => {
-        setproductDetailsChangeStatus(true)
+        //setproductDetailsChangeStatus(true)
         let deliveryPrice = getValues('deliveryPrice');
 
         if (parseInt(deliveryPrice) <= 0) {
@@ -321,24 +407,30 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
             return false;
         }
 
-        allProduct['delivery_charge'] = parseInt(deliveryPrice);
-        allProduct['grand_total'] =
-            allProduct['total_amount'] + allProduct['delivery_charge'] + allProduct['platform_charge'];
-            let values = {
-                franchise_id:allProduct?.franchise_id,
-                common_tax_charge:allProduct?.common_tax_charge,
-                grand_total:allProduct?.grand_total,
-                price_breakup:allProduct?.price_breakup,
-                type:allProduct?.type,
-                total_price:allProduct?.total_price,
-                id:query?.id,
-                delivery_charge: deliveryPrice,
-                productDetailsChangeStatus: true,
-                delivery_charge_details:allProduct?.delivery_charge_details,
-                productDetails: [...allProduct.productDetails]
-            }
-            InitialPost(values)
-        
+        data.delivery_charge = parseInt(deliveryPrice);
+        data.id= query?.id;
+        data.deliveryChangeStatus= true
+
+
+        console.log({data})
+
+        // allProduct['delivery_charge'] = parseInt(deliveryPrice);
+        // allProduct['grand_total'] = allProduct['total_amount'] + allProduct['delivery_charge'] + allProduct['platform_charge'];
+        // let values = {
+        //     franchise_id: allProduct?.franchise_id,
+        //     common_tax_charge: allProduct?.common_tax_charge,
+        //     grand_total: allProduct?.grand_total,
+        //     price_breakup: allProduct?.price_breakup,
+        //     type: allProduct?.type,
+        //     total_price: allProduct?.total_price,
+        //     id: query?.id,
+        //     delivery_charge: deliveryPrice,
+        //     productDetailsChangeStatus: true,
+        //     delivery_charge_details: allProduct?.delivery_charge_details,
+        //     productDetails: [...allProduct.productDetails]
+        // }
+        InitialPost(data)
+
         handleClose();
     };
 
@@ -410,7 +502,7 @@ const ProductDetailEditModal = ({ handleClose, open, data, mode, allProduct, ord
                                     placeholder={``}
                                     fieldLabel={"Seller Price"}
                                     disabled={false}
-                                    view={false}
+                                    view={true}
                                     defaultValue={''}
                                 />
                             </Grid>

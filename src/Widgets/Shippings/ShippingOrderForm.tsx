@@ -41,9 +41,9 @@ type Inputs = {
     comment: string;
     order_id: string;
     ridername: string,
-    customer_comments:string,
-    rider_email:string,
-    rider_phone:string,
+    customer_comments: string,
+    rider_email: string,
+    rider_phone: string,
     payment_status: string;
     refund_amount: string;
     vendor_status: any,
@@ -58,13 +58,13 @@ type props = {
     onupdate?: any
 }
 
-const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
+const ShippingOrderForm = ({ view, res, edit, add, onupdate }: props) => {
     const router = useRouter()
     const idd = view ? view : res;
     const [patientArray, setPatientArray] = useState<any>([])
     const [orderhistory, setOrderhistory] = useState<any>()
     const [customerGroupSelect, setCustomerGroupSelect] = useState<string>('')
-   const [ordertype, setordertype] = useState<any>("Slot based")
+    const [ordertype, setordertype] = useState<any>("Slot based")
     const [paymentMethodList, setPaymentMethodList] = useState<any>([
         {
             id: 1,
@@ -96,10 +96,10 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
     const [vendor_statusP, setVendorStatusP] = useState<any>(null)
     const [defaultStatus, setDefaultStatus] = useState<any>(null)
     const [refundModal, setRefundModal] = useState<boolean>(false);
-    const [storeList,setStoreList]=useState<any>(null)
+    const [storeList, setStoreList] = useState<any>(null)
     const [customerListAll, setcustomerListAll] = useState<any>([])
     const [dataa, setDataa] = useState<any>('')
-	const [inputValue, setInputValue] = useState<any>('');
+    const [inputValue, setInputValue] = useState<any>('');
     const [productdetails, setproductdetails] = useState<any>()
     const [customerGroupData, setcustomerGroupData] = useState<any>('')
     const [platFomCharge, setplatFomCharge] = useState<any>('')
@@ -123,7 +123,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
     const [vendorStatusList, setVendorStatusList] = useState<any>([])
     const [platformList, setplatformList] = useState<any>(null);
 
-   
+
 
     const schema = yup
         .object()
@@ -133,7 +133,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             payment_method: yup.string().max(60, 'payment method required'),
             // name:yup.string().required("name required")
             // email:yup.string().required("email required"),
-            
+
         })
         .required();
 
@@ -150,58 +150,59 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
 
         });
 
-        const CustomerGroupChange = (e: any) => {
-           
-     }
-    
-     const CustomerAddressChange = (e: any) => {
-           const {value}=e.target
-           console.log(value);
-           setValue("shipping_address_delivery_address",value)
-           setselectedcustmraddress(value)
-           
+    const CustomerGroupChange = (e: any) => {
+
+    }
+
+    const CustomerAddressChange = (e: any) => {
+        const { value } = e.target
+        console.log(value);
+        setValue("shipping_address_delivery_address", value)
+        setselectedcustmraddress(value)
+
     }
     const orderTypeChange = (e: any) => {
-        if(!idd){
+        if (!idd) {
 
         }
 
     }
- 
-    
+
+
     const fetchCustomerGroupOptions = async () => {
         try {
             const response = await fetchData(`/admin/customer-group/${process.env.NEXT_PUBLIC_TYPE}`);
             const customerGroupData = response.data.data;
-  
+
             setcustomerGroupData(customerGroupData)
         } catch (error) {
             console.error("Failed to fetch customer groups:", error);
             toast.error("Failed to fetch customer groups");
-        } };
+        }
+    };
 
-        // const getPlatFormCharge = async () => {
-     
-        //     try {
-                
-        //         const response = await fetchData('common/platformcharge')
-        //         let { data } = response?.data
-        //         console.log({data});
-                
-        //          setplatFomCharge(data?.platformCharge)
-    
-        //     } catch (err) {
-        //         toast.error("cant't find platform charge")
-             
-    
-        //     } 
-        // }
+    // const getPlatFormCharge = async () => {
+
+    //     try {
+
+    //         const response = await fetchData('common/platformcharge')
+    //         let { data } = response?.data
+    //         console.log({data});
+
+    //          setplatFomCharge(data?.platformCharge)
+
+    //     } catch (err) {
+    //         toast.error("cant't find platform charge")
+
+
+    //     } 
+    // }
     useEffect(() => {
         fetchCustomerGroupOptions();
         // getPlatFormCharge()
     }, []);
     useEffect(() => {
-         if (dataa ) {
+        if (dataa) {
             // customerDetails()
             setValue('name', dataa?.name)
             // setValue('user_id', data?.user_id)
@@ -211,91 +212,89 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             setcustomer_user_id(dataa?.customer_user_id)
             // setValue()
         }
-    
+
         if (inputValue.length === 0) {
             setValue('name', "")
             setValue('email', "")
             setValue('mobile', "")
-            
+
             // setValue('user_id', "")
         }
     }, [dataa])
 
-    const paymentMethodChange = (e: any) =>
-     {
+    const paymentMethodChange = (e: any) => {
         const { value } = e.target;
         setValue("payment_type", value)
         setPaymentMethodSelect(value)
-     }
+    }
 
-    const paymentStatusChange = (e: any) =>
-     {
+    const paymentStatusChange = (e: any) => {
         const { value } = e.target;
         setValue("payment_status", value)
         setPaymentStatusSelect(value)
-     }
+    }
 
-    const orderStatusChange = (e: any) => 
-    {
+    const orderStatusChange = (e: any) => {
         const { value } = e.target;
         setOrderSelect(value);
 
     }
 
     useEffect(() => {
-        if(dataa)
-        {
+        if (dataa) {
             customerDetailsAddressGet()
         }
-        
+
     }, [dataa])
 
 
     const customerDetailsAddressGet = async () => {
         const id = dataa?.customer_id;
-        console.log({dataa});
-        
+        console.log({ dataa });
+
         try {
-                const response = await fetchData(`admin/customer-details/search/${id}`);
+            const response = await fetchData(`admin/customer-details/search/${id}`);
             console.log(response?.data?.data);
             const customerGroupId = response?.data?.data?.customer_group_id;
             const matchingCustomerGroup = findMatchingCustomerGroup(customerGroupId);
             setcustomeraddressList(response?.data?.data?.users?.addresses)
-           
-            {customeraddressList?.map((res: any) => (
-                setValue('customer_comments',res?.comments)
-            ))}
-          
-           console.log({customerGroupData});
-           console.log({matchingCustomerGroup});
-           
-           if (matchingCustomerGroup) {
-            setValue("customer_group", matchingCustomerGroup);
-            setCustomerGroupSelect(matchingCustomerGroup);
-        }
-           
-         
-            
+
+            {
+                customeraddressList?.map((res: any) => (
+                    setValue('customer_comments', res?.comments)
+                ))
+            }
+
+            console.log({ customerGroupData });
+            console.log({ matchingCustomerGroup });
+
+            if (matchingCustomerGroup) {
+                setValue("customer_group", matchingCustomerGroup);
+                setCustomerGroupSelect(matchingCustomerGroup);
+            }
+
+
+
             // if (Array.isArray(customerGroupData)) {
             //     // Check if customer group ID matches any customer group
             //     const matchingCustomerGroup = customerGroupData.find(
             //         (group) => group?.customer_group_id === response?.data?.data?.customer_group_id
             //     );
             //  console.log({matchingCustomerGroup});
-    
+
             //     // If a match is found, update the customer group select state
             //     if (matchingCustomerGroup) {
             //      setValue("customer_group",matchingCustomerGroup)   ;
             //      setCustomerGroupSelect(matchingCustomerGroup?.name)
             //     }
             // }
-          
+
         } catch (err: any) {
             toast.error(err?.message);
-           
-        } 
+
+        }
     };
-    const findMatchingCustomerGroup = (customerGroupId:any) => {
+    const findMatchingCustomerGroup = (customerGroupId: any) => {
         if (Array.isArray(customerGroupData)) {
             return customerGroupData.find((group) => group?._id === customerGroupId);
         }
@@ -308,11 +307,11 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             const response = await fetchData(`admin/order/show/${idd}`)
             setOrderViewList(response?.data?.data)
 
-         
+
 
         } catch (err: any) {
             toast.error(err?.message)
-        
+
 
         } finally {
             setLoader(false)
@@ -360,7 +359,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
 
         let value = {
             order_id: idd,
-         
+
         }
         try {
             setLoading(true)
@@ -406,7 +405,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
         setVendorStatusP(vendor_statusP)
     }
     // const customerList = async () => {
-     
+
     //     try {
     //         const fetch = await fetchData('admin/customer-details/list');
     //         let result = fetch?.data?.data?.map((userData: any) => ({
@@ -415,17 +414,17 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
     //             phonenumber: userData?.users?.mobile,
     //             customer_id:userData?._id,
     //             customet_user_id:userData?.user_id
-                 
-               
+
+
     //        }));
     //          setcustomerListAll(result);
     //     } catch (err: any) {
     //         // Handle errors here
-          
+
     //     }
     // };
 
-   
+
 
     // const GetPlatformCharge = async () => {
     //     try {
@@ -453,7 +452,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
         vendorStatus();
         // GetPlatformCharge()
         //customerList()
-        setValue("order_type",ordertype)
+        setValue("order_type", ordertype)
     }, [])
 
 
@@ -469,7 +468,7 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
             setValue('ridername', orderviewList?.rider_each_order_settlement?.rider?.name)
             setrider_name(orderviewList?.rider_each_order_settlement?.rider?.name)
             // setValue('rider_email',orderviewList?.rider_each_order_settlement?.rider?.email)
-            setValue('rider_phone',orderviewList?.rider_each_order_settlement?.rider?.mobile)
+            setValue('rider_phone', orderviewList?.rider_each_order_settlement?.rider?.mobile)
             // setValue('payment_address_pickup_address', `${orderviewList?.billaddress?.name ? orderviewList?.billaddress?.name : ''},${orderviewList?.billaddress?.area?.address ? orderviewList?.billaddress?.area?.address : ''},${orderviewList?.billaddress?.pincode ? orderviewList?.billaddress?.pincode : ''},${orderviewList?.billaddress?.mobile ? `${'Mob:'}${orderviewList?.billaddress?.mobile}` : ''}`)
             setValue('shipping_address_delivery_address', `${orderviewList?.shipaddress?.name ? orderviewList?.shipaddress?.name : ''},${orderviewList?.shipaddress?.area?.address ? orderviewList?.shipaddress?.area?.address : ''},${orderviewList?.shipaddress?.pincode ? orderviewList?.shipaddress?.pincode : ''},
             ${orderviewList?.shipaddress?.mobile ? `${'Mob:'}${orderviewList?.shipaddress?.mobile}` : ''}`)
@@ -502,99 +501,98 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
 
 
     const SubmitOrder = async (data: any) => {
-    
 
-     
-       if(res){
-        let uniqueStore: any[] = Array.from(new Set(storeList));
 
-    
 
-        let result = {
-            id: idd,
-            delivery_charge: Math.ceil(deliveryCharge),
-            ...data,
-            payment_method: data?.payment_type,
-            vendor_status: vendor_statusP,
-            platform_charge: orderviewList?.platform_charge,
-            store:uniqueStore,
-          }
-  
-        
-        try {
+        if (res) {
+            let uniqueStore: any[] = Array.from(new Set(storeList));
 
-            await postData('admin/order/update', result);
-            //router.push('/shipments')
-            if(onupdate){
-                onupdate()
+
+
+            let result = {
+                id: idd,
+                delivery_charge: Math.ceil(deliveryCharge),
+                ...data,
+                payment_method: data?.payment_type,
+                vendor_status: vendor_statusP,
+                platform_charge: orderviewList?.platform_charge,
+                store: uniqueStore,
             }
-            
-            toast.success('Order Updated Successfully')
-            router.push('/shipments')
-
-        } catch (err) {
-            let message = 'Unknown Error'
-            if (err instanceof Error) message = err.message
-            reportError({ message })
-            toast.error(message)
-        }
-       }
-       else {
-       
-    
 
 
-        let resultadd = productdetails?.product_details?.productDetails?.map((itm: any) => ({
-            id: productdetails?.product_details?._id,
-            user_id: dataa?.customet_user_id,
-            name: data?.name,
-            payment_status: data?.payment_status,
-            payment_type: data?.payment_type,
-            store: [itm?.vendor?._id],
-            franchise: itm?.vendor?.franchise_id,
-            delivery_charge: productdetails?.delivery_charge,
-            shipping_address:selectedcustmraddress,
-            billing_address:selectedcustmraddress,
-            total_amount: productdetails?.total_amount,
-            type:process.env.NEXT_PUBLIC_TYPE,
-            delivery_date:new Date().toISOString().slice(0, 19).replace("T", " "),
-            delivery_type:ordertype ,
-            // platform_charge:platFomCharge
-          
-            
-        }));
+            try {
 
- 
-  
-        if(!selectedcustmraddress)
-        {
-            toast.error("Shipping Address/Delivery Address required")
-            return
+                await postData('admin/order/update', result);
+                //router.push('/shipments')
+                if (onupdate) {
+                    onupdate()
+                }
+
+                toast.success('Order Updated Successfully')
+                router.push('/shipments')
+
+            } catch (err) {
+                let message = 'Unknown Error'
+                if (err instanceof Error) message = err.message
+                reportError({ message })
+                toast.error(message)
+            }
         }
-        if(! data?.payment_type){
-         toast.error("Payment method required")
-         return
+        else {
+
+
+
+
+            let resultadd = productdetails?.product_details?.productDetails?.map((itm: any) => ({
+                id: productdetails?.product_details?._id,
+                user_id: dataa?.customet_user_id,
+                name: data?.name,
+                payment_status: data?.payment_status,
+                payment_type: data?.payment_type,
+                store: [itm?.vendor?._id],
+                franchise: itm?.vendor?.franchise_id,
+                delivery_charge: productdetails?.delivery_charge,
+                shipping_address: selectedcustmraddress,
+                billing_address: selectedcustmraddress,
+                total_amount: productdetails?.total_amount,
+                type: process.env.NEXT_PUBLIC_TYPE,
+                delivery_date: new Date().toISOString().slice(0, 19).replace("T", " "),
+                delivery_type: ordertype,
+                // platform_charge:platFomCharge
+
+
+            }));
+
+
+
+            if (!selectedcustmraddress) {
+                toast.error("Shipping Address/Delivery Address required")
+                return
+            }
+            if (!data?.payment_type) {
+                toast.error("Payment method required")
+                return
+            }
+            if (!data?.payment_status) {
+                toast.error("Payment status required")
+                return
+            }
+            if (!productdetails?.product_details?._id) {
+                toast.error("Please Add Product")
+                return
+            }
+            try {
+                await postData('admin/order/create', resultadd[0]);
+                router.push('/shipments');
+                toast.success('Order created Successfully');
+            } catch (err) {
+                let message = 'Unknown Error';
+                if (err instanceof Error) message = err.message;
+                reportError({ message });
+                toast.error(message);
+            }
         }
-        if(!data?.payment_status){
-         toast.error("Payment status required")
-         return
-        }
-        if(!productdetails?.product_details?._id){
-         toast.error("Please Add Product")
-         return
-        }
-        try {
-            await postData('admin/order/create', resultadd[0]);
-            router.push('/shipments');
-            toast.success('Order created Successfully');
-        } catch (err) {
-            let message = 'Unknown Error';
-            if (err instanceof Error) message = err.message;
-            reportError({ message });
-            toast.error(message);
-        }
-    }
-          
+
 
     }
 
@@ -605,59 +603,59 @@ const ShippingOrderForm = ({ view, res, edit,add, onupdate }: props) => {
         return <><CustomLoader /></>
     }
 
-const onChangeRelatedproduct = (value: any) => {
-    let result = value && value?.map((res: any) => ({
-        _id: res?._id,
-        name: res?.title
+    const onChangeRelatedproduct = (value: any) => {
+        let result = value && value?.map((res: any) => ({
+            _id: res?._id,
+            name: res?.title
+        }
+        ))
+
+        // setRecomendedProductArray(result)
     }
-    ))
+    const PatientSearch = (value: any, newvalue: any) => {
+        setDataa(newvalue)
+        console.log({ newvalue });
 
-    // setRecomendedProductArray(result)
-}
-const PatientSearch = (value:any, newvalue:any) => {
-    setDataa(newvalue)
-    console.log({newvalue});
-    
-    // customerDetailsAddressGet()
-    
-    
-}
+        // customerDetailsAddressGet()
 
 
-const PatientOnchangeInput = (event: any, newInputValue: any) => {
-    setInputValue(newInputValue);
-  
-    const val = {
-      key: newInputValue,
+    }
+
+
+    const PatientOnchangeInput = (event: any, newInputValue: any) => {
+        setInputValue(newInputValue);
+
+        const val = {
+            key: newInputValue,
+        };
+
+
+        const filteredPatients = customerListAll?.filter((patient: any) => {
+            const { name, phonenumber } = patient;
+
+            const nameMatches = name?.toLowerCase().startsWith(newInputValue?.toLowerCase());
+
+
+            const isNumeric = !isNaN(newInputValue);
+            const phoneMatches = isNumeric && phonenumber?.includes(newInputValue);
+
+            return nameMatches || phoneMatches;
+        });
+
+
+
+
+        setPatientArray(filteredPatients)
+
+
+
+
     };
-  
 
-     const filteredPatients = customerListAll?.filter((patient:any) => {
-      const { name, phonenumber } = patient;
-  
-      const nameMatches = name?.toLowerCase().startsWith(newInputValue?.toLowerCase());
-  
-     
-      const isNumeric = !isNaN(newInputValue);
-      const phoneMatches = isNumeric && phonenumber?.includes(newInputValue);
-  
-      return nameMatches || phoneMatches;
-    });
-   
-   
+    const handleApiSuccess = (newAddedProduct: string) => {
+        setproductdetails(newAddedProduct)
 
-
-   setPatientArray(filteredPatients)
-
-   
-   
-    
-  };
- 
-  const handleApiSuccess = (newAddedProduct: string) => {
-    setproductdetails(newAddedProduct)
-
-  };
+    };
 
 
 
@@ -666,39 +664,39 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
             <CustomBox title='Customer Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
-                    <Grid item xs={12} lg={12} >
-                    {idd ? (
-                // Render CustomInput if idd is present
-                <CustomInput
-                    type='text'
-                    control={control}
-                    error={errors.name}
-                    fieldName="name"
-                    placeholder={``}
-                    fieldLabel={"Customer Name"}
-                    disabled={false}
-                    view={true}
-                    defaultValue={''}
-                />
-            ) : (
-                // Render CustomSelectSearch if idd is not present
-                <CustomSelectSearch
-                    control={control}
-                    error={errors.name}
-                    fieldName="patient"
-                    fieldLabel="Search Customer"
-                    background="#FFFFFF"
-                    height="40px"
-                    size="16px"
-                    options={patientArray}
-                    getOptionLabel={({ name, phonenumber }: any) => `${name}  ${phonenumber}`}
-                    onChangeValue={PatientSearch}
-                    inputValue={inputValue}
-                    placeholder='Search by Name,Mobile'
-                    onInputChange={PatientOnchangeInput}
-                />
-            )}
-            </Grid>
+                        <Grid item xs={12} lg={12} >
+                            {idd ? (
+                                // Render CustomInput if idd is present
+                                <CustomInput
+                                    type='text'
+                                    control={control}
+                                    error={errors.name}
+                                    fieldName="name"
+                                    placeholder={``}
+                                    fieldLabel={"Customer Name"}
+                                    disabled={false}
+                                    view={true}
+                                    defaultValue={''}
+                                />
+                            ) : (
+                                // Render CustomSelectSearch if idd is not present
+                                <CustomSelectSearch
+                                    control={control}
+                                    error={errors.name}
+                                    fieldName="patient"
+                                    fieldLabel="Search Customer"
+                                    background="#FFFFFF"
+                                    height="40px"
+                                    size="16px"
+                                    options={patientArray}
+                                    getOptionLabel={({ name, phonenumber }: any) => `${name}  ${phonenumber}`}
+                                    onChangeValue={PatientSearch}
+                                    inputValue={inputValue}
+                                    placeholder='Search by Name,Mobile'
+                                    onInputChange={PatientOnchangeInput}
+                                />
+                            )}
+                        </Grid>
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput
@@ -710,7 +708,7 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                             view={true}
                             fieldLabel={"Email Address"}
                             disabled={true}
-                      
+
                             defaultValue={''}
                         />
                     </Grid>
@@ -740,14 +738,14 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                             height={40}
                             label={''}
                             size={16}
-                        
+
                             value={customerGroupSelect}
                             options={customerGroupData}
                             onChangeValue={orderTypeChange}
                             // onChangeValue={CustomerGroupChange}
                             background={'#fff'}
                         >
-                           {/* {customerGroupData?.map((group:any) => (
+                            {/* {customerGroupData?.map((group:any) => (
                                 <MenuItem
                                     key={group._id}
                                     value={group._id}
@@ -755,7 +753,7 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                                     {group.name}
                                 </MenuItem>
                             ))} */}
-                               
+
                         </Customselect>
                     </Grid>
                 </Grid>
@@ -811,42 +809,42 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                         />
                     </Grid> */}
                     <Grid item xs={12} lg={2.5}>
-                       {idd?(
-                       <CustomTextarea
-                            control={control}
-                            error={errors.shipping_address_delivery_address}
-                            fieldName="shipping_address_delivery_address"
-                            placeholder={``}
-                            fieldLabel={"Shipping Address or Delivery Address"}
-                            disabled={false}
-                            view={idd ? true : false}
-                            defaultValue={''}
-                        />):
-                       ( <Customselect
-                        type='text'
-                        control={control}
-                        error={errors.shipping_address_delivery_address}
-                        fieldName="shipping_address_delivery_address"
-                        disabled={view ? true : false}
-                        placeholder={``}
-                        fieldLabel={"Shipping Address or Delivery Address"}
-                        selectvalue={""}
-                        height={40}
-                        label={''}
-                        size={16}
-                        value={selectedcustmraddress}
-                        options={''}
-                        onChangeValue={CustomerAddressChange}
-                        background={'#fff'}
-                    >
-                         {customeraddressList?.map((res: any) => (
+                        {idd ? (
+                            <CustomTextarea
+                                control={control}
+                                error={errors.shipping_address_delivery_address}
+                                fieldName="shipping_address_delivery_address"
+                                placeholder={``}
+                                fieldLabel={"Shipping Address or Delivery Address"}
+                                disabled={false}
+                                view={idd ? true : false}
+                                defaultValue={''}
+                            />) :
+                            (<Customselect
+                                type='text'
+                                control={control}
+                                error={errors.shipping_address_delivery_address}
+                                fieldName="shipping_address_delivery_address"
+                                disabled={view ? true : false}
+                                placeholder={``}
+                                fieldLabel={"Shipping Address or Delivery Address"}
+                                selectvalue={""}
+                                height={40}
+                                label={''}
+                                size={16}
+                                value={selectedcustmraddress}
+                                options={''}
+                                onChangeValue={CustomerAddressChange}
+                                background={'#fff'}
+                            >
+                                {customeraddressList?.map((res: any) => (
                                     <MenuItem value={res?._id}>{res?.fullData}</MenuItem>
                                 ))}
-                    </Customselect>
-                        ) }
+                            </Customselect>
+                            )}
                     </Grid>
                     <Grid item xs={12} lg={2.5}>
-                       <CustomTextarea
+                        <CustomTextarea
                             control={control}
                             error={errors.refund_details}
                             fieldName="refund_details"
@@ -870,15 +868,15 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                             height={''}
                             label={'Refund'}
                             disabled={false}
-                            onClick={HandleopenRefund} 
+                            onClick={HandleopenRefund}
                         />
                     </Box>}
 
             </CustomBox>
             <CustomBox title='Customer Instructions'>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} lg={2.5}>
-                      
+                <Grid container spacing={2}>
+                    <Grid item xs={12} lg={2.5}>
+
                         <CustomInput
                             type='text'
                             control={control}
@@ -887,16 +885,16 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                             placeholder={``}
                             fieldLabel={"Comments"}
                             disabled={false}
-                            view={idd?true:false}
+                            view={idd ? true : false}
                             defaultValue={''}
                         />
-                    
+
                     </Grid></Grid>
-                </CustomBox>
+            </CustomBox>
             <CustomBox title='Rider Details'>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} lg={2.5}>
-                      
+                <Grid container spacing={2}>
+                    <Grid item xs={12} lg={2.5}>
+
                         <CustomInput
                             type='text'
                             control={control}
@@ -908,9 +906,9 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                             view={true}
                             defaultValue={''}
                         />
-                    
-                        </Grid>
-                        {/* <Grid item xs={12} lg={2.5}>
+
+                    </Grid>
+                    {/* <Grid item xs={12} lg={2.5}>
                             <CustomInput
                                 type='text'
                                 control={control}
@@ -924,35 +922,35 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                             />
 
                         </Grid> */}
-                        <Grid item xs={12} lg={2.5}>
-                            <CustomInput
-                                type='text'
-                                control={control}
-                                error={errors.rider_phone}
-                                fieldName="rider_phone"
-                                placeholder={``}
-                                fieldLabel={"Mobile Number"}
-                                disabled={false}
-                                view={true}
-                                defaultValue={''}
-                            />
-
-                        </Grid>
+                    <Grid item xs={12} lg={2.5}>
+                        <CustomInput
+                            type='text'
+                            control={control}
+                            error={errors.rider_phone}
+                            fieldName="rider_phone"
+                            placeholder={``}
+                            fieldLabel={"Mobile Number"}
+                            disabled={false}
+                            view={true}
+                            defaultValue={''}
+                        />
 
                     </Grid>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', py: 1 }}>
-                        <Custombutton
-                            btncolor='#D35858'
-                            IconEnd={''}
-                            IconStart={''}
-                            endIcon={false}
-                            startIcon={false}
-                            height={''}
-                            label={'Alert Rider'}
-                            disabled={rider_name ?false:true}
-                            onClick={Alertrider} />
-                    </Box>
-                </CustomBox>
+
+                </Grid>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', py: 1 }}>
+                    <Custombutton
+                        btncolor='#D35858'
+                        IconEnd={''}
+                        IconStart={''}
+                        endIcon={false}
+                        startIcon={false}
+                        height={''}
+                        label={'Alert Rider'}
+                        disabled={rider_name ? false : true}
+                        onClick={Alertrider} />
+                </Box>
+            </CustomBox>
             <CustomBox title='Payment Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
@@ -1023,7 +1021,7 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                             placeholder={``}
                             fieldLabel={"Invoice No."}
                             disabled={false}
-                            view={idd?true:false}
+                            view={idd ? true : false}
                             defaultValue={''}
                         />
                     </Grid>
@@ -1036,94 +1034,94 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                             placeholder={``}
                             fieldLabel={"Reward Points Received"}
                             disabled={false}
-                            view={idd?true:false}
+                            view={idd ? true : false}
                             defaultValue={''}
                         />
 
                     </Grid>
                 </Grid>
             </CustomBox>
-         {  <CustomBox title='Product Details'>
-                { 
-                    <ShippingTable 
-                        res={orderviewList}  
-                        onApiSuccess={handleApiSuccess}  
-                        readonly={res} 
-                        id={idd} 
-                        SetDeliveryCharge={SetDeliveryCharge} 
+            {<CustomBox title='Product Details'>
+                {
+                    <ShippingTable
+                        res={orderviewList}
+                        onApiSuccess={handleApiSuccess}
+                        readonly={res}
+                        id={idd}
+                        SetDeliveryCharge={SetDeliveryCharge}
                         setStoreList={setStoreList}
                     />
                 }
             </CustomBox>}
-      {idd&&
-            <CustomBox title='Vendor Status'>
-                <TableContainer component={Paper} >
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell align="center">#</TableCell>
-                                <TableCell align="center">Store Name</TableCell>
-                                <TableCell align="center">Vendor Name</TableCell>
-                                <TableCell align="center">Current Status</TableCell>
-                                {res &&
-                                    <TableCell align="center">Change Status</TableCell>}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {vendor_statusP && vendor_statusP?.map((resp: any, i: number) => (
-                                <TableRow
-                                    // key={row.name}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell align="center" component="th" scope="row">
-                                        {i + 1}
-                                    </TableCell>
-                                    <TableCell align="center" component="th" scope="row">
-                                        {resp?.store_name}
-                                    </TableCell>
-                                    <TableCell align="center" component="th" scope="row">
-                                        {resp?.vendor_name}
-                                    </TableCell>
-                                    <TableCell align="center" component="th" scope="row">
-                                        {resp?.status}
-                                    </TableCell>
+            {idd &&
+                <CustomBox title='Vendor Status'>
+                    <TableContainer component={Paper} >
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align="center">#</TableCell>
+                                    <TableCell align="center">Store Name</TableCell>
+                                    <TableCell align="center">Vendor Name</TableCell>
+                                    <TableCell align="center">Current Status</TableCell>
                                     {res &&
+                                        <TableCell align="center">Change Status</TableCell>}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {vendor_statusP && vendor_statusP?.map((resp: any, i: number) => (
+                                    <TableRow
+                                        // key={row.name}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
                                         <TableCell align="center" component="th" scope="row">
-                                            <select onChange={(e: any) => vendorStatusChange(e, i, resp)} style={{ cursor: 'pointer', background: '#fff', border: '1px solid #f5f5f5', padding: 10 }}>
-                                                <option> <em> Select Status</em></option>
+                                            {i + 1}
+                                        </TableCell>
+                                        <TableCell align="center" component="th" scope="row">
+                                            {resp?.store_name}
+                                        </TableCell>
+                                        <TableCell align="center" component="th" scope="row">
+                                            {resp?.vendor_name}
+                                        </TableCell>
+                                        <TableCell align="center" component="th" scope="row">
+                                            {resp?.status}
+                                        </TableCell>
+                                        {res &&
+                                            <TableCell align="center" component="th" scope="row">
+                                                <select onChange={(e: any) => vendorStatusChange(e, i, resp)} style={{ cursor: 'pointer', background: '#fff', border: '1px solid #f5f5f5', padding: 10 }}>
+                                                    <option> <em> Select Status</em></option>
 
-                                                {vendor_statusP && vendorStatusList?.filter((res: any) => res?.status_name !== "completed" && res?.status_name !== "pickedup").map((list: any) => (
-                                                    <option value={list?.status_name}>{list?.status_name}</option>
-                                                ))}
-                                            </select>
-                                        </TableCell>}
-                                </TableRow>))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                                    {vendor_statusP && vendorStatusList?.filter((res: any) => res?.status_name !== "completed" && res?.status_name !== "pickedup").map((list: any) => (
+                                                        <option value={list?.status_name}>{list?.status_name}</option>
+                                                    ))}
+                                                </select>
+                                            </TableCell>}
+                                    </TableRow>))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
 
-            </CustomBox>}
+                </CustomBox>}
             {orderviewList?.refund_completed_status &&
-            <CustomBox title='Refund Details'>
-                <TableContainer component={Paper} >
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                
-                                <TableCell align="center">Refund Amount </TableCell>
-                                <TableCell align="center">Refund Note</TableCell>
-                                <TableCell align="center">Refund Id</TableCell>
-                                {res &&
-                                    <TableCell align="center">Change Status</TableCell>}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                        
+                <CustomBox title='Refund Details'>
+                    <TableContainer component={Paper} >
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+
+                                    <TableCell align="center">Refund Amount </TableCell>
+                                    <TableCell align="center">Refund Note</TableCell>
+                                    <TableCell align="center">Refund Id</TableCell>
+                                    {res &&
+                                        <TableCell align="center">Change Status</TableCell>}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+
                                 <TableRow
                                     // key={row.name}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
-                                   
+
                                     <TableCell align="center" component="th" scope="row">
                                         {orderviewList?.refund_details?.refund_amount}
                                     </TableCell>
@@ -1133,14 +1131,14 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                                     <TableCell align="center" component="th" scope="row">
                                         {orderviewList?.refund_details?.transaction_id}
                                     </TableCell>
-                               
-                                </TableRow>
-                             
-                        </TableBody>
-                    </Table>
-                </TableContainer>
 
-            </CustomBox>}
+                                </TableRow>
+
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+
+                </CustomBox>}
             {idd && <HistoryTable res={orderviewList?.order_history} />}
 
             {(res && !orderviewList?.order_history?.some((res: any) => res?.status === 'cancelled' || res?.status === 'completed')) &&
@@ -1167,10 +1165,10 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                                     <>Select OrderStatus</>
                                 </MenuItem>
                                 {orderList?.map((res: any) => (
-                                   <MenuItem value={res?.status_name}>{res?.status_name}</MenuItem>
-                                  
+                                    <MenuItem value={res?.status_name}>{res?.status_name}</MenuItem>
+
                                 ))}
-           
+
                             </Customselect>
                         </Grid>
                         <Grid item xs={12} lg={5}>
@@ -1202,7 +1200,7 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                             onClick={ChangeOrderStatus} />
                     </Box>
                 </CustomBox>}
-            {(res || add ) && <Box py={3} display={'flex'} justifyContent={'center'}>
+            {(res || add) && <Box py={3} display={'flex'} justifyContent={'center'}>
                 <Custombutton
                     btncolor=''
                     IconEnd={''}
@@ -1210,7 +1208,7 @@ const PatientOnchangeInput = (event: any, newInputValue: any) => {
                     endIcon={false}
                     startIcon={false}
                     height={''}
-                    label={ res?'Update Order':'Add Order'}
+                    label={res ? 'Update Order' : 'Add Order'}
                     disabled={loading}
                     onClick={handleSubmit(SubmitOrder)} />
             </Box>}
