@@ -15,7 +15,12 @@ const FranchiseEnquiryModal = ({ open, close, res,mutate }) => {
 
     console.log({ res })
 
-
+  useEffect(()=>{
+    if(res){
+        setValue('franchise_enquiry',res?.status)
+    }
+  }
+  ,[res])
 
     const { register,
         handleSubmit,

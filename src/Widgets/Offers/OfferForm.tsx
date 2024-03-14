@@ -328,7 +328,7 @@ const OfferForm = ({ res, view }: props) => {
 
     return (
         <Box>
-            <CustomBox title='Panda Coin Details'>
+            <CustomBox title='Offer Details'>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={2.5}>
                         <CustomInput

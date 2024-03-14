@@ -221,11 +221,11 @@ const NewOrderForm = ({ view, res, edit, add, onupdate }: props) => {
         setPaymentStatusSelect(value)
     }
 
-    const orderStatusChange = (e: any) => {
-        const { value } = e.target;
-        setOrderSelect(value);
+    // const orderStatusChange = (e: any) => {
+    //     const { value } = e.target;
+    //     setOrderSelect(value);
 
-    }
+    // }
 
 
     const onChangeCustomer = async (value: any) => {

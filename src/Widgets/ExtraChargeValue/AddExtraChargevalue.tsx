@@ -67,7 +67,7 @@ const AddExtraChargevalue = ({ view, res }: props) => {
         extra_charge_id: yup.string().required('Required'),
         charge: yup.string().matches(/^[0-9]+$/, 'not valid').required('Required'),
         franchise: yup.string().required('Required'),
-        expiry_date_time: yup.string().required('Required'),
+        // expiry_date_time: yup.string().required('Required'),
         // If selectType is not 'text', label2 is require
         type: yup.string().required('Required'),
     }
@@ -126,23 +126,24 @@ const AddExtraChargevalue = ({ view, res }: props) => {
 
                     const data = resp?.data?.data;
                 
+                     console.log({data})
                     setValue('charge', resp?.data?.data?.charge);
                     setValue('franchise', data?.franchise?.franchise_id)
                     setValue('extra_charge_id', data?.extra_charge_id?.extra_charge_id)
                     setValue('type', data?.type)
                    
                     if (data?.type === "dateRange") {
-                        setValue('label1', data.label1 ? moment(data.label1, 'YYYY-MM-DD') : null)
-                        setValue('label2', data.label2 ? moment(data.label2, 'YYYY-MM-DD') : null)
+                        setValue('label1', data?.label1 ? moment(data?.label1, 'YYYY-MM-DD') : null)
+                        setValue('label2', data?.label2 ? moment(data?.label2, 'YYYY-MM-DD') : null)
                     }
                     if (data?.type === "timeRange") {
-                        setValue('label1', data.label1 ? moment(data.label1, 'hh:mm A') : null)
-                        setValue('label2', data.label2 ? moment(data.label2, 'hh:mm A') : null)
+                        setValue('label1', data?.label1 ? moment(data?.label1, 'hh:mm A') : null)
+                        setValue('label2', data?.label2 ? moment(data?.label2, 'hh:mm A') : null)
                         setValue('expiry_date_time', data.expiry_date_time ? moment(data.expiry_date_time, 'YYYY-MM-DD') : null);
                     }
                     if (data?.type === 'text') {
-                        setValue('label1', data.label1 ? data.label1 : null)
-                        setValue('label2', data.label2 ? data.label2 : null)
+                        setValue('label1', data?.label1 ? data?.label1 : null)
+                        setValue('label2', data?.label2 ? data?.label2 : null)
                     }
                     UpdateTask({
                         extraChargeSelect: data?.extra_charge_id?.extra_charge_id,
@@ -355,7 +356,7 @@ const AddExtraChargevalue = ({ view, res }: props) => {
                         <Grid item xs={12} lg={2}>
                             <CustomTimepicker
                                 changeValue={(data) => TimeFilter.startTime(data)}
-                                fieldName={"lable1"}
+                                fieldName={"label1"}
                                 control={control}
                                 disabled={false}
                                 error={errors.label1}

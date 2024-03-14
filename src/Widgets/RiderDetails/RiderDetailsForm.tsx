@@ -139,7 +139,7 @@ const RiderDetailsform = ({ res, view }: props) => {
             .nullable()
             .notRequired(),
         account_name: yup.string()
-            .matches(/^[A-Za-z]+(?:[A-Za-z]+)*$/, "Account Name should contain only characters")
+            .matches(/^[A-Za-z ]+(?:[A-Za-z ]+)*$/, "Account Name should contain only characters")
             .nullable()
             .notRequired(),
 

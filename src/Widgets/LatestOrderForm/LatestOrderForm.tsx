@@ -11,6 +11,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import CustomTextarea from '@/components/CustomTextarea'
 import CustomTable from '@/components/CustomTable'
+import moment from 'moment'
 type IFormInput = {
     customer_email: any,
     customer_group: string,
@@ -30,8 +31,8 @@ const LatestOrderForm = () => {
     const { id } = router.query
     const [itemStore, setItemStore] = useState([])
     const [itemProduct, setItemProduct] = useState([])
-    console.log({itemStore})
-    console.log({itemProduct})
+    console.log({ itemStore })
+    console.log({ itemProduct })
 
 
     const schema = yup
@@ -129,7 +130,7 @@ const LatestOrderForm = () => {
             flex: 1,
             headerAlign: 'center',
             align: 'center',
-          
+
         },
 
         {
@@ -149,7 +150,7 @@ const LatestOrderForm = () => {
 
         },
 
-     
+
 
 
     ];
@@ -163,8 +164,8 @@ const LatestOrderForm = () => {
                 data.customer_email = data?.customer_details?.customer_email;
                 data.customer_group = data?.customer_details?.customer_group;
                 data.customer_mobile = data?.customer_details?.customer_mobile;
-                data.completed_date = data?.rider_review?.completed_date;
-                data.pickedup_date = data?.rider_review?.pickedup_date;
+                data.completed_date = data?.rider_review?.completed_date ? moment(data?.rider_review?.completed_date).format('DD-MM-YYYY A') : null;
+                data.pickedup_date = data?.rider_review?.pickedup_date ? moment(data?.rider_review?.pickedup_date).format('DD-MM-YYYY A') : null;
                 data.rider_name = data?.rider_review?.rider_name;
                 data.rider_rating = data?.rider_review?.rider_rating;
                 data.rider_review = data?.rider_review?.rider_review;
@@ -174,7 +175,7 @@ const LatestOrderForm = () => {
                 delete data.store_review
                 delete data.product_review
                 // delete data.rider_review
-            
+
                 reset(data)
             } catch (err: any) {
                 toast.error(err.message)

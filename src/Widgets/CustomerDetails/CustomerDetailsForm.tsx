@@ -148,6 +148,8 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     const [area, setArea] = useState<any>("")
     const [statusSelect, setStatusSelect] = useState<any>(null)
 
+
+     console.log({addressfromprevious})
     const CheckBlackList = (e: any) => {
 
         console.log({ customerList }, 'customerList FROM PREVIOUS')
@@ -254,17 +256,17 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
         setLoading(true);
         try {
             data.customer_group_id = selectedValue;
-            if (!addressfromprevious[0]?.pincode) {
+            if ((addressfromprevious[0]?.pincode && !addressfromprevious[0]?.pincode)) {
                 toast.error("Address pincode required")
                 return
             }
 
-            if (!addressfromprevious[0]?.area) {
+            if ((addressfromprevious[0]?.area && !addressfromprevious[0]?.area)) {
                 toast.error("Area required")
                 return
             }
 
-            if (!addressfromprevious[0]?.address_type) {
+            if ((addressfromprevious[0]?.address_type && !addressfromprevious[0]?.address_type)) {
                 toast.error("Address type required")
                 return
             }
@@ -557,7 +559,7 @@ const CustomerDetailsForm = ({ resData, view }: props) => {
     }, [idd]);
 
     useEffect(() => {
-        if (customerList) {
+        if (customerList && idd) {
             let addrs = customerList?.customer_address?.map((itm: any) => (
                 {
                     id: itm?._id,

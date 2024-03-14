@@ -79,6 +79,7 @@ const FranchiseAccounts = () => {
       flex: 1,
       headerAlign: 'center',
       align: 'center',
+      valueGetter: (params) => params?.row?.last_salary_date ? moment(params?.row?.last_salary_date, "YYYY-MM-DD hh:mm A").format("DD-MM-YYYY hh:mm A") : '-'
 
     },
 
